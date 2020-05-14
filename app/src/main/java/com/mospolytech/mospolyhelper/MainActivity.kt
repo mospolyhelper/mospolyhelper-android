@@ -9,8 +9,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
-
-    override fun onResume() {
-        super.onResume()
-    }
 }
+
+val Any.TAG: String
+    get() {
+        val tag = this::class.java.simpleName
+        return if (tag.length <= 23) tag else tag.substring(0, 23)
+    }
