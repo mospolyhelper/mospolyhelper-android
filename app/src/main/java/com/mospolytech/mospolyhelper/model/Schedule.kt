@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.model
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.TAG
+import java.time.DayOfWeek
 import java.util.*
 
 
@@ -9,30 +10,81 @@ data class Schedule(
     val dailySchedules: Array<Daily>,
     val lastUpdate: Calendar,
     val group: Group,
-    val isByDate: Boolean,
-    val isSession: Boolean
+    val isSession: Boolean,
+    val dateFrom: Calendar,
+    val dateTo: Calendar
 ) {
-    var dateFrom = Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
-    var dateTo = Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
+    class Builder(
+        private var dailySchedules: Array<Daily>,
+        private var lastUpdate: Calendar? = null,
+        private var group: Group = Group.empty,
+        private var isSession: Boolean,
+        private var dateFrom: Calendar? = null,
+        private var dateTo: Calendar? = null
+    ) {
+        fun dailySchedules(dailySchedules: Array<Daily>) = apply { this.dailySchedules = dailySchedules }
 
-    init {
+        fun lastUpdate(lastUpdate: Calendar) = apply { this.lastUpdate = lastUpdate }
 
+        fun group(group: Group) = apply { this.group = group }
+
+        fun isSession(isSession: Boolean) = apply { this.isSession = isSession }
+
+        fun dateFrom(dateFrom: Calendar) = apply { this.dateFrom = dateFrom }
+
+        fun dateTo(dateTo: Calendar) = apply { this.dateTo = dateTo }
+
+        fun build(): Schedule {
+            var dateFrom = this.dateFrom ?: Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
+            var dateTo = this.dateTo ?: Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
+            if (this.dateFrom == null || this.dateTo == null) {
+                for (dailySchedule in dailySchedules) {
+                    for (lesson in dailySchedule) {
+                        if (lesson.dateFrom < dateFrom)
+                            dateFrom = lesson.dateFrom;
+                        if (lesson.dateTo > dateTo)
+                            dateTo = lesson.dateTo;
+                    }
+                }
+            }
+            val lastUpdate = lastUpdate ?: Calendar.getInstance()
+
+            return  Schedule(
+                dailySchedules,
+                lastUpdate,
+                group,
+                isSession,
+                dateFrom,
+                dateTo
+            )
+        }
     }
 
-    constructor(
-        dailySchedules: Array<Daily>,
-        lastUpdate: Calendar,
-        group: Group,
-        isByDate: Boolean,
-        isSession: Boolean,
-        dateFrom: Calendar,
-        dateTo: Calendar
-    ) : this(dailySchedules, lastUpdate, group, isByDate, isSession) {
-        this.dateFrom = dateFrom
-        this.dateTo = dateTo
+
+    fun getSchedule(date: Calendar, filter: Filter) =
+        filter.getFilteredSchedule(dailySchedules[date.get(Calendar.DAY_OF_WEEK)], date)
+
+    data class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
+        companion object {
+            val default = Filter(true, DateFilter.Hide)
+            val none = Filter(false, DateFilter.Show)
+        }
+        enum class DateFilter{
+            Show,
+            Desaturate,
+            Hide
+        }
+
+        fun getFilteredSchedule(dailySchedule: Daily, date: Calendar) =
+            Daily(dailySchedule.lessons.filter {
+                ((dateFilter != DateFilter.Hide ||
+                        ((it.dateFrom <= date || it.isImportant) && date <= it.dateTo)) &&
+                        (!sessionFilter ||
+                        !it.isImportant || (it.dateFrom <= date && date <= it.dateTo)))
+            }.toTypedArray(), dailySchedule.dayOfWeek);
     }
 
-    data class Daily(val lessons: Array<Lesson>, val day: Long) {
+    data class Daily(val lessons: Array<Lesson>, val dayOfWeek: DayOfWeek){
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -40,17 +92,44 @@ data class Schedule(
             other as Daily
 
             if (!lessons.contentEquals(other.lessons)) return false
-            if (day != other.day) return false
+            if (dayOfWeek != other.dayOfWeek) return false
 
             return true
         }
 
         override fun hashCode(): Int {
             var result = lessons.contentHashCode()
-            result = 31 * result + day.hashCode()
+            result = 31 * result + dayOfWeek.hashCode()
             return result
         }
 
+        operator fun iterator() = lessons.iterator()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Schedule
+
+        if (!dailySchedules.contentEquals(other.dailySchedules)) return false
+        if (lastUpdate != other.lastUpdate) return false
+        if (group != other.group) return false
+        if (isSession != other.isSession) return false
+        if (dateFrom != other.dateFrom) return false
+        if (dateTo != other.dateTo) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = dailySchedules.contentHashCode()
+        result = 31 * result + lastUpdate.hashCode()
+        result = 31 * result + group.hashCode()
+        result = 31 * result + isSession.hashCode()
+        result = 31 * result + dateFrom.hashCode()
+        result = 31 * result + dateTo.hashCode()
+        return result
     }
 }
 
