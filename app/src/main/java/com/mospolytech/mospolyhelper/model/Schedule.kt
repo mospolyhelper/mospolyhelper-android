@@ -2,12 +2,11 @@ package com.mospolytech.mospolyhelper.model
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.TAG
-import java.time.DayOfWeek
 import java.util.*
 
 
 data class Schedule(
-    val dailySchedules: Array<Daily>,
+    val dailySchedules: Array<Array<Lesson>>,
     val lastUpdate: Calendar,
     val group: Group,
     val isSession: Boolean,
@@ -15,14 +14,14 @@ data class Schedule(
     val dateTo: Calendar
 ) {
     class Builder(
-        private var dailySchedules: Array<Daily>,
+        private var dailySchedules: Array<Array<Lesson>>,
         private var lastUpdate: Calendar? = null,
         private var group: Group = Group.empty,
         private var isSession: Boolean,
         private var dateFrom: Calendar? = null,
         private var dateTo: Calendar? = null
     ) {
-        fun dailySchedules(dailySchedules: Array<Daily>) = apply { this.dailySchedules = dailySchedules }
+        fun dailySchedules(dailySchedules: Array<Array<Lesson>>) = apply { this.dailySchedules = dailySchedules }
 
         fun lastUpdate(lastUpdate: Calendar) = apply { this.lastUpdate = lastUpdate }
 
@@ -61,13 +60,13 @@ data class Schedule(
     }
 
 
-    fun getSchedule(date: Calendar, filter: Filter) =
-        filter.getFilteredSchedule(dailySchedules[date.get(Calendar.DAY_OF_WEEK)], date)
+    fun getSchedule(date: Calendar, filter: Filter = Filter.default) =
+        filter.getFiltered(dailySchedules[date.get(Calendar.DAY_OF_WEEK)], date)
 
-    data class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
+    class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
-            val default = Filter(true, DateFilter.Hide)
-            val none = Filter(false, DateFilter.Show)
+            val default by lazy { Filter(true, DateFilter.Hide) }
+            val none by lazy { Filter(false, DateFilter.Show) }
         }
         enum class DateFilter{
             Show,
@@ -75,35 +74,120 @@ data class Schedule(
             Hide
         }
 
-        fun getFilteredSchedule(dailySchedule: Daily, date: Calendar) =
-            Daily(dailySchedule.lessons.filter {
+        fun getFiltered(dailySchedule: Array<Lesson>, date: Calendar) =
+            dailySchedule.filter {
                 ((dateFilter != DateFilter.Hide ||
                         ((it.dateFrom <= date || it.isImportant) && date <= it.dateTo)) &&
                         (!sessionFilter ||
-                        !it.isImportant || (it.dateFrom <= date && date <= it.dateTo)))
-            }.toTypedArray(), dailySchedule.dayOfWeek);
+                                !it.isImportant || (it.dateFrom <= date && date <= it.dateTo)))
+            }.toTypedArray()
     }
 
-    data class Daily(val lessons: Array<Lesson>, val dayOfWeek: DayOfWeek){
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
+    class AdvancedSearch(
+        val lessonTitles: Iterable<String>,
+        val lessonTeachers: Iterable<String>,
+        val lessonAuditoriums: Iterable<String>,
+        val lessonTypes: Iterable<String>
+    ) {
+        class Builder(
+            private var lessonTitles: Iterable<String> = listOf(),
+            private var lessonTeachers: Iterable<String> = listOf(),
+            private var lessonAuditoriums: Iterable<String> = listOf(),
+            private var lessonTypes: Iterable<String> = listOf()
+        ) {
 
-            other as Daily
+            fun lessonTitles(lessonTitles: Iterable<String>) =
+                apply { this.lessonTitles = lessonTitles }
 
-            if (!lessons.contentEquals(other.lessons)) return false
-            if (dayOfWeek != other.dayOfWeek) return false
+            fun lessonTeachers(lessonTeachers: Iterable<String>) =
+                apply { this.lessonTeachers = lessonTeachers }
 
-            return true
+            fun lessonAuditoriums(lessonAuditoriums: Iterable<String>) =
+                apply { this.lessonAuditoriums = lessonAuditoriums }
+
+            fun lessonTypes(lessonTypes: Iterable<String>) =
+                apply { this.lessonTypes = lessonTypes }
+
+            fun build() =
+                AdvancedSearch(
+                    lessonTitles,
+                    lessonTeachers,
+                    lessonAuditoriums,
+                    lessonTypes
+                )
         }
 
-        override fun hashCode(): Int {
-            var result = lessons.contentHashCode()
-            result = 31 * result + dayOfWeek.hashCode()
-            return result
+        fun getFiltered(schedules: Iterable<Schedule>): Schedule {
+            val dailySchedules = arrayOf(mutableListOf<Lesson>(), mutableListOf<Lesson>(),
+                mutableListOf<Lesson>(), mutableListOf<Lesson>(), mutableListOf<Lesson>(),
+                mutableListOf<Lesson>(), mutableListOf<Lesson>())
+
+            var dateFrom = Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
+            var dateTo = Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
+
+            for (schedule in schedules) {
+                if (schedule.dateFrom < dateFrom) {
+                    dateFrom = schedule.dateFrom;
+                }
+                if (schedule.dateTo > dateTo) {
+                    dateTo = schedule.dateTo;
+                }
+                for (i in schedule.dailySchedules.indices) {
+                    dailySchedules[i].addAll(schedule.dailySchedules[i].filter { lesson ->
+                        checkFilter(lessonTitles, lesson.title) &&
+                                checkFilter(lessonTeachers, lesson.teachers.map { it.getFullName() }) &&
+                                checkFilter(lessonAuditoriums, lesson.auditoriums.map { it.title }) &&
+                                checkFilter(lessonTypes, lesson.type)
+                    })
+                }
+            }
+
+            return Schedule(
+                dailySchedules.map { it.toTypedArray() }.toTypedArray(),
+                Calendar.getInstance(),
+                Group.empty,
+                false,
+                dateFrom,
+                dateTo
+            )
         }
 
-        operator fun iterator() = lessons.iterator()
+        private fun checkFilter(filterList: Iterable<String>, value: String): Boolean {
+            val iterator = filterList.iterator()
+            if (iterator.hasNext()) {
+                do {
+                    if (iterator.next() == value) return true
+                } while (iterator.hasNext())
+                return false
+            }
+            else {
+                return true
+            }
+        }
+
+        private fun checkFilter(filterList: Iterable<String>, values: Iterable<String>): Boolean {
+            val iterator = filterList.iterator()
+            if (iterator.hasNext()) {
+                val valueIterator = values.iterator()
+                if (!valueIterator.hasNext()) return false
+                do {
+                    var valuesContainCurrentFilter = false
+                    do {
+                        if (valueIterator.next() == iterator.next()) {
+                            valuesContainCurrentFilter = true
+                            break
+                        }
+                    } while (valueIterator.hasNext())
+
+                    if (valuesContainCurrentFilter) return true
+                } while (iterator.hasNext())
+
+                return false
+            }
+            else {
+                return true
+            }
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -188,6 +272,95 @@ data class Lesson(
                 "",
                 Group.empty
             )
+
+        fun getOrder(time: Calendar, groupIsEvening: Boolean): Int =
+            if (time > Time.thirdPair.second) when {
+                time <= Time.fourthPair.second -> 3
+                time <= Time.fifthPair.second -> 4
+                groupIsEvening -> if (time <= Time.sixthPairEvening.second) 5 else 6
+                else -> if (time <= Time.sixthPair.second) 5 else 6
+            }
+            else when {
+                time > Time.secondPair.second -> 2
+                time > Time.firstPair.second -> 1
+                else -> 0
+            }
+
+    }
+
+    class Time {
+        companion object {
+            val firstPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 9)
+                    set(Calendar.MINUTE, 0)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 10)
+                    set(Calendar.MINUTE, 30)
+                }
+            )
+            val secondPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 10)
+                    set(Calendar.MINUTE, 40)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 12)
+                    set(Calendar.MINUTE, 10)
+                }
+            )
+            val thirdPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 12)
+                    set(Calendar.MINUTE, 20)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 13)
+                    set(Calendar.MINUTE, 50)
+                }
+            )
+            val fourthPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 14)
+                    set(Calendar.MINUTE, 30)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 16)
+                    set(Calendar.MINUTE, 0)
+                }
+            )
+            val fifthPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 16)
+                    set(Calendar.MINUTE, 10)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 17)
+                    set(Calendar.MINUTE, 40)
+                }
+            )
+            val sixthPair = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 17)
+                    set(Calendar.MINUTE, 50)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 19)
+                    set(Calendar.MINUTE, 20)
+                }
+            )
+            val sixthPairEvening = Pair(
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 18)
+                    set(Calendar.MINUTE, 20)
+                },
+                Calendar.getInstance().apply {
+                    set(Calendar.HOUR, 19)
+                    set(Calendar.MINUTE, 40)
+                }
+            )
+        }
     }
 
     val isEmpty = title.isEmpty() && type.isEmpty()
