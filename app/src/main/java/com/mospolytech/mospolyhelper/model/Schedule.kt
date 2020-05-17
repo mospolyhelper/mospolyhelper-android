@@ -6,7 +6,7 @@ import java.util.*
 
 
 data class Schedule(
-    val dailySchedules: Array<Array<Lesson>>,
+    val dailySchedules: List<List<Lesson>>,
     val lastUpdate: Calendar,
     val group: Group,
     val isSession: Boolean,
@@ -14,14 +14,14 @@ data class Schedule(
     val dateTo: Calendar
 ) {
     class Builder(
-        private var dailySchedules: Array<Array<Lesson>>,
+        private var dailySchedules: List<List<Lesson>>,
         private var lastUpdate: Calendar? = null,
         private var group: Group = Group.empty,
         private var isSession: Boolean,
         private var dateFrom: Calendar? = null,
         private var dateTo: Calendar? = null
     ) {
-        fun dailySchedules(dailySchedules: Array<Array<Lesson>>) = apply { this.dailySchedules = dailySchedules }
+        fun dailySchedules(dailySchedules: List<List<Lesson>>) = apply { this.dailySchedules = dailySchedules }
 
         fun lastUpdate(lastUpdate: Calendar) = apply { this.lastUpdate = lastUpdate }
 
@@ -74,13 +74,13 @@ data class Schedule(
             Hide
         }
 
-        fun getFiltered(dailySchedule: Array<Lesson>, date: Calendar) =
+        fun getFiltered(dailySchedule: List<Lesson>, date: Calendar) =
             dailySchedule.filter {
                 ((dateFilter != DateFilter.Hide ||
                         ((it.dateFrom <= date || it.isImportant) && date <= it.dateTo)) &&
                         (!sessionFilter ||
                                 !it.isImportant || (it.dateFrom <= date && date <= it.dateTo)))
-            }.toTypedArray()
+            }
     }
 
     class AdvancedSearch(
@@ -118,9 +118,9 @@ data class Schedule(
         }
 
         fun getFiltered(schedules: Iterable<Schedule>): Schedule {
-            val dailySchedules = arrayOf(mutableListOf<Lesson>(), mutableListOf<Lesson>(),
-                mutableListOf<Lesson>(), mutableListOf<Lesson>(), mutableListOf<Lesson>(),
-                mutableListOf<Lesson>(), mutableListOf<Lesson>())
+            val tempList: List<MutableList<Lesson>> = listOf(mutableListOf(), mutableListOf(),
+                mutableListOf(), mutableListOf(), mutableListOf(),
+                mutableListOf(), mutableListOf())
 
             var dateFrom = Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
             var dateTo = Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
@@ -133,7 +133,7 @@ data class Schedule(
                     dateTo = schedule.dateTo;
                 }
                 for (i in schedule.dailySchedules.indices) {
-                    dailySchedules[i].addAll(schedule.dailySchedules[i].filter { lesson ->
+                    tempList[i].addAll(schedule.dailySchedules[i].asSequence().filter { lesson ->
                         checkFilter(lessonTitles, lesson.title) &&
                                 checkFilter(lessonTeachers, lesson.teachers.map { it.getFullName() }) &&
                                 checkFilter(lessonAuditoriums, lesson.auditoriums.map { it.title }) &&
@@ -143,7 +143,7 @@ data class Schedule(
             }
 
             return Schedule(
-                dailySchedules.map { it.toTypedArray() }.toTypedArray(),
+                tempList,
                 Calendar.getInstance(),
                 Group.empty,
                 false,
@@ -189,32 +189,6 @@ data class Schedule(
             }
         }
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Schedule
-
-        if (!dailySchedules.contentEquals(other.dailySchedules)) return false
-        if (lastUpdate != other.lastUpdate) return false
-        if (group != other.group) return false
-        if (isSession != other.isSession) return false
-        if (dateFrom != other.dateFrom) return false
-        if (dateTo != other.dateTo) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = dailySchedules.contentHashCode()
-        result = 31 * result + lastUpdate.hashCode()
-        result = 31 * result + group.hashCode()
-        result = 31 * result + isSession.hashCode()
-        result = 31 * result + dateFrom.hashCode()
-        result = 31 * result + dateTo.hashCode()
-        return result
-    }
 }
 
 data class Group(
@@ -242,10 +216,10 @@ data class Group(
 data class Lesson(
     val order: Int,
     val title: String,
-    val teachers: Array<Teacher>,
+    val teachers: List<Teacher>,
     val dateFrom: Calendar,
     val dateTo: Calendar,
-    val auditoriums: Array<Auditorium>,
+    val auditoriums: List<Auditorium>,
     val type: String,
     val group: Group
 ) : Comparable<Lesson> {
@@ -265,10 +239,10 @@ data class Lesson(
             Lesson(
                 order,
                 "",
-                arrayOf(),
+                emptyList(),
                 Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) },
                 Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) },
-                arrayOf(),
+                emptyList(),
                 "",
                 Group.empty
             )
@@ -360,6 +334,16 @@ data class Lesson(
                     set(Calendar.MINUTE, 40)
                 }
             )
+
+            val firstPairStr by lazy { Pair("09:00", "10:30") }
+            val secondPairStr by lazy { Pair("10:40", "12:10") }
+            val thirdPairStr by lazy { Pair("12:20", "13:50") }
+            val fourthPairStr by lazy { Pair("14:30", "16:00") }
+            val fifthPairStr by lazy { Pair("16:10", "17:40") }
+            val sixthPairStr by lazy { Pair("17:50", "19:20") }
+            val sixthPairEveningStr by lazy { Pair("18:20", "19:40") }
+            val seventhPairStr by lazy { Pair("19:30", "21:00") }
+            val seventhPairEveningStr by lazy { Pair("19:50", "21:10") }
         }
     }
 
@@ -373,13 +357,13 @@ data class Lesson(
                 type.contains(EXAMINATION_SHOW, true)
 
     val time = when (order) {
-        0 -> Pair("09:00", "10:30")
-        1 -> Pair("10:40", "12:10")
-        2 -> Pair("12:20", "13:50")
-        3 -> Pair("14:30", "16:00")
-        4 -> Pair("16:10", "17:40")
-        5 -> if (group.isEvening) Pair("18:20", "19:40") else Pair("17:50", "19:20")
-        6 -> if (group.isEvening) Pair("19:50", "21:10") else Pair("19:30", "21:00")
+        0 -> Time.firstPairStr
+        1 -> Time.secondPairStr
+        2 -> Time.thirdPairStr
+        3 -> Time.fourthPairStr
+        4 -> Time.fifthPairStr
+        5 -> if (group.isEvening) Time.sixthPairEveningStr else Time.sixthPairStr
+        6 -> if (group.isEvening) Time.seventhPairEveningStr else Time.seventhPairStr
         else -> {
             Log.e(TAG, "Wrong order number of lesson")
             Pair("Ошибка", "номера занятия")
@@ -389,36 +373,6 @@ data class Lesson(
     fun equalsTime(lesson: Lesson) =
         order == lesson.order && group.isEvening == lesson.group.isEvening
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Lesson
-
-        if (order != other.order) return false
-        if (title != other.title) return false
-        if (!teachers.contentEquals(other.teachers)) return false
-        if (dateFrom != other.dateFrom) return false
-        if (dateTo != other.dateTo) return false
-        if (!auditoriums.contentEquals(other.auditoriums)) return false
-        if (type != other.type) return false
-        if (group != other.group) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = order
-        result = 31 * result + title.hashCode()
-        result = 31 * result + teachers.contentHashCode()
-        result = 31 * result + dateFrom.hashCode()
-        result = 31 * result + dateTo.hashCode()
-        result = 31 * result + auditoriums.contentHashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + group.hashCode()
-        return result
-    }
-
     override fun compareTo(other: Lesson) = when {
         order != other.order -> order.compareTo(other.order)
         group.isEvening == other.group.isEvening -> group.title.compareTo(other.group.title)
@@ -427,7 +381,7 @@ data class Lesson(
     }
 }
 
-data class Teacher(val names: Array<String>) {
+data class Teacher(val names: List<String>) {
     companion object {
         fun fromFullName(name: String) =
             Teacher(
@@ -436,7 +390,6 @@ data class Teacher(val names: Array<String>) {
                     .replace("- ", "-")
                     .split(" ")
                     .filter { it.isNotEmpty() }
-                    .toTypedArray()
             )
         }
 
@@ -452,28 +405,13 @@ data class Teacher(val names: Array<String>) {
             names.joinToString("\u00A0")
         } else {
             val shortName = StringBuilder(names.first())
-            for (i in 1 until names.size) {
+            for (i in names.indices) {
                 shortName.append("\u00A0")
                     .append(names[i][0])
                     .append('.')
             }
             shortName.toString()
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Teacher
-
-        if (!names.contentEquals(other.names)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return names.contentHashCode()
     }
 }
 
