@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "addresses": {
+    "Учебные корпуса": [
+      "<h2 style=\"text-align: center;\"><strong><span style=\"color: #7aa0e7;\">а, б, в, н, нд</span></strong></h2><strong>Адрес</strong>: ул. Большая Семеновская, 38<br><strong>Проезд</strong>: пешком от м. Электрозаводская, Семеновская",
+      "<h2 style=\"text-align: center;\"><strong><span style=\"color: #d69ad5;\">ав</span></strong></h2><strong>Адрес</strong>: ул. Автозаводская, 16<br /><strong>Проезд</strong>: от м. Автозаводская (Южный выход) пешком или тролл. No26, 40, 46, 67, авт.No9, 44, 99 (только в рабочие дни), 142, 147, 234, 263, 291 (остановка &laquo;1-я проходная ЗИЛ&raquo;)",
+      "<h2 style=\"text-align: center;\"><span style=\"color: #b36666;\">пк</span></h2><strong>Адрес</strong>: ул. Павла Корчагина, 22<br /><strong>Проезд</strong>: от м. ВДНХ пешком или автобус 274,от м. Рижская автобус 714.",
+      "<h2 style=\"text-align: center;\"><strong><span style=\"color: #800080;\">пр</span></strong></h2><strong>Адрес</strong>: ул. Прянишникова, 2А (&laquo;Пряники&raquo;)<br /><strong>Проезд</strong>: от ж/д платформы &laquo;Окружная&raquo; или м. Петровско-Разумовская на авт. 204, 179, 114, 461, 591,от м.Дмитровская трамваи 27, 27к",
+      "<h2 style=\"text-align: center;\"><strong><span style=\"color: #ff8000;\">м</span></strong></h2><strong>Адрес</strong>: ул. Михалковская, 7к3 (&laquo;Михалка&raquo;)<br /><strong>Проезд</strong>: от ж/д платформы &laquo;Окружная&raquo; или м. Петровско-Разумовская на авт. 204, 179, 114, 461, 591,от м.Дмитровская трамваи 27, 27к<",
+      "<h2 style=\"text-align: center;\"><strong><span style=\"color: #0080c0;\">сс</span></strong></h2><strong>Адрес</strong>: ул. Садовая-Спасская, 6к4 (&laquo;Сухари&raquo;)<br /> <strong>Проезд</strong>: от м. Цветной бульвар или Сухаревская пешком или на троллейбусе &laquo;Б&raquo;"
+    ],
+    "Спортзалы": [],
+    "Общежитии": []
+  }
+}
