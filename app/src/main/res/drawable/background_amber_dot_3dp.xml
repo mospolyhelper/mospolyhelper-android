@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <clip xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="center">
+    <shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+      <solid android:color="#292929"/>
+      <size android:height="2dp" android:width="4dp"/>
+    </shape>
+  </clip>
