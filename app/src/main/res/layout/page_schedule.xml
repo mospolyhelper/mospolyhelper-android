@@ -1,0 +1,35 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent">
+    <Button
+        android:layout_alignParentTop="true"
+        android:paddingHorizontal="18dp"
+        android:elevation="0dp"
+        android:textAlignment="textStart"
+        android:textColor="@color/textScheduleDay"
+        android:textSize="14sp"
+        android:drawablePadding="4dp"
+        android:textAllCaps="false"
+        android:background="@drawable/selector_day"
+        android:stateListAnimator="@null" 
+        android:drawableRight="@drawable/arrow_forward_ios_24px"
+        android:fontFamily="sans-serif-medium" 
+        android:id="@+id/button_day"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"/>
+    <androidx.recyclerview.widget.RecyclerView 
+        android:layout_below="@id/button_day"
+        android:id="@+id/recycler_schedule" 
+        android:scrollbars="none" 
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent">
+    </androidx.recyclerview.widget.RecyclerView>
+    <TextView android:id="@+id/text_null_lesson" 
+        android:visibility="invisible" 
+        android:layout_width="wrap_content" 
+        android:layout_gravity="center"
+        android:layout_height="wrap_content" 
+        android:text="@string/null_daily_schedule" 
+        android:layout_centerInParent="true"/>
+</RelativeLayout>

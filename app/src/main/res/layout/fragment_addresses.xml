@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/scheduleBackgroundColor"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include  layout="@layout/toolbar_addresses" />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/addresses_update"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_addresses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>
+
