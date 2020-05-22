@@ -56,7 +56,9 @@ class LessonAdapter(
         }
         var localCurrLessonOrder = -1
         var fixedOrder = -1
-        if (date == Calendar.getInstance()) {
+        val today = Calendar.getInstance()
+        if (date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
+            && date.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
             localCurrLessonOrder = Lesson.getOrder(Calendar.getInstance(), dailySchedule[0].group.isEvening)
             for (lesson in dailySchedule)
             {
