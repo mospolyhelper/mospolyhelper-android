@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text"
+    android:paddingHorizontal="17.7dp"
+    android:paddingVertical="17.7dp"
+    android:elevation="1dp"
+    android:textIsSelectable="true"
+    android:background="@color/lessonBackground"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="14dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+</TextView>

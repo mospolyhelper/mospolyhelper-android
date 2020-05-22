@@ -1,0 +1,84 @@
+
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto" 
+    xmlns:tools="http://schemas.android.com/tools" 
+    android:id="@+id/drawer_layout_schedule"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<androidx.coordinatorlayout.widget.CoordinatorLayout 
+    android:layout_width="match_parent" 
+    android:focusableInTouchMode="true" 
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/viewpager_layout" 
+    android:layout_width="match_parent" 
+        android:orientation="vertical"
+        android:background="@color/scheduleBackgroundColor"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" 
+    android:layout_height="match_parent">
+        <include layout="@layout/toolbar_schedule"/>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/schedule_update"
+            android:layout_width="match_parent"
+            android:background="@drawable/bottom_stroke"
+            android:layout_above="@id/bottomAppBar"
+            android:layout_below="@id/toolbar"
+            android:paddingBottom="0.5dp"
+            android:layout_height="match_parent">
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager" 
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent"/>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <include layout="@layout/bottom_app_bar_schedule" />
+</RelativeLayout>
+<include layout="@layout/bottom_sheet_schedule" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+<com.google.android.material.navigation.NavigationView android:id="@+id/nav_view_right"
+        android:background="@color/drawerColor"
+        android:layout_gravity="end" 
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+<LinearLayout 
+    android:orientation="vertical" 
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content" 
+    android:paddingHorizontal="18dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="7dp">
+    <TextView android:textSize="16sp" 
+        android:textStyle="bold" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:layout_marginBottom="7dp" 
+        android:text="@string/schedule_preferences_title"/>
+    <TextView android:textSize="12sp" 
+            android:textStyle="bold" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:text="@string/schedule_date_filter_prompt"/>
+        <Spinner android:id="@+id/spinner_schedule_date_filter" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+                    android:layout_marginBottom="18dp"
+            android:entries="@array/schedule_date_filter_array"/>
+    <Switch android:id="@+id/switch_schedule_session_filter" 
+            android:textSize="14sp" 
+            android:text="@string/schedule_session_filter" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+                android:layout_marginBottom="18dp"
+            android:switchPadding="10dp"/>
+        <Switch android:id="@+id/switch_schedule_empty_lessons" 
+            android:textSize="14sp" 
+            android:text="@string/pref_title_schedule_empty_lessons" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+                android:layout_marginBottom="18dp"
+            android:switchPadding="10dp"/>
+</LinearLayout>
+            </com.google.android.material.navigation.NavigationView>
+</androidx.drawerlayout.widget.DrawerLayout>

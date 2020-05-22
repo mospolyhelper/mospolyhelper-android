@@ -1,0 +1,59 @@
+<resources>
+
+  <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorSecondary">@color/colorSecondary</item>
+    <item name="colorAccent">@color/colorSecondary</item>
+    <item name="android:colorEdgeEffect">@color/colorSecondary</item>
+    <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
+    <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+    <item name="android:navigationBarColor">#0C0C0C</item>
+    <item name="android:windowLightStatusBar">true</item>
+  </style>
+  <style name="AppTheme.ActionBar">
+    <item name="background">@color/colorPrimaryLight</item>
+  </style>
+
+  <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+    <item name="android:layout">@layout/fragment_settings</item>
+  </style>
+
+  <style name="AppTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+  </style>
+
+  <style name="AppTheme.Splash">
+    <item name="android:windowBackground">@drawable/splash_screen</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowFullscreen">false</item>
+    <item name="android:windowTranslucentStatus">true</item>
+    <item name="android:windowTranslucentNavigation">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowActionBar">true</item>
+    <item name="android:windowLightStatusBar">false</item>
+  </style>
+
+
+
+
+  <style name="AppTheme.PopupWindow" parent="Theme.AppCompat.DayNight.DarkActionBar" >
+    <item name="thumbTint">@color/switch_color</item>
+    <item name="trackTint">@color/switch_color</item>
+  </style>
+  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+  <style name="AppTheme.ViewPagerTabStrip">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textColor">#FFFFFF</item>
+    
+  </style>
+
+  <style name="AppTheme.ViewPagerTabStripText">
+    <item name="android:fontFamily">sans-serif-medium</item>
+  </style>
+
+
+</resources>

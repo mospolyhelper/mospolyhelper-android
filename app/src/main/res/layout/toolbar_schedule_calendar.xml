@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <com.google.android.material.appbar.AppBarLayout xmlns:tools="http://schemas.android.com/tools" 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto" 
+    app:elevation="0dp"
+    android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+<androidx.appcompat.widget.Toolbar 
+    android:id="@+id/toolbar" 
+    app:layout_scrollFlags="scroll|enterAlways"
+    android:layout_width="match_parent" 
+    android:background="@drawable/bottom_stroke_calendar"
+    android:layout_height="?attr/actionBarSize"
+    tools:showIn="@layout/fragment_schedule_calendar" >
+</androidx.appcompat.widget.Toolbar>
+</com.google.android.material.appbar.AppBarLayout>
