@@ -1,7 +1,5 @@
-package com.mospolytech.mospolyhelper.repository.model.schedule
+package com.mospolytech.mospolyhelper.repository.models.schedule
 
-import android.util.Log
-import com.mospolytech.mospolyhelper.TAG
 import java.util.*
 
 
@@ -87,9 +85,9 @@ data class Schedule(
         fun getFiltered(dailySchedule: List<Lesson>, date: Calendar) =
             dailySchedule.filter {
                 ((dateFilter != DateFilter.Hide ||
-                        ((it.dateFrom <= date || it.isImportant) && date <= it.dateTo)) &&
+                        ((it.isImportant || it.dateFrom <= date) && date <= it.dateTo)) &&
                         (!sessionFilter ||
-                                !it.isImportant || (it.dateFrom <= date && date <= it.dateTo)))
+                                !it.isImportant || (date in it.dateFrom..it.dateTo)))
             }
     }
 
