@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.model.Addresses
+import com.mospolytech.mospolyhelper.repository.models.Addresses
 
 class AddressesAdapter(
     var buildings: Addresses
