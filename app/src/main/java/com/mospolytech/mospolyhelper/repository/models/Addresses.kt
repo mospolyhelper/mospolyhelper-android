@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.model
+package com.mospolytech.mospolyhelper.repository.models
 
 import java.util.*
 

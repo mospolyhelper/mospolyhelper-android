@@ -10,8 +10,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.model.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.model.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
+import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
