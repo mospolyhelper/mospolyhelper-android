@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.model.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.model.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
+import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit

@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.model.schedule
+package com.mospolytech.mospolyhelper.repository.models.schedule
 
 data class Teacher(val names: List<String>) {
     companion object {

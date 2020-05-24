@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.repository.remote.schedule
 import android.util.Log
 import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.TAG
-import com.mospolytech.mospolyhelper.repository.model.schedule.*
+import com.mospolytech.mospolyhelper.repository.models.schedule.*
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.model.schedule
+package com.mospolytech.mospolyhelper.repository.models.schedule
 
 import java.util.*
 
