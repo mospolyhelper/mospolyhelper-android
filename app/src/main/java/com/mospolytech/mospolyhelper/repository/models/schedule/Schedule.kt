@@ -1,13 +1,14 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
+import com.beust.klaxon.Json
 import java.util.*
 
 
 data class Schedule(
     val dailySchedules: List<List<Lesson>>,
-    val lastUpdate: Calendar,
+    @Json(ignored = true) val lastUpdate: Calendar,
     val group: Group,
-    val isSession: Boolean,
+    @Json(ignored = true) val isSession: Boolean,
     val dateFrom: Calendar,
     val dateTo: Calendar
 ) {
