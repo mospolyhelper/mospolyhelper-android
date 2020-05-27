@@ -18,7 +18,7 @@ class CalendarViewModel :
         subscribe(::handleMessage)
     }
 
-    fun handleMessage(message: ViewModelMessage) {
+    private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
             "CalendarMode" -> {
                 val list = message.content as List<*>
