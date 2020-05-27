@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
 import android.util.Log
+import com.beust.klaxon.Json
 import com.mospolytech.mospolyhelper.TAG
 import java.util.*
 
@@ -12,7 +13,7 @@ data class Lesson(
     val dateTo: Calendar,
     val auditoriums: List<Auditorium>,
     val type: String,
-    val group: Group
+    @Json(ignored = true) val group: Group
 ) : Comparable<Lesson> {
     companion object {
         const val COURSE_PROJECT = "кп"

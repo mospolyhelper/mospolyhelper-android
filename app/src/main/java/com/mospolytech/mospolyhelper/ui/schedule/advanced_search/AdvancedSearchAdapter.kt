@@ -21,7 +21,11 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
 
     fun isAllChecked() = filter.isAllChecked(dataSet)
 
-    fun UpdateTemplate(template: String) {
+    fun addAllCheckedChanged(block: (Boolean) -> Unit) {
+        allCheckedChanged.add(block)
+    }
+
+    fun updateTemplate(template: String) {
         dataSet = filter.getFiltered(template)
         notifyDataSetChanged()
         allCheckedChanged.forEach {
