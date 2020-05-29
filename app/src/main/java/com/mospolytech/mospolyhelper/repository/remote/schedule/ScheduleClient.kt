@@ -67,7 +67,7 @@ class ScheduleClient {
         }
     }
 
-    suspend fun getGroup(): String {
+    suspend fun getGroupList(): String {
         val client = HttpClient()
         val cookiesStorage = cookiesStorage
         if (cookiesStorage != null) {
