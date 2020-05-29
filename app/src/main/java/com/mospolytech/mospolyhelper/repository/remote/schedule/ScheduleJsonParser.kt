@@ -4,6 +4,7 @@ import android.util.Log
 import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.TAG
 import com.mospolytech.mospolyhelper.repository.models.schedule.*
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,7 +51,7 @@ class ScheduleJsonParser {
 
     fun parse(scheduleString: String, isSession: Boolean): Schedule {
         val parser: Parser = Parser.default()
-        val json = parser.parse(scheduleString) as JsonObject
+        val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
         val status = json.string(STATUS_KEY)
         if (status == STATUS_ERROR) {
             val message = json.string(MESSAGE_KEY)
@@ -135,7 +136,7 @@ class ScheduleJsonParser {
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
             var parsedDay: Int
-            var date = Calendar.getInstance()
+            val date = Calendar.getInstance()
 
             if (isByDate) {
                 val parsedDate = dateFormat.parse(day) ?: continue
@@ -156,8 +157,8 @@ class ScheduleJsonParser {
                 val parsedOrder = index.toInt() - 1
                 for (lesson in lessonPlace) {
                     if (lesson !is JsonObject) continue
-                    val lesson = parseLesson(lesson, parsedOrder, group, isByDate, date)
-                    tempList[parsedDay].add(lesson)
+                    val parsedLesson = parseLesson(lesson, parsedOrder, group, isByDate, date)
+                    tempList[parsedDay].add(parsedLesson)
                 }
             }
         }
