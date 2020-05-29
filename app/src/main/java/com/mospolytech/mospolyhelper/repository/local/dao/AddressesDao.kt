@@ -3,22 +3,23 @@ package com.mospolytech.mospolyhelper.repository.local.dao
 import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.repository.models.Addresses
 import com.mospolytech.mospolyhelper.utils.AssetProvider
+import com.mospolytech.mospolyhelper.utils.ContextProvider
 import java.io.File
 import java.lang.Exception
 import java.net.URL
-import java.nio.file.Paths
 
 class AddressesDao {
     companion object {
-        const val BuildingsFile = "cached_addresses"
-        const val BuildingsUrl =
+        const val AddressesFolder = "addresses"
+        const val AddressesFile = "cached_addresses"
+        const val AddressesUrl =
             "https://gist.githubusercontent.com/tipapro/" +
                     "f19b581ea759cacde6ff674b516c552a/raw/91385341b7e36bd8fb48a8d4d3abfffef5614e42/" +
                     "mospolyhelper-addresses.json"
     }
 
     fun readAddresses(): Addresses? {
-        val filePath = File("", BuildingsFile)  // TODO: Add directory
+        val filePath = ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile)  // TODO: Add directory
         return if (!filePath.exists()) {
             null
         } else {
@@ -29,7 +30,7 @@ class AddressesDao {
 
     fun downloadAddresses(): Addresses? {
         return try {
-            val serBuildings = URL(BuildingsUrl).readText()
+            val serBuildings = URL(AddressesUrl).readText()
             Klaxon().parse<Addresses>(serBuildings)
         } catch(e: Exception) {
             null
@@ -37,7 +38,7 @@ class AddressesDao {
     }
 
     fun saveAddresses(buildings: Addresses) {
-        val filePath = File("", BuildingsFile)
+        val filePath = File(ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile), AddressesFile)
         filePath.delete()
         val str = Klaxon().toJsonString(buildings)
         filePath.createNewFile()

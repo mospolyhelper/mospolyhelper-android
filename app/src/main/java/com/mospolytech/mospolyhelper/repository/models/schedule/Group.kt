@@ -11,15 +11,13 @@ data class Group(
     val comment: String
 ) {
     companion object {
-        val empty by lazy {
-            Group(
-                "",
-                0,
-                Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) },
-                Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) },
-                false,
-                ""
-            )
-        }
+        val empty = Group(
+            "",
+            0,
+            Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) },
+            Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) },
+            false,
+            ""
+        )
     }
 }
