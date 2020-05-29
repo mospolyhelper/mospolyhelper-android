@@ -3,7 +3,6 @@
   <style name="AppTheme" parent="Theme.AppCompat.DayNight">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorSecondary">@color/colorSecondary</item>
     <item name="colorAccent">@color/colorSecondary</item>
     <item name="android:colorEdgeEffect">@color/colorSecondary</item>
     <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
