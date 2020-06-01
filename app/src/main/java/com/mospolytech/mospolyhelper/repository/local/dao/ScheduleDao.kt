@@ -8,13 +8,12 @@ import com.mospolytech.mospolyhelper.repository.remote.schedule.GroupListJsonPar
 import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleClient
 import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleJsonParser
 import com.mospolytech.mospolyhelper.utils.ContextProvider
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.collections.HashSet
 
 
 class ScheduleDao {
@@ -208,20 +207,20 @@ class ScheduleDao {
 
     var scheduleCounter = AtomicInteger(0)
 
-    fun getSchedules(groupList: List<String>): SchedulePackList? = runBlocking {
+    suspend fun getSchedules(groupList: List<String>): SchedulePackList? {
         if (groupList.isEmpty()) {
-            return@runBlocking null
+            return null
         }
 
         scheduleCounter.set(0)
         val maxCount = groupList.size * 3 + groupList.size / 33
-        var packs = emptySequence<SchedulePack>()
+        val packs = mutableListOf<SchedulePack>()
         val deferredList = mutableListOf<Deferred<Unit>>()
 
         val chunks = groupList.chunked(groupList.size / (Runtime.getRuntime().availableProcessors() * 3))
         for (chunk in chunks) {
             for (groupTitle in chunk) {
-                deferredList.add(async<Unit> {
+                deferredList.add(GlobalScope.async<Unit> {
                     scheduleCounter.incrementAndGet()
                     // lock (this.key)
                     // {
@@ -231,7 +230,7 @@ class ScheduleDao {
                         val schedule = getSchedule(groupTitle, false)
                         val data = allDataFromSchedule(schedule)
                         synchronized(packs) {
-                            packs += data
+                            packs.add(data)
                         }
                     } catch (ex: Exception) {}
                     Log.d(TAG, (scheduleCounter.incrementAndGet() * 10000 / maxCount).toString())
@@ -244,7 +243,7 @@ class ScheduleDao {
                         val schedule = getSchedule(groupTitle, true)
                         val data = allDataFromSchedule(schedule)
                         synchronized(packs) {
-                            packs += data
+                            packs.add(data)
                         }
                     }
                     catch (ex: Exception) {}
@@ -256,9 +255,8 @@ class ScheduleDao {
                 })
             }
         }
-        for (deferred in deferredList) {
-            deferred.await()
-        }
+        deferredList.awaitAll()
+
         var packList = SchedulePackListTemp(
             emptySequence(),
             emptySequence(),
@@ -275,32 +273,32 @@ class ScheduleDao {
             acc
         }
 
-        return@runBlocking SchedulePackList(
+        return SchedulePackList(
             packList.schedules.toList(),
-            packList.lessonTitles.toSet(),
-            packList.lessonTeachers.toSet(),
-            packList.lessonAuditoriums.toSet(),
-            packList.lessonTypes.toSet()
+            packList.lessonTitles.toSortedSet(),
+            packList.lessonTeachers.toSortedSet(),
+            packList.lessonAuditoriums.toSortedSet(),
+            packList.lessonTypes.toSortedSet()
         )
     }
 
     fun allDataFromSchedule(schedule: Schedule): SchedulePack {
-        var lessonTitles = emptySequence<String>()
-        var lessonTeachers = emptySequence<String>()
-        var lessonAuditoriums = emptySequence<String>()
-        var lessonTypes = emptySequence<String>()
+        val lessonTitles = HashSet<String>()
+        val lessonTeachers = HashSet<String>()
+        val lessonAuditoriums = HashSet<String>()
+        val lessonTypes = HashSet<String>()
         for (dailySchedule in schedule.dailySchedules) {
             for (lesson in dailySchedule) {
-                lessonTitles += lesson.title
+                lessonTitles.add(lesson.title)
                 for (teacher in lesson.teachers) {
-                    lessonTeachers += teacher.getFullName()
+                    lessonTeachers.add(teacher.getFullName())
                 }
                 if (lesson.auditoriums.isNotEmpty()) {
                     for (auditorium in lesson.auditoriums) {
-                        lessonAuditoriums += auditorium.title
+                        lessonAuditoriums.add(auditorium.title)
                     }
                 }
-                lessonTypes += lesson.type
+                lessonTypes.add(lesson.type)
             }
         }
         return SchedulePack(
@@ -331,9 +329,9 @@ class ScheduleDao {
 
     class SchedulePack(
         val schedule: Schedule,
-        val lessonTitles: Sequence<String>,
-        val lessonTeachers: Sequence<String>,
-        val lessonAuditoriums: Sequence<String>,
-        val lessonTypes: Sequence<String>
+        val lessonTitles: Set<String>,
+        val lessonTeachers: Set<String>,
+        val lessonAuditoriums: Set<String>,
+        val lessonTypes: Set<String>
     )
 }
