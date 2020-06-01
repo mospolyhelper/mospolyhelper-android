@@ -14,6 +14,8 @@ import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import com.mospolytech.mospolyhelper.utils.CalendarUtils.Companion.addDays
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -56,11 +58,7 @@ class ScheduleAdapter(
         if (schedule == null) {
             count = 1
         } else {
-            this.count = TimeUnit.DAYS
-                .convert(
-                    schedule.dateFrom.time.time - schedule.dateTo.time.time,
-                    TimeUnit.MILLISECONDS
-                ).toInt() + 1
+            this.count = CalendarUtils.getDeltaInDays(schedule.dateFrom, schedule.dateTo) + 1
             if (count > 400 || count < 0) {
                 count = 400
             }
@@ -70,7 +68,7 @@ class ScheduleAdapter(
     private fun setFirstPosDate() {
         if (schedule != null) {
             firstPosDate = if (count == 400)
-                Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -200) }
+                Calendar.getInstance().addDays(-200)
             else
                 schedule.dateFrom
         }
@@ -95,9 +93,7 @@ class ScheduleAdapter(
                 firstPosDate, showEmptyLessons, showGroup)
             viewHolder.dayBtn.setOnClickListener {
                 openCalendar.forEach {
-                    it((firstPosDate.clone() as Calendar).apply {
-                        add(Calendar.DAY_OF_YEAR, position)
-                    })
+                    it(firstPosDate.addDays(position))
                 }
             }
             viewHolder.listAdapter?.addOnLessonClick { lesson ->
@@ -111,15 +107,14 @@ class ScheduleAdapter(
         }
 
 
-        val date = (firstPosDate.clone() as Calendar).apply { add(Calendar.DAY_OF_YEAR, position) }
+        val date = firstPosDate.addDays(position)
 
          // If not null TODO fix it
 
 
 
 
-        viewHolder.dayBtn.text = dateFormat.format((firstPosDate.clone() as Calendar)
-            .apply { add(Calendar.DAY_OF_YEAR, position) }.time)
+        viewHolder.dayBtn.text = dateFormat.format(firstPosDate.addDays(position).time)
 
         return viewHolder.view
     }
@@ -157,9 +152,7 @@ class ScheduleAdapter(
         var date: Calendar = Calendar.getInstance()
 
         init {
-            date = (firstPosDate.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_YEAR, position)
-            }
+            date = firstPosDate.addDays(position)
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics);
             val dp32 = dp8 * 4;
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -206,17 +199,16 @@ class ScheduleAdapter(
                    firstPosDate: Calendar, showEmptyLessons: Boolean, showGroup: Boolean) {
             this.position = position
             this.firstPosDate = firstPosDate
-            date = (firstPosDate.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_YEAR, position)
-                list.scrollToPosition(0)
-                accumulator = 0f
-                dayBtn.elevation = 0f
-                listAdapter?.buildSchedule(
-                    schedule.getSchedule(date, scheduleFilter),
-                    scheduleFilter, date, showEmptyLessons, showGroup
-                )
+            date = firstPosDate.addDays(position)
+            list.scrollToPosition(0)
+            accumulator = 0f
+            dayBtn.elevation = 0f
+            listAdapter?.buildSchedule(
+                schedule.getSchedule(date, scheduleFilter),
+                scheduleFilter, date, showEmptyLessons, showGroup
+            )
 
-            }
+
         }
     }
 }

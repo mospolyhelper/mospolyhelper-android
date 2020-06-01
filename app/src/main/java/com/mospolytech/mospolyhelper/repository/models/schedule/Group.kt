@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
 import java.util.*
 
 data class Group(
@@ -14,8 +15,8 @@ data class Group(
         val empty = Group(
             "",
             0,
-            Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) },
-            Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) },
+            CalendarUtils.getMinValue(),
+            CalendarUtils.getMaxValue(),
             false,
             ""
         )

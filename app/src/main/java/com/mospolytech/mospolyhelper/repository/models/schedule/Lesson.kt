@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.repository.models.schedule
 import android.util.Log
 import com.beust.klaxon.Json
 import com.mospolytech.mospolyhelper.TAG
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
 import java.util.*
 
 data class Lesson(
@@ -32,8 +33,8 @@ data class Lesson(
                 order,
                 "",
                 emptyList(),
-                Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) },
-                Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) },
+                CalendarUtils.getMinValue(),
+                CalendarUtils.getMaxValue(),
                 emptyList(),
                 "",
                 Group.empty
@@ -56,7 +57,8 @@ data class Lesson(
 
     private class Time {
         companion object {
-            val firstPair = Pair(
+            val firstPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 9)
                     set(Calendar.MINUTE, 0)
@@ -66,7 +68,8 @@ data class Lesson(
                     set(Calendar.MINUTE, 30)
                 }
             )
-            val secondPair = Pair(
+            val secondPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 10)
                     set(Calendar.MINUTE, 40)
@@ -76,7 +79,8 @@ data class Lesson(
                     set(Calendar.MINUTE, 10)
                 }
             )
-            val thirdPair = Pair(
+            val thirdPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 12)
                     set(Calendar.MINUTE, 20)
@@ -87,7 +91,8 @@ data class Lesson(
                 }
             )
 
-            val fourthPair = Pair(
+            val fourthPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 14)
                     set(Calendar.MINUTE, 30)
@@ -97,7 +102,8 @@ data class Lesson(
                     set(Calendar.MINUTE, 0)
                 }
             )
-            val fifthPair = Pair(
+            val fifthPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 16)
                     set(Calendar.MINUTE, 10)
@@ -107,7 +113,8 @@ data class Lesson(
                     set(Calendar.MINUTE, 40)
                 }
             )
-            val sixthPair = Pair(
+            val sixthPair
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 17)
                     set(Calendar.MINUTE, 50)
@@ -117,7 +124,8 @@ data class Lesson(
                     set(Calendar.MINUTE, 20)
                 }
             )
-            val sixthPairEvening = Pair(
+            val sixthPairEvening
+                get() = Pair(
                 Calendar.getInstance().apply {
                     set(Calendar.HOUR, 18)
                     set(Calendar.MINUTE, 20)

@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
 import com.beust.klaxon.Json
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
 import java.util.*
 
 
@@ -33,8 +34,8 @@ data class Schedule(
         fun dateTo(dateTo: Calendar) = apply { this.dateTo = dateTo }
 
         fun build(): Schedule {
-            var dateFrom = this.dateFrom ?: Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
-            var dateTo = this.dateTo ?: Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
+            var dateFrom = this.dateFrom ?: CalendarUtils.getMinValue()
+            var dateTo = this.dateTo ?: CalendarUtils.getMaxValue()
             if (this.dateFrom == null || this.dateTo == null) {
                 for (dailySchedule in dailySchedules) {
                     for (lesson in dailySchedule) {
@@ -64,18 +65,8 @@ data class Schedule(
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
-            val default by lazy {
-                Filter(
-                    true,
-                    DateFilter.Hide
-                )
-            }
-            val none by lazy {
-                Filter(
-                    false,
-                    DateFilter.Show
-                )
-            }
+            val default = Filter(true, DateFilter.Hide)
+            val none = Filter(false, DateFilter.Show)
         }
         enum class DateFilter{
             Show,
@@ -90,6 +81,24 @@ data class Schedule(
                         (!sessionFilter ||
                                 !it.isImportant || (date in it.dateFrom..it.dateTo)))
             }
+        class Builder(
+            private var sessionFilter: Boolean? = null,
+            private var dateFilter: DateFilter? = null
+        ) {
+            constructor(filter: Filter) : this(filter.sessionFilter, filter.dateFilter)
+
+            fun sessionFilter(sessionFilter: Boolean) =
+                apply { this.sessionFilter = sessionFilter }
+
+            fun dateFilter(dateFilter: DateFilter) =
+                apply { this.dateFilter = dateFilter }
+
+            fun build(): Filter {
+                val sessionFilter = this.sessionFilter ?: default.sessionFilter
+                val dateFilter = this.dateFilter ?: default.dateFilter
+                return Filter(sessionFilter, dateFilter)
+            }
+        }
     }
 
     class AdvancedSearch(
@@ -131,8 +140,8 @@ data class Schedule(
                 mutableListOf(), mutableListOf(), mutableListOf(),
                 mutableListOf(), mutableListOf())
 
-            var dateFrom = Calendar.getInstance().apply { time = Date(Long.MIN_VALUE) }
-            var dateTo = Calendar.getInstance().apply { time = Date(Long.MAX_VALUE) }
+            var dateFrom = CalendarUtils.getMinValue()
+            var dateTo = CalendarUtils.getMaxValue()
 
             for (schedule in schedules) {
                 if (schedule.dateFrom < dateFrom) {

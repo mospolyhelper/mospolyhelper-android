@@ -135,13 +135,13 @@ class AdvancedFilter(
             }
             return array
         }
-        var templateRegex = buildRegex(template)
+        val templateRegex = buildRegex(template)
 
         var capacity = originDataSet.size / 4 / template.length
         if (capacity < 4) {
             capacity = 4
         }
-        var newList = ArrayList<Int>(capacity)
+        val newList = ArrayList<Int>(capacity)
         var j = 0
         for (i in originDataSet.indices) {
             if (templateRegex.containsMatchIn(this.normalized[i])) {
@@ -159,8 +159,8 @@ class AdvancedFilter(
 
 
     fun buildRegex(str: String): Regex {
-        var str = Regex.escape(str)
-        var res = ArrayList<Char>(str.length)
+        val str = Regex.escape(str)
+        val res = ArrayList<Char>(str.length)
         var i = 0
         while (i < str.length && !str[i].isLetterOrDigit()) {
             i++

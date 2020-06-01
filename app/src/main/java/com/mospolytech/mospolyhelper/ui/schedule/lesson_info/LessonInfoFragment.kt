@@ -103,7 +103,7 @@ class LessonInfoFragment : Fragment() {
         }
         val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         for (i in 0 until lesson.auditoriums.size - 1) {
-            var audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
             if (lesson.auditoriums[i].color.isNotEmpty()) {
                 var colorString = lesson.auditoriums[i].color
                 if (colorString.length == 4) {
@@ -139,7 +139,7 @@ class LessonInfoFragment : Fragment() {
             }
         }
         if (lesson.auditoriums.isNotEmpty()) {
-            var audTitle = HtmlCompat.fromHtml(lesson.auditoriums[lesson.auditoriums.lastIndex].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[lesson.auditoriums.lastIndex].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
             if (lesson.auditoriums[lesson.auditoriums.lastIndex].color.isNotEmpty()) {
                 var colorString = lesson.auditoriums[lesson.auditoriums.lastIndex].color
                 if (colorString.length == 4) {
