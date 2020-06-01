@@ -18,7 +18,7 @@ enum class Fragments {
     ScheduleMain,
     ScheduleManager,
     Settings,
-    Buildings,
+    Addresses,
     Other,
     ScheduleLessonInfo,
     ScheduleCalendar

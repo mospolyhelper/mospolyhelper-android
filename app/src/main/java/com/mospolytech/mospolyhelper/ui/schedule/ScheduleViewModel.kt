@@ -30,7 +30,7 @@ class ScheduleViewModel : ViewModelBase(Mediator(), ScheduleViewModel::class.jav
     var scheduleDownloaded = false
     val scheduleFilter = MutableLiveData(Schedule.Filter.default)
     var isAdvancedSearch = false
-    var groupList = emptyList<String>()
+    var groupList = MutableLiveData(emptyList<String>())
     val showEmptyLessons = MutableLiveData(false)
 
     val beginDownloading: Event0 = Action0()
@@ -139,7 +139,7 @@ class ScheduleViewModel : ViewModelBase(Mediator(), ScheduleViewModel::class.jav
 
     fun getGroupList(downloadNew: Boolean) {
         GlobalScope.launch(Dispatchers.Main) {
-            groupList = dao.getGroupList2(downloadNew)
+            groupList.value = dao.getGroupList2(downloadNew)
         }
     }
 }
