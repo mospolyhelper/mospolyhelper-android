@@ -9,6 +9,9 @@ import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
 import java.util.*
 
 class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class.java.simpleName) {
+    companion object {
+        const val LessonInfo = "LessonInfo"
+    }
     var lesson: Lesson = Lesson.getEmpty(0)
     var date: Calendar = Calendar.getInstance()
 
@@ -18,7 +21,7 @@ class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class
 
     fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
-            "LessonInfo" -> {
+            LessonInfo -> {
                 val list = message.content as List<*>
                 lesson = list[0] as Lesson
                 date = list[1] as Calendar

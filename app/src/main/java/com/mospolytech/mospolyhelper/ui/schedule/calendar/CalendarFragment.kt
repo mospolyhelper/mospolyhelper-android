@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class CalendarFragment : Fragment() {
@@ -92,11 +94,8 @@ class CalendarFragment : Fragment() {
         recyclerView.addItemDecoration(q)
         recyclerView.addItemDecoration(e)
 
-        recyclerView.scrollToPosition(TimeUnit.DAYS
-            .convert(
-                viewModel.date.time.time - recyclerAdapter.firstPosDate.time.time,
-                TimeUnit.MILLISECONDS
-            ).toInt())
+        recyclerView.scrollToPosition(
+            CalendarUtils.getDeltaInDays(viewModel.date, recyclerAdapter.firstPosDate))
 
         return view
     }

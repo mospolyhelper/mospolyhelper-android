@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import com.mospolytech.mospolyhelper.utils.CalendarUtils.Companion.addDays
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -47,11 +49,7 @@ class CalendarAdapter(
     override fun getItemCount() = itemCount
 
     fun setCount() {
-        itemCount = TimeUnit.DAYS
-            .convert(
-                schedule.dateFrom.time.time - schedule.dateTo.time.time,
-                TimeUnit.MILLISECONDS
-            ).toInt() + 1
+        itemCount = CalendarUtils.getDeltaInDays(schedule.dateFrom, schedule.dateTo) + 1
         if (itemCount > 400 || itemCount < 0) {
             itemCount = 400
         }
@@ -60,7 +58,7 @@ class CalendarAdapter(
 
     fun setFirstPosDate() {
         firstPosDate = if (itemCount == 400)
-            Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -200) }
+            Calendar.getInstance().addDays(-200)
         else
             schedule.dateFrom
     }
@@ -72,9 +70,7 @@ class CalendarAdapter(
         var vh = ViewHolder(view)
         vh.lessonPlace.setOnClickListener {
             dayClick.forEach {
-                it((firstPosDate.clone() as Calendar).apply {
-                    add(Calendar.DAY_OF_YEAR, vh.layoutPosition)
-                })
+                it(firstPosDate.addDays(vh.layoutPosition))
             }
         }
 
@@ -197,8 +193,7 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val date: Calendar = firstPosDate.clone() as Calendar
-        date.add(Calendar.DAY_OF_YEAR, position)
+        val date: Calendar = firstPosDate.addDays(position)
         val dailySchedule = this.schedule.getSchedule(date, scheduleFilter);
         viewHolder.setLessons(dailySchedule, date);
         viewHolder.setHead(date);
