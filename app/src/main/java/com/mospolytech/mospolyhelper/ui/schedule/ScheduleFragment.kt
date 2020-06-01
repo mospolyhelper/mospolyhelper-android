@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
-import android.R.string
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
@@ -15,6 +14,7 @@ import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
@@ -25,6 +25,8 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.ui.common.FragmentBase
+import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedFilter
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchAdapter
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment
@@ -38,11 +40,10 @@ import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
 
 
-class ScheduleFragment : Fragment() {
+class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
     companion object {
         fun newInstance() = ScheduleFragment()
@@ -57,11 +58,11 @@ class ScheduleFragment : Fragment() {
     var checkedTeachers = ObservableArrayList<Int>()
     var checkedLessonTitles = ObservableArrayList<Int>()
     var checkedAuditoriums = ObservableArrayList<Int>()
-    var schedules = mutableListOf<Schedule>()
-    var lessonTitles = mutableListOf<String>()
-    var teachers = mutableListOf<String>()
-    var auditoriums = mutableListOf<String>()
-    var lessonTypes = mutableListOf<String>()
+    var schedules = listOf<Schedule>()
+    var lessonTitles = listOf<String>()
+    var lessonTeachers = listOf<String>()
+    var lessonAuditoriums = listOf<String>()
+    var lessonTypes = listOf<String>()
 
     var regularString: String = ""
     var sessionString: String = ""
@@ -81,7 +82,7 @@ class ScheduleFragment : Fragment() {
         (activity as MainActivity).changeFragment(fragment, false)
     }
 
-    fun setUpgroupList(groupList: List<String>) {
+    fun setUpGroupList(groupList: List<String>) {
         if (textGroupTitle == null || context == null) {
             return
         }
@@ -296,7 +297,7 @@ class ScheduleFragment : Fragment() {
         }
 
         textGroupTitle = view.findViewById<AutoCompleteTextView>(R.id.text_group_title)
-        setUpgroupList(viewModel.groupList)
+        setUpGroupList(viewModel.groupList.value!!)
         textGroupTitle?.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value!!))
         textGroupTitle?.setOnKeyListener { v, keyCode, event ->
             when {
@@ -371,7 +372,7 @@ class ScheduleFragment : Fragment() {
             val dialog = AdvancedSearchFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
-                SimpleFilter(viewModel.groupList, checkedGroups)
+                SimpleFilter(viewModel.groupList.value!!, checkedGroups)
             ))
         }
         val textLessonTitles = view.findViewById<TextView>(R.id.text_lesson_titles)
@@ -388,7 +389,7 @@ class ScheduleFragment : Fragment() {
             cancelBtn.visibility = View.GONE
         }
         checkedGroups.addOnListChangedCallback(ListChangedObserver {
-            textGroups.text = checkedGroups.joinToString { viewModel.groupList[it] }
+            textGroups.text = checkedGroups.joinToString { viewModel.groupList.value!![it] }
             if (textGroups.text.isEmpty()) {
                 textGroups.text = getString(R.string.all_groups)
             }
@@ -419,13 +420,19 @@ class ScheduleFragment : Fragment() {
                 try {
                     val pack = GlobalScope.async {
                         viewModel.getAdvancedSearchData(
-                            if (checkedGroups.isEmpty()) viewModel.groupList else
-                                checkedGroups.map { viewModel.groupList[it] }
+                            if (checkedGroups.isEmpty()) viewModel.groupList.value!! else
+                                checkedGroups.map { viewModel.groupList.value!![it] }
                         ) {
                             progressBar.progress = it
                             progressText.text = "${it / 100} %"
                         }
                     }.await()
+                    this@ScheduleFragment.lessonTitles = pack?.lessonTitles?.toList() ?: emptyList()
+                    this@ScheduleFragment.lessonTypes = pack?.lessonTypes?.toList() ?: emptyList()
+                    this@ScheduleFragment.lessonTeachers = pack?.lessonTeachers?.toList() ?: emptyList()
+                    this@ScheduleFragment.lessonAuditoriums = pack?.lessonAuditoriums?.toList() ?: emptyList()
+                    this@ScheduleFragment.schedules = pack?.schedules?.toList() ?: emptyList()
+
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
                     downloadShedulesBtn.isEnabled = true
                     textGroups.isEnabled = true
@@ -475,93 +482,79 @@ class ScheduleFragment : Fragment() {
             }
         })
 
-        textTeachers.Click += (obj, arg) =>
-        {
-            if (activity == null)
-            {
-                return
+        textTeachers.setOnClickListener {
+            if (activity == null) {
+                return@setOnClickListener
             }
-            var dialog = AdvancedSearchFragment.newInstance()
-            dialog.show(activity.supportFragmentManager, "qq")
+            val dialog = AdvancedSearchFragment.newInstance()
+            dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(
                 AdvancedSearchAdapter(
-                    AdvancedSearchAdapter.AdvancedFilter(this.teachers, this.checkedTeachers))
+                    AdvancedFilter(lessonTeachers, checkedTeachers))
             )
         }
-        this.checkedTeachers.CollectionChanged +=
-            (obj, arg) =>
-        {
-            textTeachers.text = string.Join(", ", from index in this.checkedTeachers
-                    select this.teachers[index])
-            if (textTeachers.text == string.Empty)
-            {
-                textTeachers.text = GetString(R.string.all_teachers)
+        checkedTeachers.addOnListChangedCallback(ListChangedObserver {
+            textTeachers.text = checkedTeachers.joinToString { lessonTeachers[it] }
+            if (textTeachers.text.isEmpty()) {
+                textTeachers.text = getString(R.string.all_teachers)
             }
-        }
+        })
 
-        textAuditoriums.Click += (obj, arg) =>
-        {
-            if (activity == null)
-            {
-                return
+        textAuditoriums.setOnClickListener {
+            if (activity == null) {
+                return@setOnClickListener
             }
-            var dialog = AdvancedSearchFragment.newInstance()
-            dialog.show(activity.supportFragmentManager, "qq")
+            val dialog = AdvancedSearchFragment.newInstance()
+            dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
-                    AdvancedSearchAdapter.AdvancedFilter(this.auditoriums, this.checkedAuditoriums)))
+                AdvancedFilter(lessonAuditoriums, checkedAuditoriums)))
         }
-        this.checkedAuditoriums.CollectionChanged +=
-            (obj, arg) =>
-        {
-            textAuditoriums.text = string.Join(", ", from index in this.checkedAuditoriums
-                    select this.auditoriums[index])
-            if (textAuditoriums.text == string.Empty)
-            {
-                textAuditoriums.text = GetString(R.string.all_auditoriums)
+        checkedAuditoriums.addOnListChangedCallback(ListChangedObserver {
+            textAuditoriums.text = checkedAuditoriums.joinToString { lessonAuditoriums[it] }
+            if (textAuditoriums.text.isEmpty()) {
+                textAuditoriums.text = getString(R.string.all_auditoriums)
             }
-        }
+        })
 
-        textLessonTypes.Click += (obj, arg) =>
-        {
-            if (activity == null)
-            {
-                return
+        textLessonTypes.setOnClickListener {
+            if (activity == null) {
+                return@setOnClickListener
             }
-            var dialog = AdvancedSearchFragment.newInstance()
-            dialog.show(activity.supportFragmentManager, "qq")
+            val dialog = AdvancedSearchFragment.newInstance()
+            dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
-                    AdvancedSearchAdapter.SimpleFilter(this.lessonTypes, this.checkedLessonTypes)))
+                SimpleFilter(lessonTypes, checkedLessonTypes)))
         }
-        this.checkedLessonTypes.CollectionChanged +=
-            (obj, arg) =>
-        {
-            textLessonTypes.text = string.Join(", ", from index in this.checkedLessonTypes
-                    select this.lessonTypes[index])
-            if (textLessonTypes.text == string.Empty)
-            {
-                textLessonTypes.text = GetString(R.string.all_lesson_types)
+        this.checkedLessonTypes.addOnListChangedCallback(ListChangedObserver {
+            textLessonTypes.text = checkedLessonTypes.joinToString { lessonTypes[it] }
+            if (textLessonTypes.text.isEmpty()) {
+                textLessonTypes.text = getString(R.string.all_lesson_types)
             }
-        }
-        applyButton.Click += (obj, arg) =>
-        {
+        })
+        applyButton.setOnClickListener {
             setUpSchedule(null, true)
-            var filt = Schedule.AdvancedSerach()
-            var newSchedule = filt.Filter(this.schedules,
-                this.checkedLessonTitles.Count == 0 ? this.lessonTitles :
-            (from index in this.checkedLessonTitles
-            select this.lessonTitles[index]).ToList() as IList<string>,
-            this.checkedLessonTypes.Count == 0 ? this.lessonTypes :
-            (from index in this.checkedLessonTypes
-            select this.lessonTypes[index]).ToList() as IList<string>,
-            this.checkedAuditoriums.Count == 0 ? this.auditoriums :
-            (from index in this.checkedAuditoriums
-            select this.auditoriums[index]).ToList() as IList<string>,
-            this.checkedTeachers.Count == 0 ? this.teachers :
-            (from index in this.checkedTeachers
-            select this.teachers[index]).ToList() as IList<string>)
-            this.viewModel.IsAdvancedSearch = true
-            this.viewModel.SetUpSchedule(newSchedule)
-            this.textGroupTitle.text = "..."
+            val filt = Schedule.AdvancedSearch.Builder()
+                .lessonTitles(
+                    if (checkedLessonTitles.isEmpty()) lessonTitles
+                    else checkedLessonTitles.map { lessonTitles[it] })
+                .lessonTypes(
+                    if (this.checkedLessonTypes.isEmpty()) lessonTypes
+                    else checkedLessonTypes.map { lessonTypes[it] })
+                .lessonAuditoriums(
+                    if (checkedAuditoriums.isEmpty()) lessonAuditoriums
+                    else checkedAuditoriums.map { lessonAuditoriums[it] }
+                )
+                .lessonTeachers(
+                    if (checkedTeachers.isEmpty()) lessonTeachers
+                    else checkedTeachers.map { lessonTeachers[it] }
+                )
+                .build()
+            val newSchedule = filt.getFiltered(schedules)
+
+
+            viewModel.isAdvancedSearch = true
+            viewModel.schedule.value = newSchedule
+            textGroupTitle?.setText("...")
         }
     }
 
@@ -615,6 +608,32 @@ class ScheduleFragment : Fragment() {
 
             viewModel.setUpSchedule(false)
         }
+
+        viewModel.schedule.observe(this, Observer {
+            setUpSchedule(it)
+        })
+
+        viewModel.groupList.observe(this, Observer {
+            setUpGroupList(it)
+        })
+
+        viewModel.isSession.observe(this, Observer {
+            scheduleType?.text = getTypeText(it)
+        })
+
+        viewModel.date.observe(this, Observer {
+            val adapter = viewPager?.adapter
+            if (adapter is ScheduleAdapter) {
+                viewPager?.setCurrentItem(
+                    CalendarUtils.getDeltaInDays(it, adapter.firstPosDate), false
+                )
+            }
+        })
+
+        viewModel.scheduleFilter.observe(this, Observer {
+            scheduleDateFilter?.setSelection(it.dateFilter.ordinal)
+            scheduleSessionFilter?.isChecked = it.sessionFilter
+        })
 
         //this.viewModel.Announced += ViewModel_Announced;
     }

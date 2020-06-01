@@ -16,6 +16,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     dataBinding {
         enabled = true
     }
@@ -44,9 +53,10 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
     // Network
-    implementation "io.ktor:ktor-client-core:$ktor_version"
     implementation "io.ktor:ktor-client-android:$ktor_version"
+
     // Json
     implementation 'com.beust:klaxon:5.0.1'
     implementation 'com.google.android.material:material:1.1.0'

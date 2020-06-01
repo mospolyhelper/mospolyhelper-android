@@ -4,7 +4,7 @@ import android.content.Context
 
 class ContextProvider {
     companion object {
-        val context: Context? = null
+        var context: Context? = null
         private const val DATA_FOLDER = "appdata"
 
 
