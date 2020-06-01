@@ -9,6 +9,9 @@ import java.util.*
 
 class CalendarViewModel :
     ViewModelBase(Mediator(), CalendarViewModel::class.java.simpleName) {
+    companion object {
+        const val CalendarMode = "CalendarMode"
+    }
     var schedule: Schedule? = null
     var scheduleFilter: Schedule.Filter = Schedule.Filter.default
     var date: Calendar = Calendar.getInstance()
@@ -20,7 +23,7 @@ class CalendarViewModel :
 
     private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
-            "CalendarMode" -> {
+            CalendarMode -> {
                 val list = message.content as List<*>
                 schedule = list[0] as Schedule
                 scheduleFilter = list[1] as Schedule.Filter
