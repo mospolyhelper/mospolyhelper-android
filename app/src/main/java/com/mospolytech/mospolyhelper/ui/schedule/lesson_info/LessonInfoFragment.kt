@@ -24,10 +24,12 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Group
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
+import com.mospolytech.mospolyhelper.ui.common.FragmentBase
+import com.mospolytech.mospolyhelper.ui.common.Fragments
 import java.text.SimpleDateFormat
 import java.util.*
 
-class LessonInfoFragment : Fragment() {
+class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
     companion object {
         fun newInstance() = LessonInfoFragment()
