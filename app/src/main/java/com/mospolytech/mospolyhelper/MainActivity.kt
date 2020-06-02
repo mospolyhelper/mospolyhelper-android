@@ -192,9 +192,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun changeFragment(fragment: IFragmentBase, disposePrevious: Boolean) {
-        prevFragment = supportFragmentManager.findFragmentById(R.id.frame_schedule) as IFragmentBase
+        prevFragment = supportFragmentManager.findFragmentById(R.id.frame_schedule) as IFragmentBase?
         if (disposePrevious) {
-            if (this.prevFragment != null) {
+            if (prevFragment != null) {
                 //this.prevFragment.Fragment.Dispose();
             }
             supportFragmentManager.beginTransaction().replace(R.id.frame_schedule, fragment.fragment).commit()

@@ -5,13 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" 
     android:layout_gravity="bottom"
     android:id="@+id/bottomAppBar"
-    android:theme="@style/Widget.MaterialComponents.BottomAppBar"
+    android:theme="@style/Theme.MaterialComponents.DayNight"
     android:layout_alignParentBottom="true"
         tools:showIn="@layout/fragment_schedule"
     android:layout_width="match_parent"
         app:backgroundTint="@color/scheduleBackgroundColor"
     app:navigationIcon="@drawable/ic_menu_24px"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:ignore="BottomAppBar">
     <LinearLayout
             android:gravity="bottom"
         android:layout_width="match_parent"

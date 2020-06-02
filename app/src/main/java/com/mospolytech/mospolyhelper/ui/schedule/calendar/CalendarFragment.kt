@@ -16,11 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.ui.common.FragmentBase
+import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.utils.CalendarUtils
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class CalendarFragment : Fragment() {
+class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
 
     companion object {
         fun newInstance() = CalendarFragment()
