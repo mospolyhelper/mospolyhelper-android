@@ -158,20 +158,20 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         var fragmentId = Fragments.Other
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout);
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
 
         var fragmentCreator: (() -> IFragmentBase)? = null
         when (id) {
             R.id.nav_schedule -> {
-                fragmentId = Fragments.ScheduleMain;
+                fragmentId = Fragments.ScheduleMain
                 fragmentCreator = ScheduleFragment.Companion::newInstance
             }
             R.id.nav_buildings -> {
-                fragmentId = Fragments.Addresses;
+                fragmentId = Fragments.Addresses
                 fragmentCreator = AddressesFragment.Companion::newInstance
             }
             R.id.nav_settings -> {
-                fragmentId = Fragments.Settings;
+                fragmentId = Fragments.Settings
                 fragmentCreator = SettingsFragment.Companion::newInstance
             }
         }
