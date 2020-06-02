@@ -21,5 +21,6 @@ enum class Fragments {
     Addresses,
     Other,
     ScheduleLessonInfo,
-    ScheduleCalendar
+    ScheduleCalendar,
+    Deadlines
 }

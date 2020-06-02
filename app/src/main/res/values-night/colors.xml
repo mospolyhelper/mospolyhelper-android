@@ -50,4 +50,17 @@
   
   <color name="textScheduleDay">#BBBBBB</color>
   <color name="textScheduleTitle">#CCCCCC</color>
+
+  <color name="predmetcolor">#0093CE</color>
+  <color name="colorLow">#CC26E910</color>
+  <color name="colorMedium">#CCFFCB0F</color>
+  <color name="colorHigh">#CCDB0C0C</color>
+  <color name="colorCompleted">#191919</color>
+  <color name="colorPinned">#1E1E22</color>
+
+  <color name="colorAccent">#5ea3de</color>
+  <color name="colorHint">#C0C0C0</color>
+  <color name="defaultCardColor">#1e1e1e</color>
+  <color name="bottomColor">#121212</color>
+  <color name="textColorDate">#6E6E6E</color>
 </resources>
