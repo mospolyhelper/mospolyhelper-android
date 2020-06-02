@@ -16,6 +16,7 @@ import com.mospolytech.mospolyhelper.ui.addresses.AddressesFragment
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.common.interfaces.IFragmentBase
+import com.mospolytech.mospolyhelper.ui.deadlines.DeadlineFragment
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragment
 import com.mospolytech.mospolyhelper.ui.settings.SettingsFragment
 import com.mospolytech.mospolyhelper.utils.AssetProvider
@@ -157,27 +158,31 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        var fragmentId = Fragments.Other
+        var fragmentId = Fragments.Othe
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout);
 
         var fragmentCreator: (() -> IFragmentBase)? = null
         when (id) {
             R.id.nav_schedule -> {
-                fragmentId = Fragments.ScheduleMain;
+                fragmentId = Fragments.ScheduleMain
                 fragmentCreator = ScheduleFragment.Companion::newInstance
             }
             R.id.nav_buildings -> {
-                fragmentId = Fragments.Addresses;
+                fragmentId = Fragments.Addresses
                 fragmentCreator = AddressesFragment.Companion::newInstance
             }
             R.id.nav_settings -> {
-                fragmentId = Fragments.Settings;
+                fragmentId = Fragments.Settings
                 fragmentCreator = SettingsFragment.Companion::newInstance
+            }
+            R.id.nav_deadlines -> {
+                fragmentId = Fragments.Deadlines
+                fragmentCreator = DeadlineFragment.Companion::newInstance
             }
         }
         if (currFragment?.fragmentType == fragmentId) {
             drawer.closeDrawer(GravityCompat.START)
-            return false;
+            return false
         }
 //        if (fragmentId == Fragments.Other) {
 //            //this.logger.Warn("{ItemId} doesn't have own Fragments enum id", item.ItemId);
