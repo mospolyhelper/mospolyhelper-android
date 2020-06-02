@@ -81,6 +81,7 @@ class ScheduleDao {
             .resolve(GROUP_LIST_FOLDER)
             .resolve(GROUP_LIST_FILE)
         file.delete()
+        file.parentFile?.mkdirs()
         file.createNewFile()
         file.writeText(converter.serializeGroupList(groupList))
     }
@@ -192,6 +193,7 @@ class ScheduleDao {
                 } else {
                     val newFile = File(folder.path)
                         .resolve(file.nameWithoutExtension + OldExtension)
+                    newFile.parentFile?.mkdirs()
                     newFile.createNewFile()
                     file.copyTo(newFile)
                     file.delete()
