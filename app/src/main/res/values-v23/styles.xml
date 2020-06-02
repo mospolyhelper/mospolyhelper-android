@@ -3,6 +3,7 @@
   <style name="AppTheme" parent="Theme.AppCompat.DayNight">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorSecondary">@color/colorSecondary</item>
     <item name="colorAccent">@color/colorSecondary</item>
     <item name="android:colorEdgeEffect">@color/colorSecondary</item>
     <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
@@ -35,6 +36,7 @@
     <item name="android:windowLightStatusBar">false</item>
   </style>
 
+  <style name="AppTheme.Chip" parent="@style/Theme.MaterialComponents"></style>
 
 
 
@@ -47,12 +49,11 @@
   <style name="AppTheme.ViewPagerTabStrip">
     <item name="android:textSize">12sp</item>
     <item name="android:textColor">#FFFFFF</item>
-    
+
   </style>
 
   <style name="AppTheme.ViewPagerTabStripText">
     <item name="android:fontFamily">sans-serif-medium</item>
   </style>
-
 
 </resources>
