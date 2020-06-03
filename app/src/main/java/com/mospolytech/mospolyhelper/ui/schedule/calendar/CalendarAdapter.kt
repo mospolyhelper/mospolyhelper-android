@@ -12,11 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
-import com.mospolytech.mospolyhelper.utils.CalendarUtils.Companion.addDays
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class CalendarAdapter(
     var schedule: Schedule,
@@ -33,23 +31,23 @@ class CalendarAdapter(
             0x29b6f6    // Other
         )
     }
-    val dateFormat = SimpleDateFormat("dddd, d MMMM", Locale.getDefault())
-    var firstPosDate: Calendar = Calendar.getInstance()
+    val dateFormatter = DateTimeFormatter.ofPattern("dddd, d MMMM")
+    var firstPosDate: LocalDate = LocalDate.now()
     private var itemCount = 0
 
-    private val dayClick = mutableSetOf<(Calendar) -> Unit>()
+    private val dayClick = mutableSetOf<(LocalDate) -> Unit>()
 
     init {
         setCount()
         setFirstPosDate()
     }
 
-    fun addOnDayClick(block: (Calendar) -> Unit) = dayClick.add(block)
+    fun addOnDayClick(block: (LocalDate) -> Unit) = dayClick.add(block)
 
     override fun getItemCount() = itemCount
 
     fun setCount() {
-        itemCount = CalendarUtils.getDeltaInDays(schedule.dateFrom, schedule.dateTo) + 1
+        itemCount = ChronoUnit.DAYS.between(schedule.dateFrom, schedule.dateTo).toInt() + 1
         if (itemCount > 400 || itemCount < 0) {
             itemCount = 400
         }
@@ -58,7 +56,7 @@ class CalendarAdapter(
 
     fun setFirstPosDate() {
         firstPosDate = if (itemCount == 400)
-            Calendar.getInstance().addDays(-200)
+            LocalDate.now().minusDays(200)
         else
             schedule.dateFrom
     }
@@ -70,26 +68,25 @@ class CalendarAdapter(
         var vh = ViewHolder(view)
         vh.lessonPlace.setOnClickListener {
             dayClick.forEach {
-                it(firstPosDate.addDays(vh.layoutPosition))
+                it(firstPosDate.plusDays(vh.layoutPosition.toLong()))
             }
         }
 
         return vh
     }
 
-    fun ViewHolder.setHead(date: Calendar) {
+    fun ViewHolder.setHead(date: LocalDate) {
         val res = SpannableStringBuilder()
         lessonTime.setTextColor(colorTitle)
-        val today = Calendar.getInstance()
+        val today = LocalDate.now()
 
-        if (date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
-            && date.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
+        if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
             lessonTime.setTextColor(colorCurrentTitle)
         }
-        lessonTime.setText(dateFormat.format(date), TextView.BufferType.NORMAL) // .replace('.', '\0') TODO Check it
+        lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL) // .replace('.', '\0') TODO Check it
     }
 
-    fun ViewHolder.setLessons(dailySchedule: List<Lesson>, date: Calendar) {
+    fun ViewHolder.setLessons(dailySchedule: List<Lesson>, date: LocalDate) {
         val res = SpannableStringBuilder()
 
         if (dailySchedule.isNotEmpty()) {
@@ -193,9 +190,9 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val date: Calendar = firstPosDate.addDays(position)
+        val date: LocalDate = firstPosDate.plusDays(position.toLong())
         val dailySchedule = this.schedule.getSchedule(date, scheduleFilter);
-        viewHolder.setLessons(dailySchedule, date);
+        viewHolder.setLessons(dailySchedule, date)
         viewHolder.setHead(date);
     }
 
