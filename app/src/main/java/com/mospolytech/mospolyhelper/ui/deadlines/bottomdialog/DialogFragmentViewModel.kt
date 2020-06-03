@@ -16,6 +16,10 @@ class DialogFragmentViewModel/*(app: Application)*/ :
     /*AndroidViewModel(app) {*/
     ViewModelBase(Mediator(), DialogFragmentViewModel::class.java.simpleName) {
 
+    companion object {
+        const val DeadlineAdd = "DeadlinesAdd"
+    }
+
     private var database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
     private val deadlinesRepository = DeadlinesRepository(database)
 
