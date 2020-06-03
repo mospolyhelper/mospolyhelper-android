@@ -5,8 +5,9 @@ import com.mospolytech.mospolyhelper.repository.models.schedule.Group
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import java.lang.StringBuilder
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ScheduleConverter {
     companion object {
@@ -23,36 +24,47 @@ class ScheduleConverter {
         val LESSON_TYPE = Lesson::type.name
     }
 
-    val calendarConverter = object : Converter {
+    val localDateConverter = object : Converter {
         override fun canConvert(cls: Class<*>) =
-            cls == Calendar::class.java
+            cls == LocalDate::class.java
 
         override fun fromJson(jv: JsonValue): Any? {
-            val date = formatter.parse(jv.string!!)!!
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            return calendar
+            return LocalDate.parse(jv.string!!, dateFormatter)
         }
 
         override fun toJson(value: Any) =
-            formatter.format(value as Calendar)
+            (value as LocalDate).format(dateFormatter)
 
     }
 
-    private val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    val localDateTimeConverter = object : Converter {
+        override fun canConvert(cls: Class<*>) =
+            cls == LocalDateTime::class.java
+
+        override fun fromJson(jv: JsonValue): Any? {
+            return LocalDateTime.parse(jv.string!!, dateTimeFormatter)
+        }
+
+        override fun toJson(value: Any) =
+            (value as LocalDateTime).format(dateTimeFormatter)
+
+    }
+
+    private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     fun serializeSchedule(schedule: Schedule): String {
-        val converter = Klaxon().converter(calendarConverter)
+        val converter = Klaxon().converter(localDateConverter)
         return converter.toJsonString(schedule)
     }
 
-    fun deserializeSchedule(scheduleString: String, isSession: Boolean, lastUpdate: Calendar): Schedule {
-        val converter = Klaxon().converter(calendarConverter)
+    fun deserializeSchedule(scheduleString: String, isSession: Boolean, lastUpdate: LocalDateTime): Schedule {
+        val converter = Klaxon().converter(localDateConverter)
         val parser = Parser.default()
         val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
         val group = converter.parseFromJsonObject<Group>(json.obj(SCHEDULE_GROUP)!!)!!
-        val dateFrom = converter.parseFromJsonObject<Calendar>(json.obj(SCHEDULE_DATE_FROM)!!)!!
-        val dateTo = converter.parseFromJsonObject<Calendar>(json.obj(SCHEDULE_DATE_TO)!!)!!
+        val dateFrom = converter.parseFromJsonObject<LocalDate>(json.obj(SCHEDULE_DATE_FROM)!!)!!
+        val dateTo = converter.parseFromJsonObject<LocalDate>(json.obj(SCHEDULE_DATE_TO)!!)!!
 
         val dailySchedules = json
             .array<JsonArray<JsonObject>>(DAILY_SCHEDULES)!!
