@@ -6,6 +6,7 @@ import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import java.time.LocalDate
 import java.util.*
 
 class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class.java.simpleName) {
@@ -13,7 +14,7 @@ class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class
         const val LessonInfo = "LessonInfo"
     }
     var lesson: Lesson = Lesson.getEmpty(0)
-    var date: Calendar = Calendar.getInstance()
+    var date: LocalDate = LocalDate.now()
 
     init {
         subscribe(::handleMessage)
@@ -24,7 +25,7 @@ class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class
             LessonInfo -> {
                 val list = message.content as List<*>
                 lesson = list[0] as Lesson
-                date = list[1] as Calendar
+                date = list[1] as LocalDate
             }
         }
     }
