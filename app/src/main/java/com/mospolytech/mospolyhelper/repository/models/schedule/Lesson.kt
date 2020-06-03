@@ -3,15 +3,16 @@ package com.mospolytech.mospolyhelper.repository.models.schedule
 import android.util.Log
 import com.beust.klaxon.Json
 import com.mospolytech.mospolyhelper.TAG
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.*
 
 data class Lesson(
     val order: Int,
     val title: String,
     val teachers: List<Teacher>,
-    val dateFrom: Calendar,
-    val dateTo: Calendar,
+    val dateFrom: LocalDate,
+    val dateTo: LocalDate,
     val auditoriums: List<Auditorium>,
     val type: String,
     @Json(ignored = true) val group: Group
@@ -33,14 +34,14 @@ data class Lesson(
                 order,
                 "",
                 emptyList(),
-                CalendarUtils.getMinValue(),
-                CalendarUtils.getMaxValue(),
+                LocalDate.MIN,
+                LocalDate.MAX,
                 emptyList(),
                 "",
                 Group.empty
             )
 
-        fun getOrder(time: Calendar, groupIsEvening: Boolean): Int =
+        fun getOrder(time: LocalTime, groupIsEvening: Boolean): Int =
             if (time > Time.thirdPair.second) when {
                 time <= Time.fourthPair.second -> 3
                 time <= Time.fifthPair.second -> 4
@@ -57,83 +58,38 @@ data class Lesson(
 
     private class Time {
         companion object {
-            val firstPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 9)
-                    set(Calendar.MINUTE, 0)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 10)
-                    set(Calendar.MINUTE, 30)
-                }
+            val firstPair = Pair(
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 30)
             )
-            val secondPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 10)
-                    set(Calendar.MINUTE, 40)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 12)
-                    set(Calendar.MINUTE, 10)
-                }
-            )
-            val thirdPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 12)
-                    set(Calendar.MINUTE, 20)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 13)
-                    set(Calendar.MINUTE, 50)
-                }
+            val secondPair = Pair(
+                LocalTime.of(10, 40),
+                LocalTime.of(12, 10)
             )
 
-            val fourthPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 14)
-                    set(Calendar.MINUTE, 30)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 16)
-                    set(Calendar.MINUTE, 0)
-                }
+            val thirdPair = Pair(
+                LocalTime.of(12, 20),
+                LocalTime.of(13, 50)
             )
-            val fifthPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 16)
-                    set(Calendar.MINUTE, 10)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 17)
-                    set(Calendar.MINUTE, 40)
-                }
+
+            val fourthPair = Pair(
+                LocalTime.of(14, 30),
+                LocalTime.of(16, 0)
             )
-            val sixthPair
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 17)
-                    set(Calendar.MINUTE, 50)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 19)
-                    set(Calendar.MINUTE, 20)
-                }
+
+            val fifthPair = Pair(
+                LocalTime.of(16, 10),
+                LocalTime.of(17, 40)
             )
-            val sixthPairEvening
-                get() = Pair(
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 18)
-                    set(Calendar.MINUTE, 20)
-                },
-                Calendar.getInstance().apply {
-                    set(Calendar.HOUR, 19)
-                    set(Calendar.MINUTE, 40)
-                }
+
+            val sixthPair = Pair(
+                LocalTime.of(17, 50),
+                LocalTime.of(19, 20)
+            )
+
+            val sixthPairEvening = Pair(
+                LocalTime.of(18, 20),
+                LocalTime.of(19, 40)
             )
 
             val firstPairStr by lazy { "09:00" to "10:30" }
