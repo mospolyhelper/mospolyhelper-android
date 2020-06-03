@@ -8,11 +8,13 @@ import com.mospolytech.mospolyhelper.repository.database.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
+import com.mospolytech.mospolyhelper.ui.deadlines.DeadlineViewModel
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 
+
 class DialogFragmentViewModel/*(app: Application)*/ :
+    /*AndroidViewModel(app) {*/
     ViewModelBase(Mediator(), DialogFragmentViewModel::class.java.simpleName) {
-    //AndroidViewModel(app) {
 
     companion object {
         const val DeadlineAdd = "DeadlinesAdd"
