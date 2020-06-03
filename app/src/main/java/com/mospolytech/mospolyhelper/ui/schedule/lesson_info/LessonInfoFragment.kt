@@ -27,6 +27,7 @@ import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
@@ -90,7 +91,7 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
         textView.text = lesson.title
     }
 
-    fun setTime(textView: TextView, lesson: Lesson, date: Calendar) {
+    fun setTime(textView: TextView, lesson: Lesson, date: LocalDate) {
         val (startTime, endTime) = lesson.time
         val dateStr = SimpleDateFormat("dddd, d MMMM,", Locale.getDefault()).format(date)
         // TODO: val dateStr = dateStr[0].toUpperCase() + dateStr.Substring(1)

@@ -15,12 +15,13 @@ import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 
 class ScheduleViewModel(
     schedule: Schedule? = null,
-    date: Calendar? = null,
+    date: LocalDate? = null,
     isSession: Boolean? = null,
     groupTitle: String? = null,
     scheduleFilter: Schedule.Filter? = null,
@@ -33,7 +34,7 @@ class ScheduleViewModel(
     }
     val dao = ScheduleDao()
     val schedule = MutableLiveData<Schedule?>(schedule)
-    val date = MutableLiveData(date ?: Calendar.getInstance())
+    val date = MutableLiveData(date ?: LocalDate.now())
     val isSession = MutableLiveData(isSession ?: false)
     val groupTitle = MutableLiveData<String>(groupTitle ?: "")
     var scheduleDownloaded = false
@@ -49,20 +50,20 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         getGroupList(true)
 
-        this.isSession.observeForever {
-            GlobalScope.launch {
-                setUpSchedule(true)
-            }
-        }
-
-        // TODO: Change
-        this.showEmptyLessons.observeForever {
-            this.schedule.value = this.schedule.value
-        }
-
-        this.scheduleFilter.observeForever {
-            this.schedule.value = this.schedule.value
-        }
+//        this.isSession.observeForever {
+//            GlobalScope.launch {
+//                setUpSchedule(true)
+//            }
+//        }
+//
+//        // TODO: Change
+//        this.showEmptyLessons.observeForever {
+//            this.schedule.value = this.schedule.value
+//        }
+//
+//        this.scheduleFilter.observeForever {
+//            this.schedule.value = this.schedule.value
+//        }
     }
 
     fun handleMessage(message: ViewModelMessage) {
@@ -73,7 +74,7 @@ class ScheduleViewModel(
                 // FragmentChanged?.Invoke(scheduleFragment);
             }
             ChangeDate -> {
-                date.value = (message.content as List<*>)[0] as Calendar
+                date.value = (message.content as List<*>)[0] as LocalDate
             }
         }
     }
@@ -107,7 +108,7 @@ class ScheduleViewModel(
     }
 
     fun goHome() {
-        date.value = Calendar.getInstance()
+        date.value = LocalDate.now()
     }
 
     fun openCalendar() {
@@ -119,7 +120,7 @@ class ScheduleViewModel(
         ))
     }
 
-    fun openLessonInfo(lesson: Lesson, date: Calendar) {
+    fun openLessonInfo(lesson: Lesson, date: LocalDate) {
         send(LessonInfoViewModel::class.java.simpleName, LessonInfoViewModel.LessonInfo, listOf(
             lesson,
             date
@@ -140,7 +141,7 @@ class ScheduleViewModel(
 
     class Factory: ViewModelProvider.Factory {
         var schedule: Schedule? = null
-        var date: Calendar? = null
+        var date: LocalDate? = null
         var isSession: Boolean? = null
         var groupTitle: String? = null
         var scheduleFilter: Schedule.Filter? = null
