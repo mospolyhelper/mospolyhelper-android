@@ -19,6 +19,9 @@ android {
     }
 
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 8
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -62,7 +65,8 @@ dependencies {
 
     // Json
     implementation 'com.beust:klaxon:5.0.1'
-    implementation 'com.google.android.material:material:1.1.0'
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
 
     // Room
     implementation "android.arch.persistence.room:runtime:1.1.1"
