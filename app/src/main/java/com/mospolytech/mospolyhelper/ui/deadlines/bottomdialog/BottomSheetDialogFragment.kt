@@ -4,16 +4,20 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
+import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import java.util.*
 
@@ -26,7 +30,9 @@ class AddBottomSheetDialogFragment
 
     private var edit: Boolean = false
     private var deadline: Deadline? = null
-    private val viewModel by viewModels<DialogFragmentViewModel>()
+    private lateinit var viewModel: DialogFragmentViewModel
+    //private val viewModel by viewModels<DialogFragmentViewModel>()
+    private var contextApp = ContextProvider.context as Context
 
     private val datePickerDialog = DatePickerDialog(
         contextApp,
@@ -52,11 +58,9 @@ class AddBottomSheetDialogFragment
         Calendar.getInstance().get(Calendar.MINUTE),true)
 
     companion object {
-        fun newInstance(context: Context): AddBottomSheetDialogFragment {
-            contextApp = context
+        fun newInstance(): AddBottomSheetDialogFragment {
             return AddBottomSheetDialogFragment()
         }
-        private lateinit var contextApp: Context
         const val TAG = "BottomDialog"
     }
 
@@ -126,6 +130,7 @@ class AddBottomSheetDialogFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
         btadd.setOnClickListener(this)
 
         editDate.setOnClickListener {
@@ -160,8 +165,11 @@ class AddBottomSheetDialogFragment
         val predmet =  editPredmet.text.toString()
         val descr = editDescription.text.toString()
         if (descr.isEmpty()) {
-            //Toast.makeText(activity, R.string.predmetError, Toast.LENGTH_SHORT).show()
-            editDescription.error = resources.getString(R.string.predmetError)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                Toast.makeText(contextApp, R.string.predmetError, Toast.LENGTH_SHORT).show()
+            } else {
+                editDescription.error = resources.getString(R.string.predmetError)
+            }
             return
         }
 
