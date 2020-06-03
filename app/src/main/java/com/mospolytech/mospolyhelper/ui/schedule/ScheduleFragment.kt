@@ -49,6 +49,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         fun newInstance() = ScheduleFragment()
     }
 
+    val viewModelFactory = ScheduleViewModel.Factory()
+
     var textGroupTitle: AutoCompleteTextView? = null
     var viewPager: ViewPager? = null
     var swipeToRefresh: SwipeRefreshLayout? = null
@@ -71,7 +73,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     var scheduleEmptyPair: Switch? = null
     var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
-    private val viewModel by viewModels<ScheduleViewModel>()
+    private val viewModel by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
     fun getTypeText(isSession: Boolean) =
         if (isSession) sessionString else regularString
@@ -573,7 +575,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if (viewModel != null)
+        if (true)
         {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -582,12 +584,13 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                         Schedule.Filter.default.dateFilter.ordinal)]
             val sessionFilter = prefs.getBoolean(PreferencesConstants.ScheduleSessionFilter,
                 Schedule.Filter.default.sessionFilter)
-            viewModel.scheduleFilter.value = Schedule.Filter.Builder(Schedule.Filter.default)
+
+            viewModelFactory.scheduleFilter = Schedule.Filter.Builder(Schedule.Filter.default)
                 .dateFilter(dateFilter)
                 .sessionFilter(sessionFilter)
                 .build()
 
-            viewModel.groupTitle.value = prefs.getString(PreferencesConstants.ScheduleGroupTitle,
+            viewModelFactory.groupTitle = prefs.getString(PreferencesConstants.ScheduleGroupTitle,
                 DefaultSettings.ScheduleGroupTitle)
 
             // fix on release
@@ -598,12 +601,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             } catch (ex: Exception) {
                 isSession = prefs.getInt(PreferencesConstants.ScheduleTypePreference, 0) == 1;
             }
-            viewModel.isSession.value = isSession
+            viewModelFactory.isSession = isSession
 
             //this.viewModel = new ScheduleVm(DependencyInjector.GetILoggerFactory(), DependencyInjector.GetIMediator(),
             //isSession, scheduleFilter) GroupTitle = groupTitle
 
-            viewModel.showEmptyLessons.value = prefs.getBoolean(PreferencesConstants.ScheduleShowEmptyLessons,
+            viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferencesConstants.ScheduleShowEmptyLessons,
                 DefaultSettings.ScheduleShowEmptyLessons)
 
             viewModel.setUpSchedule(false)
