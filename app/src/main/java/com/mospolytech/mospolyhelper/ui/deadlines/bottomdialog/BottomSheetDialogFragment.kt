@@ -19,6 +19,9 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AddBottomSheetDialogFragment
@@ -37,25 +40,23 @@ class AddBottomSheetDialogFragment
     private val datePickerDialog = DatePickerDialog(
         contextApp,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            val c = Calendar.getInstance()
-            c.set(year,monthOfYear,dayOfMonth)
-            var date = "${weekDay(c.get(Calendar.DAY_OF_WEEK))}, "
-            date += if (dayOfMonth<10) "0${dayOfMonth}." else "${dayOfMonth}."
-            date += if (monthOfYear<10) "0${monthOfYear}." else "${monthOfYear}."
-            date += "$year"
-            editDate.setText(date)
-        }, Calendar.getInstance().get(Calendar.YEAR),
-        Calendar.getInstance().get(Calendar.MONTH),
-        Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+            val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
+            val dateFormatter = DateTimeFormatter.ofPattern("ccc, dd.MM.yyyy")
+            editDate.setText(localDate.format(dateFormatter))
+        }, LocalDate.now().year,
+        LocalDate.now().month.value - 1,
+        LocalDate.now().dayOfMonth)
 
     private val timePickerDialog = TimePickerDialog(
         contextApp,
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-            var time: String = if (hourOfDay<10) "0${hourOfDay}:" else "${hourOfDay}:"
-            time += if (minute<10) "0${minute}" else "$minute"
-            editTime.setText(time)
-        }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
-        Calendar.getInstance().get(Calendar.MINUTE),true)
+            val localTime = LocalTime.of(hourOfDay, minute)
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            //var time: String = if (hourOfDay<10) "0${hourOfDay}:" else "${hourOfDay}:"
+            //time += if (minute<10) "0${minute}" else "$minute"
+            editTime.setText(localTime.format(timeFormatter))
+        }, LocalTime.now().hour,
+        LocalTime.now().minute,true)
 
     companion object {
         fun newInstance(): AddBottomSheetDialogFragment {
