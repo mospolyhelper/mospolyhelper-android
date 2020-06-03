@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.ui.settings
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +25,7 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
         fun newInstance() = SettingsFragment()
     }
 
-    override fun getCallbackFragment() = this
+    override fun getCallbackFragment() = this.apply { Log.d("!3!!!!!!!", "!3!!!!!!!") }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -40,7 +41,9 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("!!!!", "!!!!")
         super.onViewCreated(view, savedInstanceState)
+        Log.d("!!!!", "!!!!")
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = getString(R.string.settings_title)
         (activity as MainActivity).setSupportActionBar(toolbar)
@@ -71,7 +74,8 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
         caller: PreferenceFragmentCompat,
         pref: PreferenceScreen
     ): Boolean {
-        val fragment = newInstance()
+        Log.d("!1!!!!!!!", "!1!!!!!!!")
+        val fragment = SettingsFragment.newInstance()
         val args = Bundle()
         args.putString(ARG_PREFERENCE_ROOT, pref.key)
         fragment.arguments = args
