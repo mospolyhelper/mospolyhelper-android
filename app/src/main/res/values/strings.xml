@@ -91,4 +91,30 @@
 
   <string name="addresses_title">Адреса</string>
   <string name="settings_title">Настройки</string>
+
+  <!--Deadlines part-->
+  <string name="predmet_title">Какой предмет?</string>
+  <string name="deadline_descr">Что нужно сделать?</string>
+  <string name="importanceText">Важность</string>
+  <string name="importanceLow">Неважно</string>
+  <string name="importanceMedium">Средне</string>
+  <string name="importanceHigh">Важно</string>
+  <string name="pinned">Закрепить</string>
+  <string name="deadline_time">До какого времени?</string>
+  <string name="deadline_date">До какого числа?</string>
+  <string name="add">Добавить</string>
+  <string name="title">Дедлайны</string>
+  <string name="pressBack">Нажмите НАЗАД еще раз, чтобы выйти</string>
+  <string name="updateButton">Обновить</string>
+  <string name="emptyList">Дедлайнов нет :(</string>
+  <string name="predmetError">Заполните описание!</string>
+  <string name="deleteDeadline">Дедлайн удален</string>
+  <string name="pinnedImage">Иконка закрепления</string>
+  <string name="clockImage">Иконка часов</string>
+  <string name="predmetSample">ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ</string>
+  <string name="zadSample">Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание</string>
+  <string name="dataSample">Пн, 01.01.2020, 00:00</string>
+  <string name="pin">pinned</string>
+  <string name="unpin">unpinned</string>
+  <string name="nav_deadlines">Дедлайны</string>
 </resources>

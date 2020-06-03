@@ -16,6 +16,7 @@ import com.mospolytech.mospolyhelper.ui.addresses.AddressesFragment
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.common.interfaces.IFragmentBase
+import com.mospolytech.mospolyhelper.ui.deadlines.DeadlineFragment
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragment
 import com.mospolytech.mospolyhelper.ui.settings.SettingsFragment
 import com.mospolytech.mospolyhelper.utils.AssetProvider
@@ -174,10 +175,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 fragmentId = Fragments.Settings
                 fragmentCreator = SettingsFragment.Companion::newInstance
             }
+            R.id.nav_deadlines -> {
+                fragmentId = Fragments.Deadlines
+                fragmentCreator = DeadlineFragment.Companion::newInstance
+            }
         }
         if (currFragment?.fragmentType == fragmentId) {
             drawer.closeDrawer(GravityCompat.START)
-            return false;
+            return false
         }
 //        if (fragmentId == Fragments.Other) {
 //            //this.logger.Warn("{ItemId} doesn't have own Fragments enum id", item.ItemId);
