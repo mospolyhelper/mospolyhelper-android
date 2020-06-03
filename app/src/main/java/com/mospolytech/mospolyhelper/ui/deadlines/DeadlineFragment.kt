@@ -62,7 +62,7 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
-        bot = AddBottomSheetDialogFragment.newInstance(mainActivity)
+        bot = AddBottomSheetDialogFragment.newInstance()
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
