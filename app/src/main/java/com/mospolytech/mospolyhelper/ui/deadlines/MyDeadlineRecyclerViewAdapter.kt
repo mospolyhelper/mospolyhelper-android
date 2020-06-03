@@ -27,7 +27,7 @@ class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeadlinesViewHolder {
         return DeadlinesViewHolder(LayoutInflater.from(context)
-            .inflate(R.layout.deadline_card, parent, false))
+            .inflate(R.layout.item_deadline, parent, false))
     }
 
     override fun getItemCount(): Int {
