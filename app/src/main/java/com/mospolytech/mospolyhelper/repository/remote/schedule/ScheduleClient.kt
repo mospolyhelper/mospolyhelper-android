@@ -61,7 +61,7 @@ class ScheduleClient {
 
         return client.get(GET_SCHEDULE) {
             header("referer", BASE_URL)
-            header("host", BASE_URL)
+            //header("host", BASE_URL)
             parameter("group", groupTitle)
             parameter("session", if (isSession) 1 else 0)
         }
@@ -78,7 +78,7 @@ class ScheduleClient {
             }
         }
 
-        return client.get(GET_SCHEDULE) {
+        return client.get(GET_GROUP_LIST) {
             header("referer", BASE_URL)
             header("host", BASE_URL)
         }

@@ -28,7 +28,7 @@ class ScheduleDao {
         const val SCHEDULE_REGULAR_FOLDER = "regular"
         const val GROUP_LIST_FILE = "group_list"
     }
-    private val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    private val formatter = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
 
     val converter = ScheduleConverter()
     val client = ScheduleClient()
@@ -103,13 +103,13 @@ class ScheduleDao {
                 try {
                     saveSchedule(schedule)
                 } catch (ex: Exception) {
-                    // this.logger.Error(ex, "Saving schedule error")
+                    Log.e(TAG, "", ex)
                 }
             } catch (ex1: Exception) {
                 // this.logger.Error(ex1, "Download schedule error")
                 try {
                     // Announce?.Invoke(StringProvider.GetString(StringId.ScheduleWasntFounded))
-                    val schedule = readSchedule(group, isSession)!! // TODO: Fix
+                    schedule = readSchedule(group, isSession)!! // TODO: Fix
                     // throw Exception("Read schedule from storage fail")
                     // Announce.Invoke(StringProvider.GetString(StringId.OfflineScheduleWasFounded))
                 } catch (ex2: Exception) {
@@ -143,7 +143,7 @@ class ScheduleDao {
         if (group != schedule.group.title) {
             //this.logger.Warn("{group} != {scheduleGroupTitle}", group, this.Schedule?.Group?.Title);
         }
-        return null
+        return schedule
         // TODO: Rewrite this
     }
 
@@ -193,6 +193,7 @@ class ScheduleDao {
                 } else {
                     val newFile = File(folder.path)
                         .resolve(file.nameWithoutExtension + OldExtension)
+                    newFile.delete()
                     newFile.parentFile?.mkdirs()
                     newFile.createNewFile()
                     file.copyTo(newFile)
@@ -201,8 +202,10 @@ class ScheduleDao {
             }
         }
         val file = folder
-            .resolve(formatter.format(schedule.lastUpdate.time))
-            .resolve(CurrentExtension)
+            .resolve(formatter.format(schedule.lastUpdate.time) + CurrentExtension)
+        file.delete()
+        file.parentFile?.mkdirs()
+        file.createNewFile()
         val scheduleString = converter.serializeSchedule(schedule)
         file.writeText(scheduleString)
     }
