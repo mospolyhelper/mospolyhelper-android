@@ -18,7 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
 import com.mospolytech.mospolyhelper.utils.ContextProvider
-import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import java.util.*
 
 class AddBottomSheetDialogFragment
@@ -115,7 +115,7 @@ class AddBottomSheetDialogFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.bottom_sheet, container, false)
+        return inflater.inflate(R.layout.bottom_sheet_deadline, container, false)
     }
 
     override fun onResume() {
