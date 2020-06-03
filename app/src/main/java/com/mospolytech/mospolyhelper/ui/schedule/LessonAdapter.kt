@@ -15,13 +15,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.*
 
 class LessonAdapter(
     val nullMessage: TextView,
     var dailySchedule: List<Lesson>,
     var filter: Schedule.Filter,
-    var date: Calendar,
+    var date: LocalDate,
     var showEmptyLessons: Boolean,
     var showGroup: Boolean,
     var nightMode: Boolean,
@@ -56,10 +58,9 @@ class LessonAdapter(
         }
         var localCurrLessonOrder = -1
         var fixedOrder = -1
-        val today = Calendar.getInstance()
-        if (date.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)
-            && date.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
-            localCurrLessonOrder = Lesson.getOrder(Calendar.getInstance(), dailySchedule[0].group.isEvening)
+        val today = LocalDate.now()
+        if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
+            localCurrLessonOrder = Lesson.getOrder(LocalTime.now(), dailySchedule[0].group.isEvening)
             for (lesson in dailySchedule)
             {
                 if (filter.dateFilter != Schedule.Filter.DateFilter.Desaturate ||
@@ -90,7 +91,7 @@ class LessonAdapter(
         }
     }
 
-    fun buildSchedule(dailySchedule: List<Lesson>, scheduleFilter: Schedule.Filter, date: Calendar,
+    fun buildSchedule(dailySchedule: List<Lesson>, scheduleFilter: Schedule.Filter, date: LocalDate,
                       showEmptyLessons: Boolean, showGroup: Boolean)
     {
         this.showEmptyLessons = showEmptyLessons
