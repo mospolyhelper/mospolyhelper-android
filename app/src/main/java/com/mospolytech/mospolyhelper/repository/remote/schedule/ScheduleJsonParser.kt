@@ -115,7 +115,7 @@ class ScheduleJsonParser {
             }
         }
 
-        val isEvening = json.boolean(GROUP_EVENING_KEY) ?: false.apply {
+        val isEvening = json.int(GROUP_EVENING_KEY) == 1 ?: false.apply {
             Log.w(TAG, "Suspicious behavior: Group evening key \"$GROUP_EVENING_KEY\" not found")
         }
 
