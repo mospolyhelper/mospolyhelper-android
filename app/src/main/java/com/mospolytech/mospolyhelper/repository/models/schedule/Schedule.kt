@@ -1,41 +1,42 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
 import com.beust.klaxon.Json
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 
 data class Schedule(
     val dailySchedules: List<List<Lesson>>,
-    @Json(ignored = true) val lastUpdate: Calendar,
+    @Json(ignored = true) val lastUpdate: LocalDateTime,
     val group: Group,
     @Json(ignored = true) val isSession: Boolean,
-    val dateFrom: Calendar,
-    val dateTo: Calendar
+    val dateFrom: LocalDate,
+    val dateTo: LocalDate
 ) {
     class Builder(
         private var dailySchedules: List<List<Lesson>>,
-        private var lastUpdate: Calendar? = null,
+        private var lastUpdate: LocalDateTime? = null,
         private var group: Group = Group.empty,
         private var isSession: Boolean,
-        private var dateFrom: Calendar? = null,
-        private var dateTo: Calendar? = null
+        private var dateFrom: LocalDate? = null,
+        private var dateTo: LocalDate? = null
     ) {
         fun dailySchedules(dailySchedules: List<List<Lesson>>) = apply { this.dailySchedules = dailySchedules }
 
-        fun lastUpdate(lastUpdate: Calendar) = apply { this.lastUpdate = lastUpdate }
+        fun lastUpdate(lastUpdate: LocalDateTime) = apply { this.lastUpdate = lastUpdate }
 
         fun group(group: Group) = apply { this.group = group }
 
         fun isSession(isSession: Boolean) = apply { this.isSession = isSession }
 
-        fun dateFrom(dateFrom: Calendar) = apply { this.dateFrom = dateFrom }
+        fun dateFrom(dateFrom: LocalDate) = apply { this.dateFrom = dateFrom }
 
-        fun dateTo(dateTo: Calendar) = apply { this.dateTo = dateTo }
+        fun dateTo(dateTo: LocalDate) = apply { this.dateTo = dateTo }
 
         fun build(): Schedule {
-            var dateFrom = this.dateFrom ?: CalendarUtils.getMinValue()
-            var dateTo = this.dateTo ?: CalendarUtils.getMaxValue()
+            var dateFrom = this.dateFrom ?: LocalDate.MIN
+            var dateTo = this.dateTo ?: LocalDate.MAX
             if (this.dateFrom == null || this.dateTo == null) {
                 for (dailySchedule in dailySchedules) {
                     for (lesson in dailySchedule) {
@@ -46,7 +47,7 @@ data class Schedule(
                     }
                 }
             }
-            val lastUpdate = lastUpdate ?: Calendar.getInstance()
+            val lastUpdate = lastUpdate ?: LocalDateTime.now()
 
             return Schedule(
                 dailySchedules,
@@ -60,8 +61,8 @@ data class Schedule(
     }
 
 
-    fun getSchedule(date: Calendar, filter: Filter = Filter.default) =
-        filter.getFiltered(dailySchedules[date.get(Calendar.DAY_OF_WEEK)], date)
+    fun getSchedule(date: LocalDate, filter: Filter = Filter.default) =
+        filter.getFiltered(dailySchedules[date.dayOfWeek.ordinal % 7], date)
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
@@ -74,7 +75,7 @@ data class Schedule(
             Hide
         }
 
-        fun getFiltered(dailySchedule: List<Lesson>, date: Calendar) =
+        fun getFiltered(dailySchedule: List<Lesson>, date: LocalDate) =
             dailySchedule.filter {
                 ((dateFilter != DateFilter.Hide ||
                         ((it.isImportant || it.dateFrom <= date) && date <= it.dateTo)) &&
@@ -140,8 +141,8 @@ data class Schedule(
                 mutableListOf(), mutableListOf(), mutableListOf(),
                 mutableListOf(), mutableListOf())
 
-            var dateFrom = CalendarUtils.getMinValue()
-            var dateTo = CalendarUtils.getMaxValue()
+            var dateFrom = LocalDate.MIN
+            var dateTo = LocalDate.MAX
 
             for (schedule in schedules) {
                 if (schedule.dateFrom < dateFrom) {
@@ -162,7 +163,7 @@ data class Schedule(
 
             return Schedule(
                 tempList,
-                Calendar.getInstance(),
+                LocalDateTime.now(),
                 Group.empty,
                 false,
                 dateFrom,
