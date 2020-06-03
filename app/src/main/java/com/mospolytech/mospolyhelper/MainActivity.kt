@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper
 
+import android.Manifest
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -80,6 +82,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 //        ActivityCompat.requestPermissions(this,
 //            new string[] { Android.Manifest.Permission.Internet }, 123)
+
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.INTERNET),
+            123
+        )
 
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
