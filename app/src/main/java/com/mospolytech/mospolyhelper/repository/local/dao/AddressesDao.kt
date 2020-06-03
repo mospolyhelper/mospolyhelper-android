@@ -1,6 +1,8 @@
 package com.mospolytech.mospolyhelper.repository.local.dao
 
+import android.util.Log
 import com.beust.klaxon.Klaxon
+import com.mospolytech.mospolyhelper.TAG
 import com.mospolytech.mospolyhelper.repository.models.Addresses
 import com.mospolytech.mospolyhelper.utils.AssetProvider
 import com.mospolytech.mospolyhelper.utils.ContextProvider
@@ -13,9 +15,7 @@ class AddressesDao {
         const val AddressesFolder = "addresses"
         const val AddressesFile = "cached_addresses"
         const val AddressesUrl =
-            "https://gist.githubusercontent.com/tipapro/" +
-                    "f19b581ea759cacde6ff674b516c552a/raw/91385341b7e36bd8fb48a8d4d3abfffef5614e42/" +
-                    "mospolyhelper-addresses.json"
+            "https://gist.githubusercontent.com/tipapro/f19b581ea759cacde6ff674b516c552a/raw/1920290b693458a68c57f1ecf853fea90544d2a9/mospolyhelper-addresses.json"
     }
 
     fun readAddresses(): Addresses? {
@@ -33,6 +33,7 @@ class AddressesDao {
             val serBuildings = URL(AddressesUrl).readText()
             Klaxon().parse<Addresses>(serBuildings)
         } catch(e: Exception) {
+            Log.e(TAG, "Addresses downloading and parsing error", e)
             null
         }
     }
@@ -41,6 +42,7 @@ class AddressesDao {
         val filePath = File(ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile), AddressesFile)
         filePath.delete()
         val str = Klaxon().toJsonString(buildings)
+        filePath.parentFile?.mkdirs()
         filePath.createNewFile()
         filePath.writeText(str)
     }

@@ -28,7 +28,7 @@ class AddressesAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        var spanned = HtmlCompat.fromHtml(buildings["addresses"]!![position], HtmlCompat.FROM_HTML_MODE_LEGACY);
+        var spanned = HtmlCompat.fromHtml(buildings["Учебные корпуса"]!![position], HtmlCompat.FROM_HTML_MODE_LEGACY);
         viewHolder.text.setText(spanned, TextView.BufferType.NORMAL);
     }
 

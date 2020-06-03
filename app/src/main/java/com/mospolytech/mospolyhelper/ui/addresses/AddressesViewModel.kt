@@ -6,7 +6,9 @@ import com.mospolytech.mospolyhelper.repository.local.dao.AddressesDao
 import com.mospolytech.mospolyhelper.repository.models.Addresses
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddressesViewModel :
     ViewModelBase(Mediator(), AddressesViewModel::class.java.simpleName) {
@@ -16,13 +18,19 @@ class AddressesViewModel :
 
     fun refresh() {
         viewModelScope.launch {
-            addresses.value = dao.getAddresses(true)
+            addresses.value =
+                withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+                    dao.getAddresses(true)
+                }
         }
     }
 
     fun setUpAddresses() {
         viewModelScope.launch {
-            addresses.value = dao.getAddresses(false)
+            addresses.value =
+                withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+                    dao.getAddresses(false)
+                }
         }
     }
 

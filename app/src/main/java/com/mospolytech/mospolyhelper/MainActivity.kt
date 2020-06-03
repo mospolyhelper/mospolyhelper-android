@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         var fragmentId = Fragments.Other
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout);
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
 
         var fragmentCreator: (() -> IFragmentBase)? = null
         when (id) {
