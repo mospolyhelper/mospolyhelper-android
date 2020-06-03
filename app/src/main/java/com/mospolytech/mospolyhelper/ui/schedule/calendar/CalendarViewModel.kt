@@ -5,6 +5,7 @@ import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import java.time.LocalDate
 import java.util.*
 
 class CalendarViewModel :
@@ -14,7 +15,7 @@ class CalendarViewModel :
     }
     var schedule: Schedule? = null
     var scheduleFilter: Schedule.Filter = Schedule.Filter.default
-    var date: Calendar = Calendar.getInstance()
+    var date: LocalDate = LocalDate.now()
     var isAdvancedSearch: Boolean = false
 
     init {
@@ -27,7 +28,7 @@ class CalendarViewModel :
                 val list = message.content as List<*>
                 schedule = list[0] as Schedule
                 scheduleFilter = list[1] as Schedule.Filter
-                date = list[2] as Calendar
+                date = list[2] as LocalDate
                 isAdvancedSearch = list[3] as Boolean
             }
         }

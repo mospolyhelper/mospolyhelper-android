@@ -1,5 +1,11 @@
 package com.mospolytech.mospolyhelper
 
+import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleClient
+import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleJsonParser
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +18,12 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val client = ScheduleClient()
+        val parser = ScheduleJsonParser()
+        runBlocking {
+            val q = client.getSchedule("181-721", false)
+            val a = parser.parse(q, false)
+            print(q)
+        }
     }
 }
