@@ -12,7 +12,6 @@ import androidx.core.view.GravityCompat
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
@@ -33,13 +32,13 @@ import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchF
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.SimpleFilter
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment
 import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
-import com.mospolytech.mospolyhelper.utils.CalendarUtils.Companion.addDays
 import com.mospolytech.mospolyhelper.utils.DefaultSettings
 import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -78,7 +77,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     fun getTypeText(isSession: Boolean) =
         if (isSession) sessionString else regularString
 
-    fun onLessonClick(lesson: Lesson, date: Calendar) {
+    fun onLessonClick(lesson: Lesson, date: LocalDate) {
         val fragment = LessonInfoFragment.newInstance()
         viewModel.openLessonInfo(lesson, date)
         (activity as MainActivity).changeFragment(fragment, false)
@@ -99,16 +98,16 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         if (context != null && schedule != null && schedule.group.comment.isNotEmpty()) {
             Toast.makeText(requireContext(), schedule.group.comment, Toast.LENGTH_LONG).show()
         }
-        var toDate: Calendar
+        var toDate: LocalDate
         val adapter = viewPager?.adapter
         if (adapter is ScheduleAdapter) {
             adapter.needDispose = true
-            toDate = adapter.firstPosDate.addDays(viewPager!!.currentItem)
-            if (toDate == CalendarUtils.getMinValue()) {
-                toDate = Calendar.getInstance()
+            toDate = adapter.firstPosDate.plusDays(viewPager!!.currentItem.toLong())
+            if (toDate == LocalDate.MIN) {
+                toDate = LocalDate.now()
             }
         } else {
-            toDate = Calendar.getInstance()
+            toDate = LocalDate.now()
         }
 
         val adapter2 = ScheduleAdapter(
@@ -120,7 +119,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         )
         viewPager?.adapter = adapter2
         if (schedule != null) {
-            adapter2.addOnOpenCalendar {
+            adapter2.openCalendar += {
                 val fragment = CalendarFragment.newInstance()
                 val adapter3 = viewPager?.adapter
                 if (adapter3 is ScheduleAdapter) {
@@ -128,8 +127,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     (activity as MainActivity).changeFragment(fragment, false)
                 }
             }
-            viewPager?.currentItem = CalendarUtils.getDeltaInDays(toDate, adapter2.firstPosDate)
-            adapter2.addOnLessonClick(::onLessonClick)
+            viewPager?.currentItem = ChronoUnit.DAYS.between(toDate, adapter2.firstPosDate).toInt()
+            adapter2.lessonClick += ::onLessonClick
             viewPager?.adapter?.notifyDataSetChanged()
         }
         // this.logger.Debug("Schedule set up");
@@ -197,7 +196,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 val adapter = viewPager?.adapter
                 if (adapter is ScheduleAdapter) {
                     val tab = tabs.get(
-                        (adapter.firstPosDate.get(Calendar.DAY_OF_WEEK) +
+                        (adapter.firstPosDate.dayOfWeek.ordinal % 7 +
                                 position +
                                 (if (positionOffset < 0.5f) 0 else 1)) % 7
                     )
@@ -209,7 +208,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
             override fun onPageSelected(position: Int) {
                 viewModel.date.value =
-                    (viewPager!!.adapter as ScheduleAdapter).firstPosDate.addDays(position)
+                    (viewPager!!.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
             }
         })
 
@@ -594,14 +593,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 DefaultSettings.ScheduleGroupTitle)
 
             // fix on release
-            var isSession: Boolean
-            try {
-                isSession = prefs.getBoolean(PreferencesConstants.ScheduleTypePreference,
+            viewModelFactory.isSession = try {
+                prefs.getBoolean(PreferencesConstants.ScheduleTypePreference,
                     DefaultSettings.ScheduleTypePreference);
             } catch (ex: Exception) {
-                isSession = prefs.getInt(PreferencesConstants.ScheduleTypePreference, 0) == 1;
+                prefs.getInt(PreferencesConstants.ScheduleTypePreference, 0) == 1;
             }
-            viewModelFactory.isSession = isSession
 
             //this.viewModel = new ScheduleVm(DependencyInjector.GetILoggerFactory(), DependencyInjector.GetIMediator(),
             //isSession, scheduleFilter) GroupTitle = groupTitle
@@ -624,14 +621,14 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             scheduleType?.text = getTypeText(it)
         })
 
-        viewModel.date.observe(this, Observer {
-            val adapter = viewPager?.adapter
-            if (adapter is ScheduleAdapter) {
-                viewPager?.setCurrentItem(
-                    CalendarUtils.getDeltaInDays(it, adapter.firstPosDate), false
-                )
-            }
-        })
+//        viewModel.date.observe(this, Observer {
+//            val adapter = viewPager?.adapter
+//            if (adapter is ScheduleAdapter) {
+//                viewPager?.setCurrentItem(
+//                    ChronoUnit.DAYS.between(it, adapter.firstPosDate).toInt(), false
+//                )
+//            }
+//        })
 
         viewModel.scheduleFilter.observe(this, Observer {
             scheduleDateFilter?.setSelection(it.dateFilter.ordinal)

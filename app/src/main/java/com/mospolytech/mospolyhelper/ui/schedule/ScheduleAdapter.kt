@@ -14,11 +14,14 @@ import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
-import com.mospolytech.mospolyhelper.utils.CalendarUtils.Companion.addDays
-import java.text.SimpleDateFormat
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.Action2
+import com.mospolytech.mospolyhelper.utils.Event1
+import com.mospolytech.mospolyhelper.utils.Event2
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class ScheduleAdapter(
@@ -32,23 +35,19 @@ class ScheduleAdapter(
         const val ACTIVE_PAGES_COUNT = 3
     }
 
-    val dateFormat = SimpleDateFormat("dddd, d MMMM", Locale.getDefault())
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
     val viewHolders = mutableListOf<ViewHolder?>(null, null, null)
     var needDispose = false
-    var firstPosDate: Calendar = Calendar.getInstance()
+    var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
 
-    private val lessonClick = mutableSetOf<(Lesson, Calendar) -> Unit>()
-    private val openCalendar = mutableSetOf<(Calendar) -> Unit>()
+    val lessonClick: Event2<Lesson, LocalDate> = Action2()
+    val openCalendar: Event1<LocalDate> = Action1()
 
     init {
         setCount()
         setFirstPosDate()
     }
-
-    fun addOnLessonClick(block: (Lesson, Calendar) -> Unit) = lessonClick.add(block)
-
-    fun addOnOpenCalendar(block: (Calendar) -> Unit) = openCalendar.add(block)
 
     fun getView(position: Int) = viewHolders[position % 3]
 
@@ -58,7 +57,7 @@ class ScheduleAdapter(
         if (schedule == null) {
             count = 1
         } else {
-            this.count = CalendarUtils.getDeltaInDays(schedule.dateFrom, schedule.dateTo) + 1
+            this.count = ChronoUnit.DAYS.between(schedule.dateFrom, schedule.dateTo).toInt() + 1
             if (count > 400 || count < 0) {
                 count = 400
             }
@@ -68,7 +67,7 @@ class ScheduleAdapter(
     private fun setFirstPosDate() {
         if (schedule != null) {
             firstPosDate = if (count == 400)
-                Calendar.getInstance().addDays(-200)
+                LocalDate.now().minusDays(200)
             else
                 schedule.dateFrom
         }
@@ -92,14 +91,10 @@ class ScheduleAdapter(
             viewHolder = ViewHolder.from(container, position, R.layout.page_schedule, schedule, scheduleFilter,
                 firstPosDate, showEmptyLessons, showGroup)
             viewHolder.dayBtn.setOnClickListener {
-                openCalendar.forEach {
-                    it(firstPosDate.addDays(position))
-                }
+                (openCalendar as Action1).invoke(firstPosDate.plusDays(position.toLong()))
             }
             viewHolder.listAdapter?.addOnLessonClick { lesson ->
-                lessonClick.forEach {
-                    it(lesson, viewHolder.listAdapter!!.date)
-                }
+                (lessonClick as Action2).invoke(lesson, viewHolder.listAdapter!!.date)
             }
         } else {
             viewHolder = vh
@@ -107,14 +102,14 @@ class ScheduleAdapter(
         }
 
 
-        val date = firstPosDate.addDays(position)
+        val date = firstPosDate.plusDays(position.toLong())
 
          // If not null TODO fix it
 
 
 
 
-        viewHolder.dayBtn.text = dateFormat.format(firstPosDate.addDays(position).time)
+        viewHolder.dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
 
         return viewHolder.view
     }
@@ -134,10 +129,10 @@ class ScheduleAdapter(
     }
 
     class ViewHolder(val view: View, private var position: Int, var schedule: Schedule, var scheduleFilter: Schedule.Filter,
-                     var firstPosDate: Calendar, val showEmptyLessons: Boolean, val showGroup: Boolean) {
+                     var firstPosDate: LocalDate, val showEmptyLessons: Boolean, val showGroup: Boolean) {
         companion object {
             fun from(container: ViewGroup, position: Int, resource: Int, schedule: Schedule,
-                     scheduleFilter: Schedule.Filter, firstPosDate: Calendar, showEmptyLessons: Boolean, showGroup: Boolean): ViewHolder {
+                     scheduleFilter: Schedule.Filter, firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean): ViewHolder {
                 val view: View = LayoutInflater.from(container.context)
                     .inflate(resource, container, false)
                 container.addView(view)
@@ -149,10 +144,10 @@ class ScheduleAdapter(
         val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
         var listAdapter: LessonAdapter? = null
         var accumulator = 0f
-        var date: Calendar = Calendar.getInstance()
+        var date: LocalDate = LocalDate.now()
 
         init {
-            date = firstPosDate.addDays(position)
+            date = firstPosDate.plusDays(position.toLong())
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics);
             val dp32 = dp8 * 4;
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -196,10 +191,10 @@ class ScheduleAdapter(
         }
 
         fun update(position: Int, schedule: Schedule, scheduleFilter: Schedule.Filter,
-                   firstPosDate: Calendar, showEmptyLessons: Boolean, showGroup: Boolean) {
+                   firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean) {
             this.position = position
             this.firstPosDate = firstPosDate
-            date = firstPosDate.addDays(position)
+            date = firstPosDate.plusDays(position.toLong())
             list.scrollToPosition(0)
             accumulator = 0f
             dayBtn.elevation = 0f
