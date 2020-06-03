@@ -35,7 +35,7 @@ class ScheduleConverter {
         }
 
         override fun toJson(value: Any) =
-            formatter.format(value as Calendar)
+            formatter.format((value as Calendar).time)
 
     }
 
