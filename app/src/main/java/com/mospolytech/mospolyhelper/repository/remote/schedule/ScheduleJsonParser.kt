@@ -5,8 +5,8 @@ import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.TAG
 import com.mospolytech.mospolyhelper.repository.models.schedule.*
 import java.lang.StringBuilder
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class ScheduleJsonParser {
     companion object {
@@ -46,7 +46,7 @@ class ScheduleJsonParser {
 
         // endregion
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
     fun parse(scheduleString: String, isSession: Boolean): Schedule {
@@ -90,30 +90,29 @@ class ScheduleJsonParser {
             Log.w(TAG, "Suspicious behavior: Group course key \"$GROUP_COURSE_KEY\" not found")
         }
 
-        val dateFrom = Calendar.getInstance().apply {
-            val temp = json.string(GROUP_DATE_FROM_KEY)
-            if (temp == null) {
-                time = Date(Long.MIN_VALUE)
+        val dateFrom: LocalDate
+            val tempDateFrom = json.string(GROUP_DATE_FROM_KEY)
+            if (tempDateFrom == null) {
+                dateFrom = LocalDate.MIN
                 Log.w(TAG, "Suspicious behavior: Group date from key \"$GROUP_DATE_FROM_KEY\" not found")
             } else {
-                time = dateFormat.parse(temp) ?: Date(Long.MIN_VALUE).apply {
+                dateFrom = LocalDate.parse(tempDateFrom, dateFormatter) ?: LocalDate.MIN.apply {
                     Log.w(TAG, "Suspicious behavior: " +
                             "Can not parse value of group date from key \"$GROUP_DATE_FROM_KEY\"")
                 }
             }
-        }
-        val dateTo = Calendar.getInstance().apply {
-            val temp = json.string(GROUP_DATE_TO_KEY)
-            if (temp == null) {
-                time = Date(Long.MAX_VALUE)
+
+        val dateTo: LocalDate
+            val tempDateTo = json.string(GROUP_DATE_TO_KEY)
+            if (tempDateTo == null) {
+                dateTo = LocalDate.MAX
                 Log.w(TAG, "Suspicious behavior: Group date to key \"$GROUP_DATE_TO_KEY\" not found")
             } else {
-                time = dateFormat.parse(temp) ?: Date(Long.MAX_VALUE).apply {
+                dateTo = LocalDate.parse(tempDateTo, dateFormatter) ?: LocalDate.MAX.apply {
                     Log.w(TAG, "Suspicious behavior: " +
                             "Can not parse value of group date to key \"$GROUP_DATE_TO_KEY\"")
                 }
             }
-        }
 
         val isEvening = json.int(GROUP_EVENING_KEY) == 1 ?: false.apply {
             Log.w(TAG, "Suspicious behavior: Group evening key \"$GROUP_EVENING_KEY\" not found")
@@ -136,12 +135,11 @@ class ScheduleJsonParser {
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
             var parsedDay: Int
-            val date = Calendar.getInstance()
+            var date = LocalDate.now()
 
             if (isByDate) {
-                val parsedDate = dateFormat.parse(day) ?: continue
-                date.time = parsedDate
-                parsedDay = date.get(Calendar.DAY_OF_WEEK)
+                date = LocalDate.parse(day, dateFormatter) ?: continue
+                parsedDay = date.dayOfWeek.ordinal
             } else {
                 parsedDay = day.toInt()
             }
@@ -168,32 +166,43 @@ class ScheduleJsonParser {
     private fun parseLesson(
         json: JsonObject, order: Int,
         group: Group, isByDate: Boolean,
-        date: Calendar
+        date: LocalDate
     ): Lesson {
         val title = json.string(LESSON_TITLE_KEY)
             ?: "Не найден ключ названия занятия. Возможно, структура расписания была обновлена: $json"
 
         val teachers = parseTeachers(json.string(LESSON_TEACHER_KEY))
 
-        var dateFrom = if (isByDate) date else Calendar.getInstance().apply {
+        var dateFrom: LocalDate
+        if (isByDate) {
+            dateFrom = date
+        } else {
             val temp = json.string(LESSON_DATE_FROM_KEY)
             if (temp == null) {
-                time = Date(Long.MIN_VALUE)
-                Log.w(TAG, "Suspicious behavior: Lesson date from key \"$LESSON_DATE_FROM_KEY\" not found")
+                dateFrom = LocalDate.MIN
+                Log.w(
+                    TAG,
+                    "Suspicious behavior: Lesson date from key \"$LESSON_DATE_FROM_KEY\" not found"
+                )
             } else {
-                time = dateFormat.parse(temp) ?: Date(Long.MIN_VALUE).apply {
-                    Log.w(TAG, "Suspicious behavior: " +
-                            "Can not parse value of lesson date from key \"$LESSON_DATE_FROM_KEY\"")
+                dateFrom = LocalDate.parse(temp, dateFormatter) ?: LocalDate.MIN.apply {
+                    Log.w(
+                        TAG, "Suspicious behavior: " +
+                                "Can not parse value of lesson date from key \"$LESSON_DATE_FROM_KEY\""
+                    )
                 }
             }
         }
-        var dateTo = if (isByDate) date else Calendar.getInstance().apply {
+        var dateTo: LocalDate
+        if (isByDate) {
+            dateTo = date
+        } else {
             val temp = json.string(LESSON_DATE_TO_KEY)
             if (temp == null) {
-                time = Date(Long.MAX_VALUE)
+                dateTo = LocalDate.MAX
                 Log.w(TAG, "Suspicious behavior: Lesson date to key \"$LESSON_DATE_TO_KEY\" not found")
             } else {
-                time = dateFormat.parse(temp) ?: Date(Long.MAX_VALUE).apply {
+                dateTo = LocalDate.parse(temp, dateFormatter) ?: LocalDate.MAX.apply {
                     Log.w(TAG, "Suspicious behavior: " +
                             "Can not parse value of lesson date to key \"$LESSON_DATE_TO_KEY\"")
                 }

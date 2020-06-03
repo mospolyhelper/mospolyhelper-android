@@ -1,8 +1,6 @@
 package com.mospolytech.mospolyhelper.ui.schedule.calendar
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -18,9 +16,7 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
-import java.util.*
-import java.util.concurrent.TimeUnit
+import java.time.temporal.ChronoUnit
 
 class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
 
@@ -97,7 +93,7 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         recyclerView.addItemDecoration(e)
 
         recyclerView.scrollToPosition(
-            CalendarUtils.getDeltaInDays(viewModel.date, recyclerAdapter.firstPosDate))
+            ChronoUnit.DAYS.between(viewModel.date, recyclerAdapter.firstPosDate).toInt())
 
         return view
     }

@@ -10,8 +10,8 @@ import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleJsonPars
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.coroutines.*
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.HashSet
 
@@ -28,7 +28,7 @@ class ScheduleDao {
         const val SCHEDULE_REGULAR_FOLDER = "regular"
         const val GROUP_LIST_FILE = "group_list"
     }
-    private val formatter = SimpleDateFormat("MM-dd-yyyy", Locale.getDefault())
+    private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
     val converter = ScheduleConverter()
     val client = ScheduleClient()
@@ -173,9 +173,7 @@ class ScheduleDao {
             }
             fileToRead = fileToReadOld
         }
-        val date = Calendar.getInstance().apply {
-            time = formatter.parse(fileToRead.nameWithoutExtension)!!
-        }
+        val date = LocalDateTime.parse(fileToRead.nameWithoutExtension, dateTimeFormatter)
         val schedule = converter.deserializeSchedule(fileToRead.readText(), isSession, date)
         return schedule
     }
@@ -195,14 +193,13 @@ class ScheduleDao {
                         .resolve(file.nameWithoutExtension + OldExtension)
                     newFile.delete()
                     newFile.parentFile?.mkdirs()
-                    newFile.createNewFile()
                     file.copyTo(newFile)
                     file.delete()
                 }
             }
         }
         val file = folder
-            .resolve(formatter.format(schedule.lastUpdate.time) + CurrentExtension)
+            .resolve(schedule.lastUpdate.format(dateTimeFormatter) + CurrentExtension)
         file.delete()
         file.parentFile?.mkdirs()
         file.createNewFile()

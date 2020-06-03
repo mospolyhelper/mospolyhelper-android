@@ -1,13 +1,13 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
-import com.mospolytech.mospolyhelper.utils.CalendarUtils
+import java.time.LocalDate
 import java.util.*
 
 data class Group(
     val title: String,
     val course: Int,
-    val dateFrom: Calendar,
-    val dateTo: Calendar,
+    val dateFrom: LocalDate,
+    val dateTo: LocalDate,
     val isEvening: Boolean,
     val comment: String
 ) {
@@ -15,8 +15,8 @@ data class Group(
         val empty = Group(
             "",
             0,
-            CalendarUtils.getMinValue(),
-            CalendarUtils.getMaxValue(),
+            LocalDate.MIN,
+            LocalDate.MAX,
             false,
             ""
         )
