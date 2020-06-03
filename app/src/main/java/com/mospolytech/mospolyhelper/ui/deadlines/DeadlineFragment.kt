@@ -27,7 +27,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
-import kotlinx.android.synthetic.main.deadline_fragment.*
+import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlin.math.roundToInt
 
@@ -56,13 +56,13 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.deadline_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_deadline, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
-        bot = AddBottomSheetDialogFragment.newInstance(mainActivity)
+        bot = AddBottomSheetDialogFragment.newInstance()
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
