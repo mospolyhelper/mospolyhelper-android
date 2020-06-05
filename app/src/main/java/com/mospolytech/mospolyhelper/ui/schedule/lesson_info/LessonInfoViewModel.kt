@@ -6,10 +6,11 @@ import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
 import java.util.*
 
-class LessonInfoViewModel : ViewModelBase(Mediator(), LessonInfoViewModel::class.java.simpleName) {
+class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfoViewModel::class.java.simpleName) {
     companion object {
         const val LessonInfo = "LessonInfo"
     }
