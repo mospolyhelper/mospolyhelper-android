@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"/>
         <ImageButton
         android:layout_weight="1"
+            android:paddingVertical="12dp"
                     android:id="@+id/button_schedule_filter"
             android:background="?android:selectableItemBackground"
                 android:src="@drawable/ic_filter_24dp"
