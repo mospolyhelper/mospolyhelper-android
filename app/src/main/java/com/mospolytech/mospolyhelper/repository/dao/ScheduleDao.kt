@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.local.dao
+package com.mospolytech.mospolyhelper.repository.dao
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.TAG
@@ -186,16 +186,14 @@ class ScheduleDao {
         if (folder.exists()) {
             val files = folder.listFiles()!!
             for (file in files) {
-                if (file.extension == OldExtension) {
-                    file.delete()
-                } else {
+                if (file.extension == CurrentExtension) {
                     val newFile = File(folder.path)
                         .resolve(file.nameWithoutExtension + OldExtension)
                     newFile.delete()
                     newFile.parentFile?.mkdirs()
                     file.copyTo(newFile)
-                    file.delete()
                 }
+                file.delete()
             }
         }
         val file = folder

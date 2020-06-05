@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.local.dao
+package com.mospolytech.mospolyhelper.repository.dao
 
 import android.util.Log
 import com.beust.klaxon.Klaxon
