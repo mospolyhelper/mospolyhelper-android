@@ -2,7 +2,6 @@ package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
 import android.content.res.Configuration
 import android.graphics.Color
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -10,7 +9,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.transition.Slide
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,9 +24,9 @@ import com.mospolytech.mospolyhelper.repository.models.schedule.Group
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
-import java.text.SimpleDateFormat
+import com.mospolytech.mospolyhelper.ui.schedule.LessonAdapter
 import java.time.LocalDate
-import java.util.*
+import java.time.format.DateTimeFormatter
 
 class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
@@ -36,10 +34,12 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
         fun newInstance() = LessonInfoFragment()
 
         val lessonTypeColors = listOf(
-            0xeb4141,   // Exam, Credit,..
-            0x29b6f6    // Other
+            0xffeb4141.toInt(),   // Exam, Credit,..
+            0xff29b6f6.toInt()    // Other
         )
     }
+    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM,")
+    val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val viewModel by viewModels<LessonInfoViewModel>()
 
     var isNoteEdited: Boolean = false
@@ -93,7 +93,7 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
     fun setTime(textView: TextView, lesson: Lesson, date: LocalDate) {
         val (startTime, endTime) = lesson.time
-        val dateStr = SimpleDateFormat("dddd, d MMMM,", Locale.getDefault()).format(date)
+        val dateStr = date.format(dateFormatter)
         // TODO: val dateStr = dateStr[0].toUpperCase() + dateStr.Substring(1)
         textView.text = "$dateStr с $startTime до $endTime, ${lesson.order + 1}-е занятие"
     }
@@ -106,72 +106,67 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
         }
         val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         for (i in 0 until lesson.auditoriums.size - 1) {
-            val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
-            if (lesson.auditoriums[i].color.isNotEmpty()) {
-                var colorString = lesson.auditoriums[i].color
-                if (colorString.length == 4) {
-                    colorString = "#" +
-                            colorString[1] + colorString[1] +
-                            colorString[2] + colorString[2] +
-                            colorString[3] + colorString[3]
-                }
-                var color = Color.parseColor(colorString)
-                if (nightMode) {
-                    val hsv = FloatArray(3)
-                    Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
-                    var hue = hsv[0]
-                    if (hue > 214f && hue < 286f) {
-                        hue = if (hue >= 250f) 214f else 286f
-                    }
-                    hsv[0] = hue
-                    hsv[2] = hsv[2] * 3
-                    color = Color.HSVToColor(hsv)
-                }
+            val auditorium = lesson.auditoriums[i]
+            val audTitle = HtmlCompat.fromHtml(auditorium.title.toLowerCase(),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val color = convertColorFromString(auditorium.color, nightMode)
+            if (color != null) {
                 auditoriums
-                    .append(audTitle,
-                        ForegroundColorSpan(color),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    ).append(", ",
-                        ForegroundColorSpan(color),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
+                    .append(audTitle, ForegroundColorSpan(color),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    .append(", ", ForegroundColorSpan(color),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else {
                 auditoriums
                     .append(audTitle)
                     .append(", ")
             }
         }
-        if (lesson.auditoriums.isNotEmpty()) {
-            val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[lesson.auditoriums.lastIndex].title.toLowerCase(), HtmlCompat.FROM_HTML_MODE_LEGACY)
-            if (lesson.auditoriums[lesson.auditoriums.lastIndex].color.isNotEmpty()) {
-                var colorString = lesson.auditoriums[lesson.auditoriums.lastIndex].color
-                if (colorString.length == 4) {
-                    colorString = "#" +
-                            colorString[1] + colorString[1] +
-                            colorString[2] + colorString[2] +
-                            colorString[3] + colorString[3];
-                }
-                var color = Color.parseColor(colorString)
-                if (nightMode) {
-                    val hsv = FloatArray(3)
-                    Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
-                    var hue = hsv[0]
-                    if (hue > 214f && hue < 286f) {
-                        hue = if (hue >= 250f) 214f else 286f
-                    }
-                    hsv[0] = hue
-                    hsv[2] = hsv[2] * 3
-                    color = Color.HSVToColor(hsv)
-                }
-                auditoriums.append(audTitle,
-                    ForegroundColorSpan(color),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            } else {
-                auditoriums.append(audTitle)
-            }
+        val lastAuditorium = lesson.auditoriums.last()
+        val audTitle = HtmlCompat.fromHtml(lastAuditorium.title.toLowerCase(),
+            HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val color = convertColorFromString(lastAuditorium.color, nightMode)
+        if (color != null) {
+            auditoriums.append(audTitle,
+                ForegroundColorSpan(color),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        } else {
+            auditoriums.append(audTitle)
         }
         textView.movementMethod = LinkMovementMethod.getInstance()
         textView.setText(auditoriums, TextView.BufferType.NORMAL)
+        auditoriums.clear()
+    }
+
+    fun convertColorFromString(colorString: String, nightMode: Boolean): Int? {
+        if (colorString.isEmpty()) {
+            return null
+        }
+        var color = Color.parseColor(
+            if (colorString.length == 4) {
+                "#" + colorString[1] + colorString[1] +
+                        colorString[2] + colorString[2] +
+                        colorString[3] + colorString[3]
+            } else {
+                colorString
+            }
+        )
+        if (nightMode) {
+            color = convertColorToNight(color)
+        }
+        return color
+    }
+
+    fun convertColorToNight(color: Int): Int {
+        val hsv = FloatArray(3)
+        Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
+        var hue = hsv[0]
+        if (hue > 214f && hue < 286f) {
+            hue = if (hue >= 250f) 214f else 286f
+        }
+        hsv[0] = hue
+        hsv[2] = hsv[2] * 3
+        return Color.HSVToColor(hsv)
     }
 
 
@@ -181,17 +176,17 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
     fun setDate(textView: TextView, lesson: Lesson) {
         if (lesson.dateFrom == lesson.dateTo) {
-            textView.text = SimpleDateFormat("d MMMM", Locale.getDefault()).format(lesson.dateFrom)
+            textView.text = lesson.dateFrom.format(shortDateFormatter)
         } else {
-            textView.text = "С ${SimpleDateFormat("d MMMM ", Locale.getDefault()).format(lesson.dateFrom)}" +
-                    "до ${SimpleDateFormat("d MMMM", Locale.getDefault()).format(lesson.dateTo)}"
+            textView.text = "С ${lesson.dateFrom.format(shortDateFormatter)} " +
+                    "до ${lesson.dateTo.format(shortDateFormatter)}"
         }
     }
 
     fun setGroupInfo(textView: TextView, group: Group) {
         var text = "Группа ${group.title}, ${group.course}-й курс, длительность семестра: " +
-        "с ${SimpleDateFormat("d MMMM", Locale.getDefault()).format(group.dateFrom)} " +
-                "до ${SimpleDateFormat("d MMMM", Locale.getDefault()).format(group.dateTo)}"
+        "с ${group.dateFrom.format(shortDateFormatter)} " +
+                "до ${group.dateTo.format(shortDateFormatter)}"
         if (group.isEvening) {
             text += ", вечерняя"
         }

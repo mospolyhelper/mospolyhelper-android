@@ -25,7 +25,7 @@ class ScheduleViewModel(
     groupTitle: String? = null,
     scheduleFilter: Schedule.Filter? = null,
     showEmptyLessons: Boolean? = null
-) : ViewModelBase(Mediator(), ScheduleViewModel::class.java.simpleName) {
+) : ViewModelBase(StaticDI.viewModelMediator, ScheduleViewModel::class.java.simpleName) {
     companion object {
         const val ResaveSchedule = "ResaveSchedule"
         const val ChangeFragment = "ChangeFragment"
@@ -49,20 +49,20 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         getGroupList(true)
 
-//        this.isSession.observeForever {
-//            GlobalScope.launch {
-//                setUpSchedule(true)
-//            }
-//        }
-//
-//        // TODO: Change
-//        this.showEmptyLessons.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
-//
-//        this.scheduleFilter.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
+        this.isSession.observeForever {
+            GlobalScope.launch {
+                setUpSchedule(true)
+            }
+        }
+
+        // TODO: Change
+        this.showEmptyLessons.observeForever {
+            this.schedule.value = this.schedule.value
+        }
+
+        this.scheduleFilter.observeForever {
+            this.schedule.value = this.schedule.value
+        }
     }
 
     fun handleMessage(message: ViewModelMessage) {
