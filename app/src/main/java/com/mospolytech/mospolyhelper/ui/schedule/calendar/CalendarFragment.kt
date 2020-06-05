@@ -93,7 +93,7 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         recyclerView.addItemDecoration(e)
 
         recyclerView.scrollToPosition(
-            ChronoUnit.DAYS.between(viewModel.date, recyclerAdapter.firstPosDate).toInt())
+            recyclerAdapter.firstPosDate.until(viewModel.date, ChronoUnit.DAYS).toInt())
 
         return view
     }
