@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.ui.schedule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mospolytech.mospolyhelper.repository.local.dao.ScheduleDao
+import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import com.mospolytech.mospolyhelper.ui.common.Mediator
@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.*
 
 
 class ScheduleViewModel(

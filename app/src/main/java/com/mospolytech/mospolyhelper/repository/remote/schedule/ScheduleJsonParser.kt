@@ -233,12 +233,7 @@ class ScheduleJsonParser {
         if (json == null) return emptyList()
 
         return json.split(',').filter { it.isNotEmpty() }.map {
-            Teacher(
-                it.replace(" - ", "-")
-                    .replace(" -", "-")
-                    .replace("- ", "-")
-                    .split(' ')
-            )
+            Teacher.fromFullName(it)
         }
     }
 
