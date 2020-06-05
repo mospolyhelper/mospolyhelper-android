@@ -26,7 +26,7 @@ data class Teacher(val names: List<String>) {
             names.joinToString("\u00A0")
         } else {
             val shortName = StringBuilder(names.first())
-            for (i in names.indices) {
+            for (i in 1 until names.size) {
                 shortName.append("\u00A0")
                     .append(names[i].first())
                     .append('.')

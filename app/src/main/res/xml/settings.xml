@@ -2,21 +2,6 @@
 <PreferenceScreen
   app:key="MainScreen"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-  <!--<PreferenceScreen
-        app:title="@string/pref_category_schedule"
-        app:key="ScheduleScreen"
-        app:persistent="false">
-    <SwitchPreferenceCompat
-        app:key="ScheduleShowEmptyLessons"
-        app:title="@string/pref_title_schedule_empty_lessons"
-        app:summary="@string/pref_summary_schedule_empty_lessons"
-        app:defaultValue="false"/>
-    <SwitchPreferenceCompat
-        app:key="ScheduleShowColoredLessons"
-        app:title="@string/pref_title_schedule_colored_lessons"
-        app:summary="@string/pref_summary_schedule_colored_lessons"
-        app:defaultValue="true"/>
-</PreferenceScreen>-->
   <PreferenceScreen
       app:title="@string/appearance"
       app:key="DecorScreen"
