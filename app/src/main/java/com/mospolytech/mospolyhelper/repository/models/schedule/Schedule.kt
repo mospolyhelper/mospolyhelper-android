@@ -35,8 +35,8 @@ data class Schedule(
         fun dateTo(dateTo: LocalDate) = apply { this.dateTo = dateTo }
 
         fun build(): Schedule {
-            var dateFrom = this.dateFrom ?: LocalDate.MIN
-            var dateTo = this.dateTo ?: LocalDate.MAX
+            var dateFrom = this.dateFrom ?: LocalDate.MAX
+            var dateTo = this.dateTo ?: LocalDate.MIN
             if (this.dateFrom == null || this.dateTo == null) {
                 for (dailySchedule in dailySchedules) {
                     for (lesson in dailySchedule) {

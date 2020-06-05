@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.ui.addresses
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.repository.local.dao.AddressesDao
+import com.mospolytech.mospolyhelper.repository.dao.AddressesDao
 import com.mospolytech.mospolyhelper.repository.models.Addresses
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
