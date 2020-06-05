@@ -17,7 +17,6 @@ import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.*
 
 class LessonAdapter(
     val nullMessage: TextView,
@@ -33,8 +32,8 @@ class LessonAdapter(
 ) : RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
-            0xeb4141,   // Exam, Credit,..
-            0x29b6f6    // Other
+            0xffeb4141.toInt(),   // Exam, Credit,..
+            0xff29b6f6.toInt()    // Other
         )
     }
     var orderMap: IntArray = IntArray(7)
@@ -182,29 +181,12 @@ class LessonAdapter(
             return
         }
         if (enabled) {
-            for (i in lesson.auditoriums.indices) {
-                val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(),
+            for (i in 0 until lesson.auditoriums.size - 1) {
+                val auditorium = lesson.auditoriums[i]
+                val audTitle = HtmlCompat.fromHtml(auditorium.title.toLowerCase(),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
-                if (lesson.auditoriums[i].color.isNotEmpty()) {
-                    var colorString = lesson.auditoriums[i].color
-                    if (colorString.length == 4) {
-                        colorString = "#" +
-                                colorString[1] + colorString[1] +
-                                colorString[2] + colorString[2] +
-                                colorString[3] + colorString[3]
-                    }
-                    var color = Color.parseColor(colorString)
-                    if (nightMode) {
-                        val hsv = FloatArray(3)
-                        Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
-                        var hue = hsv[0]
-                        if (hue > 214f && hue < 286f) {
-                            hue = if (hue >= 250f) 214f else 286f
-                        }
-                        hsv[0] = hue
-                        hsv[2] = hsv[2] * 3
-                        color = Color.HSVToColor(hsv)
-                    }
+                val color = convertColorFromString(auditorium.color)
+                if (color != null) {
                     auditoriums
                         .append(audTitle, ForegroundColorSpan(color),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -216,39 +198,20 @@ class LessonAdapter(
                         .append(", ")
                 }
             }
-            if (lesson.auditoriums.isNotEmpty()) {
-                var audTitle = HtmlCompat.fromHtml(lesson.auditoriums[lesson.auditoriums.lastIndex].title.toLowerCase(),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-                if (lesson.auditoriums[lesson.auditoriums.lastIndex].color.isNotEmpty()) {
-                    var colorString = lesson.auditoriums[lesson.auditoriums.lastIndex].color
-                    if (colorString.length == 4) {
-                        colorString = "#" +
-                                colorString[1] + colorString[1] +
-                                colorString[2] + colorString[2] +
-                                colorString[3] + colorString[3];
-                    }
-                    var color = Color.parseColor(colorString)
-                    if (nightMode) {
-                        val hsv = FloatArray(3)
-                        Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
-                        var hue = hsv[0]
-                        if (hue > 214f && hue < 286f) {
-                            hue = if (hue >= 250f) 214f else 286f
-                        }
-                        hsv[0] = hue
-                        hsv[2] = hsv[2] * 3
-                        color = Color.HSVToColor(hsv)
-                    }
-                    auditoriums.append(audTitle,
-                        ForegroundColorSpan(color),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                } else {
-                    auditoriums.append(audTitle)
-                }
+            val lastAuditorium = lesson.auditoriums.last()
+            val audTitle = HtmlCompat.fromHtml(lastAuditorium.title.toLowerCase(),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val color = convertColorFromString(lastAuditorium.color)
+            if (color != null) {
+                auditoriums.append(audTitle,
+                    ForegroundColorSpan(color),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            } else {
+                auditoriums.append(audTitle)
             }
         } else {
             for (i in 0 until lesson.auditoriums.size - 1) {
-                var audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(),
+                val audTitle = HtmlCompat.fromHtml(lesson.auditoriums[i].title.toLowerCase(),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 auditoriums
                     .append(audTitle,
@@ -258,16 +221,45 @@ class LessonAdapter(
                         ForegroundColorSpan(disabledColor),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-            if (lesson.auditoriums.isNotEmpty()) {
-                var audTitle = HtmlCompat.fromHtml(lesson.auditoriums[lesson.auditoriums.lastIndex].title.toLowerCase(),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-                auditoriums.append(audTitle,
-                    ForegroundColorSpan(disabledColor),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+            val audTitle = HtmlCompat.fromHtml(lesson.auditoriums.last().title.toLowerCase(),
+                HtmlCompat.FROM_HTML_MODE_LEGACY)
+            auditoriums.append(audTitle,
+                ForegroundColorSpan(disabledColor),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        lessonAuditoriums.setText(auditoriums, TextView.BufferType.NORMAL);
+        lessonAuditoriums.setText(auditoriums, TextView.BufferType.NORMAL)
         auditoriums.clear()
+    }
+
+    fun convertColorFromString(colorString: String): Int? {
+        if (colorString.isEmpty()) {
+            return null
+        }
+        var color = Color.parseColor(
+            if (colorString.length == 4) {
+                "#" + colorString[1] + colorString[1] +
+                        colorString[2] + colorString[2] +
+                        colorString[3] + colorString[3]
+        } else {
+                colorString
+            }
+        )
+        if (nightMode) {
+            color = convertColorToNight(color)
+        }
+        return color
+    }
+
+    fun convertColorToNight(color: Int): Int {
+        val hsv = FloatArray(3)
+        Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
+        var hue = hsv[0]
+        if (hue > 214f && hue < 286f) {
+            hue = if (hue >= 250f) 214f else 286f
+        }
+        hsv[0] = hue
+        hsv[2] = hsv[2] * 3
+        return Color.HSVToColor(hsv)
     }
 
     fun ViewHolder.setTitle(enabled: Boolean) {
@@ -290,31 +282,31 @@ class LessonAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         var fixedPos = position
         if (showEmptyLessons) {
-            var flag = false
+            var notEmpty = true
             var lastNotEmpty = -1
-            for (i in 1 until 6) {
-                if (this.orderMap[i] == -1) {
+            for (i in 0 until 6) {
+                if (orderMap[i] == -1) {
                     fixedPos--
                     if (lastNotEmpty == fixedPos) {
                         viewHolder.lesson = Lesson.getEmpty(i)
-                        flag = true
+                        notEmpty = false
                         break
                     }
                 } else {
-                    lastNotEmpty = this.orderMap[i]
-                    if (fixedPos <= this.orderMap[i]) {
+                    lastNotEmpty = orderMap[i]
+                    if (fixedPos <= orderMap[i]) {
                         break
                     }
                 }
             }
-            if (flag) {
-                viewHolder.lesson = this.dailySchedule[fixedPos];
+            if (notEmpty) {
+                viewHolder.lesson = dailySchedule[fixedPos]
             }
         } else {
             viewHolder.lesson = dailySchedule[position]
         }
 
-        val scale = viewHolder.lessonLayout.context.resources.displayMetrics.density;
+        val scale = viewHolder.lessonLayout.context.resources.displayMetrics.density
         val dp8InPx = (9 * scale + 0.5f).toInt()
         val dp18InPx = (18 * scale + 0.5f).toInt()
         if (viewHolder.lesson.isEmpty) {

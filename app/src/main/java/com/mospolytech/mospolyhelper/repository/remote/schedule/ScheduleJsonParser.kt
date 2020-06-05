@@ -139,7 +139,7 @@ class ScheduleJsonParser {
 
             if (isByDate) {
                 date = LocalDate.parse(day, dateFormatter) ?: continue
-                parsedDay = date.dayOfWeek.ordinal
+                parsedDay = date.dayOfWeek.value
             } else {
                 parsedDay = day.toInt()
             }
