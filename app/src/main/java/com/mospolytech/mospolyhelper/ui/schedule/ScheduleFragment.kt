@@ -197,7 +197,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 val adapter = viewPager.adapter
                 if (adapter is ScheduleAdapter) {
                     val tab = tabs.get(
-                        (adapter.firstPosDate.dayOfWeek.ordinal % 7 +
+                        (adapter.firstPosDate.dayOfWeek.value % 7 +
                                 position +
                                 (if (positionOffset < 0.5f) 0 else 1)) % 7
                     )
