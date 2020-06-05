@@ -47,7 +47,7 @@ class CalendarAdapter(
     override fun getItemCount() = itemCount
 
     fun setCount() {
-        itemCount = ChronoUnit.DAYS.between(schedule.dateFrom, schedule.dateTo).toInt() + 1
+        itemCount = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
         if (itemCount > 400 || itemCount < 0) {
             itemCount = 400
         }
