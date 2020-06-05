@@ -5,11 +5,12 @@ import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
 import java.util.*
 
 class CalendarViewModel :
-    ViewModelBase(Mediator(), CalendarViewModel::class.java.simpleName) {
+    ViewModelBase(StaticDI.viewModelMediator, CalendarViewModel::class.java.simpleName) {
     companion object {
         const val CalendarMode = "CalendarMode"
     }
@@ -35,6 +36,6 @@ class CalendarViewModel :
     }
 
     fun dateChanged() {
-        send(ScheduleViewModel::class.java.simpleName, "ChangeDate", date)
+        send(ScheduleViewModel::class.java.simpleName, "ChangeDate", listOf(date))
     }
 }

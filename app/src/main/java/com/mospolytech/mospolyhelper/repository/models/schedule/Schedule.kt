@@ -62,7 +62,7 @@ data class Schedule(
 
 
     fun getSchedule(date: LocalDate, filter: Filter = Filter.default) =
-        filter.getFiltered(dailySchedules[date.dayOfWeek.ordinal % 7], date)
+        filter.getFiltered(dailySchedules[date.dayOfWeek.value % 7], date)
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
