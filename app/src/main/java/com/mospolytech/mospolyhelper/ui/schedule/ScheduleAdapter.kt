@@ -21,7 +21,6 @@ import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 
 class ScheduleAdapter(
@@ -34,9 +33,7 @@ class ScheduleAdapter(
     companion object {
         const val ACTIVE_PAGES_COUNT = 3
     }
-
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
-    val viewHolders = mutableListOf<ViewHolder?>(null, null, null)
+    private val viewHolders = mutableListOf<ViewHolder?>(null, null, null)
     var needDispose = false
     var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
@@ -49,7 +46,11 @@ class ScheduleAdapter(
         setFirstPosDate()
     }
 
-    fun getView(position: Int) = viewHolders[position % 3]
+    private fun getViewHolder(position: Int) = viewHolders[position % ACTIVE_PAGES_COUNT]
+
+    private fun setViewHolder(position: Int, viewHolder: ViewHolder) {
+        viewHolders[position % ACTIVE_PAGES_COUNT] = viewHolder
+    }
 
     override fun getCount() = count
 
@@ -57,7 +58,7 @@ class ScheduleAdapter(
         if (schedule == null) {
             count = 1
         } else {
-            this.count = ChronoUnit.DAYS.between(schedule.dateFrom, schedule.dateTo).toInt() + 1
+            this.count = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
             if (count > 400 || count < 0) {
                 count = 400
             }
@@ -85,7 +86,7 @@ class ScheduleAdapter(
                     .apply { container.addView(this) }
         }
 
-        val vh = viewHolders[position % ACTIVE_PAGES_COUNT]
+        val vh = getViewHolder(position)
         val viewHolder: ViewHolder
         if (vh == null) {
             viewHolder = ViewHolder.from(container, position, R.layout.page_schedule, schedule, scheduleFilter,
@@ -96,27 +97,18 @@ class ScheduleAdapter(
             viewHolder.listAdapter?.addOnLessonClick { lesson ->
                 (lessonClick as Action2).invoke(lesson, viewHolder.listAdapter!!.date)
             }
+            setViewHolder(position, viewHolder)
         } else {
             viewHolder = vh
             viewHolder.update(position, schedule, scheduleFilter, firstPosDate, showEmptyLessons, showGroup)
         }
 
-
-        val date = firstPosDate.plusDays(position.toLong())
-
-         // If not null TODO fix it
-
-
-
-
-        viewHolder.dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
-
         return viewHolder.view
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        if (needDispose && viewHolders[position % ACTIVE_PAGES_COUNT] != null) {
-            container.removeView(viewHolders[position % ACTIVE_PAGES_COUNT]!!.view);
+        if (needDispose && getViewHolder(position) != null) {
+            container.removeView(getViewHolder(position)!!.view);
         }
     }
 
@@ -131,6 +123,8 @@ class ScheduleAdapter(
     class ViewHolder(val view: View, private var position: Int, var schedule: Schedule, var scheduleFilter: Schedule.Filter,
                      var firstPosDate: LocalDate, val showEmptyLessons: Boolean, val showGroup: Boolean) {
         companion object {
+            private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
+
             fun from(container: ViewGroup, position: Int, resource: Int, schedule: Schedule,
                      scheduleFilter: Schedule.Filter, firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean): ViewHolder {
                 val view: View = LayoutInflater.from(container.context)
@@ -188,6 +182,8 @@ class ScheduleAdapter(
             list.itemAnimator = null
             list.layoutManager = LinearLayoutManager(view.context)
             list.adapter = listAdapter!!
+
+            dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
         }
 
         fun update(position: Int, schedule: Schedule, scheduleFilter: Schedule.Filter,
@@ -202,8 +198,7 @@ class ScheduleAdapter(
                 schedule.getSchedule(date, scheduleFilter),
                 scheduleFilter, date, showEmptyLessons, showGroup
             )
-
-
+            dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
         }
     }
 }

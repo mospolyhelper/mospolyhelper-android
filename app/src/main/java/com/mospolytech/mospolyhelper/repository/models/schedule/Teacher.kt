@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
+import java.lang.Exception
+
 data class Teacher(val names: List<String>) {
     companion object {
         fun fromFullName(name: String) =
@@ -26,7 +28,7 @@ data class Teacher(val names: List<String>) {
             val shortName = StringBuilder(names.first())
             for (i in names.indices) {
                 shortName.append("\u00A0")
-                    .append(names[i][0])
+                    .append(names[i].first())
                     .append('.')
             }
             shortName.toString()
