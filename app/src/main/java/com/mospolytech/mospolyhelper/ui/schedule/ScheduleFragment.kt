@@ -39,7 +39,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 
 class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
@@ -50,10 +49,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
     val viewModelFactory = ScheduleViewModel.Factory()
 
-    var textGroupTitle: AutoCompleteTextView? = null
-    var viewPager: ViewPager? = null
-    var swipeToRefresh: SwipeRefreshLayout? = null
-    var scheduleType: Button? = null
+    lateinit var textGroupTitle: AutoCompleteTextView
+    lateinit var viewPager: ViewPager
+    lateinit var swipeToRefresh: SwipeRefreshLayout
+    lateinit var scheduleType: Button
     var checkedGroups = ObservableArrayList<Int>()
     var checkedLessonTypes = ObservableArrayList<Int>()
     var checkedTeachers = ObservableArrayList<Int>()
@@ -67,10 +66,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
     var regularString: String = ""
     var sessionString: String = ""
-    var scheduleSessionFilter: Switch? = null
-    var scheduleDateFilter: Spinner? = null
-    var scheduleEmptyPair: Switch? = null
-    var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
+    lateinit var scheduleSessionFilter: Switch
+    lateinit var scheduleDateFilter: Spinner
+    lateinit var scheduleEmptyPair: Switch
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val viewModel by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
@@ -84,25 +83,19 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     }
 
     fun setUpGroupList(groupList: List<String>) {
-        if (textGroupTitle == null || context == null) {
-            return
-        }
         textGroupTitle
-            ?.setAdapter(ArrayAdapter(requireContext(), R.layout.item_group_list, groupList))
+            .setAdapter(ArrayAdapter(requireContext(), R.layout.item_group_list, groupList))
     }
 
     fun setUpSchedule(schedule: Schedule?, loading: Boolean = false) {
-        if (viewPager == null) {
-            return
-        }
         if (context != null && schedule != null && schedule.group.comment.isNotEmpty()) {
             Toast.makeText(requireContext(), schedule.group.comment, Toast.LENGTH_LONG).show()
         }
         var toDate: LocalDate
-        val adapter = viewPager?.adapter
+        val adapter = viewPager.adapter
         if (adapter is ScheduleAdapter) {
             adapter.needDispose = true
-            toDate = adapter.firstPosDate.plusDays(viewPager!!.currentItem.toLong())
+            toDate = adapter.firstPosDate.plusDays(viewPager.currentItem.toLong())
             if (toDate == LocalDate.MIN) {
                 toDate = LocalDate.now()
             }
@@ -117,21 +110,24 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             viewModel.isAdvancedSearch,
             loading
         )
-        viewPager?.adapter = adapter2
+        viewPager.adapter = adapter2
         if (schedule != null) {
             adapter2.openCalendar += {
                 val fragment = CalendarFragment.newInstance()
-                val adapter3 = viewPager?.adapter
+                val adapter3 = viewPager.adapter
                 if (adapter3 is ScheduleAdapter) {
                     viewModel.openCalendar()
                     (activity as MainActivity).changeFragment(fragment, false)
                 }
             }
-            viewPager?.currentItem = ChronoUnit.DAYS.between(toDate, adapter2.firstPosDate).toInt()
             adapter2.lessonClick += ::onLessonClick
-            viewPager?.adapter?.notifyDataSetChanged()
+            val c = viewPager.adapter?.count
+
+            //viewPager.adapter?.notifyDataSetChanged()
+            val q = adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt()
+            viewPager.setCurrentItem(q, true)
+            viewPager.adapter?.notifyDataSetChanged()
         }
-        // this.logger.Debug("Schedule set up");
     }
 
     override fun onCreateView(
@@ -144,11 +140,17 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewPager = view.findViewById(R.id.viewpager)
+        swipeToRefresh = view.findViewById(R.id.schedule_update)
+        scheduleDateFilter = view.findViewById(R.id.spinner_schedule_date_filter)
+        scheduleSessionFilter = view.findViewById(R.id.switch_schedule_session_filter)
+        scheduleEmptyPair = view.findViewById(R.id.switch_schedule_empty_lessons)
+        scheduleType = view.findViewById(R.id.button_schedule_type)
+        textGroupTitle = view.findViewById(R.id.text_group_title)
+
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
-        viewPager = view.findViewById<ViewPager>(R.id.viewpager)
-
-        if (viewPager?.adapter == null) {
+        if (viewPager.adapter == null) {
             if (this.viewModel.scheduleDownloaded) {
                 setUpSchedule(viewModel.schedule.value)
             } else {
@@ -171,10 +173,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         tabLayout.addTab(tabs[6])
         tabLayout.addTab(tabs[0])
 
-        swipeToRefresh = view.findViewById<SwipeRefreshLayout>(R.id.schedule_update)
-        swipeToRefresh?.setOnRefreshListener {
+        swipeToRefresh.setOnRefreshListener {
             if (viewModel.isAdvancedSearch) {
-                textGroupTitle?.setText(viewModel.groupTitle.value)
+                textGroupTitle.setText(viewModel.groupTitle.value)
                 viewModel.isAdvancedSearch = false
             }
             viewModel.updateSchedule()
@@ -183,9 +184,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         viewModel.endDownloading += ::scheduleEndDownloading
         viewModel.beginDownloading += ::scheduleBeginDownloading
 
-        viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeToRefresh?.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                swipeToRefresh.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
 
             override fun onPageScrolled(
@@ -193,10 +194,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-                val adapter = viewPager?.adapter
+                val adapter = viewPager.adapter
                 if (adapter is ScheduleAdapter) {
                     val tab = tabs.get(
-                        (adapter.firstPosDate.dayOfWeek.ordinal % 7 +
+                        (adapter.firstPosDate.dayOfWeek.value % 7 +
                                 position +
                                 (if (positionOffset < 0.5f) 0 else 1)) % 7
                     )
@@ -208,14 +209,13 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
             override fun onPageSelected(position: Int) {
                 viewModel.date.value =
-                    (viewPager!!.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
+                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
             }
         })
 
 
-        scheduleDateFilter = view.findViewById<Spinner>(R.id.spinner_schedule_date_filter)
-        scheduleDateFilter?.setSelection(viewModel.scheduleFilter.value!!.dateFilter.ordinal)
-        scheduleDateFilter?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        scheduleDateFilter.setSelection(viewModel.scheduleFilter.value!!.dateFilter.ordinal)
+        scheduleDateFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(
@@ -231,12 +231,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     prefs.edit().putInt(PreferencesConstants.ScheduleDateFilter, position).apply()
                 }
             }
-
         }
 
-        scheduleSessionFilter = view.findViewById<Switch>(R.id.switch_schedule_session_filter);
-        scheduleSessionFilter?.isChecked = viewModel.scheduleFilter.value!!.sessionFilter
-        scheduleSessionFilter?.setOnCheckedChangeListener { _, isChecked ->
+        scheduleSessionFilter.isChecked = viewModel.scheduleFilter.value!!.sessionFilter
+        scheduleSessionFilter.setOnCheckedChangeListener { _, isChecked ->
             if (viewModel.scheduleFilter.value!!.sessionFilter != isChecked) {
                 viewModel.scheduleFilter.value =
                     Schedule.Filter.Builder(viewModel.scheduleFilter.value!!)
@@ -245,9 +243,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             }
         }
 
-        scheduleEmptyPair = view.findViewById<Switch>(R.id.switch_schedule_empty_lessons)
-        scheduleEmptyPair?.isChecked = viewModel.showEmptyLessons.value!!
-        scheduleEmptyPair?.setOnCheckedChangeListener { _, isChecked ->
+
+        scheduleEmptyPair.isChecked = viewModel.showEmptyLessons.value!!
+        scheduleEmptyPair.setOnCheckedChangeListener { _, isChecked ->
             if (viewModel.showEmptyLessons.value != isChecked) {
                 viewModel.showEmptyLessons.value = isChecked
                 prefs.edit().putBoolean(PreferencesConstants.ScheduleShowEmptyLessons, isChecked).apply()
@@ -261,17 +259,16 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
         val advancedSearchBtn = view.findViewById<ImageButton>(R.id.button_advanced_search);
         advancedSearchBtn.setOnClickListener {
-            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         regularString = requireContext().getString(R.string.text_schedule_type_regular);
         sessionString = requireContext().getString(R.string.text_schedule_type_session);
-        scheduleType = view.findViewById<Button>(R.id.button_schedule_type);
-        scheduleType?.text = getTypeText(viewModel.isSession.value!!)
-        scheduleType?.setOnClickListener {
+        scheduleType.text = getTypeText(viewModel.isSession.value!!)
+        scheduleType.setOnClickListener {
             val newIsSession = !viewModel.isSession.value!!
             viewModel.isSession.value = newIsSession
-            scheduleType?.text = getTypeText(newIsSession)
+            scheduleType.text = getTypeText(newIsSession)
             prefs.edit().putBoolean(PreferencesConstants.ScheduleTypePreference, newIsSession).apply()
         }
         val filterBtn = view.findViewById<ImageButton>(R.id.button_schedule_filter)
@@ -297,17 +294,17 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             settingsDrawer.openDrawer(GravityCompat.END)
         }
 
-        textGroupTitle = view.findViewById<AutoCompleteTextView>(R.id.text_group_title)
+
         setUpGroupList(viewModel.groupList.value!!)
-        textGroupTitle?.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value!!))
-        textGroupTitle?.setOnKeyListener { v, keyCode, event ->
+        textGroupTitle.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value!!))
+        textGroupTitle.setOnKeyListener { v, keyCode, event ->
             when {
                 event.action != KeyEvent.ACTION_UP -> {
                     return@setOnKeyListener false
                 }
                 keyCode == KeyEvent.KEYCODE_BACK -> {
-                    if (textGroupTitle!!.isFocused) {
-                        textGroupTitle!!.clearFocus()
+                    if (textGroupTitle.isFocused) {
+                        textGroupTitle.clearFocus()
                     }
                     activity?.onBackPressed()
                     return@setOnKeyListener true
@@ -317,10 +314,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     val title = (v as AutoCompleteTextView).text.toString()
                     prefs.edit().putString(PreferencesConstants.ScheduleGroupTitle, title).apply()
                     viewModel.groupTitle.value = title
-                    textGroupTitle?.dismissDropDown()
+                    textGroupTitle.dismissDropDown()
                     val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputManager.hideSoftInputFromWindow(textGroupTitle!!.windowToken, 0)
-                    textGroupTitle?.clearFocus()
+                    inputManager.hideSoftInputFromWindow(textGroupTitle.windowToken, 0)
+                    textGroupTitle.clearFocus()
                     return@setOnKeyListener true
                 }
                 else -> {
@@ -328,14 +325,14 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 }
             }
         }
-        textGroupTitle?.setOnItemClickListener { parent, view, position, id ->
+        textGroupTitle.setOnItemClickListener { parent, _, position, _ ->
             viewModel.isAdvancedSearch = false
             val title = parent.getItemAtPosition(position) as String
             prefs.edit().putString(PreferencesConstants.ScheduleGroupTitle, title).apply()
             viewModel.groupTitle.value = title
             val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputManager.hideSoftInputFromWindow(textGroupTitle!!.windowToken, 0)
-            textGroupTitle?.clearFocus()
+            inputManager.hideSoftInputFromWindow(textGroupTitle.windowToken, 0)
+            textGroupTitle.clearFocus()
         }
     }
 
@@ -344,7 +341,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     }
 
     fun scheduleEndDownloading() {
-        swipeToRefresh?.isRefreshing = false
+        swipeToRefresh.isRefreshing = false
     }
 
     fun announced(msg: String) {
@@ -355,15 +352,15 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
     override fun onResume() {
         super.onResume()
-        if (textGroupTitle?.text?.isEmpty() == true) {
-            textGroupTitle?.requestFocus()
+        if (textGroupTitle.text?.isEmpty() == true) {
+            textGroupTitle.requestFocus()
         }
     }
 
     fun setUpBotomSheet(view: View) {
         val bottomSheet = view.findViewById<LinearLayout>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         val textGroups = view.findViewById<TextView>(R.id.text_groups)
         textGroups.setOnClickListener {
@@ -405,10 +402,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             applyButton.visibility = View.GONE
         })
 
-        val downloadShedulesBtn = view.findViewById<Button>(R.id.btn_acceptGroups)
-        downloadShedulesBtn.setOnClickListener {
+        val downloadSchedulesBtn = view.findViewById<Button>(R.id.btn_acceptGroups)
+        downloadSchedulesBtn.setOnClickListener {
             GlobalScope.launch {
-                downloadShedulesBtn.isEnabled = false
+                downloadSchedulesBtn.isEnabled = false
                 textGroups.isEnabled = false
                 textLessonTitles.visibility = View.GONE
                 textTeachers.visibility = View.GONE
@@ -435,7 +432,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     this@ScheduleFragment.schedules = pack?.schedules?.toList() ?: emptyList()
 
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
-                    downloadShedulesBtn.isEnabled = true
+                    downloadSchedulesBtn.isEnabled = true
                     textGroups.isEnabled = true
                     textLessonTitles.visibility = View.VISIBLE
                     textTeachers.visibility = View.VISIBLE
@@ -449,7 +446,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     progressText.text = "0 %"
                     cancelBtn.visibility = View.GONE
                 } catch (ex: Exception) { // TODO: Canceled
-                    downloadShedulesBtn.isEnabled = true
+                    downloadSchedulesBtn.isEnabled = true
                     textGroups.isEnabled = true
                     Toast.makeText(context, "Загрузка отменена", Toast.LENGTH_SHORT).show()
                     progressBar.progress = 0
@@ -555,13 +552,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
             viewModel.isAdvancedSearch = true
             viewModel.schedule.value = newSchedule
-            textGroupTitle?.setText("...")
+            textGroupTitle.setText("...")
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
 
         val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -618,21 +614,22 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         })
 
         viewModel.isSession.observe(this, Observer {
-            scheduleType?.text = getTypeText(it)
+            scheduleType.text = getTypeText(it)
         })
 
-//        viewModel.date.observe(this, Observer {
-//            val adapter = viewPager?.adapter
-//            if (adapter is ScheduleAdapter) {
-//                viewPager?.setCurrentItem(
-//                    ChronoUnit.DAYS.between(it, adapter.firstPosDate).toInt(), false
-//                )
-//            }
-//        })
+        viewModel.date.observe(this, Observer {
+            val adapter = viewPager.adapter
+            if (adapter is ScheduleAdapter) {
+                if (it != adapter.firstPosDate.plusDays(viewPager.currentItem.toLong()))
+                viewPager.setCurrentItem(
+                    adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(), false
+                )
+            }
+        })
 
         viewModel.scheduleFilter.observe(this, Observer {
-            scheduleDateFilter?.setSelection(it.dateFilter.ordinal)
-            scheduleSessionFilter?.isChecked = it.sessionFilter
+            scheduleDateFilter.setSelection(it.dateFilter.ordinal)
+            scheduleSessionFilter.isChecked = it.sessionFilter
         })
 
         //this.viewModel.Announced += ViewModel_Announced;

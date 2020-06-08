@@ -27,11 +27,11 @@ class CalendarAdapter(
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
-            0xeb4141,   // Exam, Credit,..
-            0x29b6f6    // Other
+            0xffeb4141.toInt(),   // Exam, Credit,..
+            0xff29b6f6.toInt()    // Other
         )
     }
-    val dateFormatter = DateTimeFormatter.ofPattern("dddd, d MMMM")
+    val dateFormatter = DateTimeFormatter.ofPattern("EEE, d MMMM")
     var firstPosDate: LocalDate = LocalDate.now()
     private var itemCount = 0
 
@@ -47,7 +47,7 @@ class CalendarAdapter(
     override fun getItemCount() = itemCount
 
     fun setCount() {
-        itemCount = ChronoUnit.DAYS.between(schedule.dateFrom, schedule.dateTo).toInt() + 1
+        itemCount = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
         if (itemCount > 400 || itemCount < 0) {
             itemCount = 400
         }
