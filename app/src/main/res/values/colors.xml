@@ -64,4 +64,7 @@
   <color name="colorHint">#C0C0C0</color>
   <color name="defaultCardColor">#FFFFFF</color>
   <color name="colorFab">#5ea3de</color>
+  <color name="colorFabIcon">#FFFFFF</color>
+  <color name="pushPin">#878787</color>
+  <color name="pushUnPin">#D5D5D5</color>
 </resources>
