@@ -33,15 +33,15 @@ class AddBottomSheetDialogFragment
 
     private var edit: Boolean = false
     private var deadline: Deadline? = null
-    private lateinit var viewModel: DialogFragmentViewModel
-    //private val viewModel by viewModels<DialogFragmentViewModel>()
+    //private lateinit var viewModel: DialogFragmentViewModel
+    private val viewModel by viewModels<DialogFragmentViewModel>()
     private var contextApp = ContextProvider.context as Context
 
     private val datePickerDialog = DatePickerDialog(
         contextApp,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-            val dateFormatter = DateTimeFormatter.ofPattern("ccc, dd.MM.yyyy")
+            val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
             editDate.setText(localDate.format(dateFormatter))
         }, LocalDate.now().year,
         LocalDate.now().month.value - 1,
@@ -52,8 +52,6 @@ class AddBottomSheetDialogFragment
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            //var time: String = if (hourOfDay<10) "0${hourOfDay}:" else "${hourOfDay}:"
-            //time += if (minute<10) "0${minute}" else "$minute"
             editTime.setText(localTime.format(timeFormatter))
         }, LocalTime.now().hour,
         LocalTime.now().minute,true)
@@ -131,7 +129,8 @@ class AddBottomSheetDialogFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
+        //viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
+        viewModel.newRepository()
         btadd.setOnClickListener(this)
 
         editDate.setOnClickListener {

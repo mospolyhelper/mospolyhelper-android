@@ -20,8 +20,12 @@ class DialogFragmentViewModel/*(app: Application)*/ :
         const val DeadlineAdd = "DeadlinesAdd"
     }
 
-    private var database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
-    private val deadlinesRepository = DeadlinesRepository(database)
+    private val database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
+    private lateinit var deadlinesRepository: DeadlinesRepository
+
+    fun newRepository() {
+        deadlinesRepository = DeadlinesRepository(database)
+    }
 
     fun saveInformation(deadline: Deadline) {
         deadlinesRepository.insertDeadline(deadline)
