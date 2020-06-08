@@ -139,7 +139,7 @@ class ScheduleJsonParser {
 
             if (isByDate) {
                 date = LocalDate.parse(day, dateFormatter) ?: continue
-                parsedDay = date.dayOfWeek.ordinal
+                parsedDay = date.dayOfWeek.value
             } else {
                 parsedDay = day.toInt()
             }
@@ -233,12 +233,7 @@ class ScheduleJsonParser {
         if (json == null) return emptyList()
 
         return json.split(',').filter { it.isNotEmpty() }.map {
-            Teacher(
-                it.replace(" - ", "-")
-                    .replace(" -", "-")
-                    .replace("- ", "-")
-                    .split(' ')
-            )
+            Teacher.fromFullName(it)
         }
     }
 
