@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.ui.schedule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mospolytech.mospolyhelper.repository.local.dao.ScheduleDao
+import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import com.mospolytech.mospolyhelper.ui.common.Mediator
@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.*
 
 
 class ScheduleViewModel(
@@ -26,7 +25,7 @@ class ScheduleViewModel(
     groupTitle: String? = null,
     scheduleFilter: Schedule.Filter? = null,
     showEmptyLessons: Boolean? = null
-) : ViewModelBase(Mediator(), ScheduleViewModel::class.java.simpleName) {
+) : ViewModelBase(StaticDI.viewModelMediator, ScheduleViewModel::class.java.simpleName) {
     companion object {
         const val ResaveSchedule = "ResaveSchedule"
         const val ChangeFragment = "ChangeFragment"
@@ -50,20 +49,20 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         getGroupList(true)
 
-//        this.isSession.observeForever {
-//            GlobalScope.launch {
-//                setUpSchedule(true)
-//            }
-//        }
-//
-//        // TODO: Change
-//        this.showEmptyLessons.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
-//
-//        this.scheduleFilter.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
+        this.isSession.observeForever {
+            GlobalScope.launch {
+                setUpSchedule(true)
+            }
+        }
+
+        // TODO: Change
+        this.showEmptyLessons.observeForever {
+            this.schedule.value = this.schedule.value
+        }
+
+        this.scheduleFilter.observeForever {
+            this.schedule.value = this.schedule.value
+        }
     }
 
     fun handleMessage(message: ViewModelMessage) {

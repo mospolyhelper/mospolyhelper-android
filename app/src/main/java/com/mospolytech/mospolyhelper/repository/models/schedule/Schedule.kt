@@ -35,8 +35,8 @@ data class Schedule(
         fun dateTo(dateTo: LocalDate) = apply { this.dateTo = dateTo }
 
         fun build(): Schedule {
-            var dateFrom = this.dateFrom ?: LocalDate.MIN
-            var dateTo = this.dateTo ?: LocalDate.MAX
+            var dateFrom = this.dateFrom ?: LocalDate.MAX
+            var dateTo = this.dateTo ?: LocalDate.MIN
             if (this.dateFrom == null || this.dateTo == null) {
                 for (dailySchedule in dailySchedules) {
                     for (lesson in dailySchedule) {
@@ -62,7 +62,7 @@ data class Schedule(
 
 
     fun getSchedule(date: LocalDate, filter: Filter = Filter.default) =
-        filter.getFiltered(dailySchedules[date.dayOfWeek.ordinal % 7], date)
+        filter.getFiltered(dailySchedules[date.dayOfWeek.value % 7], date)
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
