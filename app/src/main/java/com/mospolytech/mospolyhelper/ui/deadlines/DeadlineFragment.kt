@@ -24,16 +24,24 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
+import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
 class DeadlineFragment : FragmentBase(Fragments.Deadlines),
     View.OnClickListener {
+
+    private val viewModelFactory = ScheduleViewModel.Factory()
+    private val viewModelShedule by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
     private lateinit var mainActivity: MainActivity
     private lateinit var bot: AddBottomSheetDialogFragment
@@ -69,8 +77,18 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         defaultData()
         editDeadline()
         deleteDeadline()
+        receiveName()
         setToolbar()
         fab.setOnClickListener(this)
+    }
+
+    private fun receiveName() {
+        viewModel.nameReceiver.observe(viewLifecycleOwner, Observer {
+            bot.setName(it)
+            bot.show(fm,
+                AddBottomSheetDialogFragment.TAG
+            )
+        })
     }
 
     private fun editDeadline() {
