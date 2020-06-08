@@ -63,4 +63,7 @@
   <color name="defaultCardColor">#1e1e1e</color>
   <color name="bottomColor">#121212</color>
   <color name="textColorDate">#6E6E6E</color>
+  <color name="colorFabIcon">#000000</color>
+  <color name="pushPin">#AAAAAA</color>
+  <color name="pushUnPin">#606060</color>
 </resources>
