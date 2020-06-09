@@ -12,7 +12,9 @@ import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -280,8 +282,6 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
 
     private fun setToolbar(){
         mainActivity.setSupportActionBar(toolbar)
-        toolbar.title = resources.getString(R.string.title)
-        mainActivity.setSupportActionBar(toolbar)
         val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
             activity, drawer, toolbar,
@@ -291,6 +291,24 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         toggle.syncState()
         toggle.isDrawerIndicatorEnabled = true
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        button_search_deadline.setOnClickListener {
+            toolbar_deadline_main.visibility = View.GONE
+            toolbar_deadline_search.visibility = View.VISIBLE
+        }
+        button_search_clear.setOnClickListener {
+            toolbar_deadline_main.visibility = View.VISIBLE
+            toolbar_deadline_search.visibility = View.GONE
+            requestData(DataType.FULL)
+            edit_search_deadline.text.clear()
+        }
+        edit_search_deadline.addTextChangedListener {
+            if (!viewModel.foundData.hasActiveObservers()) {
+                requestData(DataType.FIND)
+            } else if (it.toString().isEmpty()) {
+                requestData(DataType.FULL)
+            }
+            viewModel.find(it.toString())
+        }
     }
 
 
