@@ -2,8 +2,58 @@
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/toolbar"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/fragment_settings"
     android:layout_width="match_parent"
     android:background="@drawable/bottom_stroke_calendar"
+    tools:showIn="@layout/fragment_deadline"
     android:layout_height="?attr/actionBarSize">
+    <RelativeLayout
+        android:id="@+id/toolbar_deadline_main"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_deadlines"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"/>
+        <Button
+            android:id="@+id/button_search_deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="10dp"
+            android:background="@drawable/transparent_gfx"
+            android:drawableStart="@drawable/ic_search_24"
+            android:layout_marginEnd="2dp"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/toolbar_deadline_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <EditText
+            android:id="@+id/edit_search_deadline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autofillHints=""
+            android:background="@android:color/transparent"
+            android:hint="@string/predmet_title"
+            android:inputType="textCapCharacters"/>
+        <Button
+            android:id="@+id/button_search_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="10dp"
+            android:background="@drawable/transparent_gfx"
+            android:drawableStart="@drawable/ic_clear_24"
+            android:layout_centerVertical="true"
+            android:layout_alignEnd="@id/edit_search_deadline"
+            android:layout_marginEnd="2dp"/>
+    </RelativeLayout>
 </androidx.appcompat.widget.Toolbar>
