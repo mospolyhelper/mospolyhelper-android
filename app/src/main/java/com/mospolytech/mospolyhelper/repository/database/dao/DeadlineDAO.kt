@@ -22,7 +22,14 @@ interface DeadlineDAO {
             "union all Select * from deadlines where (pinned = 0 and  completed = 0)")
     fun getAllCurrentLive(): LiveData<List<Deadline>>
 
-    @Query("Select * from deadlines where name like :predmet")
+    @Query("Select * from deadlines where (pinned = 1 and  completed = 0 " +
+            "and name like '%' || :predmet || '%') " +
+            "union all Select * from deadlines where (pinned = 0 and  completed = 0 " +
+            "and name like '%' || :predmet || '%') " +
+            "union all select * from deadlines where (pinned = 1 and completed = 1 " +
+            "and name like '%' || :predmet || '%')" +
+            "union all select * from deadlines where (pinned = 0 and completed = 1 " +
+            "and name like '%' || :predmet || '%')")
     fun findDeadline(predmet: String): List<Deadline>
 
     @Insert
