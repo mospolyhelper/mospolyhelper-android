@@ -19,8 +19,9 @@ class DeadlineViewModel/*(app: Application)*/ :
     companion object {
         const val DeadlineInfo = "DeadlinesInfo"
     }
-    var edit : MutableLiveData<Deadline> = MutableLiveData()
-    var delete : MutableLiveData<Deadline> = MutableLiveData()
+    val edit : MutableLiveData<Deadline> = MutableLiveData()
+    val delete : MutableLiveData<Deadline> = MutableLiveData()
+    val nameReceiver : MutableLiveData<String> = MutableLiveData()
 
     private var database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
     private val deadlinesRepository = DeadlinesRepository(database)
@@ -28,6 +29,10 @@ class DeadlineViewModel/*(app: Application)*/ :
     val data = deadlinesRepository.getDeadlines()
     val dataCurrent = deadlinesRepository.getDeadlinesCurrent()
     val foundData =  deadlinesRepository.foundData
+
+    fun setName(name: String) {
+        nameReceiver.value = name
+    }
 
     fun saveInformation(deadline: Deadline) {
         deadlinesRepository.insertDeadline(deadline)
