@@ -1,9 +1,7 @@
 package com.mospolytech.mospolyhelper.repository.local.converters
 
 import com.beust.klaxon.*
-import com.mospolytech.mospolyhelper.repository.models.schedule.Group
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.models.schedule.*
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,6 +20,9 @@ class ScheduleConverter {
         val LESSON_DATE_TO = Lesson::dateTo.name
         val LESSON_AUDITORIUMS = Lesson::auditoriums.name
         val LESSON_TYPE = Lesson::type.name
+        val TEACHER_NAMES = Teacher::names.name
+        val AUDITORIUM_TITLE = Auditorium::title.name
+        val AUDITORIUM_COLOR = Auditorium::color.name
     }
 
     val localDateConverter = object : Converter {
@@ -33,7 +34,7 @@ class ScheduleConverter {
         }
 
         override fun toJson(value: Any) =
-            (value as LocalDate).format(dateFormatter)
+            "\"${(value as LocalDate).format(dateFormatter)}\""
 
     }
 
@@ -46,8 +47,7 @@ class ScheduleConverter {
         }
 
         override fun toJson(value: Any) =
-            (value as LocalDateTime).format(dateTimeFormatter)
-
+            "\"${(value as LocalDateTime).format(dateTimeFormatter)}\""
     }
 
     private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
@@ -63,8 +63,8 @@ class ScheduleConverter {
         val parser = Parser.default()
         val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
         val group = converter.parseFromJsonObject<Group>(json.obj(SCHEDULE_GROUP)!!)!!
-        val dateFrom = converter.parseFromJsonObject<LocalDate>(json.obj(SCHEDULE_DATE_FROM)!!)!!
-        val dateTo = converter.parseFromJsonObject<LocalDate>(json.obj(SCHEDULE_DATE_TO)!!)!!
+        val dateFrom = LocalDate.parse(json.string(SCHEDULE_DATE_FROM)!!, dateFormatter)
+        val dateTo = LocalDate.parse(json.string(SCHEDULE_DATE_TO)!!, dateFormatter)
 
         val dailySchedules = json
             .array<JsonArray<JsonObject>>(DAILY_SCHEDULES)!!
@@ -73,10 +73,17 @@ class ScheduleConverter {
                     Lesson(
                         lesson.int(LESSON_ORDER)!!,
                         lesson.string(LESSON_TITLE)!!,
-                        lesson.array(LESSON_TEACHERS)!!,
-                        converter.parseFromJsonObject(lesson.obj(LESSON_DATE_FROM)!!)!!,
-                        converter.parseFromJsonObject(lesson.obj(LESSON_DATE_TO)!!)!!,
-                        lesson.array(LESSON_AUDITORIUMS)!!,
+                        lesson.array<JsonObject>(LESSON_TEACHERS)!!.map {
+                            Teacher(it.array(TEACHER_NAMES)!!)
+                        },
+                        LocalDate.parse(lesson.string(LESSON_DATE_FROM)!!, dateFormatter),
+                        LocalDate.parse(lesson.string(LESSON_DATE_TO)!!, dateFormatter),
+                        lesson.array<JsonObject>(LESSON_AUDITORIUMS)!!.map {
+                            Auditorium(
+                                it.string(AUDITORIUM_TITLE)!!,
+                                it.string(AUDITORIUM_COLOR)!!
+                            )
+                        },
                         lesson.string(LESSON_TYPE)!!,
                         group
                     )
