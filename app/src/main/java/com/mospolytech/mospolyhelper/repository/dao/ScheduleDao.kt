@@ -8,7 +8,12 @@ import com.mospolytech.mospolyhelper.repository.remote.schedule.GroupListJsonPar
 import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleClient
 import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleJsonParser
 import com.mospolytech.mospolyhelper.utils.ContextProvider
+import com.mospolytech.mospolyhelper.utils.StringId
+import com.mospolytech.mospolyhelper.utils.StringProvider
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -19,9 +24,9 @@ import kotlin.collections.HashSet
 class ScheduleDao {
 
     companion object {
-        const val CurrentExtension = ".current"
-        const val OldExtension = ".backup"
-        const val CustomExtension = ".custom"
+        const val CurrentExtension = "current"
+        const val OldExtension = "backup"
+        const val CustomExtension = "custom"
         const val SCHEDULE_FOLDER = "cached_schedules"
         const val GROUP_LIST_FOLDER = "cached_group_list"
         const val SCHEDULE_SESSION_FOLDER = "session"
@@ -30,12 +35,12 @@ class ScheduleDao {
     }
     private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-    val converter = ScheduleConverter()
-    val client = ScheduleClient()
-    val scheduleParser = ScheduleJsonParser()
-    val groupListParser = GroupListJsonParser()
+    private val converter = ScheduleConverter()
+    private val client = ScheduleClient()
+    private val scheduleParser = ScheduleJsonParser()
+    private val groupListParser = GroupListJsonParser()
 
-    suspend fun getGroupList(): List<String> {
+    private suspend fun downloadGroupList(): List<String> {
         val groupListString = client.getGroupList()
         return groupListParser.parseGroupList(groupListString)
     }
@@ -44,7 +49,7 @@ class ScheduleDao {
         var groupList: List<String>? = null
         if (downloadNew) {
             try {
-                groupList = getGroupList()
+                groupList = downloadGroupList()
                 try {
                     saveGroupList(groupList)
                 } catch (ex: Exception) {
@@ -86,65 +91,51 @@ class ScheduleDao {
         file.writeText(converter.serializeGroupList(groupList))
     }
 
-    suspend fun getSchedule(groupTitle: String, isSession: Boolean): Schedule {
-        val scheduleString = client.getSchedule(groupTitle, isSession)
-        val schedule = scheduleParser.parse(scheduleString, isSession)
-        return schedule
+    private suspend fun downloadSchedule(groupTitle: String, isSession: Boolean): Schedule? {
+        return try {
+            val scheduleString = client.getSchedule(groupTitle, isSession)
+            scheduleParser.parse(scheduleString, isSession)
+        } catch (e: Exception) {
+            Log.e(TAG, "Schedule downloading and parsing error: groupTitle: $groupTitle, isSession: $isSession", e)
+            null
+        }
     }
 
-    suspend fun getSchedule2(group: String, isSession: Boolean, downloadNew: Boolean): Schedule? {
+    suspend fun getSchedule2(
+        group: String,
+        isSession: Boolean,
+        downloadNew: Boolean,
+        messageBlock: (String) -> Unit = { }
+    ): Schedule? {
         var schedule: Schedule? = null
         if (downloadNew) {
             try {
-                schedule = getSchedule(group, isSession)
-                //if (schedule == null) {
-                   // Announce?.Invoke(StringProvider.GetString(StringId.ScheduleWasntFounded))
-                //}
-                try {
-                    saveSchedule(schedule)
-                } catch (ex: Exception) {
-                    Log.e(TAG, "", ex)
+                schedule = updateSchedule(group, isSession)
+                if (schedule == null) {
+                    messageBlock(StringProvider.getString(StringId.ScheduleWasntFound))
                 }
-            } catch (ex1: Exception) {
+            } catch (e1: Exception) {
                 // this.logger.Error(ex1, "Download schedule error")
                 try {
-                    // Announce?.Invoke(StringProvider.GetString(StringId.ScheduleWasntFounded))
+                    messageBlock(StringProvider.getString(StringId.ScheduleWasntFound))
                     schedule = readSchedule(group, isSession)!! // TODO: Fix
                     // throw Exception("Read schedule from storage fail")
-                    // Announce.Invoke(StringProvider.GetString(StringId.OfflineScheduleWasFounded))
-                } catch (ex2: Exception) {
+                    messageBlock(StringProvider.getString(StringId.OfflineScheduleWasFound))
+                } catch (e2: Exception) {
                     // this.logger.Error(ex2, "Read schedule after download failed error")
-                    // Announce?.Invoke(StringProvider.GetString(StringId.OfflineScheduleWasntFounded))
+                    messageBlock(StringProvider.getString(StringId.OfflineScheduleWasntFound))
                     schedule = null
                 }
             }
         } else {
-            //if (schedule != null && this.Schedule.Group.Title == group && this.Schedule.IsSession == isSession) {
-            //   return this.Schedule;
-            //}
-            try
-            {
+            try {
                 schedule = readSchedule(group, isSession)
-                //if (schedule == null) {
-                //    throw new Exception("Read schedule from storage fail");
-                //}
-                //if (this.Schedule.Version != Schedule.RequiredVersion) {
-                //    throw new Exception("Read schedule from storage fail");
-                //}
-            } catch (ex1: Exception) {
+            } catch (e: Exception) {
                 //this.logger.Error(ex1, "Read schedule error");
-                //Announce?.Invoke(StringProvider.GetString(StringId.OfflineScheduleWasntFounded));
+                messageBlock(StringProvider.getString(StringId.ScheduleWasntFound))
             }
         }
-
-        if (schedule == null) {
-            return null
-        }
-        if (group != schedule.group.title) {
-            //this.logger.Warn("{group} != {scheduleGroupTitle}", group, this.Schedule?.Group?.Title);
-        }
         return schedule
-        // TODO: Rewrite this
     }
 
     fun readSchedule(groupTitle: String, isSession: Boolean): Schedule? {
@@ -174,8 +165,13 @@ class ScheduleDao {
             fileToRead = fileToReadOld
         }
         val date = LocalDateTime.parse(fileToRead.nameWithoutExtension, dateTimeFormatter)
-        val schedule = converter.deserializeSchedule(fileToRead.readText(), isSession, date)
-        return schedule
+        val t = fileToRead.readText()
+        val q = try {
+            converter.deserializeSchedule(t, isSession, date)
+        } catch (e: Exception) {
+            null
+        }
+        return q
     }
 
     fun saveSchedule(schedule: Schedule) {
@@ -188,7 +184,7 @@ class ScheduleDao {
             for (file in files) {
                 if (file.extension == CurrentExtension) {
                     val newFile = File(folder.path)
-                        .resolve(file.nameWithoutExtension + OldExtension)
+                        .resolve(file.nameWithoutExtension + "." +  OldExtension)
                     newFile.delete()
                     newFile.parentFile?.mkdirs()
                     file.copyTo(newFile)
@@ -197,7 +193,7 @@ class ScheduleDao {
             }
         }
         val file = folder
-            .resolve(schedule.lastUpdate.format(dateTimeFormatter) + CurrentExtension)
+            .resolve(schedule.lastUpdate.format(dateTimeFormatter) + "." +  CurrentExtension)
         file.delete()
         file.parentFile?.mkdirs()
         file.createNewFile()
@@ -205,81 +201,77 @@ class ScheduleDao {
         file.writeText(scheduleString)
     }
 
+    suspend fun updateSchedule(group: String, isSession: Boolean): Schedule? {
+        val schedule: Schedule? = downloadSchedule(group, isSession)
+        if (schedule == null) {
+            return schedule
+        }
+        try {
+            saveSchedule(schedule)
+        } catch (e: Exception) {
+            Log.e("ScheduleDao", "!!!!", e)
+        }
+        return schedule
+    }
+
     var scheduleCounter = AtomicInteger(0)
 
-    suspend fun getSchedules(groupList: List<String>): SchedulePackList? {
+    suspend fun getSchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList? = coroutineScope {
         if (groupList.isEmpty()) {
-            return null
+            return@coroutineScope null
         }
 
         scheduleCounter.set(0)
-        val maxCount = groupList.size * 3 + groupList.size / 33
-        val packs = mutableListOf<SchedulePack>()
-        val deferredList = mutableListOf<Deferred<Unit>>()
+        val maxProgress = groupList.size * 4
 
-        val chunks = groupList.chunked(groupList.size / (Runtime.getRuntime().availableProcessors() * 3))
-        for (chunk in chunks) {
-            for (groupTitle in chunk) {
-                deferredList.add(GlobalScope.async<Unit> {
-                    scheduleCounter.incrementAndGet()
-                    // lock (this.key)
-                    // {
-                    //   DownloadProgressChanged?.Invoke(this.scheduleCounter * 10000 / maxCount);
-                    //  }
-                    try {
-                        val schedule = getSchedule(groupTitle, false)
-                        val data = allDataFromSchedule(schedule)
-                        synchronized(packs) {
-                            packs.add(data)
-                        }
-                    } catch (ex: Exception) {}
-                    Log.d(TAG, (scheduleCounter.incrementAndGet() * 10000 / maxCount).toString())
-                    // lock (this.key)
-                    // {
-                    //     DownloadProgressChanged?.Invoke(this.scheduleCounter * 10000 / maxCount);
-                    // }
+        val chunkSize = groupList.size / (Runtime.getRuntime().availableProcessors() * 3)
+        val chunks = if (chunkSize > 3) groupList.chunked(chunkSize) else listOf(groupList)
 
-                    try {
-                        val schedule = getSchedule(groupTitle, true)
-                        val data = allDataFromSchedule(schedule)
-                        synchronized(packs) {
-                            packs.add(data)
-                        }
-                    }
-                    catch (ex: Exception) {}
-                    Log.d(TAG, (scheduleCounter.incrementAndGet() * 10000 / maxCount).toString())
-                    // lock (this.key)
-                    // {
-                    //     DownloadProgressChanged?.Invoke(this.scheduleCounter * 10000 / maxCount);
-                    // }
-                })
+        val channel = Channel<Schedule?>()
+        val deferredList = chunks.map { chunk ->
+            async(context = Dispatchers.IO) {
+                for (groupTitle in chunk) {
+                    channel.send(updateSchedule(groupTitle, false))
+                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+                }
+                for (groupTitle in chunk) {
+                    channel.send(updateSchedule(groupTitle, true))
+                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+                }
             }
         }
-        deferredList.awaitAll()
 
-        var packList = SchedulePackListTemp(
-            emptySequence(),
-            emptySequence(),
-            emptySequence(),
-            emptySequence(),
-            emptySequence()
-        )
-        packList = packs.fold(packList) { acc, e ->
-            acc.schedules += e.schedule
-            acc.lessonTitles += e.lessonTitles
-            acc.lessonTeachers += e.lessonTeachers
-            acc.lessonAuditoriums += e.lessonAuditoriums
-            acc.lessonTypes += e.lessonTypes
-            acc
+        launch {
+            deferredList.awaitAll()
+            channel.close()
         }
 
-        return SchedulePackList(
-            packList.schedules.toList(),
-            packList.lessonTitles.toSortedSet(),
-            packList.lessonTeachers.toSortedSet(),
-            packList.lessonAuditoriums.toSortedSet(),
-            packList.lessonTypes.toSortedSet()
+        val packList = SchedulePackList(
+            ScheduleIterable(groupList),
+            sortedSetOf(),
+            sortedSetOf(),
+            sortedSetOf(),
+            sortedSetOf()
         )
+        channel.receiveAsFlow().collect {
+            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+            if (it == null) {
+                return@collect
+            }
+            for (dailySchedule in it.dailySchedules) {
+                for (lesson in dailySchedule) {
+                    packList.lessonTitles.add(lesson.title)
+                    for (teacher in lesson.teachers) {
+                        packList.lessonTeachers.add(teacher.getFullName())
+                    }
+                    for (auditorium in lesson.auditoriums) {
+                        packList.lessonAuditoriums.add(auditorium.title)
+                    }
+                    packList.lessonTypes.add(lesson.type)
+                }
+            }
+        }
+        return@coroutineScope packList
     }
 
     fun allDataFromSchedule(schedule: Schedule): SchedulePack {
@@ -311,20 +303,11 @@ class ScheduleDao {
     }
 
     class SchedulePackList(
-        val schedules: List<Schedule>,
-        val lessonTitles: Set<String>,
-        val lessonTeachers: Set<String>,
-        val lessonAuditoriums: Set<String>,
-        val lessonTypes: Set<String>
-    )
-
-
-    class SchedulePackListTemp(
-        var schedules: Sequence<Schedule>,
-        var lessonTitles: Sequence<String>,
-        var lessonTeachers: Sequence<String>,
-        var lessonAuditoriums: Sequence<String>,
-        var lessonTypes: Sequence<String>
+        val schedules: Iterable<Schedule?>,
+        val lessonTitles: MutableSet<String>,
+        val lessonTeachers: MutableSet<String>,
+        val lessonAuditoriums: MutableSet<String>,
+        val lessonTypes: MutableSet<String>
     )
 
     class SchedulePack(
@@ -334,4 +317,39 @@ class ScheduleDao {
         val lessonAuditoriums: Set<String>,
         val lessonTypes: Set<String>
     )
+}
+
+class ScheduleIterable(
+    private val groupList: Iterable<String>
+): Iterable<Schedule?> {
+    private val dao = ScheduleDao()
+
+    override fun iterator(): Iterator<Schedule?> {
+        return ScheduleIterator(groupList.iterator(), dao)
+    }
+
+    class ScheduleIterator(
+        private var groupListIterator: Iterator<String>,
+        private var dao: ScheduleDao
+    ): Iterator<Schedule?> {
+        private var isSessionFlag = false
+        private var curGroupTitle = ""
+
+        override fun hasNext() = groupListIterator.hasNext() || isSessionFlag
+
+        override fun next() = try {
+            if (isSessionFlag) {
+                val result = dao.readSchedule(curGroupTitle, isSessionFlag)
+                isSessionFlag = false
+                result
+            } else {
+                curGroupTitle = groupListIterator.next()
+                val result = dao.readSchedule(curGroupTitle, isSessionFlag)
+                isSessionFlag = true
+                result
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
