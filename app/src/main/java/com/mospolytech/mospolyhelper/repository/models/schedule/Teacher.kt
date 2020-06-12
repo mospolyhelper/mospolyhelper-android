@@ -6,10 +6,23 @@ data class Teacher(val names: List<String>) {
     companion object {
         fun fromFullName(name: String) =
             Teacher(
-                name.replace(" - ", "-")
-                    .replace(" -", "-")
-                    .replace("- ", "-")
-                    .split(" ")
+                StringBuilder(name).apply {
+                    var idx = indexOf(" - ")
+                    while (idx != -1) {
+                        replace(idx, idx + 4, "-")
+                        idx = indexOf(" - ")
+                    }
+                    idx = indexOf(" -")
+                    while (idx != -1) {
+                        replace(idx, idx + 3, "-")
+                        idx = indexOf(" -")
+                    }
+                    idx = indexOf("- ")
+                    while (idx != -1) {
+                        replace(idx, idx + 3, "-")
+                        idx = indexOf(" -")
+                    }
+                }.split(" ")
                     .filter { it.isNotEmpty() }
             )
     }
