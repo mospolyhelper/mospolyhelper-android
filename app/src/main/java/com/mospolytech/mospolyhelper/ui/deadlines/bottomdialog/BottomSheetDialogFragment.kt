@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
 import com.mospolytech.mospolyhelper.utils.ContextProvider
@@ -28,20 +29,26 @@ class AddBottomSheetDialogFragment
     : BottomSheetDialogFragment(), View.OnClickListener {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        BottomSheetDialog(requireContext(), theme)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = BottomSheetDialog(requireContext(), theme)
+    enum class OpenType {
+        EDIT, ADD, SIMPLE
+    }
 
-    private var edit: Boolean = false
+    private var chipId: Int = 0
+    private var openType = OpenType.SIMPLE
     private var deadline: Deadline? = null
-    private lateinit var viewModel: DialogFragmentViewModel
-    //private val viewModel by viewModels<DialogFragmentViewModel>()
+    private var name: String = ""
+    //private lateinit var viewModel: DialogFragmentViewModel
+    private val viewModel by viewModels<DialogFragmentViewModel>()
     private var contextApp = ContextProvider.context as Context
 
     private val datePickerDialog = DatePickerDialog(
         contextApp,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
-            val dateFormatter = DateTimeFormatter.ofPattern("ccc, dd.MM.yyyy")
+            val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
             editDate.setText(localDate.format(dateFormatter))
         }, LocalDate.now().year,
         LocalDate.now().month.value - 1,
@@ -52,8 +59,6 @@ class AddBottomSheetDialogFragment
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            //var time: String = if (hourOfDay<10) "0${hourOfDay}:" else "${hourOfDay}:"
-            //time += if (minute<10) "0${minute}" else "$minute"
             editTime.setText(localTime.format(timeFormatter))
         }, LocalTime.now().hour,
         LocalTime.now().minute,true)
@@ -65,8 +70,13 @@ class AddBottomSheetDialogFragment
         const val TAG = "BottomDialog"
     }
 
+    fun setName(name: String) {
+        this.name = name
+        openType = OpenType.ADD
+    }
+
     fun setEdit(deadline: Deadline) {
-        this.edit = true
+        openType = OpenType.EDIT
         this.deadline = deadline
     }
 
@@ -109,7 +119,7 @@ class AddBottomSheetDialogFragment
             item.pinned = pinned
             item.importance = color
             viewModel.updateOne(item)
-            this.edit = false
+            openType = OpenType.SIMPLE
             dismiss()
         }
     }
@@ -121,19 +131,38 @@ class AddBottomSheetDialogFragment
 
     override fun onResume() {
         super.onResume()
-        if (edit) {
-            setEditable(this.deadline as Deadline)
-        } else {
-            btadd.setText(R.string.add)
-            btadd.setOnClickListener(this)
+        when (openType) {
+            OpenType.EDIT -> {
+                setEditable(this.deadline as Deadline)
+            }
+            OpenType.SIMPLE -> {
+                clear()
+            }
+            OpenType.ADD -> {
+                clear()
+                editPredmet.setText(this.name)
+            }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
-        btadd.setOnClickListener(this)
-
+        //viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
+        viewModel.newRepository()
+        chipId = chipLow.id
+        when (openType) {
+            OpenType.SIMPLE -> {
+                btadd.setOnClickListener(this)
+            }
+            OpenType.ADD -> {
+                btadd.setOnClickListener(this)
+                clear()
+                editPredmet.setText(this.name)
+            }
+            OpenType.EDIT -> {
+                setEditable(this.deadline as Deadline)
+            }
+        }
         editDate.setOnClickListener {
             datePickerDialog.show()
         }
@@ -154,10 +183,10 @@ class AddBottomSheetDialogFragment
 
         chipGr.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.chipLow -> {  }
-                R.id.chipMedium -> {  }
-                R.id.chipHigh -> {  }
-                else -> chipLow.isChecked = true
+                R.id.chipLow -> { chipId = R.id.chipLow }
+                R.id.chipMedium -> { chipId = R.id.chipMedium }
+                R.id.chipHigh -> { chipId = R.id.chipHigh }
+                else -> { view.findViewById<Chip>(chipId).isChecked = true }
             }
         }
     }
@@ -192,14 +221,10 @@ class AddBottomSheetDialogFragment
 
     override fun onPause() {
         super.onPause()
-        if (this.edit) clear()
-        editDescription.error = null
+        clear()
+        openType = OpenType.SIMPLE
     }
 
-    override fun dismiss() {
-        super.dismiss()
-        clear()
-    }
 
     private fun clear() {
         editPredmet.text.clear()
@@ -209,27 +234,12 @@ class AddBottomSheetDialogFragment
         imgPinned.setImageResource(R.drawable.ic_push_unpin_24px)
         imgPinned.contentDescription = getString(R.string.unpin)
         chipLow.isChecked = true
-        if (this.edit) {
+        if (openType == OpenType.EDIT) {
             btadd.setOnClickListener(this)
             btadd.setText(R.string.add)
-            this.edit = false
+            openType = OpenType.SIMPLE
         }
+        editDescription.error = null
     }
 
-    fun getDeadline(): Deadline? {
-        return deadline
-    }
-
-    private fun weekDay(day:Int): String{
-        return when(day) {
-            1 -> "Вс"
-            2 -> "Пн"
-            3 -> "Вт"
-            4 -> "Ср"
-            5 -> "Чт"
-            6 -> "Пт"
-            7 -> "Сб"
-            else -> "Пн"
-        }
-    }
 }
