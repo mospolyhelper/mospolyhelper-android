@@ -34,14 +34,13 @@ import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment
 import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
 import com.mospolytech.mospolyhelper.utils.DefaultSettings
 import com.mospolytech.mospolyhelper.utils.PreferencesConstants
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.coroutines.CoroutineContext
 
 
-class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
+class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
     companion object {
         fun newInstance() = ScheduleFragment()
@@ -58,11 +57,14 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     var checkedTeachers = ObservableArrayList<Int>()
     var checkedLessonTitles = ObservableArrayList<Int>()
     var checkedAuditoriums = ObservableArrayList<Int>()
-    var schedules = listOf<Schedule>()
+    var schedules: Iterable<Schedule?> = emptyList()
     var lessonTitles = listOf<String>()
     var lessonTeachers = listOf<String>()
     var lessonAuditoriums = listOf<String>()
     var lessonTypes = listOf<String>()
+
+    var downloadSchedulesJob = SupervisorJob()
+    val job = SupervisorJob()
 
     var regularString: String = ""
     var sessionString: String = ""
@@ -72,6 +74,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
     lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val viewModel by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + job
 
     fun getTypeText(isSession: Boolean) =
         if (isSession) sessionString else regularString
@@ -383,7 +388,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
         val progressText = bottomSheet.findViewById<TextView>(R.id.text_progress)
         val cancelBtn = bottomSheet.findViewById<Button>(R.id.btn_cancel)
         cancelBtn.setOnClickListener {
-            // this.cts.Cancel() TODO: Make cancel
+            downloadSchedulesJob.cancel()
             cancelBtn.visibility = View.GONE
         }
         checkedGroups.addOnListChangedCallback(ListChangedObserver {
@@ -404,7 +409,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
         val downloadSchedulesBtn = view.findViewById<Button>(R.id.btn_acceptGroups)
         downloadSchedulesBtn.setOnClickListener {
-            GlobalScope.launch {
+            downloadSchedulesJob = SupervisorJob()
+            async(Dispatchers.Main + downloadSchedulesJob) {
                 downloadSchedulesBtn.isEnabled = false
                 textGroups.isEnabled = false
                 textLessonTitles.visibility = View.GONE
@@ -416,20 +422,32 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                 progressText.visibility = View.VISIBLE
                 cancelBtn.visibility = View.VISIBLE
                 try {
-                    val pack = GlobalScope.async {
-                        viewModel.getAdvancedSearchData(
-                            if (checkedGroups.isEmpty()) viewModel.groupList.value!! else
-                                checkedGroups.map { viewModel.groupList.value!![it] }
-                        ) {
-                            progressBar.progress = it
-                            progressText.text = "${it / 100} %"
+                    val pack = viewModel.getAdvancedSearchData(
+                        if (checkedGroups.isEmpty()) viewModel.groupList.value!! else
+                            checkedGroups.map { viewModel.groupList.value!![it] }
+                    ) {
+                        this@ScheduleFragment.launch(Dispatchers.Main) {
+                            synchronized(progressText) {
+                                progressBar.progress = (it * 10000).toInt()
+                                progressText.text = "${(it * 100).toInt()} %"
+                            }
                         }
-                    }.await()
-                    this@ScheduleFragment.lessonTitles = pack?.lessonTitles?.toList() ?: emptyList()
-                    this@ScheduleFragment.lessonTypes = pack?.lessonTypes?.toList() ?: emptyList()
-                    this@ScheduleFragment.lessonTeachers = pack?.lessonTeachers?.toList() ?: emptyList()
-                    this@ScheduleFragment.lessonAuditoriums = pack?.lessonAuditoriums?.toList() ?: emptyList()
-                    this@ScheduleFragment.schedules = pack?.schedules?.toList() ?: emptyList()
+                    }
+
+
+                    if (pack != null) {
+                        this@ScheduleFragment.lessonTitles = pack.lessonTitles.toList()
+                        this@ScheduleFragment.lessonTypes = pack.lessonTypes.toList()
+                        this@ScheduleFragment.lessonTeachers = pack.lessonTeachers.toList()
+                        this@ScheduleFragment.lessonAuditoriums = pack.lessonAuditoriums.toList()
+                        this@ScheduleFragment.schedules = pack.schedules
+                    } else {
+                        this@ScheduleFragment.lessonTitles = emptyList()
+                        this@ScheduleFragment.lessonTypes = emptyList()
+                        this@ScheduleFragment.lessonTeachers = emptyList()
+                        this@ScheduleFragment.lessonAuditoriums = emptyList()
+                        this@ScheduleFragment.schedules = emptyList()
+                    }
 
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
                     downloadSchedulesBtn.isEnabled = true
@@ -457,6 +475,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
                     textLessonTypes.visibility = View.GONE
                     applyButton.visibility = View.GONE
                     progressBar.visibility = View.GONE
+                    cancelBtn.visibility = View.GONE
                     progressText.visibility = View.GONE
                 }
             }
@@ -602,6 +621,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferencesConstants.ScheduleShowEmptyLessons,
                 DefaultSettings.ScheduleShowEmptyLessons)
 
+            viewModel.onMessage += {
+                launch(Dispatchers.Main) {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+            }
+
             viewModel.setUpSchedule(false)
         }
 
@@ -637,6 +662,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
 
     override fun onDestroy() {
         //this.viewModel.Announced -= ViewModel_Announced;
+        coroutineContext.cancelChildren()
         super.onDestroy()
     }
 
@@ -653,29 +679,25 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain) {
             sender: ObservableList<*>?,
             positionStart: Int,
             itemCount: Int
-        ) {
-        }
+        ) = block(sender)
 
         override fun onItemRangeMoved(
             sender: ObservableList<*>?,
             fromPosition: Int,
             toPosition: Int,
             itemCount: Int
-        ) {
-        }
+        ) = block(sender)
 
         override fun onItemRangeInserted(
             sender: ObservableList<*>?,
             positionStart: Int,
             itemCount: Int
-        ) {
-        }
+        ) = block(sender)
 
         override fun onItemRangeChanged(
             sender: ObservableList<*>?,
             positionStart: Int,
             itemCount: Int
-        ) {
-        }
+        ) = block(sender)
     }
 }
