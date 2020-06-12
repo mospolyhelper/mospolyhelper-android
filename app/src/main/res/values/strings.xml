@@ -117,4 +117,5 @@
   <string name="pin">pinned</string>
   <string name="unpin">unpinned</string>
   <string name="nav_deadlines">Дедлайны</string>
+    <string name="bt_search">Search</string>
 </resources>
