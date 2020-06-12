@@ -101,7 +101,7 @@ class ScheduleDao {
         }
     }
 
-    suspend fun getSchedule2(
+    suspend fun getSchedule(
         group: String,
         isSession: Boolean,
         downloadNew: Boolean,

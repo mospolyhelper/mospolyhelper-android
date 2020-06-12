@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.database.entity
+package com.mospolytech.mospolyhelper.repository.models
 
 
 import androidx.room.Entity
