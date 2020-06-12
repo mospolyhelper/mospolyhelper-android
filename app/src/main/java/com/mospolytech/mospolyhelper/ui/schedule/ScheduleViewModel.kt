@@ -1,13 +1,11 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
-import android.app.Notification
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarViewModel
@@ -102,8 +100,8 @@ class ScheduleViewModel(
             val schedule = if (groupTitle.value!!.isEmpty()) {
                 null
             } else {
-                dao.getSchedule2(groupTitle.value!!, isSession.value!!, downloadNew, (onMessage as Action1)::invoke)
-                    ?: dao.getSchedule2(groupTitle.value!!, isSession.value!!, !downloadNew, (onMessage as Action1)::invoke)
+                dao.getSchedule(groupTitle.value!!, isSession.value!!, downloadNew, (onMessage as Action1)::invoke)
+                    ?: dao.getSchedule(groupTitle.value!!, isSession.value!!, !downloadNew, (onMessage as Action1)::invoke)
             }
             scheduleDownloaded = true
             this@ScheduleViewModel.schedule.value = schedule
