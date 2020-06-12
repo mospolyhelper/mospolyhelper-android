@@ -1,16 +1,12 @@
 package com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog
 
-import android.app.Application
 import android.content.Context
-import androidx.lifecycle.AndroidViewModel
 import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
-import com.mospolytech.mospolyhelper.repository.database.AppDatabase
-import com.mospolytech.mospolyhelper.repository.database.DeadlinesRepository
-import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
+import com.mospolytech.mospolyhelper.repository.local.AppDatabase
+import com.mospolytech.mospolyhelper.repository.local.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.models.Deadline
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
-import com.mospolytech.mospolyhelper.ui.deadlines.DeadlineViewModel
-import com.mospolytech.mospolyhelper.utils.Action0
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -31,7 +27,10 @@ class DialogFragmentViewModel/*(app: Application)*/ :
     private lateinit var deadlinesRepository: DeadlinesRepository
 
     fun newRepository() {
-        deadlinesRepository = DeadlinesRepository(database)
+        deadlinesRepository =
+            DeadlinesRepository(
+                database
+            )
     }
 
     fun saveInformation(deadline: Deadline) {
@@ -52,8 +51,8 @@ class DialogFragmentViewModel/*(app: Application)*/ :
             val schedule = if (groupTitle.isEmpty()) {
                 null
             } else {
-                dao.getSchedule2(groupTitle, false, false)
-                    ?: dao.getSchedule2(groupTitle, false, true)
+                dao.getSchedule(groupTitle, false, false)
+                    ?: dao.getSchedule(groupTitle, false, true)
             }
             dao.allDataFromSchedule(schedule!!)
         }
