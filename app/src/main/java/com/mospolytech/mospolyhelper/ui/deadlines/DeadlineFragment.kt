@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.ui.deadlines
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,7 +13,10 @@ import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -27,6 +31,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
+import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlin.math.roundToInt
@@ -34,6 +39,9 @@ import kotlin.math.roundToInt
 
 class DeadlineFragment : FragmentBase(Fragments.Deadlines),
     View.OnClickListener {
+
+    //private val viewModelFactory = ScheduleViewModel.Factory()
+    //private val viewModelShedule by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
     private lateinit var mainActivity: MainActivity
     private lateinit var bot: AddBottomSheetDialogFragment
@@ -69,8 +77,18 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         defaultData()
         editDeadline()
         deleteDeadline()
+        receiveName()
         setToolbar()
         fab.setOnClickListener(this)
+    }
+
+    private fun receiveName() {
+        viewModel.nameReceiver.observe(viewLifecycleOwner, Observer {
+            bot.setName(it)
+            bot.show(fm,
+                AddBottomSheetDialogFragment.TAG
+            )
+        })
     }
 
     private fun editDeadline() {
@@ -262,8 +280,6 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
 
     private fun setToolbar(){
         mainActivity.setSupportActionBar(toolbar)
-        toolbar.title = resources.getString(R.string.title)
-        mainActivity.setSupportActionBar(toolbar)
         val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(
             activity, drawer, toolbar,
@@ -273,6 +289,28 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         toggle.syncState()
         toggle.isDrawerIndicatorEnabled = true
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        val inputMethodManager =
+            requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        button_search_deadline.setOnClickListener {
+            toolbar_deadline_main.visibility = View.GONE
+            toolbar_deadline_search.visibility = View.VISIBLE
+            edit_search_deadline.requestFocus()
+            inputMethodManager.showSoftInput(edit_search_deadline, 0)
+        }
+        button_search_clear.setOnClickListener {
+            toolbar_deadline_main.visibility = View.VISIBLE
+            toolbar_deadline_search.visibility = View.GONE
+            edit_search_deadline.text.clear()
+            inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
+        }
+        edit_search_deadline.addTextChangedListener {
+            if (!viewModel.foundData.hasActiveObservers()) {
+                requestData(DataType.FIND)
+            } else if (it.toString().isEmpty()) {
+                requestData(DataType.FULL)
+            }
+            viewModel.find(it.toString())
+        }
     }
 
 
