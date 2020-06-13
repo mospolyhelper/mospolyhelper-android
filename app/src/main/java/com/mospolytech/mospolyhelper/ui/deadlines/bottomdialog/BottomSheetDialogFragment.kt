@@ -12,18 +12,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.database.entity.Deadline
+import com.mospolytech.mospolyhelper.repository.models.Deadline
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class AddBottomSheetDialogFragment
     : BottomSheetDialogFragment(), View.OnClickListener {
@@ -213,8 +211,10 @@ class AddBottomSheetDialogFragment
         val pinned = imgPinned.contentDescription == "pinned"
         val date = editDate.text.toString()
         val time = editTime.text.toString()
-        val d = Deadline(name = predmet, description = descr, pinned = pinned,
-            date = date, time = time, importance = color)
+        val d = Deadline(
+            name = predmet, description = descr, pinned = pinned,
+            date = date, time = time, importance = color
+        )
         viewModel.saveInformation(d)
         dismiss()
     }
