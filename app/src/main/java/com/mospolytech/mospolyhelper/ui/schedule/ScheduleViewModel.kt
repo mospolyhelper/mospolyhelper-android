@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
 import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarViewModel
@@ -45,11 +44,19 @@ class ScheduleViewModel(
     val beginDownloading: Event0 = Action0()
     val endDownloading: Event0 = Action0()
 
+    val onMessage: Event1<String> = Action1<String>()
+
     init {
         subscribe(::handleMessage)
         getGroupList(true)
 
         this.isSession.observeForever {
+            GlobalScope.launch {
+                setUpSchedule(true)
+            }
+        }
+
+        this.groupTitle.observeForever {
             GlobalScope.launch {
                 setUpSchedule(true)
             }
@@ -84,7 +91,7 @@ class ScheduleViewModel(
         }
     }
 
-    fun setUpSchedule(downloadNew: Boolean, notMainThread: Boolean = false, withoutIndicator: Boolean = false) =
+    fun setUpSchedule(downloadNew: Boolean, withoutIndicator: Boolean = false) =
         GlobalScope.launch(Dispatchers.Main) {
             if (!withoutIndicator) {
                 (beginDownloading as Action0).invoke()
@@ -93,17 +100,19 @@ class ScheduleViewModel(
             val schedule = if (groupTitle.value!!.isEmpty()) {
                 null
             } else {
-                dao.getSchedule2(groupTitle.value!!, isSession.value!!, downloadNew)
-                    ?: dao.getSchedule2(groupTitle.value!!, isSession.value!!, !downloadNew)
+                dao.getSchedule(groupTitle.value!!, isSession.value!!, downloadNew, (onMessage as Action1)::invoke)
+                    ?: dao.getSchedule(groupTitle.value!!, isSession.value!!, !downloadNew, (onMessage as Action1)::invoke)
             }
             scheduleDownloaded = true
             this@ScheduleViewModel.schedule.value = schedule
             (endDownloading as Action0).invoke()
         }
 
-    suspend fun getAdvancedSearchData(groupList: List<String>, onProgressChanged: (Int) -> Unit): ScheduleDao.SchedulePackList? {
-        // dao.downloadProgressChanged += onProgressChanged
-        return dao.getSchedules(groupList)
+    suspend fun getAdvancedSearchData(
+        groupList: List<String>,
+        onProgressChanged: (Float) -> Unit
+    ): ScheduleDao.SchedulePackList? {
+        return dao.getSchedules(groupList, onProgressChanged)
     }
 
     fun goHome() {
