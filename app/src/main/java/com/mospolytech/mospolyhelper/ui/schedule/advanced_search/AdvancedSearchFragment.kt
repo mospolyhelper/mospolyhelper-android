@@ -1,7 +1,5 @@
 package com.mospolytech.mospolyhelper.ui.schedule.advanced_search
 
-import android.R.bool
-import android.R.string
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -34,21 +32,20 @@ class AdvancedSearchFragment : DialogFragment() {
 
     fun setAdapter(adapter: AdvancedSearchAdapter) {
         this.adapter = adapter
+        if (dialog == null) return
         val recyclerView = requireDialog().findViewById<RecyclerView>(R.id.recycler_advanced_search)
         if (recyclerView != null) {
             val searchView = requireDialog().findViewById<SearchView>(R.id.searchView1)
-            if (searchView != null) {
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        adapter.updateTemplate(newText ?: "")
-                        return true
-                    }
+            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.updateTemplate(newText ?: "")
+                    return true
+                }
 
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        return true
-                    }
-                })
-            }
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+            })
             recyclerView.adapter = adapter
         }
     }
@@ -82,30 +79,25 @@ class AdvancedSearchFragment : DialogFragment() {
 
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val recyclerView = requireDialog().findViewById<RecyclerView>(R.id.recycler_advanced_search)
-        if (recyclerView != null) {
-            val layoutManager = LinearLayoutManager(recyclerView.context)
-            val divider = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
-            divider.setDrawable(requireContext().getDrawable(R.drawable.all_divider)!!)
-            recyclerView.addItemDecoration(divider)
-            recyclerView.layoutManager = layoutManager
-            recyclerView.adapter = adapter
-            recyclerView.adapter?.notifyDataSetChanged()
+        val recyclerView = requireDialog().findViewById<RecyclerView>(R.id.recycler_advanced_search)!!
+        val layoutManager = LinearLayoutManager(recyclerView.context)
+        val divider = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
+        divider.setDrawable(requireContext().getDrawable(R.drawable.all_divider)!!)
+        recyclerView.addItemDecoration(divider)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+        recyclerView.adapter?.notifyDataSetChanged()
 
-            val searchView = requireDialog().findViewById<SearchView>(R.id.searchView1);
-            if (searchView != null) {
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        adapter?.updateTemplate(newText ?: "")
-                        return true
-                    }
-
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        return true
-                    }
-                })
+        requireDialog().findViewById<SearchView>(R.id.searchView1)?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter?.updateTemplate(newText ?: "")
+                return true
             }
-        }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
