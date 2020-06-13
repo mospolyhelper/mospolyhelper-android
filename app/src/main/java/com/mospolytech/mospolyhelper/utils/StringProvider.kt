@@ -10,11 +10,11 @@ class StringProvider {
             val context = ContextProvider.context ?: return ""
             try {
                 when (stringId) {
-                    StringId.ScheduleWasntFounded ->
+                    StringId.ScheduleWasntFound ->
                         return context.getString(R.string.schedule_not_found)
-                    StringId.OfflineScheduleWasntFounded ->
+                    StringId.OfflineScheduleWasntFound ->
                         return context.getString(R.string.offline_schedule_not_found)
-                    StringId.OfflineScheduleWasFounded ->
+                    StringId.OfflineScheduleWasFound ->
                         return context.getString(R.string.offline_schedule_found)
                     StringId.GroupListWasntFounded ->
                         return context.getString(R.string.group_list_not_found)
@@ -35,9 +35,9 @@ class StringProvider {
 }
 
 enum class StringId {
-    ScheduleWasntFounded,
-    OfflineScheduleWasntFounded,
-    OfflineScheduleWasFounded,
+    ScheduleWasntFound,
+    OfflineScheduleWasntFound,
+    OfflineScheduleWasFound,
     GroupListWasntFounded,
     OfflineGroupListWasntFounded,
     OfflineGroupListWasFounded,

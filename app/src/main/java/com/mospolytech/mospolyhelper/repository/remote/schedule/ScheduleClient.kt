@@ -21,6 +21,13 @@ class ScheduleClient {
     var cookiesCheckedCount = 0
         private set
 
+    private val scheduleClient by lazy {
+        HttpClient()
+    }
+    private val groupListClient by lazy {
+        HttpClient()
+    }
+
     suspend fun getCookies() {
         val client = HttpClient()
         val data = client.get<String>(BASE_URL) {
@@ -49,38 +56,34 @@ class ScheduleClient {
     }
 
     suspend fun getSchedule(groupTitle: String, isSession: Boolean): String {
-        val client = HttpClient()
         val cookiesStorage = cookiesStorage
         if (cookiesStorage != null) {
-            client.config {
+            scheduleClient.config {
                 install(HttpCookies) {
                     storage = cookiesStorage
                 }
             }
         }
 
-        return client.get(GET_SCHEDULE) {
+        return scheduleClient.get(GET_SCHEDULE) {
             header("referer", BASE_URL)
-            //header("host", BASE_URL)
             parameter("group", groupTitle)
             parameter("session", if (isSession) 1 else 0)
         }
     }
 
     suspend fun getGroupList(): String {
-        val client = HttpClient()
         val cookiesStorage = cookiesStorage
         if (cookiesStorage != null) {
-            client.config {
+            groupListClient.config {
                 install(HttpCookies) {
                     storage = cookiesStorage
                 }
             }
         }
 
-        return client.get(GET_GROUP_LIST) {
+        return groupListClient.get(GET_GROUP_LIST) {
             header("referer", BASE_URL)
-            header("host", BASE_URL)
         }
     }
 }

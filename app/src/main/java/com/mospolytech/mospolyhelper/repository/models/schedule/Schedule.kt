@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.repository.models.schedule
 import com.beust.klaxon.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 
 data class Schedule(
@@ -136,7 +135,7 @@ data class Schedule(
                 )
         }
 
-        fun getFiltered(schedules: Iterable<Schedule>): Schedule {
+        fun getFiltered(schedules: Iterable<Schedule?>): Schedule {
             val tempList: List<MutableList<Lesson>> = listOf(mutableListOf(), mutableListOf(),
                 mutableListOf(), mutableListOf(), mutableListOf(),
                 mutableListOf(), mutableListOf())
@@ -145,6 +144,9 @@ data class Schedule(
             var dateTo = LocalDate.MAX
 
             for (schedule in schedules) {
+                if (schedule == null) {
+                    continue
+                }
                 if (schedule.dateFrom < dateFrom) {
                     dateFrom = schedule.dateFrom;
                 }
@@ -185,21 +187,20 @@ data class Schedule(
         }
 
         private fun checkFilter(filterList: Iterable<String>, values: Iterable<String>): Boolean {
-            val iterator = filterList.iterator()
-            if (iterator.hasNext()) {
-                val valueIterator = values.iterator()
-                if (!valueIterator.hasNext()) return false
+            val filterIterator = filterList.iterator()
+            // if not empty
+            if (filterIterator.hasNext()) {
                 do {
-                    var valuesContainCurrentFilter = false
+                    val valueIterator = values.iterator()
+                    // return if empty
+                    if (!valueIterator.hasNext()) return false
+                    val curFilter = filterIterator.next()
                     do {
-                        if (valueIterator.next() == iterator.next()) {
-                            valuesContainCurrentFilter = true
-                            break
+                        if (valueIterator.next() == curFilter) {
+                            return true
                         }
                     } while (valueIterator.hasNext())
-
-                    if (valuesContainCurrentFilter) return true
-                } while (iterator.hasNext())
+                } while (filterIterator.hasNext())
 
                 return false
             }
