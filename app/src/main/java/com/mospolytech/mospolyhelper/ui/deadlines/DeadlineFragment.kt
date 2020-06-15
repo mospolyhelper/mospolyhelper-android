@@ -103,7 +103,7 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
     private fun deleteDeadline() {
         viewModel.delete.observe(viewLifecycleOwner, Observer {
             viewModel.deleteOne(it)
-            val snackbar = Snackbar.make(view as View,
+            val snackbar = Snackbar.make(requireView(),
                 R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
             var isRemoved = true
             snackbar
