@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -91,10 +92,12 @@ class AddBottomSheetDialogFragment
             R.color.colorHigh -> chipHigh.isChecked = true
         }
         if (item.pinned) {
-            imgPinned.setImageResource(R.drawable.ic_push_pin_24px)
+            imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_push_pin_24px,0,0,0)
             imgPinned.contentDescription = "pinned"
         } else {
-            imgPinned.setImageResource(R.drawable.ic_push_unpin_24px)
+            imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_push_unpin_24px, 0, 0, 0)
             imgPinned.contentDescription = "unpinned"
         }
         btadd.setOnClickListener {
@@ -169,12 +172,14 @@ class AddBottomSheetDialogFragment
             timePickerDialog.show()
         }
 
-        imgPinned.setOnClickListener { it as ImageView
+        imgPinned.setOnClickListener { it as TextView
             if (it.contentDescription == getString(R.string.pin)){
-                it.setImageResource(R.drawable.ic_push_unpin_24px)
+                it.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_push_unpin_24px,0,0,0)
                 it.contentDescription = getString(R.string.unpin)
             } else {
-                it.setImageResource(R.drawable.ic_push_pin_24px)
+                it.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_push_pin_24px,0,0,0)
                 it.contentDescription = getString(R.string.pin)
             }
         }
@@ -231,7 +236,8 @@ class AddBottomSheetDialogFragment
         editDescription.text.clear()
         editDate.text.clear()
         editTime.text.clear()
-        imgPinned.setImageResource(R.drawable.ic_push_unpin_24px)
+        imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_push_unpin_24px,0,0,0)
         imgPinned.contentDescription = getString(R.string.unpin)
         chipLow.isChecked = true
         if (openType == OpenType.EDIT) {
