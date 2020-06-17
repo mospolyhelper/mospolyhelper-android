@@ -25,7 +25,7 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
         fun newInstance() = SettingsFragment()
     }
 
-    override fun getCallbackFragment() = this.apply { Log.d("!3!!!!!!!", "!3!!!!!!!") }
+    override fun getCallbackFragment() = this
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -33,17 +33,8 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
 
     private val viewModel by viewModels<SettingsViewModel>()
 
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        return inflater.inflate(R.layout.fragment_settings, container, false)
-//    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("!!!!", "!!!!")
         super.onViewCreated(view, savedInstanceState)
-        Log.d("!!!!", "!!!!")
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = getString(R.string.settings_title)
         (activity as MainActivity).setSupportActionBar(toolbar)
@@ -74,8 +65,7 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
         caller: PreferenceFragmentCompat,
         pref: PreferenceScreen
     ): Boolean {
-        Log.d("!1!!!!!!!", "!1!!!!!!!")
-        val fragment = SettingsFragment.newInstance()
+        val fragment = newInstance()
         val args = Bundle()
         args.putString(ARG_PREFERENCE_ROOT, pref.key)
         fragment.arguments = args

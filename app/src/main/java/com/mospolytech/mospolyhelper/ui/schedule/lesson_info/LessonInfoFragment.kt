@@ -50,6 +50,11 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
         exitTransition = Slide(Gravity.LEFT)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -159,7 +164,7 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
     fun convertColorToNight(color: Int): Int {
         val hsv = FloatArray(3)
-        Color.RGBToHSV(Color.red(color), Color.red(color), Color.red(color), hsv)
+        Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv)
         var hue = hsv[0]
         if (hue > 214f && hue < 286f) {
             hue = if (hue >= 250f) 214f else 286f

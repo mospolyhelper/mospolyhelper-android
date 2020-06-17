@@ -225,7 +225,7 @@ class ScheduleJsonParser {
             order, title, teachers,
             dateFrom, dateTo,
             auditoriums,
-            type, group
+            Lesson.fixType(type, title), group
         )
     }
 

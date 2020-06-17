@@ -28,6 +28,11 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
 
     private val viewModel by viewModels<CalendarViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
