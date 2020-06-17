@@ -162,6 +162,7 @@ data class Schedule(
                     })
                 }
             }
+            tempList.forEach { it.sort() }
 
             return Schedule(
                 tempList,
