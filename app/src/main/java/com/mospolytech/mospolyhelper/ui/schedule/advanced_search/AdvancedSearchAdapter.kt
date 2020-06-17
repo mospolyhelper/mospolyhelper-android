@@ -7,7 +7,8 @@ import android.widget.CheckBox
 import androidx.databinding.ObservableList
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import java.util.*
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.Event1
 import kotlin.collections.ArrayList
 
 // TODO: add id to viewHolder
@@ -16,22 +17,18 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
 
     var dataSet: List<Int> = filter.getFiltered("")
 
-    private val allCheckedChanged = mutableListOf<(Boolean) -> Unit>()
+    val allCheckedChanged: Event1<Boolean> = Action1()
 
     override fun getItemCount() = dataSet.size
 
-    fun isAllChecked() = filter.isAllChecked(dataSet)
+    private fun isAllChecked() = filter.isAllChecked(dataSet)
 
-    fun addAllCheckedChanged(block: (Boolean) -> Unit) {
-        allCheckedChanged.add(block)
-    }
 
     fun updateTemplate(template: String) {
         dataSet = filter.getFiltered(template)
         notifyDataSetChanged()
-        allCheckedChanged.forEach {
-            it(isAllChecked())
-        }
+        val isAllChecked = isAllChecked()
+        (allCheckedChanged as Action1).invoke(isAllChecked)
     }
 
     fun setCheckAll(flag: Boolean) {
@@ -43,9 +40,8 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
 
     fun checkBoxChanged(position: Int, isChecked: Boolean) {
         filter.setChecked(dataSet[position], isChecked)
-        allCheckedChanged.forEach {
-            it(isAllChecked())
-        }
+        val isAllChecked = isAllChecked()
+        (allCheckedChanged as Action1).invoke(isAllChecked)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -70,17 +66,16 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
         }
     }
 }
-// TODO checkedIndexes: ObservableList
+
 class AdvancedFilter(
     val originDataSet: List<String>,
-    val checkedList: MutableList<Int>
+    val checkedIndices: ObservableList<Int>
 ) : AdvancedSearchFilter {
     var checkedArray = mutableListOf<Boolean>()
     var normalized = mutableListOf<String>()
-    var  checkedIndexes = mutableListOf<Int>()
 
     override fun isAllChecked(localDataSet: List<Int>): Boolean {
-        if (localDataSet.size > checkedIndexes.size) {
+        if (localDataSet.size > checkedIndices.size) {
             return false
         }
         for (index in localDataSet) {
@@ -91,17 +86,15 @@ class AdvancedFilter(
         return true
     }
 
-    init {   // TODO Right here
+    init {
         this.normalized = MutableList(originDataSet.size) { idx ->
             String(
                 originDataSet[idx].filter { it.isLetterOrDigit() }.toCharArray()
             )
         }
 
-
         checkedArray = MutableList(originDataSet.size) { false }
-        checkedIndexes = checkedList
-        for (value in checkedList) {
+        for (value in checkedIndices) {
             checkedArray[value] = true
         }
     }
@@ -116,9 +109,9 @@ class AdvancedFilter(
         }
         checkedArray[index] = isChecked
         if (isChecked)
-            checkedIndexes.add(index)
+            checkedIndices.add(index)
         else
-            checkedIndexes.remove(index)
+            checkedIndices.remove(index)
     }
 
     override fun getFiltered(template: String): List<Int> {
@@ -160,7 +153,7 @@ class AdvancedFilter(
 
 
     fun buildRegex(str: String): Regex {
-        val str = Regex.escape(str)
+        val str = Regex.escapeReplacement(str)
         val res = ArrayList<Char>(str.length)
         var i = 0
         while (i < str.length && !str[i].isLetterOrDigit()) {
@@ -195,12 +188,19 @@ class AdvancedFilter(
 
 class SimpleFilter(
     val originDataSet: List<String>,
-    val checkedList: ObservableList<Int>
+    val checkedIndices: ObservableList<Int>
 ) : AdvancedSearchFilter {
     var checkedArray = mutableListOf<Boolean>()
 
+    init {
+        checkedArray = MutableList(originDataSet.size) { false }
+        for (value in checkedIndices) {
+            checkedArray[value] = true
+        }
+    }
+
     override fun isAllChecked(localDataSet: List<Int>): Boolean {
-        if (localDataSet.size > checkedList.size) {
+        if (localDataSet.size > checkedIndices.size) {
             return false
         }
         for (index in localDataSet) {
@@ -209,13 +209,6 @@ class SimpleFilter(
             }
         }
         return true
-    }
-
-    init {
-        checkedArray = MutableList(originDataSet.size) { false }
-        for (value in checkedList) {
-            checkedArray[value] = true
-        }
     }
 
     override fun getValue(index: Int) = originDataSet[index]
@@ -228,9 +221,9 @@ class SimpleFilter(
         }
         this.checkedArray[index] = isChecked
         if (isChecked) {
-            checkedList.add(index)
+            checkedIndices.add(index)
         } else {
-            checkedList.remove(index)
+            checkedIndices.remove(index)
         }
     }
 
@@ -255,7 +248,7 @@ class SimpleFilter(
         if (capacity < 4) {
             capacity = 4
         }
-        var newList = ArrayList<Int>(capacity)
+        val newList = ArrayList<Int>(capacity)
         var j = 0
         for (i in originDataSet.indices) {
             if (this.originDataSet[i].contains(template, true)) {

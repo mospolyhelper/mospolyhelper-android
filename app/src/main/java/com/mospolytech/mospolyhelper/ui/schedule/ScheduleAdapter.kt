@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +38,6 @@ class ScheduleAdapter(
     private var count = 0
 
     val lessonClick: Event2<Lesson, LocalDate> = Action2()
-    val openCalendar: Event1<LocalDate> = Action1()
 
     init {
         setCount()
@@ -91,11 +89,10 @@ class ScheduleAdapter(
         if (vh == null) {
             viewHolder = ViewHolder.from(container, position, R.layout.page_schedule, schedule, scheduleFilter,
                 firstPosDate, showEmptyLessons, showGroup)
-            viewHolder.dayBtn.setOnClickListener {
-                (openCalendar as Action1).invoke(firstPosDate.plusDays(position.toLong()))
-            }
-            viewHolder.listAdapter?.addOnLessonClick { lesson ->
-                (lessonClick as Action2).invoke(lesson, viewHolder.listAdapter!!.date)
+            viewHolder.listAdapter?.let {
+                it.lessonClick += { lesson ->
+                    (lessonClick as Action2).invoke(lesson, viewHolder.listAdapter!!.date)
+                }
             }
             setViewHolder(position, viewHolder)
         } else {
@@ -123,7 +120,7 @@ class ScheduleAdapter(
     class ViewHolder(val view: View, private var position: Int, var schedule: Schedule, var scheduleFilter: Schedule.Filter,
                      var firstPosDate: LocalDate, val showEmptyLessons: Boolean, val showGroup: Boolean) {
         companion object {
-            private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
+            private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
 
             fun from(container: ViewGroup, position: Int, resource: Int, schedule: Schedule,
                      scheduleFilter: Schedule.Filter, firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean): ViewHolder {
@@ -134,7 +131,7 @@ class ScheduleAdapter(
                     showEmptyLessons, showGroup)
             }
         }
-        val dayBtn = view.findViewById<Button>(R.id.button_day)!!
+        val dayTitle = view.findViewById<TextView>(R.id.button_day)!!
         val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
         var listAdapter: LessonAdapter? = null
         var accumulator = 0f
@@ -164,9 +161,9 @@ class ScheduleAdapter(
                 v as RecyclerView
                 if (v.canScrollVertically(-1)) {
                     accumulator -= oldScrollY
-                    dayBtn.elevation = if (accumulator > dp32) dp8 else accumulator / 4f
+                    dayTitle.elevation = if (accumulator > dp32) dp8 else accumulator / 4f
                 } else {
-                    dayBtn.elevation = 0f
+                    dayTitle.elevation = 0f
                     accumulator = 0f
                 }
             }
@@ -183,7 +180,7 @@ class ScheduleAdapter(
             list.layoutManager = LinearLayoutManager(view.context)
             list.adapter = listAdapter!!
 
-            dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
+            dayTitle.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter).capitalize()
         }
 
         fun update(position: Int, schedule: Schedule, scheduleFilter: Schedule.Filter,
@@ -193,12 +190,12 @@ class ScheduleAdapter(
             date = firstPosDate.plusDays(position.toLong())
             list.scrollToPosition(0)
             accumulator = 0f
-            dayBtn.elevation = 0f
+            dayTitle.elevation = 0f
             listAdapter?.buildSchedule(
                 schedule.getSchedule(date, scheduleFilter),
                 scheduleFilter, date, showEmptyLessons, showGroup
             )
-            dayBtn.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter)
+            dayTitle.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter).capitalize()
         }
     }
 }
