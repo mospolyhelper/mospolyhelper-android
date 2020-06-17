@@ -66,9 +66,12 @@ class AdvancedSearchFragment : DialogFragment() {
             adapter?.setCheckAll(checkedAll)
             checkAll.text = if (checkedAll) unselectAll else selectAll
         }
-        this.adapter?.addAllCheckedChanged {
-            checkedAll = it
-            checkAll.text = if (checkedAll) unselectAll else selectAll
+        val adapter = this.adapter
+        if (adapter != null) {
+            adapter.allCheckedChanged += {
+                checkedAll = it
+                checkAll.text = if (checkedAll) unselectAll else selectAll
+            }
         }
 
         return view
