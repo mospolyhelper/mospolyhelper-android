@@ -143,7 +143,7 @@ class ScheduleViewModel(
 
     fun getGroupList(downloadNew: Boolean) {
         GlobalScope.launch(Dispatchers.Main) {
-            groupList.value = dao.getGroupList2(downloadNew)
+            groupList.value = dao.getGroupList(downloadNew)
         }
     }
 
