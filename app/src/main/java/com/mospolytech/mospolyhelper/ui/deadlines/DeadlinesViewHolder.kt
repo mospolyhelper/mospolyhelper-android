@@ -39,13 +39,16 @@ class DeadlinesViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         }
         when (deadline.importance) {
             R.color.colorLow -> {
-                img.setImageResource(R.drawable.ic_access_alarm_low_24dp)
+                img.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_access_alarm_low_24dp,0, 0, 0)
             }
             R.color.colorMedium -> {
-                img.setImageResource(R.drawable.ic_access_alarm_medium_24dp)
+                img.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_access_alarm_medium_24dp,0, 0, 0)
             }
             R.color.colorHigh -> {
-                img.setImageResource(R.drawable.ic_access_alarm_high_24dp)
+                img.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_access_alarm_high_24dp,0, 0, 0)
             }
         }
         predmet.visibility = if (predmet.text.isEmpty()) View.GONE else View.VISIBLE
