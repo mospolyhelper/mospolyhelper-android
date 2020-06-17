@@ -1,6 +1,6 @@
 <resources>
 
-  <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+  <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorSecondary">@color/colorSecondary</item>
@@ -36,26 +36,6 @@
     <item name="android:windowLightStatusBar">false</item>
   </style>
 
-  <style name="AppTheme.Chip" parent="@style/Theme.MaterialComponents"></style>
-
-
-
-  <style name="AppTheme.PopupWindow" parent="Theme.AppCompat.DayNight.DarkActionBar" >
-    <item name="thumbTint">@color/switch_color</item>
-    <item name="trackTint">@color/switch_color</item>
-  </style>
-  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-  <style name="AppTheme.ViewPagerTabStrip">
-    <item name="android:textSize">12sp</item>
-    <item name="android:textColor">#FFFFFF</item>
-
-  </style>
-
-  <style name="AppTheme.ViewPagerTabStripText">
-    <item name="android:fontFamily">sans-serif-medium</item>
-  </style>
-
   <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
     <item name="android:layout_width">95dp</item>
     <item name="android:theme">@style/Theme.MaterialComponents.DayNight</item>
@@ -74,6 +54,9 @@
   <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" >
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+  </style>
+
+  <style name="AppTheme.BottomAppBar" parent="Theme.MaterialComponents">
   </style>
 
 </resources>

@@ -6,33 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-<androidx.coordinatorlayout.widget.CoordinatorLayout 
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent" 
-    android:focusableInTouchMode="true" 
+    android:focusableInTouchMode="true"
+    android:background="@color/scheduleBackgroundColor"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/viewpager_layout" 
-    android:layout_width="match_parent" 
-        android:orientation="vertical"
-        android:background="@color/scheduleBackgroundColor"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" 
-    android:layout_height="match_parent">
-        <include layout="@layout/toolbar_schedule"/>
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/schedule_update"
+<!--    app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/schedule_update"
+        android:layout_width="match_parent"
+        android:paddingBottom="0.5dp"
+        android:layout_height="match_parent">
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:background="@drawable/bottom_stroke"
-            android:layout_above="@id/bottomAppBar"
-            android:layout_below="@id/toolbar"
-            android:paddingBottom="0.5dp"
-            android:layout_height="match_parent">
-    <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewpager" 
-        android:layout_width="match_parent" 
-        android:layout_height="match_parent"/>
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include layout="@layout/bottom_app_bar_schedule" />
-</RelativeLayout>
 <include layout="@layout/bottom_sheet_schedule" />
 
 
@@ -55,6 +45,52 @@
         android:layout_height="wrap_content" 
         android:layout_marginBottom="7dp" 
         android:text="@string/schedule_preferences_title"/>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <AutoCompleteTextView
+            android:layout_marginTop="10dp"
+            android:layout_alignParentTop="true"
+            android:fontFamily="sans-serif-light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="100"
+            android:layout_marginHorizontal="5dp"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="3dp"
+            android:maxLines="1"
+            android:textColorHint="@color/textAccentDisabled"
+            android:hint="@string/enterGroup"
+            android:background="@null"
+            android:inputType="text"
+            android:minEms="4"
+            android:textSize="19sp"
+            android:completionThreshold="1"
+            android:layout_weight="1"
+            android:textColor="@color/textScheduleTitle"
+            android:id="@+id/text_group_title"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/btn_group"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:checkedButton="@id/btn_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_regular"
+            android:text="@string/text_schedule_type_regular"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_session"
+            android:text="@string/text_schedule_type_session"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
     <TextView android:textSize="12sp" 
             android:textStyle="bold" 
             android:layout_width="wrap_content" 
