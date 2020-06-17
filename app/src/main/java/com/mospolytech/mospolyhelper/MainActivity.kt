@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.mospolytech.mospolyhelper.ui.addresses.AddressesFragment
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 prefs.edit().clear().apply()
                 prefs.edit().putInt(PreferencesConstants.FirstLaunch, launchCode + 1).apply()
             }
+            AndroidThreeTen.init(this)
             //this.ScheduleVmPreloadTask = Task.Run(() => PrepareSchdeuleVm(prefs));
         }
         setTheme(R.style.AppTheme_NoActionBar)

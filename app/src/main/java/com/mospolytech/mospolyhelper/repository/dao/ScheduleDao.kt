@@ -42,10 +42,10 @@ class ScheduleDao {
 
     private suspend fun downloadGroupList(): List<String> {
         val groupListString = client.getGroupList()
-        return groupListParser.parseGroupList(groupListString)
+        return groupListParser.parseGroupList(groupListString).sorted()
     }
 
-    suspend fun getGroupList2(downloadNew: Boolean): List<String> {
+    suspend fun getGroupList(downloadNew: Boolean): List<String> {
         var groupList: List<String>? = null
         if (downloadNew) {
             try {
