@@ -20,7 +20,7 @@ class DeadlineViewModel/*(app: Application)*/ :
     val edit : MutableLiveData<Deadline> = MutableLiveData()
     val delete : MutableLiveData<Deadline> = MutableLiveData()
     val nameReceiver : MutableLiveData<String> = MutableLiveData()
-
+    private var findstr: String = ""
     private var database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
     private val deadlinesRepository =
         DeadlinesRepository(
@@ -37,28 +37,46 @@ class DeadlineViewModel/*(app: Application)*/ :
 
     fun saveInformation(deadline: Deadline) {
         deadlinesRepository.insertDeadline(deadline)
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     fun deleteOne(deadline: Deadline) {
         deadlinesRepository.deleteDeadline(deadline)
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     fun setCompleted(deadline: Deadline) {
         deadline.completed = !deadline.completed
         deadlinesRepository.updateDeadline(deadline)
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     fun setPinned(deadline: Deadline) {
         deadline.pinned = !deadline.pinned
         deadlinesRepository.updateDeadline(deadline)
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     fun edit(d: Deadline) {
         edit.value = d
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     fun delete(d: Deadline) {
         delete.value = d
+        if (foundData.hasActiveObservers()) {
+            deadlinesRepository.findItem(findstr)
+        }
     }
 
     override fun onCleared() {
@@ -67,6 +85,7 @@ class DeadlineViewModel/*(app: Application)*/ :
     }
 
     fun find(name: String) {
+        findstr = name
         deadlinesRepository.findItem(name)
     }
 
