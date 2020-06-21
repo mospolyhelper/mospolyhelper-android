@@ -4,5 +4,7 @@
         android:text="@string/null_schedule"
         android:textAlignment="center"
     android:gravity="center"
+    android:fontFamily="sans-serif-light"
+    android:textSize="20sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
