@@ -24,10 +24,10 @@ import java.time.temporal.ChronoUnit
 
 class ScheduleAdapter(
     val schedule: Schedule?,
-    val scheduleFilter: Schedule.Filter,
-    val showEmptyLessons: Boolean,
-    val showGroup: Boolean,
-    val isLoading: Boolean
+    private val scheduleFilter: Schedule.Filter,
+    private val showEmptyLessons: Boolean,
+    private val showGroup: Boolean,
+    private val isLoading: Boolean
 ) : PagerAdapter() {
     companion object {
         const val ACTIVE_PAGES_COUNT = 3
@@ -57,7 +57,7 @@ class ScheduleAdapter(
             count = 1
         } else {
             this.count = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-            if (count > 400 || count < 0) {
+            if (count  !in 0..400) {
                 count = 400
             }
         }
@@ -117,13 +117,29 @@ class ScheduleAdapter(
         return view == obj
     }
 
-    class ViewHolder(val view: View, private var position: Int, var schedule: Schedule, var scheduleFilter: Schedule.Filter,
-                     var firstPosDate: LocalDate, val showEmptyLessons: Boolean, val showGroup: Boolean) {
+    class ViewHolder(
+        val view: View,
+        private var position: Int,
+        var schedule: Schedule,
+        scheduleFilter: Schedule.Filter,
+        var firstPosDate: LocalDate,
+        showEmptyLessons: Boolean,
+        showGroup: Boolean
+    ) {
         companion object {
             private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
 
-            fun from(container: ViewGroup, position: Int, resource: Int, schedule: Schedule,
-                     scheduleFilter: Schedule.Filter, firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean): ViewHolder {
+            fun from(
+                container: ViewGroup,
+                position: Int,
+                resource: Int,
+                schedule: Schedule,
+                scheduleFilter:
+                Schedule.Filter,
+                firstPosDate: LocalDate,
+                showEmptyLessons: Boolean,
+                showGroup: Boolean
+            ): ViewHolder {
                 val view: View = LayoutInflater.from(container.context)
                     .inflate(resource, container, false)
                 container.addView(view)
@@ -131,7 +147,7 @@ class ScheduleAdapter(
                     showEmptyLessons, showGroup)
             }
         }
-        val dayTitle = view.findViewById<TextView>(R.id.button_day)!!
+        private val dayTitle = view.findViewById<TextView>(R.id.button_day)!!
         val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
         var listAdapter: LessonAdapter? = null
         var accumulator = 0f
@@ -139,8 +155,8 @@ class ScheduleAdapter(
 
         init {
             date = firstPosDate.plusDays(position.toLong())
-            val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics);
-            val dp32 = dp8 * 4;
+            val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
+            val dp32 = dp8 * 4
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
                 override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                     if (e.action == MotionEvent.ACTION_DOWN &&
@@ -172,10 +188,18 @@ class ScheduleAdapter(
             val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
             val headColor = view.context.getColor(R.color.textLessonHead)
             val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
-            listAdapter = LessonAdapter(view.findViewById<TextView>(R.id.text_null_lesson),
-                schedule.getSchedule(date, scheduleFilter), scheduleFilter, date,
-                showEmptyLessons, showGroup,
-                nightMode, disabledColor, headColor, headCurrentColor)
+            val dailySchedule = schedule.getSchedule(date, scheduleFilter)
+            listAdapter = LessonAdapter(
+                view.findViewById(R.id.text_null_lesson),
+                if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                scheduleFilter,
+                date,
+                showGroup,
+                nightMode,
+                disabledColor,
+                headColor,
+                headCurrentColor
+            )
             list.itemAnimator = null
             list.layoutManager = LinearLayoutManager(view.context)
             list.adapter = listAdapter!!
@@ -191,9 +215,12 @@ class ScheduleAdapter(
             list.scrollToPosition(0)
             accumulator = 0f
             dayTitle.elevation = 0f
+            val dailySchedule = schedule.getSchedule(date, scheduleFilter)
             listAdapter?.buildSchedule(
-                schedule.getSchedule(date, scheduleFilter),
-                scheduleFilter, date, showEmptyLessons, showGroup
+                if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                scheduleFilter,
+                date,
+                showGroup
             )
             dayTitle.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter).capitalize()
         }
