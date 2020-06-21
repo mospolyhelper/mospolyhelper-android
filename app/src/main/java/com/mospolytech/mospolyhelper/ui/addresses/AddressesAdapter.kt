@@ -11,9 +11,10 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.Addresses
 
 class AddressesAdapter(
-    var buildings: Addresses
+    var buildings: Addresses,
+    val type: String
 ) : RecyclerView.Adapter<AddressesAdapter.ViewHolder>() {
-    override fun getItemCount() = buildings.size
+    override fun getItemCount() = buildings.getOrDefault(type, emptyList()).size
 
     fun update(buildings: Addresses ) {
         this.buildings = buildings
@@ -21,14 +22,14 @@ class AddressesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater
+        val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_address, parent, false);
         return ViewHolder(view);
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        var spanned = HtmlCompat.fromHtml(buildings["Учебные корпуса"]!![position], HtmlCompat.FROM_HTML_MODE_LEGACY);
+        val spanned = HtmlCompat.fromHtml(buildings[type]!![position], HtmlCompat.FROM_HTML_MODE_LEGACY);
         viewHolder.text.setText(spanned, TextView.BufferType.NORMAL);
     }
 

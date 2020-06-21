@@ -20,6 +20,7 @@
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:id="@+id/button_home"
+    android:visibility="invisible"
 android:src="@drawable/schedule_home"
 app:layout_anchorGravity="bottom|end"
 android:layout_marginEnd="8dp"
