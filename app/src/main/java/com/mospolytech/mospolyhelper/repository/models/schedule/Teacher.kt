@@ -1,7 +1,5 @@
 package com.mospolytech.mospolyhelper.repository.models.schedule
 
-import java.lang.Exception
-
 data class Teacher(val names: List<String>) {
     companion object {
         fun fromFullName(name: String) =
