@@ -44,7 +44,7 @@ class ScheduleViewModel(
     val beginDownloading: Event0 = Action0()
     val endDownloading: Event0 = Action0()
 
-    val onMessage: Event1<String> = Action1<String>()
+    val onMessage: Event1<String> = Action1()
 
     init {
         subscribe(::handleMessage)
@@ -111,7 +111,7 @@ class ScheduleViewModel(
     suspend fun getAdvancedSearchData(
         groupList: List<String>,
         onProgressChanged: (Float) -> Unit
-    ): ScheduleDao.SchedulePackList? {
+    ): ScheduleDao.SchedulePackList {
         return dao.getSchedules(groupList, onProgressChanged)
     }
 
