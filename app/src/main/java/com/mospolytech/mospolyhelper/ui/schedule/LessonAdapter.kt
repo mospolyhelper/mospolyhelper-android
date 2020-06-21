@@ -20,13 +20,13 @@ import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.*
 
 class LessonAdapter(
     val nullMessage: TextView,
     var dailySchedule: List<Lesson>,
     var filter: Schedule.Filter,
     var date: LocalDate,
-    var showEmptyLessons: Boolean,
     var showGroup: Boolean,
     var nightMode: Boolean,
     var disabledColor: Int,
@@ -39,14 +39,12 @@ class LessonAdapter(
             0xff29b6f6.toInt()    // Other
         )
     }
-    var orderMap: IntArray = IntArray(7)
     private var itemCount = 0
     var currLessonOrder = 0
 
     val lessonClick: Event1<Lesson> = Action1()
 
     init {
-        orderMap.fill(-1)
         nullMessage.visibility = if (dailySchedule.isNotEmpty()) View.GONE else View.VISIBLE
         setCount()
     }
@@ -63,10 +61,9 @@ class LessonAdapter(
         val today = LocalDate.now()
         if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
             localCurrLessonOrder = Lesson.getOrder(LocalTime.now(), dailySchedule[0].group.isEvening)
-            for (lesson in dailySchedule)
-            {
+            for (lesson in dailySchedule) {
                 if (filter.dateFilter != Schedule.Filter.DateFilter.Desaturate ||
-                    (date >= lesson.dateFrom && date <= lesson.dateTo)) {
+                    (date in (lesson.dateFrom..lesson.dateTo))) {
                     fixedOrder = lesson.order
                 }
                 if (fixedOrder >= localCurrLessonOrder) {
@@ -76,18 +73,9 @@ class LessonAdapter(
         }
         this.currLessonOrder = fixedOrder
         this.itemCount = dailySchedule.size
-        if (showEmptyLessons) {
+        if (true) {
             if (fixedOrder >= localCurrLessonOrder) {
                 this.currLessonOrder = localCurrLessonOrder
-            }
-            for (i in dailySchedule.indices) {
-                this.orderMap[this.dailySchedule[i].order] = i
-            }
-            val maxOrder = dailySchedule[dailySchedule.size - 1].order
-            for (i in 0 until maxOrder) {
-                if (this.orderMap[i] == -1) {
-                    this.itemCount++
-                }
             }
         }
     }
@@ -96,12 +84,9 @@ class LessonAdapter(
         dailySchedule: List<Lesson>,
         scheduleFilter: Schedule.Filter,
         date: LocalDate,
-        showEmptyLessons: Boolean,
         showGroup: Boolean
     ) {
-        this.showEmptyLessons = showEmptyLessons
         this.showGroup = showGroup
-        orderMap.fill(-1)
         this.dailySchedule = dailySchedule
         this.date = date
         this.filter = scheduleFilter
@@ -118,14 +103,19 @@ class LessonAdapter(
         return ViewHolder(view) { (lessonClick as Action1).invoke(it) }
     }
 
-    private fun ViewHolder.setHead(prevEqual: Boolean) {
+    private fun ViewHolder.setHead(prevEqual: Boolean, position: Int) {
         if (prevEqual) {
             lessonTime.visibility = View.INVISIBLE
         } else {
             if (currLessonOrder == lesson.order) {
                 lessonTime.setTextColor(headCurrentColor)
             } else {
-                lessonTime.setTextColor(headColor)
+                val deltaOrder = currLessonOrder - lesson.order
+                if (deltaOrder in 1..position && dailySchedule[position - deltaOrder].isEmpty) {
+                    lessonTime.setTextColor(headCurrentColor)
+                } else {
+                    lessonTime.setTextColor(headColor)
+                }
             }
             lessonTime.visibility = View.VISIBLE
         }
@@ -134,7 +124,7 @@ class LessonAdapter(
         lessonTime.setText(time, TextView.BufferType.NORMAL)
     }
 
-    private fun ViewHolder.setFooter(nextEqual: Boolean, isLast: Boolean) {
+    private fun ViewHolder.setFooter(nextEqual: Boolean, isLast: Boolean, position: Int) {
         val (_, timeEnd) = lesson.time
         if (nextEqual) {
             lessonFooter.visibility = View.GONE
@@ -142,8 +132,9 @@ class LessonAdapter(
             lessonFooter.visibility = View.VISIBLE
             when {
                 lesson.isEmpty -> {
-                    if (orderMap[lesson.order + 1] != -1) {
-                        val (nextTimeStart, _) = Lesson.getTime(lesson.order + 1, lesson.group.isEvening)
+                    val nextLesson = dailySchedule[position + 1]
+                    if (nextLesson.isNotEmpty) {
+                        val (nextTimeStart, _) = nextLesson.time
                         lessonFooter.text = "нет занятий до $nextTimeStart"
                     } else {
                         lessonFooter.text = ""
@@ -174,8 +165,8 @@ class LessonAdapter(
             else
                 disabledColor
         )
-        lessonType.setText(type, TextView.BufferType.NORMAL);
-        lessonType.isEnabled = enabled;
+        lessonType.setText(type, TextView.BufferType.NORMAL)
+        lessonType.isEnabled = enabled
     }
 
     private fun ViewHolder.setAuditoriums(enabled: Boolean) {
@@ -296,55 +287,16 @@ class LessonAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        var fixedPos = position
-        if (showEmptyLessons) {
-            var notEmpty = true
-            var lastNotEmpty = -1
-            for (i in 0 until 6) {
-                if (orderMap[i] == -1) {
-                    fixedPos--
-                    if (lastNotEmpty == fixedPos) {
-                        viewHolder.lesson = Lesson.getEmpty(i)
-                        notEmpty = false
-                        break
-                    }
-                } else {
-                    lastNotEmpty = orderMap[i]
-                    if (fixedPos <= orderMap[i]) {
-                        break
-                    }
-                }
-            }
-            if (notEmpty) {
-                viewHolder.lesson = dailySchedule[fixedPos]
-            }
-        } else {
-            viewHolder.lesson = dailySchedule[position]
-        }
+        viewHolder.lesson = dailySchedule[position]
 
         val scale = viewHolder.lessonLayout.context.resources.displayMetrics.density
-        val dp9InPx = (9 * scale + 0.5f).toInt()
-        val dp18InPx = (18 * scale + 0.5f).toInt()
-        if (viewHolder.lesson.isEmpty) {
-            viewHolder.setHead(false)
-            viewHolder.setFooter(false, position == itemCount - 1)
-            viewHolder.setLessonType(true)
-            viewHolder.setAuditoriums(true)
-            viewHolder.setTitle(true)
-            viewHolder.setTeachers(true)
-            if (position == 0) {
-                (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx
-            } else {
-                (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx
-            }
-            return
-        }
+        val lessonIsEmpty = viewHolder.lesson.isEmpty
 
-        val prevEqual = fixedPos != 0 && dailySchedule[fixedPos - 1].equalsTime(viewHolder.lesson)
-        val nextEqual = (position != itemCount - 1) && dailySchedule[fixedPos + 1].equalsTime(viewHolder.lesson)
+        val prevEqual = !lessonIsEmpty && (position != 0 && dailySchedule[position - 1].equalsTime(viewHolder.lesson))
+        val nextEqual = !lessonIsEmpty && (position != itemCount - 1) && dailySchedule[position + 1].equalsTime(viewHolder.lesson)
 
-        viewHolder.setHead(prevEqual)
-        viewHolder.setFooter(nextEqual, position == itemCount - 1)
+        viewHolder.setHead(prevEqual, position)
+        viewHolder.setFooter(nextEqual, position == itemCount - 1, position)
 
         if (position == itemCount - 1) {
             val tv = TypedValue()
@@ -356,18 +308,20 @@ class LessonAdapter(
             (viewHolder.lessonFooter.layoutParams as RelativeLayout.LayoutParams).bottomMargin = 0
         }
 
-        if (position == 0) {
-            (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx * 1
-            val params = (viewHolder.lessonTime.layoutParams as RelativeLayout.LayoutParams)
-            params.topMargin = dp9InPx * 1
-        } else {
-            (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx
-            val params = (viewHolder.lessonTime.layoutParams as RelativeLayout.LayoutParams)
-            params.topMargin = dp9InPx
-        }
+//        val dp9InPx = (9 * scale + 0.5f).toInt()
+//
+//        if (position == 0) {
+//            (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx
+//            val params = (viewHolder.lessonTime.layoutParams as RelativeLayout.LayoutParams)
+//            params.topMargin = dp9InPx
+//        } else {
+//            (viewHolder.lessonLayout.layoutParams as RelativeLayout.LayoutParams).topMargin = dp9InPx
+//            val params = (viewHolder.lessonTime.layoutParams as RelativeLayout.LayoutParams)
+//            params.topMargin = dp9InPx
+//        }
         val enabledFrom = viewHolder.lesson.dateFrom <= date || filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
         val enabledTo = viewHolder.lesson.dateTo >= date || filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
-        val enabled = if (viewHolder.lesson.isImportant) enabledTo else enabledFrom && enabledTo
+        val enabled = if (viewHolder.lesson.isImportant) lessonIsEmpty || enabledTo else lessonIsEmpty || enabledFrom && enabledTo
 
 
         viewHolder.setLessonType(enabled)

@@ -216,9 +216,15 @@ class ScheduleDao {
 
     var scheduleCounter = AtomicInteger(0)
 
-    suspend fun getSchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList? = coroutineScope {
+    suspend fun getSchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
         if (groupList.isEmpty()) {
-            return@coroutineScope null
+            return@coroutineScope SchedulePackList(
+                emptyList(),
+                mutableSetOf(),
+                mutableSetOf(),
+                mutableSetOf(),
+                mutableSetOf()
+            )
         }
 
         scheduleCounter.set(0)
