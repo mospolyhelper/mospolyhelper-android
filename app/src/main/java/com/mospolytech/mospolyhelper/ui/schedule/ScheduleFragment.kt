@@ -2,10 +2,12 @@ package com.mospolytech.mospolyhelper.ui.schedule
 
 import android.content.Context
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.view.GravityCompat
+import androidx.core.view.children
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
@@ -19,14 +21,6 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.tabs.TabLayout
-import com.kizitonwose.calendarview.CalendarView
-import com.kizitonwose.calendarview.model.CalendarDay
-import com.kizitonwose.calendarview.model.InDateStyle
-import com.kizitonwose.calendarview.model.OutDateStyle
-import com.kizitonwose.calendarview.model.ScrollMode
-import com.kizitonwose.calendarview.ui.DayBinder
-import com.kizitonwose.calendarview.ui.ViewContainer
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
@@ -39,16 +33,17 @@ import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchF
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.SimpleFilter
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment
 import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
-import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.DefaultSettings
 import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 import kotlinx.coroutines.*
-import org.threeten.bp.YearMonth
-import org.threeten.bp.temporal.WeekFields
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 
 class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
@@ -57,31 +52,32 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         fun newInstance() = ScheduleFragment()
     }
 
-    val viewModelFactory = ScheduleViewModel.Factory()
+    private val viewModelFactory = ScheduleViewModel.Factory()
 
-    lateinit var textGroupTitle: AutoCompleteTextView
-    lateinit var viewPager: ViewPager
-    lateinit var swipeToRefresh: SwipeRefreshLayout
-    var checkedGroups = ObservableArrayList<Int>()
-    var checkedLessonTypes = ObservableArrayList<Int>()
-    var checkedTeachers = ObservableArrayList<Int>()
-    var checkedLessonTitles = ObservableArrayList<Int>()
-    var checkedAuditoriums = ObservableArrayList<Int>()
-    var schedules: Iterable<Schedule?> = emptyList()
-    var lessonTitles = listOf<String>()
-    var lessonTeachers = listOf<String>()
-    var lessonAuditoriums = listOf<String>()
-    var lessonTypes = listOf<String>()
+    private lateinit var textGroupTitle: AutoCompleteTextView
+    private lateinit var viewPager: ViewPager
+    private lateinit var swipeToRefresh: SwipeRefreshLayout
+    private var checkedGroups = ObservableArrayList<Int>()
+    private var checkedLessonTypes = ObservableArrayList<Int>()
+    private var checkedTeachers = ObservableArrayList<Int>()
+    private var checkedLessonTitles = ObservableArrayList<Int>()
+    private var checkedAuditoriums = ObservableArrayList<Int>()
+    private var schedules: Iterable<Schedule?> = emptyList()
+    private var lessonTitles = listOf<String>()
+    private var lessonTeachers = listOf<String>()
+    private var lessonAuditoriums = listOf<String>()
+    private var lessonTypes = listOf<String>()
 
-    var downloadSchedulesJob = SupervisorJob()
-    val job = SupervisorJob()
+    private var downloadSchedulesJob = SupervisorJob()
+    private val job = SupervisorJob()
 
-    lateinit var scheduleSessionFilter: Switch
-    lateinit var scheduleDateFilter: Spinner
-    lateinit var scheduleEmptyPair: Switch
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    lateinit var settingsDrawer: DrawerLayout
-    lateinit var btnGroup: MaterialButtonToggleGroup
+    private lateinit var scheduleSessionFilter: Switch
+    private lateinit var scheduleDateFilter: Spinner
+    private lateinit var scheduleEmptyPair: Switch
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var settingsDrawer: DrawerLayout
+    private lateinit var btnGroup: MaterialButtonToggleGroup
+    private lateinit var homeBtn: FloatingActionButton
 
     private val viewModel by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
@@ -89,18 +85,18 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         get() = Dispatchers.Default + job
 
 
-    fun onLessonClick(lesson: Lesson, date: LocalDate) {
+    private fun onLessonClick(lesson: Lesson, date: LocalDate) {
         val fragment = LessonInfoFragment.newInstance()
         viewModel.openLessonInfo(lesson, date)
         (activity as MainActivity).changeFragment(fragment, false)
     }
 
-    fun setUpGroupList(groupList: List<String>) {
+    private fun setUpGroupList(groupList: List<String>) {
         textGroupTitle
             .setAdapter(ArrayAdapter(requireContext(), R.layout.item_group_list, groupList))
     }
 
-    fun setUpSchedule(schedule: Schedule?, loading: Boolean = false) {
+    private fun setUpSchedule(schedule: Schedule?, loading: Boolean = false) {
         if (context != null && schedule != null && schedule.group.comment.isNotEmpty()) {
             Toast.makeText(requireContext(), schedule.group.comment, Toast.LENGTH_LONG).show()
         }
@@ -126,12 +122,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         viewPager.adapter = adapter2
         if (schedule != null) {
             adapter2.lessonClick += ::onLessonClick
-            val c = viewPager.adapter?.count
-
-            //viewPager.adapter?.notifyDataSetChanged()
-            val q = adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt()
-            viewPager.setCurrentItem(q, true)
             viewPager.adapter?.notifyDataSetChanged()
+            viewPager.setCurrentItem(adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt(), true)
+
         }
     }
 
@@ -140,6 +133,46 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_schedule, container, false)
+    }
+
+    class ParallaxPageTransformer : ViewPager.PageTransformer {
+        override fun transformPage(page: View, position: Float) {
+            val pageWidth = page.width
+            when {
+                position < -1 -> { // [-Infinity,-1)
+                    // This page is way off-screen to the left.
+                    page.alpha = 1f
+                    page.findViewById<RecyclerView>(R.id.recycler_schedule)?.translationX = 0f
+                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = 0f
+                }
+                position <= 1 -> { // [-1,1]
+                    val rv = page.findViewById<RecyclerView>(R.id.recycler_schedule)
+                    val q = if (position < 0) -1 else 1
+                    //rv?.translationX = sqrt(abs(position)) * q * pageWidth / 3f
+                    if (rv != null) {
+                        val children = rv.children.toList()
+                        for (v in children.withIndex()) {
+                            val k = (v.index + 1f) / (children.size)
+                            when (v.index % 4) {
+                                0 -> v.value.translationX = position * pageWidth / 2f * k.pow(0.1f)
+                                1 -> v.value.translationX = position * pageWidth / 2f * k.pow(0.2f)
+                                2 -> v.value.translationX = position * pageWidth / 2f * k.pow(0.3f)
+                                3 -> v.value.translationX = position * pageWidth / 2f * k.pow(0.5f)
+                            }
+                        }
+                    }
+
+                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = position * (pageWidth / 1.5f)
+                }
+                else -> { // (1,+Infinity]
+                    // This page is way off-screen to the right.
+                    page.alpha = 1f
+                    page.findViewById<RecyclerView>(R.id.recycler_schedule)?.translationX = 0f
+                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = 0f
+                }
+            }
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -153,34 +186,14 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         textGroupTitle = view.findViewById(R.id.text_group_title)
         settingsDrawer = view.findViewById(R.id.drawer_layout_schedule)
         btnGroup = view.findViewById(R.id.btn_group)
+        homeBtn = view.findViewById(R.id.button_home)
 
-        //val calendarView = view.findViewById<CalendarView>(R.id.calendarView)
-
-//        calendarView.dayBinder = object : DayBinder<DayViewContainer> {
-//            // Called only when a new container is needed.
-//            override fun create(view: View) = DayViewContainer(view)
-//
-//            // Called every time we need to reuse a container.
-//            override fun bind(container: DayViewContainer, day: CalendarDay) {
-//                container.textView.text = day.date.dayOfMonth.toString()
-//            }
-//        }
-
-
-//        val currentMonth = YearMonth.now()
-//        val firstMonth = currentMonth.minusMonths(10)
-//        val lastMonth = currentMonth.plusMonths(10)
-//        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-//        calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
-//        calendarView.scrollToMonth(currentMonth)
-//
-//        calendarView.inDateStyle = InDateStyle.ALL_MONTHS
-//        calendarView.outDateStyle = OutDateStyle.END_OF_ROW
-//        calendarView.scrollMode = ScrollMode.PAGED
-//        calendarView.orientation = RecyclerView.HORIZONTAL
-//
-//        calendarView.maxRowCount = 1
-//        calendarView.hasBoundaries = false
+//        viewPager.setPageTransformer(true, ParallaxPageTransformer())
+//        viewPager.pageMargin = TypedValue.applyDimension(
+//            TypedValue.COMPLEX_UNIT_DIP,
+//            50f,
+//            requireContext().resources.displayMetrics
+//        ).toInt()
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -204,7 +217,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
 
 
-
         if (viewPager.adapter == null) {
             if (this.viewModel.scheduleDownloaded) {
                 setUpSchedule(viewModel.schedule.value)
@@ -212,28 +224,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 setUpSchedule(null, true)
             }
         }
-//        val tabLayout = view.findViewById<TabLayout>(R.id.tab_day_week);
-//        val tabs = listOf(
-//            tabLayout.newTab(), tabLayout.newTab(), tabLayout.newTab(), tabLayout.newTab(),
-//            tabLayout.newTab(), tabLayout.newTab(), tabLayout.newTab()
-//        )
-//        for (tab in tabs) {
-//            tab.customView?.isClickable = false  // TODO: Check this
-//        }
-//        tabs[1].text = "пн"
-//        tabs[2].text = "вт"
-//        tabs[3].text = "ср"
-//        tabs[4].text = "чт"
-//        tabs[5].text = "пт"
-//        tabs[6].text = "сб"
-//        tabs[0].text = "вс"
-//        tabLayout.addTab(tabs[1])
-//        tabLayout.addTab(tabs[2])
-//        tabLayout.addTab(tabs[3])
-//        tabLayout.addTab(tabs[4])
-//        tabLayout.addTab(tabs[5])
-//        tabLayout.addTab(tabs[6])
-//        tabLayout.addTab(tabs[0])
 
         swipeToRefresh.setOnRefreshListener {
             if (viewModel.isAdvancedSearch) {
@@ -256,17 +246,14 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
-//                val adapter = viewPager.adapter
-//                if (adapter is ScheduleAdapter) {
-//                    val tab = tabs.get(
-//                        (adapter.firstPosDate.dayOfWeek.value % 7 +
-//                                position +
-//                                (if (positionOffset < 0.5f) 0 else 1)) % 7
-//                    )
-//                    if (!tab.isSelected) {
-//                        tab.select()
-//                    }
-//                }
+                val days = LocalDate.now().until(
+                    (viewPager.adapter as ScheduleAdapter).firstPosDate, ChronoUnit.DAYS
+                ) + position
+                if (days == 0L && positionOffset < 0.5 || days == -1L && positionOffset >= 0.5) {
+                    homeBtn.hide()
+                } else {
+                    homeBtn.show()
+                }
             }
 
             override fun onPageSelected(position: Int) {
@@ -314,7 +301,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             }
         }
 
-        val homeBtn = view.findViewById<FloatingActionButton>(R.id.button_home)
         homeBtn.setOnClickListener { viewModel.goHome() }
 
         setUpBotomSheet(view)
@@ -378,18 +364,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
     }
 
-    fun scheduleBeginDownloading() {
+    private fun scheduleBeginDownloading() {
         setUpSchedule(null, true)
     }
 
-    fun scheduleEndDownloading() {
+    private fun scheduleEndDownloading() {
         swipeToRefresh.isRefreshing = false
-    }
-
-    fun announced(msg: String) {
-        if (activity != null) {
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onResume() {
@@ -399,7 +379,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
     }
 
-    fun setUpBotomSheet(view: View) {
+    private fun setUpBotomSheet(view: View) {
         val bottomSheet = view.findViewById<LinearLayout>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -472,19 +452,11 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                     }
 
 
-                    if (pack != null) {
-                        this@ScheduleFragment.lessonTitles = pack.lessonTitles.toList()
-                        this@ScheduleFragment.lessonTypes = pack.lessonTypes.toList()
-                        this@ScheduleFragment.lessonTeachers = pack.lessonTeachers.toList()
-                        this@ScheduleFragment.lessonAuditoriums = pack.lessonAuditoriums.toList()
-                        this@ScheduleFragment.schedules = pack.schedules
-                    } else {
-                        this@ScheduleFragment.lessonTitles = emptyList()
-                        this@ScheduleFragment.lessonTypes = emptyList()
-                        this@ScheduleFragment.lessonTeachers = emptyList()
-                        this@ScheduleFragment.lessonAuditoriums = emptyList()
-                        this@ScheduleFragment.schedules = emptyList()
-                    }
+                    this@ScheduleFragment.lessonTitles = pack.lessonTitles.toList()
+                    this@ScheduleFragment.lessonTypes = pack.lessonTypes.toList()
+                    this@ScheduleFragment.lessonTeachers = pack.lessonTeachers.toList()
+                    this@ScheduleFragment.lessonAuditoriums = pack.lessonAuditoriums.toList()
+                    this@ScheduleFragment.schedules = pack.schedules
 
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
                     downloadSchedulesBtn.isEnabled = true
@@ -500,7 +472,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                     progressBar.progress = 0
                     progressText.text = "0 %"
                     cancelBtn.visibility = View.GONE
-                } catch (ex: Exception) { // TODO: Canceled
+                } catch (ex: Exception) {
                     downloadSchedulesBtn.isEnabled = true
                     textGroups.isEnabled = true
                     Toast.makeText(context, "Загрузка отменена", Toast.LENGTH_SHORT).show()
@@ -520,9 +492,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
 
         textLessonTitles.setOnClickListener {
-            if (activity == null) {
-                return@setOnClickListener
-            }
             val dialog = AdvancedSearchFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
@@ -537,9 +506,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textTeachers.setOnClickListener {
-            if (activity == null) {
-                return@setOnClickListener
-            }
             val dialog = AdvancedSearchFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(
@@ -555,9 +521,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textAuditoriums.setOnClickListener {
-            if (activity == null) {
-                return@setOnClickListener
-            }
             val dialog = AdvancedSearchFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
@@ -571,9 +534,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textLessonTypes.setOnClickListener {
-            if (activity == null) {
-                return@setOnClickListener
-            }
             val dialog = AdvancedSearchFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
@@ -603,12 +563,16 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                     else checkedTeachers.map { lessonTeachers[it] }
                 )
                 .build()
-            val newSchedule = filt.getFiltered(schedules)
+            async(Dispatchers.IO) {
+                val newSchedule = filt.getFiltered(schedules)
 
+                viewModel.isAdvancedSearch = true
 
-            viewModel.isAdvancedSearch = true
-            viewModel.schedule.value = newSchedule
-            textGroupTitle.setText("...")
+                withContext(Dispatchers.Main) {
+                    viewModel.schedule.value = newSchedule
+                    textGroupTitle.setText("...")
+                }
+            }
         }
     }
 
@@ -676,9 +640,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             prefs.getInt(PreferencesConstants.ScheduleTypePreference, 0) == 1;
         }
 
-        //this.viewModel = new ScheduleVm(DependencyInjector.GetILoggerFactory(), DependencyInjector.GetIMediator(),
-        //isSession, scheduleFilter) GroupTitle = groupTitle
-
         viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferencesConstants.ScheduleShowEmptyLessons,
             DefaultSettings.ScheduleShowEmptyLessons)
 
@@ -707,7 +668,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             if (adapter is ScheduleAdapter) {
                 if (it != adapter.firstPosDate.plusDays(viewPager.currentItem.toLong()))
                 viewPager.setCurrentItem(
-                    adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(), false
+                    adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(),
+                    false
                 )
             }
         })
@@ -716,12 +678,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             scheduleDateFilter.setSelection(it.dateFilter.ordinal)
             scheduleSessionFilter.isChecked = it.sessionFilter
         })
-
-        //this.viewModel.Announced += ViewModel_Announced;
     }
 
     override fun onDestroy() {
-        //this.viewModel.Announced -= ViewModel_Announced;
         coroutineContext.cancelChildren()
         super.onDestroy()
     }

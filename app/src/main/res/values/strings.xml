@@ -13,7 +13,7 @@
   <string name="odd_week">по нечётным неделям</string>
   <string name="even_week">по чётным неделям</string>
   <string name="none_week">не зависит от чётности недели</string>
-  <string name="enterGroup">группа</string>
+  <string name="enterGroup">Введите группу</string>
   <string name="null_daily_schedule">Нет занятий</string>
   <string name="null_schedule">Расписание не найдено</string>
   <string name="group_title">Введите номер группы</string>

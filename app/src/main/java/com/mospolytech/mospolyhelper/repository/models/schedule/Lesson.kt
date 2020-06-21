@@ -188,6 +188,7 @@ data class Lesson(
     }
 
     val isEmpty = title.isEmpty() && type.isEmpty()
+    val isNotEmpty = title.isNotEmpty() || type.isNotEmpty()
 
     val isImportant =
         type.contains(EXAM, true) ||

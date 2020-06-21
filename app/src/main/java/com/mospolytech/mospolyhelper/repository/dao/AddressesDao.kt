@@ -15,10 +15,10 @@ class AddressesDao {
         const val AddressesFolder = "addresses"
         const val AddressesFile = "cached_addresses"
         const val AddressesUrl =
-            "https://gist.githubusercontent.com/tipapro/f19b581ea759cacde6ff674b516c552a/raw/1920290b693458a68c57f1ecf853fea90544d2a9/mospolyhelper-addresses.json"
+            "https://gist.githubusercontent.com/tipapro/f19b581ea759cacde6ff674b516c552a/raw/mospolyhelper-addresses.json"
     }
 
-    fun readAddresses(): Addresses? {
+    private fun readAddresses(): Addresses? {
         val filePath = ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile)  // TODO: Add directory
         return if (!filePath.exists()) {
             null
@@ -28,7 +28,7 @@ class AddressesDao {
         }
     }
 
-    fun downloadAddresses(): Addresses? {
+    private fun downloadAddresses(): Addresses? {
         return try {
             val serBuildings = URL(AddressesUrl).readText()
             Klaxon().parse<Addresses>(serBuildings)
@@ -38,7 +38,7 @@ class AddressesDao {
         }
     }
 
-    fun saveAddresses(buildings: Addresses) {
+    private fun saveAddresses(buildings: Addresses) {
         val filePath = File(ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile), AddressesFile)
         filePath.delete()
         val str = Klaxon().toJsonString(buildings)
@@ -47,7 +47,7 @@ class AddressesDao {
         filePath.writeText(str)
     }
 
-    fun getAddressesFromAssets(): Addresses? {
+    private fun getAddressesFromAssets(): Addresses? {
         return Klaxon().parse<Addresses>(AssetProvider.getAsset("addresses.json")!!)
     }
 
@@ -57,7 +57,7 @@ class AddressesDao {
             try {
                 addresses = readAddresses()
             } catch (ex: Exception) {
-
+                val a =1
             }
         }
         if (addresses == null) {
