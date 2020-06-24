@@ -25,7 +25,7 @@ class ScheduleConverter {
         val AUDITORIUM_COLOR = Auditorium::color.name
     }
 
-    val localDateConverter = object : Converter {
+    private val localDateConverter = object : Converter {
         override fun canConvert(cls: Class<*>) =
             cls == LocalDate::class.java
 

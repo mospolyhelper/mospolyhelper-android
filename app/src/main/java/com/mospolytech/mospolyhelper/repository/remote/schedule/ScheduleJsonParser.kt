@@ -4,6 +4,7 @@ import android.util.Log
 import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.TAG
 import com.mospolytech.mospolyhelper.repository.models.schedule.*
+import java.lang.Exception
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -11,42 +12,42 @@ import java.time.format.DateTimeFormatter
 class ScheduleJsonParser {
     companion object {
         // region Constants
-        const val STATUS_KEY = "status";
-        const val STATUS_OK = "ok"
-        const val STATUS_ERROR = "error"
-        const val MESSAGE_KEY = "message";
-        const val IS_SESSION = "isSession";
-        const val GROUP_KEY = "group";
-        const val SCHEDULE_GRID_KEY = "grid";
+        private const val STATUS_KEY = "status"
+        private const val STATUS_OK = "ok"
+        private const val STATUS_ERROR = "error"
+        private const val MESSAGE_KEY = "message"
+        private const val IS_SESSION = "isSession"
+        private const val GROUP_KEY = "group"
+        private const val SCHEDULE_GRID_KEY = "grid"
 
-        const val GROUP_TITLE_KEY = "title";
-        const val GROUP_DATE_FROM_KEY = "dateFrom";
-        const val GROUP_DATE_TO_KEY = "dateTo";
-        const val GROUP_EVENING_KEY = "evening";
-        const val GROUP_COMMENT_KEY = "comment";
-        const val GROUP_COURSE_KEY = "course";
+        private const val GROUP_TITLE_KEY = "title"
+        private const val GROUP_DATE_FROM_KEY = "dateFrom"
+        private const val GROUP_DATE_TO_KEY = "dateTo"
+        private const val GROUP_EVENING_KEY = "evening"
+        private const val GROUP_COMMENT_KEY = "comment"
+        private const val GROUP_COURSE_KEY = "course"
 
-        const val LESSON_TITLE_KEY = "sbj";
-        const val LESSON_TEACHER_KEY = "teacher";
-        const val LESSON_DATE_FROM_KEY = "df";
-        const val LESSON_DATE_TO_KEY = "dt";
-        const val LESSON_AUDITORIUMS_KEY = "auditories";
-        const val LESSON_TYPE_KEY = "type";
-        const val LESSON_WEBINAR_LINK_KEY = "wl"
-        const val LESSON_WEEK_KEY = "week";
+        private const val LESSON_TITLE_KEY = "sbj"
+        private const val LESSON_TEACHER_KEY = "teacher"
+        private const val LESSON_DATE_FROM_KEY = "df"
+        private const val LESSON_DATE_TO_KEY = "dt"
+        private const val LESSON_AUDITORIUMS_KEY = "auditories"
+        private const val LESSON_TYPE_KEY = "type"
+        private const val LESSON_WEBINAR_LINK_KEY = "wl"
+        private const val LESSON_WEEK_KEY = "week"
 
-        const val FIRST_MODULE_KEY = "fm";
-        const val SECOND_MODULE_KEY = "sm";
-        const val NO_MODULE_KEY = "no";
+        private const val FIRST_MODULE_KEY = "fm"
+        private const val SECOND_MODULE_KEY = "sm"
+        private const val NO_MODULE_KEY = "no"
 
-        const val AUDITORIUM_TITLE_KEY = "title";
-        const val AUDITORIUM_COLOR_KEY = "color";
+        private const val AUDITORIUM_TITLE_KEY = "title"
+        private const val AUDITORIUM_COLOR_KEY = "color"
 
-        const val WEEK_DAY_NUMBER = 7;
+        private const val WEEK_DAY_NUMBER = 7
 
         // endregion
 
-        val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+        private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
     fun parse(scheduleString: String, isSession: Boolean): Schedule {
@@ -55,16 +56,19 @@ class ScheduleJsonParser {
         val status = json.string(STATUS_KEY)
         if (status == STATUS_ERROR) {
             val message = json.string(MESSAGE_KEY)
-            throw JsonParsingException("Schedule was returned with error status. " +
-                    "Message: \"${message ?: ""}\"")
+            throw JsonParsingException(
+                "Schedule was returned with error status. " +
+                        "Message: \"${message ?: ""}\""
+            )
         } else if (status != STATUS_OK) {
             val message = json.string(MESSAGE_KEY)
-            Log.w(TAG, "Suspicious behavior: " +
-                    "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
-                    "Message: \"${message ?: ""}\"")
+            Log.w(
+                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
+                        "Message: \"${message ?: ""}\""
+            )
         }
-        val isByDate = json.boolean(IS_SESSION) ?:
-            throw JsonParsingException("Key \"$IS_SESSION\" not found")
+        val isByDate =
+            json.boolean(IS_SESSION) ?: throw JsonParsingException("Key \"$IS_SESSION\" not found")
 
         val group = parseGroup(json.obj(GROUP_KEY))
         val dailySchedules = parseDailySchedules(json.obj(SCHEDULE_GRID_KEY), group, isByDate)
@@ -78,59 +82,68 @@ class ScheduleJsonParser {
 
     private fun parseGroup(json: JsonObject?): Group {
         if (json == null) {
-            Log.w(TAG, "Suspicious behavior: Group key \"$GROUP_KEY\" not found")
+            Log.w(TAG, "GROUP_KEY \"$GROUP_KEY\" not found")
             return Group.empty
         }
 
         val title = json.string(GROUP_TITLE_KEY) ?: "".apply {
-            Log.w(TAG, "Suspicious behavior: Group title key \"$GROUP_TITLE_KEY\" not found")
+            Log.w(TAG, "GROUP_TITLE_KEY \"$GROUP_TITLE_KEY\" not found")
         }
 
         val course = json.int(GROUP_COURSE_KEY) ?: 0.apply {
-            Log.w(TAG, "Suspicious behavior: Group course key \"$GROUP_COURSE_KEY\" not found")
+            Log.w(TAG, "GROUP_COURSE_KEY \"$GROUP_COURSE_KEY\" not found")
         }
 
-        val dateFrom: LocalDate
-            val tempDateFrom = json.string(GROUP_DATE_FROM_KEY)
-            if (tempDateFrom == null) {
-                dateFrom = LocalDate.MIN
-                Log.w(TAG, "Suspicious behavior: Group date from key \"$GROUP_DATE_FROM_KEY\" not found")
-            } else {
-                dateFrom = LocalDate.parse(tempDateFrom, dateFormatter) ?: LocalDate.MIN.apply {
-                    Log.w(TAG, "Suspicious behavior: " +
-                            "Can not parse value of group date from key \"$GROUP_DATE_FROM_KEY\"")
-                }
-            }
+        val dateFrom = parseGroupDateFrom(json.string(GROUP_DATE_FROM_KEY))
+        val dateTo = parseGroupDateTo(json.string(GROUP_DATE_TO_KEY))
 
-        val dateTo: LocalDate
-            val tempDateTo = json.string(GROUP_DATE_TO_KEY)
-            if (tempDateTo == null) {
-                dateTo = LocalDate.MAX
-                Log.w(TAG, "Suspicious behavior: Group date to key \"$GROUP_DATE_TO_KEY\" not found")
-            } else {
-                dateTo = LocalDate.parse(tempDateTo, dateFormatter) ?: LocalDate.MAX.apply {
-                    Log.w(TAG, "Suspicious behavior: " +
-                            "Can not parse value of group date to key \"$GROUP_DATE_TO_KEY\"")
-                }
-            }
-
-        val isEvening = json.int(GROUP_EVENING_KEY) == 1 ?: false.apply {
-            Log.w(TAG, "Suspicious behavior: Group evening key \"$GROUP_EVENING_KEY\" not found")
+        val isEvening = json.int(GROUP_EVENING_KEY) ?: 0.apply {
+            Log.w(TAG, "GROUP_EVENING_KEY \"$GROUP_EVENING_KEY\" not found")
         }
 
         val comment = json.string(GROUP_COMMENT_KEY) ?: "".apply {
-            Log.w(TAG, "Suspicious behavior: Group comment key \"$GROUP_COMMENT_KEY\" not found")
+            Log.w(TAG, "GROUP_COMMENT_KEY \"$GROUP_COMMENT_KEY\" not found")
         }
 
-        return Group(title, course, dateFrom, dateTo, isEvening, comment)
+        return Group(title, course, dateFrom, dateTo, isEvening == 1 , comment)
     }
 
-    private fun parseDailySchedules(json: JsonObject?, group: Group, isByDate: Boolean): List<List<Lesson>> {
-        if (json == null) {
-            throw JsonParsingException("Suspicious behavior: Schedule grid key \"$SCHEDULE_GRID_KEY\" not found")
+    private fun parseGroupDateFrom(json: String?): LocalDate {
+        return if (json == null) {
+            Log.w(TAG, "GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\" not found")
+            LocalDate.MIN
+        } else try {
+            LocalDate.parse(json, dateFormatter)
+        } catch (e: Exception) {
+            Log.w(TAG, "Can not parse value of GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\"")
+            LocalDate.MIN
         }
-        val tempList: List<MutableList<Lesson>> = listOf(mutableListOf(), mutableListOf(), mutableListOf(),
-                mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf())
+    }
+
+    private fun parseGroupDateTo(json: String?): LocalDate {
+        return if (json == null) {
+            Log.w(TAG, "GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\" not found")
+            LocalDate.MAX
+        } else try {
+            LocalDate.parse(json, dateFormatter)
+        } catch (e: Exception) {
+            Log.w(TAG, "Can not parse value of GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\"")
+            LocalDate.MAX
+        }
+    }
+
+    private fun parseDailySchedules(
+        json: JsonObject?,
+        group: Group,
+        isByDate: Boolean
+    ): List<List<Lesson>> {
+        if (json == null) {
+            throw JsonParsingException("SCHEDULE_GRID_KEY \"$SCHEDULE_GRID_KEY\" not found")
+        }
+        val tempList: List<MutableList<Lesson>> = listOf(
+            mutableListOf(), mutableListOf(), mutableListOf(),
+            mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf()
+        )
         for ((day, dailySchedule) in json) {
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
@@ -144,7 +157,7 @@ class ScheduleJsonParser {
                 parsedDay = day.toInt()
             }
             // DayOfWeek 1..7
-            if (parsedDay > 7 || parsedDay < 1) {
+            if (parsedDay !in 1..7) {
                 Log.w(TAG, "Parsed day out of range 1..7. Value: $day")
                 continue
             }
@@ -173,41 +186,8 @@ class ScheduleJsonParser {
 
         val teachers = parseTeachers(json.string(LESSON_TEACHER_KEY))
 
-        var dateFrom: LocalDate
-        if (isByDate) {
-            dateFrom = date
-        } else {
-            val temp = json.string(LESSON_DATE_FROM_KEY)
-            if (temp == null) {
-                dateFrom = LocalDate.MIN
-                Log.w(
-                    TAG,
-                    "Suspicious behavior: Lesson date from key \"$LESSON_DATE_FROM_KEY\" not found"
-                )
-            } else {
-                dateFrom = LocalDate.parse(temp, dateFormatter) ?: LocalDate.MIN.apply {
-                    Log.w(
-                        TAG, "Suspicious behavior: " +
-                                "Can not parse value of lesson date from key \"$LESSON_DATE_FROM_KEY\""
-                    )
-                }
-            }
-        }
-        var dateTo: LocalDate
-        if (isByDate) {
-            dateTo = date
-        } else {
-            val temp = json.string(LESSON_DATE_TO_KEY)
-            if (temp == null) {
-                dateTo = LocalDate.MAX
-                Log.w(TAG, "Suspicious behavior: Lesson date to key \"$LESSON_DATE_TO_KEY\" not found")
-            } else {
-                dateTo = LocalDate.parse(temp, dateFormatter) ?: LocalDate.MAX.apply {
-                    Log.w(TAG, "Suspicious behavior: " +
-                            "Can not parse value of lesson date to key \"$LESSON_DATE_TO_KEY\"")
-                }
-            }
-        }
+        var dateFrom = if (isByDate) date else parseDateFrom(json.string(LESSON_DATE_FROM_KEY))
+        var dateTo = if (isByDate) date else parseDateTo(json.string(LESSON_DATE_TO_KEY))
 
         if (dateTo < dateFrom) {
             val buf = dateTo
@@ -218,24 +198,47 @@ class ScheduleJsonParser {
         val auditoriums = parseAuditoriums(json.array(LESSON_AUDITORIUMS_KEY))
 
         val type = json.string(LESSON_TYPE_KEY) ?: "".apply {
-            Log.w(TAG, "Suspicious behavior: Lesson type key \"$LESSON_TYPE_KEY\" not found")
+            Log.w(TAG, "LESSON_TYPE_KEY \"$LESSON_TYPE_KEY\" not found")
         }
 
         return Lesson(
             order, title, teachers,
             dateFrom, dateTo,
             auditoriums,
-            type, group
+            Lesson.fixType(type, title), group
         )
     }
 
-    private fun parseTeachers(json: String?): List<Teacher> {
-        if (json == null) return emptyList()
-
-        return json.split(',').filter { it.isNotEmpty() }.map {
-            Teacher.fromFullName(it)
+    private fun parseDateFrom(json: String?): LocalDate {
+        return if (json == null) {
+            Log.w(TAG, "LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\" not found")
+            LocalDate.MIN
+        } else try {
+            LocalDate.parse(json, dateFormatter)
+        } catch (e: Exception) {
+            Log.w(TAG, "Can not parse value of LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\"")
+            LocalDate.MIN
         }
     }
+
+    private fun parseDateTo(json: String?): LocalDate {
+        return if (json == null) {
+            Log.w(TAG, "LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\" not found")
+            LocalDate.MAX
+        } else try {
+            LocalDate.parse(json, dateFormatter)
+        } catch (e: Exception) {
+            Log.w(TAG, "Can not parse value of LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\"")
+            LocalDate.MAX
+        }
+    }
+
+    private fun parseTeachers(json: String?) = json?.run {
+        split(',')
+            .filter { it.isNotEmpty() }
+            .map { Teacher.fromFullName(it) }
+    } ?: emptyList()
+
 
     private fun parseAuditoriums(json: JsonArray<JsonObject>?): List<Auditorium> {
         if (json == null || json.isEmpty()) return listOf()
