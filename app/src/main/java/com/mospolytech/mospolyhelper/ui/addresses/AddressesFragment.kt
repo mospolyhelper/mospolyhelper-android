@@ -6,8 +6,13 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -18,8 +23,10 @@ import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.models.Addresses
+import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
+import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 
 class AddressesFragment : FragmentBase(Fragments.Addresses) {
 
@@ -30,21 +37,23 @@ class AddressesFragment : FragmentBase(Fragments.Addresses) {
     lateinit var recyclerView: RecyclerView
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var toolbar: Toolbar
+    lateinit var addressesTypeSpinner: Spinner
     var accumulator = 0
 
     private val viewModel by viewModels<AddressesViewModel>()
 
     fun setUpBuildings(buildings: Addresses?) {
-        recyclerView.adapter = if (buildings == null) null else AddressesAdapter(buildings)
+        recyclerView.adapter = if (buildings == null) null else AddressesAdapter(buildings, viewModel.addressesType.value!!)
+        recyclerView.adapter?.notifyDataSetChanged()
         swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar = view.findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = getString(R.string.addresses_title)
+        toolbar = view.findViewById(R.id.toolbar)
+        addressesTypeSpinner = view.findViewById(R.id.spinner_addresses)
         (activity as MainActivity).setSupportActionBar(this.toolbar)
-        //(this.Activity as MainView).SupportActionBar.SetDisplayShowTitleEnabled(false)
+        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
         val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(activity, drawer, this.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
@@ -54,6 +63,37 @@ class AddressesFragment : FragmentBase(Fragments.Addresses) {
         if (this.recyclerView.adapter == null) {
             setUpBuildings(viewModel.addresses.value)
         }
+
+        addressesTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.addressesType.value = (view as TextView).text as String
+            }
+        }
+
+        viewModel.addressesType.observe(viewLifecycleOwner, Observer {
+            val type = (recyclerView.adapter as? AddressesAdapter)?.type
+            if (type != null && type != it) {
+                setUpBuildings(viewModel.addresses.value!!)
+            }
+        })
+
+        viewModel.addresses.observe(viewLifecycleOwner, Observer<Addresses?> {
+            addressesTypeSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it!!.keys.toTypedArray())
+            val prevType = (recyclerView.adapter as? AddressesAdapter)?.type
+            if (prevType != null && it!!.containsKey(prevType)) {
+                viewModel.addressesType.value = prevType
+            } else {
+                viewModel.addressesType.value = it!!.keys.first()
+            }
+            setUpBuildings(it)
+        })
     }
 
     override fun onCreateView(
@@ -96,8 +136,7 @@ class AddressesFragment : FragmentBase(Fragments.Addresses) {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         // TODO: Use the ViewModel
-        viewModel.addresses.observe(viewLifecycleOwner, Observer<Addresses?> { setUpBuildings(it) }
-        )
+
     }
 
     override fun onDestroy() {
