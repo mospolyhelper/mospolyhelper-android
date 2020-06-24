@@ -42,10 +42,10 @@ class ScheduleDao {
 
     private suspend fun downloadGroupList(): List<String> {
         val groupListString = client.getGroupList()
-        return groupListParser.parseGroupList(groupListString)
+        return groupListParser.parseGroupList(groupListString).sorted()
     }
 
-    suspend fun getGroupList2(downloadNew: Boolean): List<String> {
+    suspend fun getGroupList(downloadNew: Boolean): List<String> {
         var groupList: List<String>? = null
         if (downloadNew) {
             try {
@@ -216,9 +216,15 @@ class ScheduleDao {
 
     var scheduleCounter = AtomicInteger(0)
 
-    suspend fun getSchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList? = coroutineScope {
+    suspend fun getSchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
         if (groupList.isEmpty()) {
-            return@coroutineScope null
+            return@coroutineScope SchedulePackList(
+                emptyList(),
+                mutableSetOf(),
+                mutableSetOf(),
+                mutableSetOf(),
+                mutableSetOf()
+            )
         }
 
         scheduleCounter.set(0)

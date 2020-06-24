@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <item android:id="@+id/schedule_advanced_search"
+        android:icon="@drawable/search_24px"
+        android:orderInCategory="99"
+        app:showAsAction="always" />
+    <item android:id="@+id/schedule_filter"
+        android:icon="@drawable/ic_filter_24dp"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+    <item android:id="@+id/schedule_calendar"
+        android:icon="@drawable/ic_baseline_calendar"
+        android:orderInCategory="101"
+        app:showAsAction="always" />
+</menu>

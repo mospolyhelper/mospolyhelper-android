@@ -3,13 +3,13 @@
     android:color="@color/lessonBackgroundRipple">
     <item android:id="@android:id/mask">
       <shape android:shape="rectangle">
-        <corners android:radius="20dp"/>
+        <corners android:radius="@dimen/lesson_corner_radius"/>
         <solid android:color="@color/lessonBackgroundRipple" />
       </shape>
     </item>
     <item android:id="@android:id/background">
       <shape android:shape="rectangle">
-        <corners android:radius="20dp"/>
+        <corners android:radius="@dimen/lesson_corner_radius"/>
         <solid android:color="@color/lessonBackground" />
       </shape>
     </item>

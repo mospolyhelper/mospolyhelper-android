@@ -5,6 +5,10 @@
     android:layout_width="match_parent" 
     android:background="?attr/colorPrimary"
     android:layout_height="?attr/actionBarSize"
-    tools:showIn="@layout/fragment_buildings" 
+    tools:showIn="@layout/fragment_addresses"
     app:elevation="0dp">
+    <Spinner
+        android:id="@+id/spinner_addresses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </androidx.appcompat.widget.Toolbar>
