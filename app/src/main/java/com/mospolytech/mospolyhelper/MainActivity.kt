@@ -34,12 +34,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     companion object {
         const val launchCode = 0
     }
-
-    var prevFragment: IFragmentBase? = null
-    var currFragment: IFragmentBase? = null
-
-    var clickBackAgain: String = ""
-    var doubleBackToExitPressedOnce = false
+    private var currFragment: IFragmentBase? = null
+    private var doubleBackToExitPressedOnce = false
 
     private val viewModel by viewModels<MainViewModel>()
 
@@ -53,19 +49,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 else
                     AppCompatDelegate.MODE_NIGHT_NO
             )
-            // fix on release
-            var firstLaunch = launchCode
-            try {
-                firstLaunch = prefs.getInt(PreferencesConstants.FirstLaunch, launchCode)
-            } catch (ex: Exception) {
-                firstLaunch = launchCode
+            val firstLaunch = try {
+                prefs.getInt(PreferencesConstants.FirstLaunch, launchCode)
+            } catch (e: Exception) {
+                launchCode
             }
             if (firstLaunch == launchCode) {
                 prefs.edit().clear().apply()
                 prefs.edit().putInt(PreferencesConstants.FirstLaunch, launchCode + 1).apply()
             }
-            AndroidThreeTen.init(this)
-            //this.ScheduleVmPreloadTask = Task.Run(() => PrepareSchdeuleVm(prefs));
         }
         setTheme(R.style.AppTheme_NoActionBar)
 
@@ -83,9 +75,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             //ChangeFragment(this.SupportFragmentManager.GetBackStackEntryAt(0)., Fragments.ScheduleMain, false)
         }
 
-//        ActivityCompat.requestPermissions(this,
-//            new string[] { Android.Manifest.Permission.Internet }, 123)
-
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.INTERNET),
@@ -98,7 +87,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             onNavigationItemSelected(it)
         }
         navigationView.setCheckedItem(R.id.nav_schedule)
-        clickBackAgain = getString(R.string.click_back_again)
         doubleBackToExitPressedOnce = false
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
@@ -133,7 +121,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 super.onBackPressed()
                 finish()
             } else {
-                Toast.makeText(this, clickBackAgain, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.click_back_again, Toast.LENGTH_SHORT).show()
                 this.doubleBackToExitPressedOnce = true
             }
             updateExitFlag()
@@ -159,14 +147,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    fun updateExitFlag() {
+
+    private fun updateExitFlag() {
         GlobalScope.async {
             delay(2000)
             doubleBackToExitPressedOnce = false
         }
     }
 
-    fun onNavigationItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         var fragmentId = Fragments.Other
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -194,9 +190,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             drawer.closeDrawer(GravityCompat.START)
             return false
         }
-//        if (fragmentId == Fragments.Other) {
-//            //this.logger.Warn("{ItemId} doesn't have own Fragments enum id", item.ItemId);
-//        }
         if (fragmentCreator == null) {
             drawer.closeDrawer(GravityCompat.START)
             return false
@@ -207,15 +200,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun changeFragment(fragment: IFragmentBase, disposePrevious: Boolean) {
-        prevFragment = supportFragmentManager.findFragmentById(R.id.frame_schedule) as IFragmentBase?
         if (disposePrevious) {
-            if (prevFragment != null) {
-                //this.prevFragment.Fragment.Dispose();
-            }
-            supportFragmentManager.beginTransaction().replace(R.id.frame_schedule, fragment.fragment).commit()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_schedule, fragment.fragment)
+                .commit()
         } else {
-            supportFragmentManager.beginTransaction().add(R.id.frame_schedule, fragment.fragment)
-                .addToBackStack(null).commit()
+            supportFragmentManager.beginTransaction()
+                .add(R.id.frame_schedule, fragment.fragment)
+                .addToBackStack(null)
+                .commit()
         }
         currFragment = fragment
     }
