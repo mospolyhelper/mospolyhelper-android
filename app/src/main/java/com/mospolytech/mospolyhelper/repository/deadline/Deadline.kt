@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.models
+package com.mospolytech.mospolyhelper.repository.deadline
 
 
 import androidx.room.Entity
