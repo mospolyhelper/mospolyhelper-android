@@ -10,8 +10,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -30,60 +32,56 @@ class CalendarAdapter(
             0xffeb4141.toInt(),   // Exam, Credit,..
             0xff29b6f6.toInt()    // Other
         )
+        private const val MAX_COUNT = 400
     }
-    val dateFormatter = DateTimeFormatter.ofPattern("EEE, d MMMM")
+    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, d MMMM")
     var firstPosDate: LocalDate = LocalDate.now()
     private var itemCount = 0
 
-    private val dayClick = mutableSetOf<(LocalDate) -> Unit>()
+    val dayClick: Event1<LocalDate> = Action1()
 
     init {
         setCount()
         setFirstPosDate()
     }
 
-    fun addOnDayClick(block: (LocalDate) -> Unit) = dayClick.add(block)
-
     override fun getItemCount() = itemCount
 
     fun setCount() {
         itemCount = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-        if (itemCount > 400 || itemCount < 0) {
-            itemCount = 400
+        if (itemCount !in 1..MAX_COUNT) {
+            itemCount = MAX_COUNT
         }
 
     }
 
     fun setFirstPosDate() {
-        firstPosDate = if (itemCount == 400)
-            LocalDate.now().minusDays(200)
+        firstPosDate = if (itemCount == MAX_COUNT)
+            LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
         else
             schedule.dateFrom
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater
+        val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_daily_schedule, parent, false)
-        var vh = ViewHolder(view)
+        val vh = ViewHolder(view)
         vh.lessonPlace.setOnClickListener {
-            dayClick.forEach {
-                it(firstPosDate.plusDays(vh.layoutPosition.toLong()))
-            }
+            (dayClick as Action1).invoke(firstPosDate.plusDays(vh.layoutPosition.toLong()))
         }
 
         return vh
     }
 
     fun ViewHolder.setHead(date: LocalDate) {
-        val res = SpannableStringBuilder()
         lessonTime.setTextColor(colorTitle)
         val today = LocalDate.now()
 
         if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
             lessonTime.setTextColor(colorCurrentTitle)
         }
-        lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL) // .replace('.', '\0') TODO Check it
+        lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
     }
 
     fun ViewHolder.setLessons(dailySchedule: List<Lesson>, date: LocalDate) {

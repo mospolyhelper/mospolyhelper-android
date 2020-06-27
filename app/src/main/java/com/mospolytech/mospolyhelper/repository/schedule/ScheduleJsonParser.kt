@@ -1,9 +1,9 @@
-package com.mospolytech.mospolyhelper.repository.remote.schedule
+package com.mospolytech.mospolyhelper.repository.schedule
 
 import android.util.Log
 import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.TAG
-import com.mospolytech.mospolyhelper.repository.models.schedule.*
+import com.mospolytech.mospolyhelper.repository.schedule.models.*
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.time.LocalDate
@@ -105,7 +105,14 @@ class ScheduleJsonParser {
             Log.w(TAG, "GROUP_COMMENT_KEY \"$GROUP_COMMENT_KEY\" not found")
         }
 
-        return Group(title, course, dateFrom, dateTo, isEvening == 1 , comment)
+        return Group(
+            title,
+            course,
+            dateFrom,
+            dateTo,
+            isEvening == 1,
+            comment
+        )
     }
 
     private fun parseGroupDateFrom(json: String?): LocalDate {
@@ -113,7 +120,9 @@ class ScheduleJsonParser {
             Log.w(TAG, "GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\" not found")
             LocalDate.MIN
         } else try {
-            LocalDate.parse(json, dateFormatter)
+            LocalDate.parse(json,
+                dateFormatter
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Can not parse value of GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\"")
             LocalDate.MIN
@@ -125,7 +134,9 @@ class ScheduleJsonParser {
             Log.w(TAG, "GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\" not found")
             LocalDate.MAX
         } else try {
-            LocalDate.parse(json, dateFormatter)
+            LocalDate.parse(json,
+                dateFormatter
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Can not parse value of GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\"")
             LocalDate.MAX
@@ -151,7 +162,9 @@ class ScheduleJsonParser {
             var date = LocalDate.now()
 
             if (isByDate) {
-                date = LocalDate.parse(day, dateFormatter) ?: continue
+                date = LocalDate.parse(day,
+                    dateFormatter
+                ) ?: continue
                 parsedDay = date.dayOfWeek.value
             } else {
                 parsedDay = day.toInt()
@@ -205,7 +218,10 @@ class ScheduleJsonParser {
             order, title, teachers,
             dateFrom, dateTo,
             auditoriums,
-            Lesson.fixType(type, title), group
+            Lesson.fixType(
+                type,
+                title
+            ), group
         )
     }
 
@@ -214,7 +230,9 @@ class ScheduleJsonParser {
             Log.w(TAG, "LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\" not found")
             LocalDate.MIN
         } else try {
-            LocalDate.parse(json, dateFormatter)
+            LocalDate.parse(json,
+                dateFormatter
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Can not parse value of LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\"")
             LocalDate.MIN
@@ -226,7 +244,9 @@ class ScheduleJsonParser {
             Log.w(TAG, "LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\" not found")
             LocalDate.MAX
         } else try {
-            LocalDate.parse(json, dateFormatter)
+            LocalDate.parse(json,
+                dateFormatter
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Can not parse value of LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\"")
             LocalDate.MAX
@@ -247,7 +267,10 @@ class ScheduleJsonParser {
         for (auditorium in json) {
             val name = auditorium.string(AUDITORIUM_TITLE_KEY) ?: continue
             val color = auditorium.string(AUDITORIUM_COLOR_KEY) ?: ""
-            tempList.add((Auditorium(name, color)))
+            tempList.add((Auditorium(
+                name,
+                color
+            )))
         }
         return tempList
     }

@@ -1,8 +1,8 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -12,19 +12,20 @@ import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedFilter
@@ -36,14 +37,13 @@ import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
 import com.mospolytech.mospolyhelper.utils.DefaultSettings
 import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.abs
 import kotlin.math.pow
-import kotlin.math.sqrt
-import kotlin.random.Random
 
 
 class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
@@ -55,7 +55,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
     private val viewModelFactory = ScheduleViewModel.Factory()
 
     private lateinit var textGroupTitle: AutoCompleteTextView
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager: ViewPager2
     private lateinit var swipeToRefresh: SwipeRefreshLayout
     private var checkedGroups = ObservableArrayList<Int>()
     private var checkedLessonTypes = ObservableArrayList<Int>()
@@ -114,8 +114,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
         val adapter2 = ScheduleAdapter(
             schedule,
-            viewModel.scheduleFilter.value!!,
-            viewModel.showEmptyLessons.value!!,
+            viewModel.scheduleFilter.value,
+            viewModel.showEmptyLessons.value,
             viewModel.isAdvancedSearch,
             loading
         )
@@ -123,7 +123,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         if (schedule != null) {
             adapter2.lessonClick += ::onLessonClick
             viewPager.adapter?.notifyDataSetChanged()
-            viewPager.setCurrentItem(adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt(), true)
+            viewPager.setCurrentItem(adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt(), false)
 
         }
     }
@@ -188,17 +188,15 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         btnGroup = view.findViewById(R.id.btn_group)
         homeBtn = view.findViewById(R.id.button_home)
 
-//        viewPager.setPageTransformer(true, ParallaxPageTransformer())
-//        viewPager.pageMargin = TypedValue.applyDimension(
-//            TypedValue.COMPLEX_UNIT_DIP,
-//            50f,
-//            requireContext().resources.displayMetrics
-//        ).toInt()
+        setDrawer()
+        setScheduleViews()
+        setBottomSheet(view)
+        bindViewModel()
+    }
 
+    private fun setDrawer() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-
-        btnGroup.check(if (viewModel.isSession.value!!) R.id.btn_session else R.id.btn_regular)
-
+        btnGroup.check(if (viewModel.isSession.value) R.id.btn_session else R.id.btn_regular)
         btnGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             when (checkedId) {
                 R.id.btn_regular -> if (isChecked) {
@@ -216,54 +214,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             }
         }
 
-
-        if (viewPager.adapter == null) {
-            if (this.viewModel.scheduleDownloaded) {
-                setUpSchedule(viewModel.schedule.value)
-            } else {
-                setUpSchedule(null, true)
-            }
-        }
-
-        swipeToRefresh.setOnRefreshListener {
-            if (viewModel.isAdvancedSearch) {
-                textGroupTitle.setText(viewModel.groupTitle.value)
-                viewModel.isAdvancedSearch = false
-            }
-            viewModel.updateSchedule()
-        }
-
-        viewModel.endDownloading += ::scheduleEndDownloading
-        viewModel.beginDownloading += ::scheduleBeginDownloading
-
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                swipeToRefresh.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                val days = LocalDate.now().until(
-                    (viewPager.adapter as ScheduleAdapter).firstPosDate, ChronoUnit.DAYS
-                ) + position
-                if (days == 0L && positionOffset < 0.5 || days == -1L && positionOffset >= 0.5) {
-                    homeBtn.hide()
-                } else {
-                    homeBtn.show()
-                }
-            }
-
-            override fun onPageSelected(position: Int) {
-                viewModel.date.value =
-                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
-            }
-        })
-
-
-        scheduleDateFilter.setSelection(viewModel.scheduleFilter.value!!.dateFilter.ordinal)
+        scheduleDateFilter.setSelection(viewModel.scheduleFilter.value.dateFilter.ordinal)
         scheduleDateFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -273,38 +224,33 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 position: Int,
                 id: Long
             ) {
-                if (viewModel.scheduleFilter.value!!.dateFilter.ordinal != position) {
+                if (viewModel.scheduleFilter.value.dateFilter.ordinal != position) {
                     viewModel.scheduleFilter.value =
-                        Schedule.Filter.Builder(viewModel.scheduleFilter.value!!)
+                        Schedule.Filter.Builder(viewModel.scheduleFilter.value)
                             .dateFilter(Schedule.Filter.DateFilter.values()[position]).build()
                     prefs.edit().putInt(PreferencesConstants.ScheduleDateFilter, position).apply()
                 }
             }
         }
 
-        scheduleSessionFilter.isChecked = viewModel.scheduleFilter.value!!.sessionFilter
+        scheduleSessionFilter.isChecked = viewModel.scheduleFilter.value.sessionFilter
         scheduleSessionFilter.setOnCheckedChangeListener { _, isChecked ->
-            if (viewModel.scheduleFilter.value!!.sessionFilter != isChecked) {
+            if (viewModel.scheduleFilter.value.sessionFilter != isChecked) {
                 viewModel.scheduleFilter.value =
-                    Schedule.Filter.Builder(viewModel.scheduleFilter.value!!)
+                    Schedule.Filter.Builder(viewModel.scheduleFilter.value)
                         .sessionFilter(isChecked).build()
                 prefs.edit().putBoolean(PreferencesConstants.ScheduleSessionFilter, isChecked).apply()
             }
         }
 
 
-        scheduleEmptyPair.isChecked = viewModel.showEmptyLessons.value!!
+        scheduleEmptyPair.isChecked = viewModel.showEmptyLessons.value
         scheduleEmptyPair.setOnCheckedChangeListener { _, isChecked ->
             if (viewModel.showEmptyLessons.value != isChecked) {
                 viewModel.showEmptyLessons.value = isChecked
                 prefs.edit().putBoolean(PreferencesConstants.ScheduleShowEmptyLessons, isChecked).apply()
             }
         }
-
-        homeBtn.setOnClickListener { viewModel.goHome() }
-
-        setUpBotomSheet(view)
-
 
         settingsDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         settingsDrawer.addDrawerListener(object : DrawerLayout.DrawerListener {
@@ -323,8 +269,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
 
-        setUpGroupList(viewModel.groupList.value!!)
-        textGroupTitle.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value!!))
+        setUpGroupList(viewModel.groupList.value)
+        textGroupTitle.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value))
         textGroupTitle.setOnKeyListener { v, keyCode, event ->
             when {
                 event.action != KeyEvent.ACTION_UP -> {
@@ -364,22 +310,45 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
     }
 
-    private fun scheduleBeginDownloading() {
-        setUpSchedule(null, true)
-    }
-
-    private fun scheduleEndDownloading() {
-        swipeToRefresh.isRefreshing = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (textGroupTitle.text?.isEmpty() == true) {
-            textGroupTitle.requestFocus()
+    fun setScheduleViews() {
+        swipeToRefresh.setOnRefreshListener {
+            if (viewModel.isAdvancedSearch) {
+                textGroupTitle.setText(viewModel.groupTitle.value)
+                viewModel.isAdvancedSearch = false
+            }
+            viewModel.updateSchedule()
         }
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                swipeToRefresh.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                val days = LocalDate.now().until(
+                    (viewPager.adapter as ScheduleAdapter).firstPosDate, ChronoUnit.DAYS
+                ) + position
+                if (days == 0L && positionOffset < 0.5 || days == -1L && positionOffset >= 0.5) {
+                    homeBtn.hide()
+                } else {
+                    homeBtn.show()
+                }
+            }
+
+            override fun onPageSelected(position: Int) {
+                viewModel.date.value =
+                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
+            }
+        })
+
+        homeBtn.setOnClickListener { viewModel.goHome() }
     }
 
-    private fun setUpBotomSheet(view: View) {
+    private fun setBottomSheet(view: View) {
         val bottomSheet = view.findViewById<LinearLayout>(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -576,13 +545,43 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_schedule, menu)
+    private fun bindViewModel() {
+        combine(viewModel.schedule, viewModel.showEmptyLessons, viewModel.scheduleFilter) { a, _, _ ->
+            setUpSchedule(a, viewModel.isLoading)
+            swipeToRefresh.isRefreshing = false
+        }.launchIn(lifecycleScope)
+
+        viewModel.groupList.onEach { setUpGroupList(it) }.launchIn(lifecycleScope)
+        viewModel.isSession.onEach { btnGroup.check(if (it) R.id.btn_session else R.id.btn_regular) }.launchIn(lifecycleScope)
+        viewModel.date.onEach {
+            val adapter = viewPager.adapter
+            if (adapter is ScheduleAdapter) {
+                if (it != adapter.firstPosDate.plusDays(viewPager.currentItem.toLong()))
+                    viewPager.setCurrentItem(
+                        adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(),
+                        false
+                    )
+            }
+        }.launchIn(lifecycleScope)
+        viewModel.scheduleFilter.onEach {
+            if (scheduleDateFilter.selectedItemPosition != it.dateFilter.ordinal) {
+                scheduleDateFilter.setSelection(it.dateFilter.ordinal)
+            }
+            if (scheduleSessionFilter.isChecked != it.sessionFilter) {
+                scheduleSessionFilter.isChecked = it.sessionFilter
+            }
+        }.launchIn(lifecycleScope)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    override fun onResume() {
+        super.onResume()
+        if (textGroupTitle.text?.isEmpty() == true) {
+            textGroupTitle.requestFocus()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_schedule, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -602,6 +601,12 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         return true
     }
 
+    override fun onStart() {
+        super.onStart()
+        setHasOptionsMenu(true)
+        requireActivity().invalidateOptionsMenu()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -615,8 +620,10 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        prepareViewModelFactory(PreferenceManager.getDefaultSharedPreferences(context))
+    }
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+    private fun prepareViewModelFactory(prefs: SharedPreferences) {
 
         val dateFilter = Schedule.Filter.DateFilter.values()[
                 prefs.getInt(PreferencesConstants.ScheduleDateFilter,
@@ -624,7 +631,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         val sessionFilter = prefs.getBoolean(PreferencesConstants.ScheduleSessionFilter,
             Schedule.Filter.default.sessionFilter)
 
-        viewModelFactory.scheduleFilter = Schedule.Filter.Builder(Schedule.Filter.default)
+        viewModelFactory.scheduleFilter = Schedule.Filter.Builder(
+            Schedule.Filter.default)
             .dateFilter(dateFilter)
             .sessionFilter(sessionFilter)
             .build()
@@ -632,7 +640,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         viewModelFactory.groupTitle = prefs.getString(PreferencesConstants.ScheduleGroupTitle,
             DefaultSettings.ScheduleGroupTitle)
 
-        // fix on release
         viewModelFactory.isSession = try {
             prefs.getBoolean(PreferencesConstants.ScheduleTypePreference,
                 DefaultSettings.ScheduleTypePreference);
@@ -648,47 +655,11 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }
         }
-
-        viewModel.setUpSchedule(false)
-
-        viewModel.schedule.observe(this, Observer {
-            setUpSchedule(it)
-        })
-
-        viewModel.groupList.observe(this, Observer {
-            setUpGroupList(it)
-        })
-
-        viewModel.isSession.observe(this, Observer {
-            btnGroup.check(if (it) R.id.btn_session else R.id.btn_regular)
-        })
-
-        viewModel.date.observe(this, Observer {
-            val adapter = viewPager.adapter
-            if (adapter is ScheduleAdapter) {
-                if (it != adapter.firstPosDate.plusDays(viewPager.currentItem.toLong()))
-                viewPager.setCurrentItem(
-                    adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(),
-                    false
-                )
-            }
-        })
-
-        viewModel.scheduleFilter.observe(this, Observer {
-            scheduleDateFilter.setSelection(it.dateFilter.ordinal)
-            scheduleSessionFilter.isChecked = it.sessionFilter
-        })
     }
 
     override fun onDestroy() {
         coroutineContext.cancelChildren()
         super.onDestroy()
-    }
-
-    override fun onDestroyView() {
-        viewModel.beginDownloading -= ::scheduleEndDownloading
-        viewModel.endDownloading -= ::scheduleBeginDownloading
-        super.onDestroyView()
     }
 
     class ListChangedObserver(private val block: (ObservableList<*>?) -> Unit) : ObservableList.OnListChangedCallback<ObservableList<*>>() {
