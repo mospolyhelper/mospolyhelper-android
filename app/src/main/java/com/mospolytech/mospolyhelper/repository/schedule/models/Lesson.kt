@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.models.schedule
+package com.mospolytech.mospolyhelper.repository.schedule.models
 
 import android.util.Log
 import com.beust.klaxon.Json
@@ -96,12 +96,16 @@ data class Lesson(
                 type.contains(OTHER, true) -> {
                     val res = regex.findAll(subjectTitle).joinToString { it.value }
                     if (res.isNotEmpty()) {
-                        findCombinedShortTypeOrNull(res) ?: type
+                        findCombinedShortTypeOrNull(
+                            res
+                        ) ?: type
                     } else {
                         OTHER_FIXED
                     }
                 }
-                else -> findCombinedTypeOrNull(type) ?: type
+                else -> findCombinedTypeOrNull(
+                    type
+                ) ?: type
             }
         }
 
@@ -197,7 +201,11 @@ data class Lesson(
                 type.contains(CREDIT_WITH_MARK_FIXED, true) ||
                 type.contains(EXAMINATION_SHOW_FIXED, true)
 
-    val time = getTime(order, group.isEvening)
+    val time =
+        getTime(
+            order,
+            group.isEvening
+        )
 
     fun equalsTime(lesson: Lesson) =
         order == lesson.order && group.isEvening == lesson.group.isEvening

@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
 import android.content.res.Configuration
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,11 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.utils.Action2
-import com.mospolytech.mospolyhelper.utils.Event1
 import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -28,11 +27,14 @@ class ScheduleAdapter(
     private val showEmptyLessons: Boolean,
     private val showGroup: Boolean,
     private val isLoading: Boolean
-) : PagerAdapter() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        const val ACTIVE_PAGES_COUNT = 3
+        private const val MAX_COUNT = 400
+        private const val VIEW_TYPE_NULL = 0
+        private const val VIEW_TYPE_LOADING = 1
+        private const val VIEW_TYPE_NORMAL = 2
+        private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
     }
-    private val viewHolders = mutableListOf<ViewHolder?>(null, null, null)
     var needDispose = false
     var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
@@ -44,117 +46,71 @@ class ScheduleAdapter(
         setFirstPosDate()
     }
 
-    private fun getViewHolder(position: Int) = viewHolders[position % ACTIVE_PAGES_COUNT]
 
-    private fun setViewHolder(position: Int, viewHolder: ViewHolder) {
-        viewHolders[position % ACTIVE_PAGES_COUNT] = viewHolder
-    }
-
-    override fun getCount() = count
+    override fun getItemCount() = count
 
     private fun setCount() {
         if (schedule == null) {
             count = 1
         } else {
             this.count = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-            if (count  !in 0..400) {
-                count = 400
+            if (count  !in 0..MAX_COUNT) {
+                count = MAX_COUNT
             }
         }
     }
 
     private fun setFirstPosDate() {
         if (schedule != null) {
-            firstPosDate = if (count == 400)
-                LocalDate.now().minusDays(200)
+            firstPosDate = if (count == MAX_COUNT)
+                LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
             else
                 schedule.dateFrom
         }
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        if (schedule == null) {
-            return if (isLoading)
-                LayoutInflater.from(container.context)
-                    .inflate(R.layout.page_schedule_loading, container, false)
-                    .apply { container.addView(this) }
-            else
-                LayoutInflater.from(container.context)
-                    .inflate(R.layout.page_schedule_null, container, false)
-                    .apply { container.addView(this) }
-        }
+    override fun getItemViewType(position: Int) = if (schedule == null) {
+            if (isLoading) VIEW_TYPE_LOADING else VIEW_TYPE_NULL
+        } else VIEW_TYPE_NORMAL
 
-        val vh = getViewHolder(position)
-        val viewHolder: ViewHolder
-        if (vh == null) {
-            viewHolder = ViewHolder.from(container, position, R.layout.page_schedule, schedule, scheduleFilter,
-                firstPosDate, showEmptyLessons, showGroup)
-            viewHolder.listAdapter?.let {
-                it.lessonClick += { lesson ->
-                    (lessonClick as Action2).invoke(lesson, viewHolder.listAdapter!!.date)
-                }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        when (viewType) {
+            VIEW_TYPE_NULL -> {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.page_schedule_null, parent, false)
+                return SimpleViewHolder(view)
             }
-            setViewHolder(position, viewHolder)
-        } else {
-            viewHolder = vh
-            viewHolder.update(position, schedule, scheduleFilter, firstPosDate, showEmptyLessons, showGroup)
-        }
-
-        return viewHolder.view
-    }
-
-    override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        if (needDispose && getViewHolder(position) != null) {
-            container.removeView(getViewHolder(position)!!.view);
-        }
-    }
-
-    override fun getItemPosition(obj: Any): Int {
-        return POSITION_NONE
-    }
-
-    override fun isViewFromObject(view: View, obj: Any): Boolean {
-        return view == obj
-    }
-
-    class ViewHolder(
-        val view: View,
-        private var position: Int,
-        var schedule: Schedule,
-        scheduleFilter: Schedule.Filter,
-        var firstPosDate: LocalDate,
-        showEmptyLessons: Boolean,
-        showGroup: Boolean
-    ) {
-        companion object {
-            private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
-
-            fun from(
-                container: ViewGroup,
-                position: Int,
-                resource: Int,
-                schedule: Schedule,
-                scheduleFilter:
-                Schedule.Filter,
-                firstPosDate: LocalDate,
-                showEmptyLessons: Boolean,
-                showGroup: Boolean
-            ): ViewHolder {
-                val view: View = LayoutInflater.from(container.context)
-                    .inflate(resource, container, false)
-                container.addView(view)
-                return ViewHolder(view, position, schedule, scheduleFilter, firstPosDate,
-                    showEmptyLessons, showGroup)
+            VIEW_TYPE_LOADING -> {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.page_schedule_loading, parent, false)
+                return SimpleViewHolder(view)
+            }
+            else -> {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.page_schedule, parent, false)
+                return ViewHolder(view)
             }
         }
+    }
+
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+        if (viewHolder.itemViewType == VIEW_TYPE_NORMAL) (viewHolder as ViewHolder).bind()
+    }
+
+    inner class SimpleViewHolder(
+    val view: View
+    ) : RecyclerView.ViewHolder(view)
+
+
+    inner class ViewHolder(
+        val view: View
+    ) : RecyclerView.ViewHolder(view) {
         private val dayTitle = view.findViewById<TextView>(R.id.button_day)!!
-        val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
-        var listAdapter: LessonAdapter? = null
-        var accumulator = 0f
-        var date: LocalDate = LocalDate.now()
+        private val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
+        private var listAdapter: LessonAdapter? = null
+        private var accumulator = 0f
 
         init {
-            date = firstPosDate.plusDays(position.toLong())
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
             val dp32 = dp8 * 4
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -162,8 +118,7 @@ class ScheduleAdapter(
                     if (e.action == MotionEvent.ACTION_DOWN &&
                         rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
                     ) {
-                        rv.stopScroll();
-                        return true
+                        rv.stopScroll()
                     }
                     return false
                 }
@@ -183,46 +138,49 @@ class ScheduleAdapter(
                     accumulator = 0f
                 }
             }
-
-            val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
-            val headColor = view.context.getColor(R.color.textLessonHead)
-            val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
-            val dailySchedule = schedule.getSchedule(date, scheduleFilter)
-            listAdapter = LessonAdapter(
-                view.findViewById(R.id.text_null_lesson),
-                if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
-                scheduleFilter,
-                date,
-                showGroup,
-                nightMode,
-                disabledColor,
-                headColor,
-                headCurrentColor
-            )
             list.itemAnimator = null
             list.layoutManager = LinearLayoutManager(view.context)
-            list.adapter = listAdapter!!
-
-            dayTitle.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter).capitalize()
         }
 
-        fun update(position: Int, schedule: Schedule, scheduleFilter: Schedule.Filter,
-                   firstPosDate: LocalDate, showEmptyLessons: Boolean, showGroup: Boolean) {
-            this.position = position
-            this.firstPosDate = firstPosDate
-            date = firstPosDate.plusDays(position.toLong())
+
+        fun bind() {
+            Log.d("qqqq", layoutPosition.toString())
+            val date = firstPosDate.plusDays(layoutPosition.toLong())
+            dayTitle.text = firstPosDate.plusDays(layoutPosition.toLong()).format(dateFormatter).capitalize()
             list.scrollToPosition(0)
             accumulator = 0f
             dayTitle.elevation = 0f
-            val dailySchedule = schedule.getSchedule(date, scheduleFilter)
-            listAdapter?.buildSchedule(
-                if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
-                scheduleFilter,
-                date,
-                showGroup
-            )
-            dayTitle.text = firstPosDate.plusDays(position.toLong()).format(dateFormatter).capitalize()
+            val dailySchedule = schedule!!.getSchedule(date, scheduleFilter)
+            if (listAdapter == null) {
+                val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+                val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
+                val headColor = view.context.getColor(R.color.textLessonHead)
+                val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
+                listAdapter = LessonAdapter(
+                    view.findViewById(R.id.text_null_lesson),
+                    if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                    scheduleFilter,
+                    date,
+                    showGroup,
+                    nightMode,
+                    disabledColor,
+                    headColor,
+                    headCurrentColor
+                )
+                listAdapter?.let {
+                    it.lessonClick += { lesson ->
+                        (lessonClick as Action2).invoke(lesson, it.date)
+                    }
+                }
+                list.adapter = listAdapter
+            } else {
+                listAdapter!!.update(
+                    if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                    scheduleFilter,
+                    date,
+                    showGroup
+                )
+            }
         }
     }
 }
