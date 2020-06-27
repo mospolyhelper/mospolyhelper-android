@@ -6,8 +6,8 @@ import androidx.room.Database
 import androidx.room.Room
 
 import androidx.room.RoomDatabase
-import com.mospolytech.mospolyhelper.repository.dao.DeadlineDAO
-import com.mospolytech.mospolyhelper.repository.models.Deadline
+import com.mospolytech.mospolyhelper.repository.deadline.DeadlineDAO
+import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 
 @Database(entities = [Deadline::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

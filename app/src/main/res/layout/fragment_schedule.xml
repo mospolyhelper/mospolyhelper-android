@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:paddingBottom="0.5dp"
         android:layout_height="match_parent">
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -78,16 +78,18 @@
         app:checkedButton="@id/btn_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_regular"
             android:text="@string/text_schedule_type_regular"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/AppTheme.MaterialToggleButton"
+            android:theme="@style/AppTheme.MaterialToggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_session"
             android:text="@string/text_schedule_type_session"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/AppTheme.MaterialToggleButton"
+            android:theme="@style/AppTheme.MaterialToggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </com.google.android.material.button.MaterialButtonToggleGroup>

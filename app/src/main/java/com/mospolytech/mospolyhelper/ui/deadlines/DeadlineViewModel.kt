@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.mospolytech.mospolyhelper.repository.local.AppDatabase
-import com.mospolytech.mospolyhelper.repository.local.DeadlinesRepository
-import com.mospolytech.mospolyhelper.repository.models.Deadline
+import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.utils.ContextProvider
