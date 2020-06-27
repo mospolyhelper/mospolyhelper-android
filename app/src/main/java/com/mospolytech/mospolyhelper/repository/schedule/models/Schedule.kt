@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.models.schedule
+package com.mospolytech.mospolyhelper.repository.schedule.models
 
 import com.beust.klaxon.Json
 import java.time.LocalDate
@@ -65,8 +65,16 @@ data class Schedule(
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
-            val default = Filter(true, DateFilter.Hide)
-            val none = Filter(false, DateFilter.Show)
+            val default =
+                Filter(
+                    true,
+                    DateFilter.Hide
+                )
+            val none =
+                Filter(
+                    false,
+                    DateFilter.Show
+                )
         }
         enum class DateFilter{
             Show,
@@ -97,7 +105,10 @@ data class Schedule(
             fun build(): Filter {
                 val sessionFilter = this.sessionFilter ?: default.sessionFilter
                 val dateFilter = this.dateFilter ?: default.dateFilter
-                return Filter(sessionFilter, dateFilter)
+                return Filter(
+                    sessionFilter,
+                    dateFilter
+                )
             }
         }
     }
@@ -301,7 +312,10 @@ data class Schedule(
 
         override fun isEmpty() = dailySchedule.isEmpty()
 
-        override fun iterator() = Iterator(this)
+        override fun iterator() =
+            Iterator(
+                this
+            )
 
         override fun lastIndexOf(element: Lesson): Int {
             for (e in this.asReversed().withIndex()) {
@@ -312,14 +326,23 @@ data class Schedule(
             return -1
         }
 
-        override fun listIterator() = Iterator(this)
+        override fun listIterator() =
+            Iterator(
+                this
+            )
 
-        override fun listIterator(index: Int) = Iterator(this, index)
+        override fun listIterator(index: Int) =
+            Iterator(
+                this,
+                index
+            )
 
         override fun subList(fromIndex: Int, toIndex: Int): List<Lesson> {
             val fixedFromIndex = getFixedIndex(fromIndex)
             val fixedToIndex = getFixedIndex(toIndex)
-            return EmptyPairsListDecorator(dailySchedule.subList(fixedFromIndex, fixedToIndex))
+            return EmptyPairsListDecorator(
+                dailySchedule.subList(fixedFromIndex, fixedToIndex)
+            )
         }
 
         class Iterator(
