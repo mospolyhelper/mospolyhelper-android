@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.utils.DeadlinesDiffCallback
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.Deadline
+import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 
 
 class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,

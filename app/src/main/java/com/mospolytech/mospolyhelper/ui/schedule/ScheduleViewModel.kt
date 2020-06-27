@@ -3,46 +3,41 @@ package com.mospolytech.mospolyhelper.ui.schedule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mospolytech.mospolyhelper.repository.dao.ScheduleDao
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.schedule.GroupListDao
+import com.mospolytech.mospolyhelper.repository.schedule.GroupListRepository
+import com.mospolytech.mospolyhelper.repository.schedule.ScheduleDao
+import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
+import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarViewModel
 import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 
 
 class ScheduleViewModel(
-    schedule: Schedule? = null,
-    date: LocalDate? = null,
-    isSession: Boolean? = null,
-    groupTitle: String? = null,
-    scheduleFilter: Schedule.Filter? = null,
-    showEmptyLessons: Boolean? = null
+    val schedule: MutableStateFlow<Schedule?>,
+    val date: MutableStateFlow<LocalDate>,
+    val isSession: MutableStateFlow<Boolean>,
+    val groupTitle: MutableStateFlow<String>,
+    val scheduleFilter: MutableStateFlow<Schedule.Filter>,
+    val showEmptyLessons: MutableStateFlow<Boolean>
 ) : ViewModelBase(StaticDI.viewModelMediator, ScheduleViewModel::class.java.simpleName) {
     companion object {
-        const val ResaveSchedule = "ResaveSchedule"
-        const val ChangeFragment = "ChangeFragment"
         const val ChangeDate = "ChangeDate"
     }
-    val dao = ScheduleDao()
-    val schedule = MutableLiveData<Schedule?>(schedule)
-    val date = MutableLiveData(date ?: LocalDate.now())
-    val isSession = MutableLiveData(isSession ?: false)
-    val groupTitle = MutableLiveData<String>(groupTitle ?: "")
-    var scheduleDownloaded = false
-    val scheduleFilter = MutableLiveData(scheduleFilter ?: Schedule.Filter.default)
+    val scheduleRepository = ScheduleRepository(ScheduleDao())
+    val groupListRepository = GroupListRepository(GroupListDao())
     var isAdvancedSearch = false
-    var groupList = MutableLiveData(emptyList<String>())
-    val showEmptyLessons = MutableLiveData(showEmptyLessons ?: false)
+    var groupList = MutableStateFlow(emptyList<String>())
 
-    val beginDownloading: Event0 = Action0()
     val endDownloading: Event0 = Action0()
+    var isLoading = true
+        private set
 
     val onMessage: Event1<String> = Action1()
 
@@ -50,35 +45,31 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         getGroupList(true)
 
-        this.isSession.observeForever {
-            GlobalScope.launch {
-                setUpSchedule(true)
-            }
-        }
+        combine(this.isSession, this.groupTitle) { isSession, groupTitle ->
+            setUpSchedule(isSession, groupTitle, true)
+        }.launchIn(GlobalScope)
 
-        this.groupTitle.observeForever {
-            GlobalScope.launch {
-                setUpSchedule(true)
-            }
-        }
 
-        // TODO: Change
-        this.showEmptyLessons.observeForever {
-            this.schedule.value = this.schedule.value
-        }
 
-        this.scheduleFilter.observeForever {
-            this.schedule.value = this.schedule.value
-        }
+//        this.isSession.observeForever {
+//            setUpSchedule(true)
+//        }
+//
+//        this.groupTitle.observeForever {
+//            setUpSchedule(true)
+//        }
+//
+//        this.showEmptyLessons.observeForever {
+//            this.schedule.value = this.schedule.value
+//        }
+//
+//        this.scheduleFilter.observeForever {
+//            this.schedule.value = this.schedule.value
+//        }
     }
 
     fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
-            ResaveSchedule -> schedule.value?.let { dao.saveSchedule(it) }
-            ChangeFragment -> {
-                val fragment = (message.content as List<*>)[0] as ScheduleFragment
-                // FragmentChanged?.Invoke(scheduleFragment);
-            }
             ChangeDate -> {
                 date.value = (message.content as List<*>)[0] as LocalDate
             }
@@ -87,32 +78,47 @@ class ScheduleViewModel(
 
     fun updateSchedule() {
         GlobalScope.launch(Dispatchers.Main) {
-            setUpSchedule(true, withoutIndicator = true)
+            setUpSchedule(
+                this@ScheduleViewModel.isSession.value,
+                this@ScheduleViewModel.groupTitle.value,
+                true
+            )
         }
     }
 
-    fun setUpSchedule(downloadNew: Boolean, withoutIndicator: Boolean = false) =
-        GlobalScope.launch(Dispatchers.Main) {
-            if (!withoutIndicator) {
-                (beginDownloading as Action0).invoke()
-            }
-
-            val schedule = if (groupTitle.value!!.isEmpty()) {
+    fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
+        isLoading = true
+        schedule.value = null
+        GlobalScope.async {
+            val schedule = if (groupTitle.isEmpty()) {
                 null
             } else {
-                dao.getSchedule(groupTitle.value!!, isSession.value!!, downloadNew, (onMessage as Action1)::invoke)
-                    ?: dao.getSchedule(groupTitle.value!!, isSession.value!!, !downloadNew, (onMessage as Action1)::invoke)
+                scheduleRepository.getSchedule(
+                    groupTitle,
+                    isSession,
+                    downloadNew,
+                    (onMessage as Action1)::invoke
+                )
+                    ?: scheduleRepository.getSchedule(
+                        groupTitle,
+                        isSession,
+                        !downloadNew,
+                        (onMessage as Action1)::invoke
+                    )
             }
-            scheduleDownloaded = true
-            this@ScheduleViewModel.schedule.value = schedule
-            (endDownloading as Action0).invoke()
+            withContext(Dispatchers.Main) {
+                this@ScheduleViewModel.schedule.value = schedule
+                isLoading = false
+                (endDownloading as Action0).invoke()
+            }
         }
+    }
 
     suspend fun getAdvancedSearchData(
         groupList: List<String>,
         onProgressChanged: (Float) -> Unit
-    ): ScheduleDao.SchedulePackList {
-        return dao.getSchedules(groupList, onProgressChanged)
+    ): ScheduleRepository.SchedulePackList {
+        return scheduleRepository.getAnySchedules(groupList, onProgressChanged)
     }
 
     fun goHome() {
@@ -135,15 +141,19 @@ class ScheduleViewModel(
         ))
     }
 
-    fun submitGroupTitle() {
-        GlobalScope.launch {
-            setUpSchedule(true)
-        }
-    }
+//    fun submitGroupTitle() {
+//        GlobalScope.launch {
+//            setUpSchedule(
+//                this@ScheduleViewModel.isSession.value,
+//                this@ScheduleViewModel.groupTitle.value,
+//                true
+//            )
+//        }
+//    }
 
     fun getGroupList(downloadNew: Boolean) {
         GlobalScope.launch(Dispatchers.Main) {
-            groupList.value = dao.getGroupList(downloadNew)
+            groupList.value = groupListRepository.getGroupList(downloadNew)
         }
     }
 
@@ -158,12 +168,12 @@ class ScheduleViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass == ScheduleViewModel::class.java) {
                 return ScheduleViewModel(
-                    schedule,
-                    date,
-                    isSession,
-                    groupTitle,
-                    scheduleFilter,
-                    showEmptyLessons
+                    MutableStateFlow(schedule),
+                    MutableStateFlow(date ?: LocalDate.now()),
+                    MutableStateFlow(isSession ?: false),
+                    MutableStateFlow(groupTitle ?: ""),
+                    MutableStateFlow(scheduleFilter ?: Schedule.Filter.default),
+                    MutableStateFlow(showEmptyLessons ?: false)
                 ) as T
             } else {
                 throw IllegalArgumentException("${modelClass.name} is not ${ScheduleViewModel::class.java.name}")

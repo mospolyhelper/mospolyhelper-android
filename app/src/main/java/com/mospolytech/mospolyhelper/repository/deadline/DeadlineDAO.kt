@@ -1,8 +1,7 @@
-package com.mospolytech.mospolyhelper.repository.dao
+package com.mospolytech.mospolyhelper.repository.deadline
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.mospolytech.mospolyhelper.repository.models.Deadline
 
 @Dao
 interface DeadlineDAO {
