@@ -28,7 +28,6 @@
   <style name="AppTheme.MaterialToggleButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
     <item name="colorPrimary">@color/colorSecondary</item>
     <item name="colorOnSurface">@color/colorSecondary</item>
-    <item name="cornerRadius">15dp</item>
   </style>
 
   <style name="AppTheme.Splash">

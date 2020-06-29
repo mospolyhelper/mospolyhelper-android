@@ -319,6 +319,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             viewModel.updateSchedule()
         }
 
+        viewPager.offscreenPageLimit = 2
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 swipeToRefresh.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
@@ -409,8 +410,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 cancelBtn.visibility = View.VISIBLE
                 try {
                     val pack = viewModel.getAdvancedSearchData(
-                        if (checkedGroups.isEmpty()) viewModel.groupList.value!! else
-                            checkedGroups.map { viewModel.groupList.value!![it] }
+                        if (checkedGroups.isEmpty()) viewModel.groupList.value else
+                            checkedGroups.map { viewModel.groupList.value[it] }
                     ) {
                         this@ScheduleFragment.launch(Dispatchers.Main) {
                             synchronized(progressText) {
