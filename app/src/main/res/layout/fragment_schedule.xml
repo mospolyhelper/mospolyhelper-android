@@ -46,6 +46,7 @@
         android:layout_marginBottom="7dp" 
         android:text="@string/schedule_preferences_title"/>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="18dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -75,8 +76,10 @@
         android:id="@+id/btn_group"
         app:singleSelection="true"
         app:selectionRequired="true"
+        android:layout_marginBottom="18dp"
+        android:layout_gravity="center_horizontal"
         app:checkedButton="@id/btn_regular"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_regular"

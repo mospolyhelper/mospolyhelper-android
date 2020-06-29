@@ -13,8 +13,8 @@
 
   <color name="iconColor">#555555</color>
   
-  <color name="scheduleBackgroundColor">#F5F5F5</color>
-  <color name="lessonBackground">#FBFBFB</color>
+  <color name="scheduleBackgroundColor">#F0F0F0</color>
+  <color name="lessonBackground">#F9FAFB</color>
   <color name="lessonBackgroundRipple">#DEDEDE</color>
   <color name="lessonHeadDivider">#E6E6E6</color>
   <color name="lessonIndicator">#00C300</color>
@@ -24,7 +24,7 @@
 
   <color name="textLessonInfo">#333333</color>
   
-  <color name="allDividerColor">#DADADA</color>
+  <color name="allDividerColor">#D9D9D9</color>
   <color name="drawerColor">#D5D5D5</color>
   
   <color name="advancedSearchColor">#F2F2F2</color>
