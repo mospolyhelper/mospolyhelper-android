@@ -14,6 +14,7 @@ import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
+import com.mospolytech.mospolyhelper.repository.schedule.utils.EmptyPairsListDecorator
 import com.mospolytech.mospolyhelper.utils.Action2
 import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
@@ -158,7 +159,7 @@ class ScheduleAdapter(
                 val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
                 listAdapter = LessonAdapter(
                     view.findViewById(R.id.text_null_lesson),
-                    if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                    if (showEmptyLessons) EmptyPairsListDecorator(dailySchedule) else dailySchedule,
                     scheduleFilter,
                     date,
                     showGroup,
@@ -175,7 +176,7 @@ class ScheduleAdapter(
                 list.adapter = listAdapter
             } else {
                 listAdapter!!.update(
-                    if (showEmptyLessons) Schedule.EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                    if (showEmptyLessons) EmptyPairsListDecorator(dailySchedule) else dailySchedule,
                     scheduleFilter,
                     date,
                     showGroup
