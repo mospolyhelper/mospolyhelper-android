@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -8,9 +9,8 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
@@ -20,6 +20,7 @@ import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 class LessonAdapter(
     val nullMessage: TextView,
@@ -110,12 +111,13 @@ class LessonAdapter(
         RecyclerView.ViewHolder(view) {
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
         private val lessonTime = view.findViewById<TextView>(R.id.text_schedule_time)!!
+        private val lessonTime2 = view.findViewById<TextView>(R.id.text_schedule_time2)!!
         private val lessonType = view.findViewById<TextView>(R.id.text_schedule_type)!!
         private val lessonTeachers = view.findViewById<TextView>(R.id.text_schedule_teachers)!!
         private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_schedule_auditoriums)!!
-        private val lessonLayout = view.findViewById<LinearLayout>(R.id.layout_schedule)!!
-        private val lessonPlace = view.findViewById<RelativeLayout>(R.id.layout_lesson_place)!!
-        private val lessonFooter = view.findViewById<TextView>(R.id.text_schedule_end)
+        private val lessonPlace = view.findViewById<ConstraintLayout>(R.id.layout_lesson_place)!!
+        private val timeline = view.findViewById<View>(R.id.lesson_timeline)
+        private val lessonInfo = view.findViewById<TextView>(R.id.lesson_info)
         private var lesson: Lesson = Lesson.getEmpty(0)
 
         init {
@@ -123,23 +125,22 @@ class LessonAdapter(
         }
 
         fun bind() {
-            lesson = dailySchedule[position]
+            lesson = dailySchedule[layoutPosition]
 
             val lessonIsEmpty = lesson.isEmpty
 
             val prevEqual =
-                !lessonIsEmpty && (position != 0 && dailySchedule[position - 1].equalsTime(lesson))
+                !lessonIsEmpty && (layoutPosition != 0 && dailySchedule[layoutPosition - 1].equalsTime(lesson))
             val nextEqual =
-                !lessonIsEmpty && (position != itemCount - 1) && dailySchedule[position + 1].equalsTime(
+                !lessonIsEmpty && (layoutPosition != itemCount - 1) && dailySchedule[layoutPosition + 1].equalsTime(
                     lesson
                 )
 
-            setHead(prevEqual, position)
-            setFooter(nextEqual, position == itemCount - 1, position)
+            setTime(prevEqual, nextEqual, layoutPosition)
 
             if (layoutPosition == itemCount - 1) {
                 val tv = TypedValue()
-                if (lessonLayout.context.theme.resolveAttribute(
+                if (lessonPlace.context.theme.resolveAttribute(
                         android.R.attr.actionBarSize,
                         tv,
                         true
@@ -147,13 +148,13 @@ class LessonAdapter(
                 ) {
                     val actionBarHeight = TypedValue.complexToDimensionPixelSize(
                         tv.data,
-                        lessonLayout.context.resources.displayMetrics
+                        lessonPlace.context.resources.displayMetrics
                     )
-                    (lessonFooter.layoutParams as RelativeLayout.LayoutParams).bottomMargin =
-                        (actionBarHeight * 1.6).toInt()
+                    view.setPadding(0, 0,0, (actionBarHeight * 1.6).toInt())
+
                 }
             } else {
-                (lessonFooter.layoutParams as RelativeLayout.LayoutParams).bottomMargin = 0
+                view.setPadding(0, 0,0, 0)
             }
             val enabledFrom =
                 lesson.dateFrom <= date || filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
@@ -162,18 +163,21 @@ class LessonAdapter(
             val enabled =
                 if (lesson.isImportant) lessonIsEmpty || enabledTo else lessonIsEmpty || enabledFrom && enabledTo
 
-
+            setFooter(nextEqual, enabled)
+            setInfo(nextEqual)
             setLessonType(enabled)
             setAuditoriums(enabled)
             setTitle(enabled)
             setTeachers(enabled)
         }
 
-        private fun setHead(prevEqual: Boolean, position: Int) {
+        private fun setTime(prevEqual: Boolean, nextEqual: Boolean, position: Int) {
             if (prevEqual) {
                 lessonTime.visibility = View.INVISIBLE
             } else {
-                if (currLessonOrder == lesson.order) {
+                if (lesson.isEmpty) {
+                    lessonTime.setTextColor(disabledColor)
+                } else if (currLessonOrder == lesson.order) {
                     lessonTime.setTextColor(headCurrentColor)
                 } else {
                     val deltaOrder = currLessonOrder - lesson.order
@@ -185,38 +189,96 @@ class LessonAdapter(
                 }
                 lessonTime.visibility = View.VISIBLE
             }
-            val (timeStart, timeEnd) = lesson.time
-            lessonTime.setText(timeStart, TextView.BufferType.NORMAL)
-        }
-
-        private fun setFooter(nextEqual: Boolean, isLast: Boolean, position: Int) {
-            val (_, timeEnd) = lesson.time
-            if (nextEqual) {
-                lessonFooter.visibility = View.GONE
+            if (nextEqual || lesson.isEmpty) {
+                lessonTime2.visibility = View.GONE
             } else {
-                lessonFooter.visibility = View.VISIBLE
-                when {
-                    lesson.isEmpty -> {
-                        val nextLesson = dailySchedule[position + 1]
-                        if (nextLesson.isNotEmpty) {
-                            val (nextTimeStart, _) = nextLesson.time
-                            lessonFooter.text = "нет занятий до $nextTimeStart"
-                        } else {
-                            lessonFooter.text = ""
-                        }
-                    }
-                    isLast -> {
-                        lessonFooter.text = "конец занятий в $timeEnd"
-                    }
-                    lesson.order == 2 -> {
-                        lessonFooter.text = "в $timeEnd перерыв на 40 минут"
-                    }
-                    else -> {
-                        lessonFooter.text = "в $timeEnd перерыв на 10 минут"
+                if (currLessonOrder == lesson.order) {
+                    lessonTime2.setTextColor(headCurrentColor)
+                } else {
+                    val deltaOrder = currLessonOrder - lesson.order
+                    if (deltaOrder in 1..position && dailySchedule[position - deltaOrder].isEmpty) {
+                        lessonTime2.setTextColor(headCurrentColor)
+                    } else {
+                        lessonTime2.setTextColor(headColor)
                     }
                 }
+                lessonTime2.visibility = View.VISIBLE
+            }
+            val (timeStart, timeEnd) = lesson.time
+            lessonTime.setText(timeStart, TextView.BufferType.NORMAL)
+            lessonTime2.setText(timeEnd, TextView.BufferType.NORMAL)
+        }
+
+        private fun setFooter(nextEqual: Boolean, enabled: Boolean) {
+            if (lesson.isEmpty) {
+                timeline.visibility = View.GONE
+            } else {
+                timeline.background = ColorDrawable(if (enabled)
+                    (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
+                else
+                    disabledColor
+                )
+                timeline.visibility = View.VISIBLE
+            }
+            if (nextEqual) {
+                lessonPlace.background = null
+            } else {
+                lessonPlace.background = lessonPlace.context.getDrawable(R.drawable.bottom_stroke)
             }
         }
+
+        private fun setInfo(nextEqual: Boolean) {
+            if (lesson.isEmpty || nextEqual) {
+                lessonInfo.visibility = View.GONE
+                return
+            }
+            var info: String
+            if (layoutPosition + 1 < dailySchedule.size) {
+                val nextLesson = dailySchedule[layoutPosition + 1]
+                when {
+                    lesson.order + 1 < nextLesson.order -> {
+                        var windowTimeMinutes = lesson.localTime.second.until(
+                            nextLesson.localTime.first, ChronoUnit.MINUTES
+                        )
+                        val windowTimeHours = windowTimeMinutes / 60L
+                        windowTimeMinutes %= 60
+                        // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14
+                        val lastNumberOfHours = windowTimeHours % 10
+                        val endingHours = when {
+                            windowTimeHours in 11L..14L -> "ов"
+                            lastNumberOfHours == 1L -> ""
+                            lastNumberOfHours in 2L..4L -> "а"
+                            else -> "ов"
+                        }
+                        info = "окно в $windowTimeHours час$endingHours"
+                        if (windowTimeMinutes != 0L) {
+                            // *1 минута .. *2, *3, *4 минуты .. *5, *6, *7, *8, *9, *0 минут .. искл. - 11 - 14
+                            val lastNumberOfMinutes = windowTimeMinutes % 10
+                            val endingMinutes = when {
+                                windowTimeMinutes in 11L..14L -> ""
+                                lastNumberOfMinutes == 1L -> "а"
+                                lastNumberOfMinutes in 2L..4L -> "ы"
+                                else -> ""
+                            }
+                            info += " $windowTimeMinutes минут$endingMinutes"
+                        }
+                        lessonInfo.text = info
+                        lessonInfo.visibility = View.VISIBLE
+                    }
+                    lesson.order == 2 -> {
+                        info = "большой перерыв на 40 минут"
+                        lessonInfo.text = info
+                        lessonInfo.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        lessonInfo.visibility = View.GONE
+                    }
+                }
+            } else {
+                lessonInfo.visibility = View.GONE
+            }
+        }
+
 
         private fun setLessonType(enabled: Boolean) {
             val type = if (showGroup)

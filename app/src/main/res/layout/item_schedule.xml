@@ -1,89 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:clickable="true"
-    android:focusable="true"
-    android:id="@+id/layout_lesson_place"
-    android:background="?android:attr/selectableItemBackground"
-    android:layout_width="match_parent" 
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TextView android:id="@+id/text_schedule_time"
-        android:layout_marginVertical="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_lesson_place"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:layout_marginHorizontal="11dp"
-        android:textSize="20sp" />
-    <TextView
-        android:layout_below="@id/layout_schedule"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/text_schedule_end"
-        android:background="@drawable/bottom_stroke"
-        android:letterSpacing="0.07"
-        android:paddingVertical="3dp"
-        android:textSize="12.5sp"
-        android:clickable="false"
-        android:textAlignment="textEnd"
-        android:paddingHorizontal="2dp"
-        android:layout_marginEnd="23dp"
         android:layout_marginStart="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bottom_stroke"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:selectableItemBackground">
 
-    <LinearLayout
-        android:layout_marginTop="9dp"
-        android:layout_marginBottom="4dp"
-        android:orientation="vertical"
-        android:layout_toEndOf="@id/text_schedule_time"
-        android:id="@+id/layout_schedule"
-        android:layout_marginEnd="30dp"
-        android:clickable="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView android:id="@+id/text_schedule_type"
-            android:letterSpacing="0.05"
-            android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white" 
-        android:clickable="false"
-            android:textAlignment="textEnd"
-            android:fontFamily="sans-serif-medium"
-        android:textSize="13.5sp"/>
-        <TextView android:id="@+id/text_schedule_title"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content" 
-        android:hyphenationFrequency="full"
-        android:maxLines="3" 
-        android:ellipsize="end" 
-        android:textColor="@color/accent_text_color" 
-        android:clickable="false" 
-        android:breakStrategy="high_quality"
-        android:paddingBottom="2dp" 
-            android:fontFamily="sans-serif-medium"
-        android:textSize="16sp" />
-    <TextView android:id="@+id/text_schedule_teachers" 
-        android:layout_width="match_parent" 
-        android:textSize="14.5sp"
-        android:clickable="false" 
-        android:maxLines="1" 
-        android:ellipsize="end"
-            android:fontFamily="sans-serif-medium" 
-        android:textColor="@color/secondary_text_color"
-        android:layout_height="wrap_content"/>
-        <TextView android:id="@+id/text_schedule_auditoriums"
-            android:textStyle="bold"
+        <View
+            android:id="@+id/lesson_timeline"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="#ff29b6f6"
+            app:layout_constraintBottom_toBottomOf="@+id/text_schedule_time2"
+            app:layout_constraintEnd_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintStart_toStartOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toTopOf="@+id/text_schedule_time" />
+
+        <TextView
+            android:id="@+id/text_schedule_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/scheduleBackgroundColor"
+            android:fontFamily="sans-serif-light"
+            android:paddingTop="8dp"
+            android:text="10:40"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/text_schedule_time2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bottom_stroke_end_time"
+            android:breakStrategy="simple"
+            android:fontFamily="sans-serif"
+            android:paddingBottom="14dp"
+            android:text="12:10"
+            android:textAlignment="center"
+            android:textColor="@color/textLessonHead"
             android:textSize="15.5sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintStart_toStartOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toBottomOf="@+id/text_schedule_time"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/text_schedule_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="9.5dp"
             android:clickable="false"
-            android:maxLines="1"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.05"
+            android:text="ЛАБОРАТОРНА РАБОТА"
+            android:textAlignment="textStart"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_schedule_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:breakStrategy="high_quality"
+            android:clickable="false"
             android:ellipsize="end"
-            android:layout_marginTop="1dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:fontFamily="sans-serif-medium"
+            android:hyphenationFrequency="full"
+            android:maxLines="3"
+            android:paddingBottom="2dp"
+            android:text="Объекто-ориентированное программирование"
+            android:textColor="@color/accent_text_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_schedule_teachers"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toBottomOf="@+id/text_schedule_type" />
+
+        <TextView
+            android:id="@+id/text_schedule_teachers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:clickable="false"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="Арсентьев Дмитрий Андреевич"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14.5sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_schedule_auditoriums"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toBottomOf="@+id/text_schedule_title" />
+
+        <TextView
+            android:id="@+id/text_schedule_auditoriums"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:clickable="false"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="пр2303, пр2306"
+            android:textSize="15.5sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/view2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toBottomOf="@+id/text_schedule_teachers" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/text_schedule_time"
+            app:layout_constraintTop_toBottomOf="@+id/text_schedule_auditoriums" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/lesson_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bottom_stroke"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.06"
+        android:paddingStart="10dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="10dp"
+        android:text="окно в 1 час 50 минут"
+        android:textColor="@color/textLessonHead"
+        android:textSize="14sp" />
+
 </LinearLayout>
-</RelativeLayout></FrameLayout>
