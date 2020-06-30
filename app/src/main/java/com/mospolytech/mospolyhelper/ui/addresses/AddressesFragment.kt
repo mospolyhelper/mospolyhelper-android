@@ -12,7 +12,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -22,11 +21,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.Addresses
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
+import com.mospolytech.mospolyhelper.repository.addresses.Addresses
 import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
-import com.mospolytech.mospolyhelper.utils.PreferencesConstants
 
 class AddressesFragment : FragmentBase(Fragments.Addresses) {
 
@@ -73,7 +70,9 @@ class AddressesFragment : FragmentBase(Fragments.Addresses) {
                 position: Int,
                 id: Long
             ) {
-                viewModel.addressesType.value = (view as TextView).text as String
+                if (view != null) {
+                    viewModel.addressesType.value = (view as TextView).text as String
+                }
             }
         }
 

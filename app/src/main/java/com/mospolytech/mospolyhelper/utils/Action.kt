@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.utils
 
 import java.util.*
+import kotlin.collections.LinkedHashSet
 
 interface Event0 {
     fun addListener(block: () -> Unit)
@@ -31,7 +32,7 @@ interface Event3<T1, T2, T3> {
 }
 
 class Action0: Event0 {
-    private val list = LinkedList<() -> Unit>()
+    private val list = LinkedHashSet<() -> Unit>()
 
     operator fun invoke() {
         for (e in list) {
@@ -83,7 +84,7 @@ class Action1<T>: Event1<T> {
 }
 
 class Action2<T1, T2>: Event2<T1, T2> {
-    private val list = LinkedList<(T1, T2) -> Unit>()
+    private val list = LinkedHashSet<(T1, T2) -> Unit>()
 
     operator fun invoke(obj1: T1, obj2: T2) {
         for (e in list) {
@@ -109,7 +110,7 @@ class Action2<T1, T2>: Event2<T1, T2> {
 }
 
 class Action3<T1, T2, T3>: Event3<T1, T2, T3> {
-    private val list = LinkedList<(T1, T2, T3) -> Unit>()
+    private val list = LinkedHashSet<(T1, T2, T3) -> Unit>()
 
     operator fun invoke(obj1: T1, obj2: T2, obj3: T3) {
         for (e in list) {

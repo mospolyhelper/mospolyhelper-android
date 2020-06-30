@@ -1,9 +1,8 @@
-package com.mospolytech.mospolyhelper.repository.dao
+package com.mospolytech.mospolyhelper.repository.addresses
 
 import android.util.Log
 import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.TAG
-import com.mospolytech.mospolyhelper.repository.models.Addresses
 import com.mospolytech.mospolyhelper.utils.AssetProvider
 import com.mospolytech.mospolyhelper.utils.ContextProvider
 import java.io.File
@@ -12,14 +11,16 @@ import java.net.URL
 
 class AddressesDao {
     companion object {
-        const val AddressesFolder = "addresses"
-        const val AddressesFile = "cached_addresses"
-        const val AddressesUrl =
+        const val ADDRESSES_FOLDER = "addresses"
+        const val ADDRESSES_FILE = "cached_addresses"
+        const val ADDRESSES_URL =
             "https://gist.githubusercontent.com/tipapro/f19b581ea759cacde6ff674b516c552a/raw/mospolyhelper-addresses.json"
     }
 
     private fun readAddresses(): Addresses? {
-        val filePath = ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile)  // TODO: Add directory
+        val filePath = ContextProvider.getFilesDir().resolve(ADDRESSES_FOLDER).resolve(
+            ADDRESSES_FILE
+        )  // TODO: Add directory
         return if (!filePath.exists()) {
             null
         } else {
@@ -30,7 +31,7 @@ class AddressesDao {
 
     private fun downloadAddresses(): Addresses? {
         return try {
-            val serBuildings = URL(AddressesUrl).readText()
+            val serBuildings = URL(ADDRESSES_URL).readText()
             Klaxon().parse<Addresses>(serBuildings)
         } catch(e: Exception) {
             Log.e(TAG, "Addresses downloading and parsing error", e)
@@ -39,7 +40,11 @@ class AddressesDao {
     }
 
     private fun saveAddresses(buildings: Addresses) {
-        val filePath = File(ContextProvider.getFilesDir().resolve(AddressesFolder).resolve(AddressesFile), AddressesFile)
+        val filePath = File(ContextProvider.getFilesDir().resolve(ADDRESSES_FOLDER).resolve(
+            ADDRESSES_FILE
+        ),
+            ADDRESSES_FILE
+        )
         filePath.delete()
         val str = Klaxon().toJsonString(buildings)
         filePath.parentFile?.mkdirs()
