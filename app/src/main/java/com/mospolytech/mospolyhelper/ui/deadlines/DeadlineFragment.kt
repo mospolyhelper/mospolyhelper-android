@@ -82,6 +82,11 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         fab.setOnClickListener(this)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        
+    }
+
     private fun receiveName() {
         viewModel.nameReceiver.observe(viewLifecycleOwner, Observer {
             bot.setName(it)
@@ -144,13 +149,31 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         when(typeData){
             DataType.FULL -> {
                 viewModel.data.observe(viewLifecycleOwner, Observer {
-                    (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
+                        (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    } else {
+                        recycler.adapter =
+                            MyDeadlineRecyclerViewAdapter(
+                                it,
+                                requireContext(),
+                                viewModel
+                            )
+                    }
                     noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
             }
             DataType.FIND -> {
                 viewModel.foundData.observe(viewLifecycleOwner, Observer {
-                    (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
+                        (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    } else {
+                        recycler.adapter =
+                            MyDeadlineRecyclerViewAdapter(
+                                it,
+                                requireContext(),
+                                viewModel
+                            )
+                    }
                     noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
             }
