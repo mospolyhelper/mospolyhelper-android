@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.models.schedule
+package com.mospolytech.mospolyhelper.repository.schedule.models
 
 import com.beust.klaxon.Json
 import java.time.LocalDate
@@ -65,8 +65,16 @@ data class Schedule(
 
     class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
         companion object {
-            val default = Filter(true, DateFilter.Hide)
-            val none = Filter(false, DateFilter.Show)
+            val default =
+                Filter(
+                    true,
+                    DateFilter.Hide
+                )
+            val none =
+                Filter(
+                    false,
+                    DateFilter.Show
+                )
         }
         enum class DateFilter{
             Show,
@@ -97,7 +105,10 @@ data class Schedule(
             fun build(): Filter {
                 val sessionFilter = this.sessionFilter ?: default.sessionFilter
                 val dateFilter = this.dateFilter ?: default.dateFilter
-                return Filter(sessionFilter, dateFilter)
+                return Filter(
+                    sessionFilter,
+                    dateFilter
+                )
             }
         }
     }
@@ -209,134 +220,6 @@ data class Schedule(
             else {
                 return true
             }
-        }
-    }
-
-    class EmptyPairsListDecorator(
-        private val dailySchedule: List<Lesson>
-    ) : List<Lesson> {
-        override var size: Int = 0
-            private set
-        private val orderMap: IntArray = IntArray(7)
-        init {
-            orderMap.fill(-1)
-            size = dailySchedule.size
-            if (size != 0) {
-                for (i in dailySchedule.indices) {
-                    orderMap[dailySchedule[i].order] = i
-                }
-                val maxOrder = dailySchedule.last().order
-                for (i in 0 until maxOrder) {
-                    if (this.orderMap[i] == -1) {
-                        size++
-                    }
-                }
-            }
-        }
-
-        override fun contains(element: Lesson): Boolean {
-            for (e in this) {
-                if (element == e) {
-                    return true
-                }
-            }
-            return false
-        }
-
-        override fun containsAll(elements: Collection<Lesson>): Boolean {
-            for (e in elements) {
-                if (!contains(e)) {
-                    return false
-                }
-            }
-            return true
-        }
-
-        override fun get(index: Int): Lesson {
-            var fixedPos = index
-            var lastNotEmpty = -1
-            for (i in 0 until 6) {
-                if (orderMap[i] == -1) {
-                    fixedPos--
-                    if (lastNotEmpty == fixedPos) {
-                        return Lesson.getEmpty(i)
-                    }
-                } else {
-                    lastNotEmpty = orderMap[i]
-                    if (fixedPos <= orderMap[i]) {
-                        break
-                    }
-                }
-            }
-            return dailySchedule[fixedPos]
-        }
-
-        private fun getFixedIndex(index: Int): Int {
-            var fixedPos = index
-            var lastNotEmpty = -1
-            for (i in 0 until 6) {
-                if (orderMap[i] == -1) {
-                    fixedPos--
-                    if (lastNotEmpty == fixedPos) {
-                        break
-                    }
-                } else {
-                    lastNotEmpty = orderMap[i]
-                    if (fixedPos <= orderMap[i]) {
-                        break
-                    }
-                }
-            }
-            return fixedPos
-        }
-
-        override fun indexOf(element: Lesson): Int {
-            for (e in this.withIndex()) {
-                if (element == e.value) {
-                    return e.index
-                }
-            }
-            return -1
-        }
-
-        override fun isEmpty() = dailySchedule.isEmpty()
-
-        override fun iterator() = Iterator(this)
-
-        override fun lastIndexOf(element: Lesson): Int {
-            for (e in this.asReversed().withIndex()) {
-                if (element == e.value) {
-                    return e.index
-                }
-            }
-            return -1
-        }
-
-        override fun listIterator() = Iterator(this)
-
-        override fun listIterator(index: Int) = Iterator(this, index)
-
-        override fun subList(fromIndex: Int, toIndex: Int): List<Lesson> {
-            val fixedFromIndex = getFixedIndex(fromIndex)
-            val fixedToIndex = getFixedIndex(toIndex)
-            return EmptyPairsListDecorator(dailySchedule.subList(fixedFromIndex, fixedToIndex))
-        }
-
-        class Iterator(
-            private val lessonList: List<Lesson>,
-            private var curPos: Int = 0
-        ): ListIterator<Lesson> {
-            override fun hasNext() = lessonList.size - 1 > curPos
-
-            override fun hasPrevious() = curPos > 0
-
-            override fun next() = lessonList[curPos++]
-
-            override fun nextIndex() = curPos + 1
-
-            override fun previous() = lessonList[curPos--]
-
-            override fun previousIndex() = curPos - 1
         }
     }
 }

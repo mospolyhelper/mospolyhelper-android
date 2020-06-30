@@ -1,10 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.schedule.calendar
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
@@ -30,7 +27,11 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
     }
 
     override fun onCreateView(
@@ -38,7 +39,7 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_schedule_calendar, container, false)
-
+        requireActivity().invalidateOptionsMenu()
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
         var groupTitle = viewModel.schedule?.group?.title ?: ""
@@ -62,31 +63,15 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_schedule_day)
         val colorTitle = requireContext().getColor(R.color.calendarTitle)
         val colorCurrentTitle = requireContext().getColor(R.color.calendarCurrentTitle)
-        // TODO Fix schedule null
         val recyclerAdapter = CalendarAdapter(viewModel.schedule!!, viewModel.scheduleFilter,
         viewModel.isAdvancedSearch, requireContext().getColor(R.color.calendarParagraph),
             requireContext().getColor(R.color.calendarTimeBackground), colorTitle, colorCurrentTitle);
-        recyclerAdapter.addOnDayClick {date ->
+        recyclerAdapter.dayClick += { date ->
             viewModel.date = date
             dateChanged = true
             activity?.onBackPressed()
         }
 
-        recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                if (e.action == MotionEvent.ACTION_DOWN &&
-                    rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
-                ) {
-                    rv.stopScroll();
-                    return true
-                }
-                return false
-            }
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
-        })
         recyclerView.itemAnimator = null
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = recyclerAdapter

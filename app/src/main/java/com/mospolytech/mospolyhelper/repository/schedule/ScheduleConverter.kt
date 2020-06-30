@@ -1,7 +1,7 @@
-package com.mospolytech.mospolyhelper.repository.local.converters
+package com.mospolytech.mospolyhelper.repository.schedule
 
 import com.beust.klaxon.*
-import com.mospolytech.mospolyhelper.repository.models.schedule.*
+import com.mospolytech.mospolyhelper.repository.schedule.models.*
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -74,7 +74,9 @@ class ScheduleConverter {
                         lesson.int(LESSON_ORDER)!!,
                         lesson.string(LESSON_TITLE)!!,
                         lesson.array<JsonObject>(LESSON_TEACHERS)!!.map {
-                            Teacher(it.array(TEACHER_NAMES)!!)
+                            Teacher(
+                                it.array(TEACHER_NAMES)!!
+                            )
                         },
                         LocalDate.parse(lesson.string(LESSON_DATE_FROM)!!, dateFormatter),
                         LocalDate.parse(lesson.string(LESSON_DATE_TO)!!, dateFormatter),
@@ -89,7 +91,7 @@ class ScheduleConverter {
                     )
                 }
             }
-        return  Schedule(
+        return Schedule(
             dailySchedules,
             lastUpdate,
             group,

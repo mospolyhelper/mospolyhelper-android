@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.Addresses
+import com.mospolytech.mospolyhelper.repository.addresses.Addresses
 
 class AddressesAdapter(
     var buildings: Addresses,
@@ -16,7 +16,7 @@ class AddressesAdapter(
 ) : RecyclerView.Adapter<AddressesAdapter.ViewHolder>() {
     override fun getItemCount() = buildings.getOrDefault(type, emptyList()).size
 
-    fun update(buildings: Addresses ) {
+    fun update(buildings: Addresses) {
         this.buildings = buildings
         notifyDataSetChanged()
     }
