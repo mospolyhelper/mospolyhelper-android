@@ -1,13 +1,11 @@
 package com.mospolytech.mospolyhelper.ui.schedule.calendar
 
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.ui.common.Mediator
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
-import java.util.*
 
 class CalendarViewModel :
     ViewModelBase(StaticDI.viewModelMediator, CalendarViewModel::class.java.simpleName) {

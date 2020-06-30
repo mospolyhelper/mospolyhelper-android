@@ -1,8 +1,8 @@
-package com.mospolytech.mospolyhelper.repository.local
+package com.mospolytech.mospolyhelper.repository.deadline
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.mospolytech.mospolyhelper.repository.models.Deadline
+import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

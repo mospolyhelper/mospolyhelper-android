@@ -1,14 +1,15 @@
 package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
-import com.mospolytech.mospolyhelper.repository.models.schedule.Lesson
-import com.mospolytech.mospolyhelper.repository.models.schedule.Schedule
-import com.mospolytech.mospolyhelper.ui.common.Mediator
+import android.content.Context
+import com.mospolytech.mospolyhelper.repository.local.AppDatabase
+import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.ContextProvider
 import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
-import java.util.*
 
 class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfoViewModel::class.java.simpleName) {
     companion object {
@@ -16,12 +17,21 @@ class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfo
     }
     var lesson: Lesson = Lesson.getEmpty(0)
     var date: LocalDate = LocalDate.now()
+    private val database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
+    var deadlinesRepository =
+        DeadlinesRepository(
+            database
+        )
 
     init {
         subscribe(::handleMessage)
     }
 
-    fun handleMessage(message: ViewModelMessage) {
+    fun getSubjectDeadlines(subjectTitle: String) {
+        deadlinesRepository.findItem(subjectTitle)
+    }
+
+    private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
             LessonInfo -> {
                 val list = message.content as List<*>
@@ -29,9 +39,5 @@ class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfo
                 date = list[1] as LocalDate
             }
         }
-    }
-
-    fun resaveSchedule() {
-        send(ScheduleViewModel::class.java.simpleName, "ResaveSchedule", null)
     }
 }

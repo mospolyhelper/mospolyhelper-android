@@ -1,14 +1,9 @@
 package com.mospolytech.mospolyhelper
 
-import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleClient
-import com.mospolytech.mospolyhelper.repository.remote.schedule.ScheduleJsonParser
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.mospolytech.mospolyhelper.repository.schedule.ScheduleClient
+import com.mospolytech.mospolyhelper.repository.schedule.ScheduleJsonParser
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -18,8 +13,10 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        val client = ScheduleClient()
-        val parser = ScheduleJsonParser()
+        val client =
+            ScheduleClient()
+        val parser =
+            ScheduleJsonParser()
         runBlocking {
             val q = client.getSchedule("181-721", false)
             val a = parser.parse(q, false)
