@@ -82,6 +82,11 @@ class DeadlineFragment : FragmentBase(Fragments.Deadlines),
         fab.setOnClickListener(this)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        
+    }
+
     private fun receiveName() {
         viewModel.nameReceiver.observe(viewLifecycleOwner, Observer {
             bot.setName(it)
