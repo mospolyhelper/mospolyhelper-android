@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.repository.models.schedule
+package com.mospolytech.mospolyhelper.repository.schedule.models
 
 import android.util.Log
 import com.beust.klaxon.Json
@@ -85,6 +85,21 @@ data class Lesson(
             }
         }
 
+        fun getLocalTime(order: Int, groupIsEvening: Boolean) = when (order) {
+            0 -> Time.firstPair
+            1 -> Time.secondPair
+            2 -> Time.thirdPair
+            3 -> Time.fourthPair
+            4 -> Time.fifthPair
+            5 -> if (groupIsEvening) Time.sixthPairEvening else Time.sixthPair
+            6 -> if (groupIsEvening) Time.seventhPairEvening else Time.seventhPair
+            else -> {
+                Log.e(TAG, "Wrong order number of lesson")
+                Pair(LocalTime.MIN, LocalTime.MAX)
+            }
+        }
+
+
         fun fixType(type: String, subjectTitle: String): String {
             return when {
                 type.contains(COURSE_PROJECT, true) -> COURSE_PROJECT_FIXED
@@ -96,12 +111,16 @@ data class Lesson(
                 type.contains(OTHER, true) -> {
                     val res = regex.findAll(subjectTitle).joinToString { it.value }
                     if (res.isNotEmpty()) {
-                        findCombinedShortTypeOrNull(res) ?: type
+                        findCombinedShortTypeOrNull(
+                            res
+                        ) ?: type
                     } else {
                         OTHER_FIXED
                     }
                 }
-                else -> findCombinedTypeOrNull(type) ?: type
+                else -> findCombinedTypeOrNull(
+                    type
+                ) ?: type
             }
         }
 
@@ -175,15 +194,25 @@ data class Lesson(
                 LocalTime.of(19, 40)
             )
 
-            val firstPairStr by lazy { "09:00" to "10:30" }
-            val secondPairStr by lazy { "10:40" to "12:10" }
-            val thirdPairStr by lazy { "12:20" to "13:50" }
-            val fourthPairStr by lazy { "14:30" to "16:00" }
-            val fifthPairStr by lazy { "16:10" to "17:40" }
-            val sixthPairStr by lazy { "17:50" to "19:20" }
-            val sixthPairEveningStr by lazy { "18:20" to "19:40" }
-            val seventhPairStr by lazy { "19:30" to "21:00" }
-            val seventhPairEveningStr by lazy { "19:50" to "21:10" }
+            val seventhPair = Pair(
+                LocalTime.of(19, 30),
+                LocalTime.of(21, 0)
+            )
+
+            val seventhPairEvening = Pair(
+                LocalTime.of(19, 50),
+                LocalTime.of(21, 10)
+            )
+
+            val firstPairStr = "09:00" to "10:30"
+            val secondPairStr = "10:40" to "12:10"
+            val thirdPairStr = "12:20" to "13:50"
+            val fourthPairStr = "14:30" to "16:00"
+            val fifthPairStr = "16:10" to "17:40"
+            val sixthPairStr = "17:50" to "19:20"
+            val sixthPairEveningStr = "18:20" to "19:40"
+            val seventhPairStr = "19:30" to "21:00"
+            val seventhPairEveningStr = "19:50" to "21:10"
         }
     }
 
@@ -197,7 +226,17 @@ data class Lesson(
                 type.contains(CREDIT_WITH_MARK_FIXED, true) ||
                 type.contains(EXAMINATION_SHOW_FIXED, true)
 
-    val time = getTime(order, group.isEvening)
+    val time =
+        getTime(
+            order,
+            group.isEvening
+        )
+
+    val localTime =
+        getLocalTime(
+            order,
+            group.isEvening
+        )
 
     fun equalsTime(lesson: Lesson) =
         order == lesson.order && group.isEvening == lesson.group.isEvening

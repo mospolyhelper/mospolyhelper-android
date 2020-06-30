@@ -4,7 +4,7 @@ import android.view.ContextMenu
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.repository.models.Deadline
+import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import kotlinx.android.synthetic.main.item_deadline.view.*
 import java.util.*
 
