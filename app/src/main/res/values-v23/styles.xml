@@ -10,6 +10,8 @@
     <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     <item name="android:navigationBarColor">#0C0C0C</item>
     <item name="android:windowLightStatusBar">true</item>
+    <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
+    <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>
   </style>
   <style name="AppTheme.ActionBar">
     <item name="background">@color/colorPrimaryLight</item>
@@ -62,6 +64,10 @@
   </style>
 
   <style name="AppTheme.BottomAppBar" parent="Theme.MaterialComponents">
+  </style>
+
+  <style name="Dialog.Theme" parent="ThemeOverlay.MaterialComponents.Dialog">
+    <item name="colorPrimary">@color/textColorPrimary</item>
   </style>
 
 </resources>
