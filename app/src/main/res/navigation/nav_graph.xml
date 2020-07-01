@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/settingsFragment">
+
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragment"
+        android:label="ScheduleFragment" >
+        <action
+            android:id="@+id/action_scheduleFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_advancedSearchFragment"
+            app:destination="@id/advancedSearchFragment" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_advancedSearchSelectFragment"
+            app:destination="@id/advancedSearchSelectFragment" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_lessonInfoFragment"
+            app:destination="@id/lessonInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addressesFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.addresses.AddressesFragment"
+        android:label="AddressesFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment"
+        android:label="CalendarFragment" />
+    <fragment
+        android:id="@+id/advancedSearchFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment"
+        android:label="AdvancedSearchFragment" />
+    <fragment
+        android:id="@+id/advancedSearchSelectFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchSelectFragment"
+        android:label="AdvancedSearchSelectFragment" />
+    <fragment
+        android:id="@+id/lessonInfoFragment"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment"
+        android:label="LessonInfoFragment" />
+</navigation>
