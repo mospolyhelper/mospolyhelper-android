@@ -64,7 +64,7 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_lesson_info, container, false)
+        val view = inflater.inflate(R.layout.fragment_schedule_lesson_info, container, false)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
