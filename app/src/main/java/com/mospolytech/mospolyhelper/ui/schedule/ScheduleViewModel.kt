@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.ui.schedule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.repository.schedule.GroupListDao
 import com.mospolytech.mospolyhelper.repository.schedule.GroupListRepository
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleDao
@@ -47,28 +48,10 @@ class ScheduleViewModel(
 
         combine(this.isSession, this.groupTitle) { isSession, groupTitle ->
             setUpSchedule(isSession, groupTitle, true)
-        }.launchIn(GlobalScope)
-
-
-
-//        this.isSession.observeForever {
-//            setUpSchedule(true)
-//        }
-//
-//        this.groupTitle.observeForever {
-//            setUpSchedule(true)
-//        }
-//
-//        this.showEmptyLessons.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
-//
-//        this.scheduleFilter.observeForever {
-//            this.schedule.value = this.schedule.value
-//        }
+        }.launchIn(viewModelScope)
     }
 
-    fun handleMessage(message: ViewModelMessage) {
+    private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
             ChangeDate -> {
                 date.value = (message.content as List<*>)[0] as LocalDate
@@ -77,19 +60,17 @@ class ScheduleViewModel(
     }
 
     fun updateSchedule() {
-        GlobalScope.launch(Dispatchers.Main) {
-            setUpSchedule(
-                this@ScheduleViewModel.isSession.value,
-                this@ScheduleViewModel.groupTitle.value,
-                true
-            )
-        }
+        setUpSchedule(
+            this@ScheduleViewModel.isSession.value,
+            this@ScheduleViewModel.groupTitle.value,
+            true
+        )
     }
 
-    fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
+    private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
         isLoading = true
         schedule.value = null
-        GlobalScope.async {
+        viewModelScope.async {
             val schedule = if (groupTitle.isEmpty()) {
                 null
             } else {
@@ -141,19 +122,12 @@ class ScheduleViewModel(
         ))
     }
 
-//    fun submitGroupTitle() {
-//        GlobalScope.launch {
-//            setUpSchedule(
-//                this@ScheduleViewModel.isSession.value,
-//                this@ScheduleViewModel.groupTitle.value,
-//                true
-//            )
-//        }
-//    }
-
     fun getGroupList(downloadNew: Boolean) {
-        GlobalScope.launch(Dispatchers.Main) {
-            groupList.value = groupListRepository.getGroupList(downloadNew)
+        viewModelScope.async {
+            val groupList = groupListRepository.getGroupList(downloadNew)
+            withContext(Dispatchers.Main) {
+                this@ScheduleViewModel.groupList.value = groupList
+            }
         }
     }
 

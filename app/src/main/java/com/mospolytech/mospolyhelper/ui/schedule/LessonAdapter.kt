@@ -23,7 +23,6 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 class LessonAdapter(
-    val nullMessage: TextView,
     var dailySchedule: List<Lesson>,
     var filter: Schedule.Filter,
     var date: LocalDate,
@@ -46,7 +45,6 @@ class LessonAdapter(
     val lessonClick: Event1<Lesson> = Action1()
 
     init {
-        nullMessage.visibility = if (dailySchedule.isNotEmpty()) View.GONE else View.VISIBLE
         setCount()
     }
 
@@ -91,7 +89,6 @@ class LessonAdapter(
         this.dailySchedule = dailySchedule
         this.date = date
         this.filter = scheduleFilter
-        nullMessage.visibility = if (this.dailySchedule.isNotEmpty()) View.GONE else View.VISIBLE
         setCount()
         notifyDataSetChanged()
     }
@@ -263,11 +260,16 @@ class LessonAdapter(
                             info += " $windowTimeMinutes минут$endingMinutes"
                         }
                         lessonInfo.text = info
+                        lessonInfo.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_fastfood_24,
+                            0, 0, 0)
                         lessonInfo.visibility = View.VISIBLE
                     }
                     lesson.order == 2 -> {
                         info = "большой перерыв на 40 минут"
                         lessonInfo.text = info
+                        lessonInfo.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_round_local_cafe_24, 0, 0, 0
+                        )
                         lessonInfo.visibility = View.VISIBLE
                     }
                     else -> {

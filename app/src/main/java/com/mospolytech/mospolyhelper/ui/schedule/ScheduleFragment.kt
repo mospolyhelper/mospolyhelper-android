@@ -30,7 +30,7 @@ import com.mospolytech.mospolyhelper.ui.common.FragmentBase
 import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedFilter
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchAdapter
-import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment
+import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchSelectFragment
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.SimpleFilter
 import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment
 import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
@@ -100,31 +100,24 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         if (context != null && schedule != null && schedule.group.comment.isNotEmpty()) {
             Toast.makeText(requireContext(), schedule.group.comment, Toast.LENGTH_LONG).show()
         }
-        var toDate: LocalDate
-        val adapter = viewPager.adapter
-        if (adapter is ScheduleAdapter) {
-            adapter.needDispose = true
-            toDate = adapter.firstPosDate.plusDays(viewPager.currentItem.toLong())
-            if (toDate == LocalDate.MIN) {
-                toDate = LocalDate.now()
-            }
-        } else {
-            toDate = LocalDate.now()
-        }
-
-        val adapter2 = ScheduleAdapter(
+        val oldAdapter = viewPager.adapter
+        val newAdapter = ScheduleAdapter(
             schedule,
             viewModel.scheduleFilter.value,
             viewModel.showEmptyLessons.value,
             viewModel.isAdvancedSearch,
             loading
         )
-        viewPager.adapter = adapter2
+        val toPosition = if (oldAdapter is ScheduleAdapter) {
+            newAdapter.firstPosDate.until(oldAdapter.firstPosDate, ChronoUnit.DAYS) + viewPager.currentItem
+        } else {
+            newAdapter.firstPosDate.until(LocalDate.now(), ChronoUnit.DAYS)
+        }
+        viewPager.adapter = newAdapter
         if (schedule != null) {
-            adapter2.lessonClick += ::onLessonClick
+            newAdapter.lessonClick += ::onLessonClick
             viewPager.adapter?.notifyDataSetChanged()
-            viewPager.setCurrentItem(adapter2.firstPosDate.until(toDate, ChronoUnit.DAYS).toInt(), false)
-
+            viewPager.setCurrentItem(toPosition.toInt(), false)
         }
     }
 
@@ -143,7 +136,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                     // This page is way off-screen to the left.
                     page.alpha = 1f
                     page.findViewById<RecyclerView>(R.id.recycler_schedule)?.translationX = 0f
-                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = 0f
+                    page.findViewById<TextView>(R.id.viewgroup_null_lesson)?.translationX = 0f
                 }
                 position <= 1 -> { // [-1,1]
                     val rv = page.findViewById<RecyclerView>(R.id.recycler_schedule)
@@ -162,13 +155,13 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                         }
                     }
 
-                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = position * (pageWidth / 1.5f)
+                    page.findViewById<TextView>(R.id.viewgroup_null_lesson)?.translationX = position * (pageWidth / 1.5f)
                 }
                 else -> { // (1,+Infinity]
                     // This page is way off-screen to the right.
                     page.alpha = 1f
                     page.findViewById<RecyclerView>(R.id.recycler_schedule)?.translationX = 0f
-                    page.findViewById<TextView>(R.id.text_null_lesson)?.translationX = 0f
+                    page.findViewById<TextView>(R.id.viewgroup_null_lesson)?.translationX = 0f
                 }
             }
         }
@@ -310,7 +303,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         }
     }
 
-    fun setScheduleViews() {
+    private fun setScheduleViews() {
         swipeToRefresh.setOnRefreshListener {
             if (viewModel.isAdvancedSearch) {
                 textGroupTitle.setText(viewModel.groupTitle.value)
@@ -318,7 +311,6 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             }
             viewModel.updateSchedule()
         }
-
         viewPager.offscreenPageLimit = 2
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
@@ -359,7 +351,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             if (activity == null) {
                 return@setOnClickListener
             }
-            val dialog = AdvancedSearchFragment.newInstance()
+            val dialog = AdvancedSearchSelectFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
                 SimpleFilter(viewModel.groupList.value!!, checkedGroups)
@@ -462,7 +454,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
 
         textLessonTitles.setOnClickListener {
-            val dialog = AdvancedSearchFragment.newInstance()
+            val dialog = AdvancedSearchSelectFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
                 AdvancedFilter(lessonTitles, checkedLessonTitles)
@@ -476,7 +468,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textTeachers.setOnClickListener {
-            val dialog = AdvancedSearchFragment.newInstance()
+            val dialog = AdvancedSearchSelectFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(
                 AdvancedSearchAdapter(
@@ -491,7 +483,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textAuditoriums.setOnClickListener {
-            val dialog = AdvancedSearchFragment.newInstance()
+            val dialog = AdvancedSearchSelectFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
                 AdvancedFilter(lessonAuditoriums, checkedAuditoriums)))
@@ -504,7 +496,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
 
         textLessonTypes.setOnClickListener {
-            val dialog = AdvancedSearchFragment.newInstance()
+            val dialog = AdvancedSearchSelectFragment.newInstance()
             dialog.show(requireActivity().supportFragmentManager, "qq")
             dialog.setAdapter(AdvancedSearchAdapter(
                 SimpleFilter(lessonTypes, checkedLessonTypes)))
@@ -517,7 +509,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         })
         applyButton.setOnClickListener {
             setUpSchedule(null, true)
-            val filt = Schedule.AdvancedSearch.Builder()
+            val filter = Schedule.AdvancedSearch.Builder()
                 .lessonTitles(
                     if (checkedLessonTitles.isEmpty()) lessonTitles
                     else checkedLessonTitles.map { lessonTitles[it] })
@@ -534,7 +526,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 )
                 .build()
             async(Dispatchers.IO) {
-                val newSchedule = filt.getFiltered(schedules)
+                val newSchedule = filter.getFiltered(schedules)
 
                 viewModel.isAdvancedSearch = true
 
