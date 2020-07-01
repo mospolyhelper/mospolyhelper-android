@@ -6,6 +6,6 @@
     android:layout_width="match_parent" 
     android:background="@color/scheduleBackgroundColor"
     android:layout_height="?attr/actionBarSize"
-    tools:showIn="@layout/fragment_lesson_info" 
+    tools:showIn="@layout/fragment_schedule_lesson_info"
     app:elevation="0dp">
 </androidx.appcompat.widget.Toolbar>
