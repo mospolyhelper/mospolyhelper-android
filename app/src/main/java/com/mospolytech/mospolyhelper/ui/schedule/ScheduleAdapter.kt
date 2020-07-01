@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
@@ -36,7 +35,6 @@ class ScheduleAdapter(
         private const val VIEW_TYPE_NORMAL = 2
         private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
     }
-    var needDispose = false
     var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
 
@@ -46,7 +44,6 @@ class ScheduleAdapter(
         setCount()
         setFirstPosDate()
     }
-
 
     override fun getItemCount() = count
 
@@ -63,10 +60,11 @@ class ScheduleAdapter(
 
     private fun setFirstPosDate() {
         if (schedule != null) {
-            firstPosDate = if (count == MAX_COUNT)
+            firstPosDate = if (count == MAX_COUNT) {
                 LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
-            else
+            } else {
                 schedule.dateFrom
+            }
         }
     }
 
@@ -110,6 +108,11 @@ class ScheduleAdapter(
         private val list = view.findViewById<RecyclerView>(R.id.recycler_schedule)!!
         private var listAdapter: LessonAdapter? = null
         private var accumulator = 0f
+        private val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
+        private val headColor = view.context.getColor(R.color.textLessonHead)
+        private val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
+        private val nullView = view.findViewById<View>(R.id.viewgroup_null_lesson)
 
         init {
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
@@ -145,20 +148,17 @@ class ScheduleAdapter(
 
 
         fun bind() {
-            Log.d("qqqq", layoutPosition.toString())
             val date = firstPosDate.plusDays(layoutPosition.toLong())
-            dayTitle.text = firstPosDate.plusDays(layoutPosition.toLong()).format(dateFormatter).capitalize()
+            val dailySchedule = schedule!!.getSchedule(date, scheduleFilter)
+
+
             list.scrollToPosition(0)
             accumulator = 0f
             dayTitle.elevation = 0f
-            val dailySchedule = schedule!!.getSchedule(date, scheduleFilter)
+            dayTitle.text = firstPosDate.plusDays(layoutPosition.toLong()).format(dateFormatter).capitalize()
+            nullView.visibility = if (dailySchedule.isNotEmpty()) View.GONE else View.VISIBLE
             if (listAdapter == null) {
-                val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-                val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
-                val headColor = view.context.getColor(R.color.textLessonHead)
-                val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
                 listAdapter = LessonAdapter(
-                    view.findViewById(R.id.text_null_lesson),
                     if (showEmptyLessons) EmptyPairsListDecorator(dailySchedule) else dailySchedule,
                     scheduleFilter,
                     date,
