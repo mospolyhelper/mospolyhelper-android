@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -13,6 +14,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.mospolytech.mospolyhelper.MainActivity
@@ -20,12 +23,10 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Group
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
-import com.mospolytech.mospolyhelper.ui.common.FragmentBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
+class LessonInfoFragment : DialogFragment() {
 
     companion object {
         fun newInstance() = LessonInfoFragment()
@@ -42,10 +43,10 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
     var isNoteEdited: Boolean = false
 
 
-    init {
-        enterTransition = Slide(Gravity.END)
-        exitTransition = Slide(Gravity.START)
-    }
+//    init {
+//        enterTransition = Slide(Gravity.END)
+//        exitTransition = Slide(Gravity.START)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,12 @@ class LessonInfoFragment : FragmentBase(Fragments.ScheduleLessonInfo) {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCreateView(

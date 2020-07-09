@@ -2,8 +2,8 @@ package com.mospolytech.mospolyhelper.repository.schedule
 
 import android.util.Log
 import com.beust.klaxon.*
-import com.mospolytech.mospolyhelper.TAG
 import com.mospolytech.mospolyhelper.repository.schedule.models.*
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.time.LocalDate

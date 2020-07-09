@@ -3,12 +3,12 @@ package com.mospolytech.mospolyhelper.ui.deadlines
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
-import com.mospolytech.mospolyhelper.utils.ContextProvider
 
 
 class DeadlineViewModel/*(app: Application)*/ :
@@ -21,7 +21,7 @@ class DeadlineViewModel/*(app: Application)*/ :
     val delete : MutableLiveData<Deadline> = MutableLiveData()
     val nameReceiver : MutableLiveData<String> = MutableLiveData()
     private var findstr: String = ""
-    private var database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
+    private var database: AppDatabase = AppDatabase.getDatabase(App.context)
     private val deadlinesRepository =
         DeadlinesRepository(
             database
