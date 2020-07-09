@@ -1,13 +1,13 @@
 package com.mospolytech.mospolyhelper.utils
 
 import android.util.Log
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.TAG
 
 class StringProvider {
     companion object {
         fun getString(stringId: StringId ): String {
-            val context = ContextProvider.context ?: return ""
+            val context = App.context ?: return ""
             try {
                 when (stringId) {
                     StringId.ScheduleWasntFound ->
