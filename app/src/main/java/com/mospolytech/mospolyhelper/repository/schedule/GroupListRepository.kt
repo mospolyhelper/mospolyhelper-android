@@ -3,13 +3,11 @@ package com.mospolytech.mospolyhelper.repository.schedule
 import android.util.Log
 import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
+import com.mospolytech.mospolyhelper.utils.TAG
 
 class GroupListRepository(
     private val dao: GroupListDao
 ) {
-    companion object {
-        private const val TAG = "GroupListRepository"
-    }
     suspend fun getGroupList(downloadNew: Boolean, messageBlock: (String) -> Unit = { }): List<String> {
         var groupList: List<String>? = null
         if (downloadNew) {

@@ -1,13 +1,12 @@
 package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
 import android.content.Context
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
-import com.mospolytech.mospolyhelper.utils.ContextProvider
 import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
 
@@ -17,7 +16,7 @@ class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfo
     }
     var lesson: Lesson = Lesson.getEmpty(0)
     var date: LocalDate = LocalDate.now()
-    private val database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
+    private val database: AppDatabase = AppDatabase.getDatabase(App.context)
     var deadlinesRepository =
         DeadlinesRepository(
             database
