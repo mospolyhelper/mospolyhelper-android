@@ -12,12 +12,13 @@
   <color name="textColorSecondary">#000000</color>
   
   <color name="iconColor">#BEBEBE</color>
-  
+
   <color name="scheduleBackgroundColor">#121212</color>
   <color name="lessonBackground">#1e1e1e</color>
   <color name="lessonBackgroundRipple">#343434</color>
   <color name="lessonHeadDivider">#303030</color>
   <color name="lessonIndicator">#00a300</color>
+  <color name="lessonTimeBackground">#1e1e1e</color>
   
   <color name="textLessonHeadCurrent">#BBBBBB</color>
   <color name="textLessonHead">#8A8A8A</color>
