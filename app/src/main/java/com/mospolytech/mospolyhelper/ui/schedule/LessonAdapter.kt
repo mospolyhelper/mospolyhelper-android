@@ -3,15 +3,23 @@ package com.mospolytech.mospolyhelper.ui.schedule
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.URLSpan
+import android.text.style.UnderlineSpan
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
+import androidx.core.text.getSpans
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
@@ -101,41 +109,55 @@ class LessonAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind()
+        viewHolder.bind(this)
     }
 
-    inner class ViewHolder(val view: View, onLessonClick: (Lesson) -> Unit) :
+    class ViewHolder(val view: View, onLessonClick: (Lesson) -> Unit) :
         RecyclerView.ViewHolder(view) {
+        private lateinit var adapter: LessonAdapter
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
         private val lessonTime = view.findViewById<TextView>(R.id.text_schedule_time)!!
         private val lessonTime2 = view.findViewById<TextView>(R.id.text_schedule_time2)!!
         private val lessonType = view.findViewById<TextView>(R.id.text_schedule_type)!!
         private val lessonTeachers = view.findViewById<TextView>(R.id.text_schedule_teachers)!!
         private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_schedule_auditoriums)!!
-        private val lessonPlace = view.findViewById<ConstraintLayout>(R.id.layout_lesson_place)!!
+        private val lessonPlace = view.findViewById<LinearLayout>(R.id.layout_lesson)!!
         private val timeline = view.findViewById<View>(R.id.lesson_timeline)
         private val lessonInfo = view.findViewById<TextView>(R.id.lesson_info)
+        private val lessonTimeLayout = view.findViewById<FrameLayout>(R.id.layout_lesson_time)
         private var lesson: Lesson = Lesson.getEmpty(0)
 
         init {
             lessonPlace.setOnClickListener { onLessonClick(lesson) }
+            lessonTimeLayout.minimumHeight = (
+                    lessonTime.marginTop * 1.7f + lessonTime2.marginBottom * 1.7f +
+                            lessonTime.paint.fontSpacing + lessonTime2.paint.fontSpacing
+                    ).toInt()
+            val dpTop = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, view.resources.displayMetrics)
+            val dpBottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.7f, view.resources.displayMetrics)
+            val timeLineParams = (timeline.layoutParams as FrameLayout.LayoutParams)
+            timeLineParams.topMargin = (lessonTime.marginTop + lessonTime.paint.fontSpacing + dpTop).toInt()
+            timeLineParams.bottomMargin = (lessonTime2.marginBottom + lessonTime2.paint.fontSpacing + dpBottom).toInt()
         }
 
-        fun bind() {
-            lesson = dailySchedule[layoutPosition]
+        // ViewHolder class is not inner because recycler views have common pool
+        fun bind(adapter: LessonAdapter) {
+            this.adapter = adapter
+            lesson = adapter.dailySchedule[layoutPosition]
+
 
             val lessonIsEmpty = lesson.isEmpty
 
             val prevEqual =
-                !lessonIsEmpty && (layoutPosition != 0 && dailySchedule[layoutPosition - 1].equalsTime(lesson))
+                !lessonIsEmpty && (layoutPosition != 0 && adapter.dailySchedule[layoutPosition - 1].equalsTime(lesson))
             val nextEqual =
-                !lessonIsEmpty && (layoutPosition != itemCount - 1) && dailySchedule[layoutPosition + 1].equalsTime(
+                !lessonIsEmpty && (layoutPosition != adapter.itemCount - 1) && adapter.dailySchedule[layoutPosition + 1].equalsTime(
                     lesson
                 )
 
             setTime(prevEqual, nextEqual, layoutPosition)
 
-            if (layoutPosition == itemCount - 1) {
+            if (layoutPosition == adapter.itemCount - 1) {
                 val tv = TypedValue()
                 if (lessonPlace.context.theme.resolveAttribute(
                         android.R.attr.actionBarSize,
@@ -154,9 +176,9 @@ class LessonAdapter(
                 view.setPadding(0, 0,0, 0)
             }
             val enabledFrom =
-                lesson.dateFrom <= date || filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
+                lesson.dateFrom <= adapter.date || adapter.filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
             val enabledTo =
-                lesson.dateTo >= date || filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
+                lesson.dateTo >= adapter.date || adapter.filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
             val enabled =
                 if (lesson.isImportant) lessonIsEmpty || enabledTo else lessonIsEmpty || enabledFrom && enabledTo
 
@@ -169,19 +191,62 @@ class LessonAdapter(
         }
 
         private fun setTime(prevEqual: Boolean, nextEqual: Boolean, position: Int) {
+            //val set = ConstraintSet()
+            val dp5 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, lessonPlace.context.resources.displayMetrics).toInt()
+            //set.clone(lessonPlace)
+            if (prevEqual && nextEqual) {
+//                set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, 0)
+//                set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, 0)
+//                set.connect(timeline.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+//                set.connect(timeline.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                lessonTimeLayout.background = ColorDrawable(lessonPlace.context.getColor(R.color.lessonTimeBackground))
+            } else {
+                if (prevEqual) {
+//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, 0)
+//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, dp5)
+                    lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_bottom)
+//                    set.connect(timeline.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+//                    set.connect(timeline.id, ConstraintSet.BOTTOM, lessonTime2.id, ConstraintSet.TOP)
+                } else {
+//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
+                    if (nextEqual) {
+//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
+//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, 0)
+                        lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
+//                        set.connect(timeline.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+//                        set.connect(timeline.id, ConstraintSet.TOP, lessonTime.id, ConstraintSet.BOTTOM)
+                    } else {
+//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, dp5)
+//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
+//                        set.connect(timeline.id, ConstraintSet.BOTTOM, lessonTime2.id, ConstraintSet.TOP)
+//                        set.connect(timeline.id, ConstraintSet.TOP, lessonTime.id, ConstraintSet.BOTTOM)
+                        lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time)
+                    }
+                }
+            }
+            if (lesson.isEmpty) {
+                //lessonTimeLayout.visibility = View.GONE
+            } else {
+                //lessonTimeLayout.visibility = View.VISIBLE
+            }
             if (prevEqual) {
                 lessonTime.visibility = View.INVISIBLE
+                //set.connect(lessonTimeLayout.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                //set.constrainHeight(lessonTimeLayout.id, ConstraintSet.MATCH_CONSTRAINT)
             } else {
                 if (lesson.isEmpty) {
-                    lessonTime.setTextColor(disabledColor)
-                } else if (currLessonOrder == lesson.order) {
-                    lessonTime.setTextColor(headCurrentColor)
+                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time)
+                    lessonTime.setTextColor(adapter.disabledColor)
+                } else if (adapter.currLessonOrder == lesson.order) {
+                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
+                    lessonTime.setTextColor(adapter.headCurrentColor)
                 } else {
-                    val deltaOrder = currLessonOrder - lesson.order
-                    if (deltaOrder in 1..position && dailySchedule[position - deltaOrder].isEmpty) {
-                        lessonTime.setTextColor(headCurrentColor)
+                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
+                    val deltaOrder = adapter.currLessonOrder - lesson.order
+                    if (deltaOrder in 1..position && adapter.dailySchedule[position - deltaOrder].isEmpty) {
+                        lessonTime.setTextColor(adapter.headCurrentColor)
                     } else {
-                        lessonTime.setTextColor(headColor)
+                        lessonTime.setTextColor(adapter.headColor)
                     }
                 }
                 lessonTime.visibility = View.VISIBLE
@@ -189,14 +254,14 @@ class LessonAdapter(
             if (nextEqual || lesson.isEmpty) {
                 lessonTime2.visibility = View.GONE
             } else {
-                if (currLessonOrder == lesson.order) {
-                    lessonTime2.setTextColor(headCurrentColor)
+                if (adapter.currLessonOrder == lesson.order) {
+                    lessonTime2.setTextColor(adapter.headCurrentColor)
                 } else {
-                    val deltaOrder = currLessonOrder - lesson.order
-                    if (deltaOrder in 1..position && dailySchedule[position - deltaOrder].isEmpty) {
-                        lessonTime2.setTextColor(headCurrentColor)
+                    val deltaOrder = adapter.currLessonOrder - lesson.order
+                    if (deltaOrder in 1..position && adapter.dailySchedule[position - deltaOrder].isEmpty) {
+                        lessonTime2.setTextColor(adapter.headCurrentColor)
                     } else {
-                        lessonTime2.setTextColor(headColor)
+                        lessonTime2.setTextColor(adapter.headColor)
                     }
                 }
                 lessonTime2.visibility = View.VISIBLE
@@ -213,15 +278,16 @@ class LessonAdapter(
                 timeline.background = ColorDrawable(if (enabled)
                     (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
                 else
-                    disabledColor
+                    adapter.disabledColor
                 )
                 timeline.visibility = View.VISIBLE
             }
-            if (nextEqual) {
-                lessonPlace.background = null
-            } else {
-                lessonPlace.background = lessonPlace.context.getDrawable(R.drawable.bottom_stroke)
-            }
+            lessonPlace.background = null
+//            if (nextEqual) {
+//                lessonPlace.background = null
+//            } else {
+//                lessonPlace.background = lessonPlace.context.getDrawable(R.drawable.bottom_stroke)
+//            }
         }
 
         private fun setInfo(nextEqual: Boolean) {
@@ -230,15 +296,15 @@ class LessonAdapter(
                 return
             }
             var info: String
-            if (layoutPosition + 1 < dailySchedule.size) {
-                val nextLesson = dailySchedule[layoutPosition + 1]
+            if (layoutPosition + 1 < adapter.dailySchedule.size) {
+                val nextLesson = adapter.dailySchedule[layoutPosition + 1]
                 when {
                     lesson.order + 1 < nextLesson.order -> {
-                        var windowTimeMinutes = lesson.localTime.second.until(
+                        val totalMinutes = lesson.localTime.second.until(
                             nextLesson.localTime.first, ChronoUnit.MINUTES
                         )
-                        val windowTimeHours = windowTimeMinutes / 60L
-                        windowTimeMinutes %= 60
+                        val windowTimeHours = totalMinutes / 60L
+                        val windowTimeMinutes = totalMinutes % 60
                         // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14
                         val lastNumberOfHours = windowTimeHours % 10
                         val endingHours = when {
@@ -260,7 +326,12 @@ class LessonAdapter(
                             info += " $windowTimeMinutes минут$endingMinutes"
                         }
                         lessonInfo.text = info
-                        lessonInfo.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_fastfood_24,
+                        val id = when  {
+                            totalMinutes < 180 -> R.drawable.ic_baseline_fastfood_24
+                            totalMinutes < 270 -> R.drawable.ic_round_sports_esports_24
+                            else -> R.drawable.ic_round_sports_volleyball_24
+                        }
+                        lessonInfo.setCompoundDrawablesWithIntrinsicBounds(id,
                             0, 0, 0)
                         lessonInfo.visibility = View.VISIBLE
                     }
@@ -283,7 +354,7 @@ class LessonAdapter(
 
 
         private fun setLessonType(enabled: Boolean) {
-            val type = if (showGroup)
+            val type = if (adapter.showGroup)
                 lesson.type.toUpperCase() + "  " + lesson.group.title
             else
                 lesson.type.toUpperCase()
@@ -292,7 +363,7 @@ class LessonAdapter(
                 if (enabled)
                     (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
                 else
-                    disabledColor
+                    adapter.disabledColor
             )
             lessonType.setText(type, TextView.BufferType.NORMAL)
             lessonType.isEnabled = enabled
@@ -310,11 +381,8 @@ class LessonAdapter(
             if (enabled) {
                 for (i in 0 until lesson.auditoriums.size - 1) {
                     val auditorium = lesson.auditoriums[i]
-                    val audTitle = HtmlCompat.fromHtml(
-                        auditorium.title.toLowerCase(),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
-                    val color = convertColorFromString(auditorium.color)
+                    val audTitle = parseAuditoriumTitle(auditorium.title.toLowerCase())
+                    val color = parseAuditoriumColor(auditorium.color)
                     if (color != null) {
                         auditoriums
                             .append(
@@ -332,11 +400,8 @@ class LessonAdapter(
                     }
                 }
                 val lastAuditorium = lesson.auditoriums.last()
-                val audTitle = HtmlCompat.fromHtml(
-                    lastAuditorium.title.toLowerCase(),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-                val color = convertColorFromString(lastAuditorium.color)
+                val audTitle = parseAuditoriumTitle(lastAuditorium.title.toLowerCase())
+                val color = parseAuditoriumColor(lastAuditorium.color)
                 if (color != null) {
                     auditoriums.append(
                         audTitle,
@@ -348,19 +413,16 @@ class LessonAdapter(
                 }
             } else {
                 for (i in 0 until lesson.auditoriums.size - 1) {
-                    val audTitle = HtmlCompat.fromHtml(
-                        lesson.auditoriums[i].title.toLowerCase(),
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    )
+                    val audTitle = parseAuditoriumTitle(lesson.auditoriums[i].title.toLowerCase())
                     auditoriums
                         .append(
                             audTitle,
-                            ForegroundColorSpan(disabledColor),
+                            ForegroundColorSpan(adapter.disabledColor),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
                         .append(
                             ", ",
-                            ForegroundColorSpan(disabledColor),
+                            ForegroundColorSpan(adapter.disabledColor),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
                 }
@@ -370,7 +432,7 @@ class LessonAdapter(
                 )
                 auditoriums.append(
                     audTitle,
-                    ForegroundColorSpan(disabledColor),
+                    ForegroundColorSpan(adapter.disabledColor),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
@@ -378,7 +440,18 @@ class LessonAdapter(
             auditoriums.clear()
         }
 
-        private fun convertColorFromString(colorString: String): Int? {
+        private fun parseAuditoriumTitle(title: String): SpannableString {
+            return SpannableString(HtmlCompat.fromHtml(
+                title,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )).apply {
+                getSpans<URLSpan>().forEach { removeSpan(it) }
+                getSpans<UnderlineSpan>().forEach { removeSpan(it) }
+                getSpans<ClickableSpan>().forEach { removeSpan(it) }
+            }
+        }
+
+        private fun parseAuditoriumColor(colorString: String): Int? {
             if (colorString.isEmpty()) {
                 return null
             }
@@ -391,7 +464,7 @@ class LessonAdapter(
                     colorString
                 }
             )
-            if (nightMode) {
+            if (adapter.nightMode) {
                 color = convertColorToNight(color)
             }
             return color

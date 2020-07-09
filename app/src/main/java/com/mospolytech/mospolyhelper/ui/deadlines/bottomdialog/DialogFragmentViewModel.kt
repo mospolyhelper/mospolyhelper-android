@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog
 
 import android.content.Context
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
@@ -8,7 +9,6 @@ import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
-import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class DialogFragmentViewModel/*(app: Application)*/ :
 
     private val groupTitle = "181-721"
     private val scheduleRepository = ScheduleRepository(ScheduleDao())
-    private val database: AppDatabase = AppDatabase.getDatabase(ContextProvider.context as Context)
+    private val database: AppDatabase = AppDatabase.getDatabase(App.context)
     private lateinit var deadlinesRepository: DeadlinesRepository
 
     fun newRepository() {

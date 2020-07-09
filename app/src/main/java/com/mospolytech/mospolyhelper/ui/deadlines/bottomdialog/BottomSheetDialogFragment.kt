@@ -15,9 +15,9 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
-import com.mospolytech.mospolyhelper.utils.ContextProvider
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -40,10 +40,9 @@ class AddBottomSheetDialogFragment
     private var name: String = ""
     //private lateinit var viewModel: DialogFragmentViewModel
     private val viewModel by viewModels<DialogFragmentViewModel>()
-    private var contextApp = ContextProvider.context as Context
 
     private val datePickerDialog = DatePickerDialog(
-        contextApp,
+        App.context,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
             val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
@@ -53,7 +52,7 @@ class AddBottomSheetDialogFragment
         LocalDate.now().dayOfMonth)
 
     private val timePickerDialog = TimePickerDialog(
-        contextApp,
+        App.context,
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -65,7 +64,6 @@ class AddBottomSheetDialogFragment
         fun newInstance(): AddBottomSheetDialogFragment {
             return AddBottomSheetDialogFragment()
         }
-        const val TAG = "BottomDialog"
     }
 
     fun setName(name: String) {
@@ -198,7 +196,7 @@ class AddBottomSheetDialogFragment
         val descr = editDescription.text.toString()
         if (descr.isEmpty()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Toast.makeText(contextApp, R.string.predmetError, Toast.LENGTH_SHORT).show()
+                Toast.makeText(App.context, R.string.predmetError, Toast.LENGTH_SHORT).show()
             } else {
                 editDescription.error = resources.getString(R.string.predmetError)
             }
