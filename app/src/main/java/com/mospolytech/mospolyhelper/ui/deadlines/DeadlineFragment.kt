@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -28,16 +29,15 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.ui.common.FragmentBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlin.math.roundToInt
 
 
-class DeadlineFragment : FragmentBase(Fragments.Deadlines),
+class DeadlineFragment : Fragment(),
     View.OnClickListener {
 
     //private val viewModelFactory = ScheduleViewModel.Factory()

@@ -26,10 +26,12 @@ class EmptyPairsListDecorator(
         return true
     }
 
-    override fun get(index: Int) = if (index < offset)
+    override fun get(index: Int) = if (index < offset) {
         Lesson.getEmpty(index)
-    else
+    } else {
         dailySchedule[index - offset]
+    }
+
 
     override fun indexOf(element: Lesson): Int {
         for (e in this.withIndex()) {

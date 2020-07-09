@@ -5,6 +5,7 @@ import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.repository.schedule.utils.ScheduleIterable
 import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
+import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -14,9 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger
 class ScheduleRepository(
     private val dao: ScheduleDao
 ) {
-    companion object {
-        private const val TAG = "ScheduleRepository"
-    }
     suspend fun getSchedule(
         group: String,
         isSession: Boolean,
