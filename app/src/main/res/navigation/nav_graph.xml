@@ -69,21 +69,21 @@
         android:id="@+id/nav_schedule"
         app:destination="@id/scheduleFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/nav_addresses"
         app:destination="@id/addressesFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/nav_deadline"
         app:destination="@id/deadlineFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/nav_settings"
         app:destination="@id/settingsFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
 
 </navigation>
