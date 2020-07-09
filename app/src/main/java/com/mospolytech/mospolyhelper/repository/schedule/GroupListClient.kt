@@ -1,14 +1,13 @@
 package com.mospolytech.mospolyhelper.repository.schedule
 
 import android.util.Log
-import com.mospolytech.mospolyhelper.TAG
+import com.mospolytech.mospolyhelper.utils.TAG
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.ConstantCookiesStorage
 import io.ktor.client.features.cookies.CookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.http.Cookie
 
 class GroupListClient {

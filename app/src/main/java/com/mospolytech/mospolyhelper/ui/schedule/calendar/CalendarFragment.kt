@@ -1,21 +1,24 @@
 package com.mospolytech.mospolyhelper.ui.schedule.calendar
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.ui.common.FragmentBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
 import java.time.temporal.ChronoUnit
 
-class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
+class CalendarFragment : DialogFragment() {
 
     companion object {
         fun newInstance() = CalendarFragment()
@@ -69,7 +72,7 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         recyclerAdapter.dayClick += { date ->
             viewModel.date = date
             dateChanged = true
-            activity?.onBackPressed()
+            findNavController().navigateUp()
         }
 
         recyclerView.itemAnimator = null
@@ -83,9 +86,16 @@ class CalendarFragment : FragmentBase(Fragments.ScheduleCalendar) {
         recyclerView.addItemDecoration(e)
 
         recyclerView.scrollToPosition(
-            recyclerAdapter.firstPosDate.until(viewModel.date, ChronoUnit.DAYS).toInt())
+            recyclerAdapter.firstPosDate.until(viewModel.date, ChronoUnit.DAYS).toInt()
+        )
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onStop() {

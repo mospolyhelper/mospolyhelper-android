@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.repository.schedule.models
 
 import android.util.Log
 import com.beust.klaxon.Json
-import com.mospolytech.mospolyhelper.TAG
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -219,6 +219,7 @@ data class Lesson(
     val isEmpty = title.isEmpty() && type.isEmpty()
     val isNotEmpty = title.isNotEmpty() || type.isNotEmpty()
 
+    @Json(ignored = true)
     val isImportant =
         type.contains(EXAM, true) ||
                 type.contains(CREDIT_FIXED, true) ||
@@ -226,12 +227,14 @@ data class Lesson(
                 type.contains(CREDIT_WITH_MARK_FIXED, true) ||
                 type.contains(EXAMINATION_SHOW_FIXED, true)
 
+    @Json(ignored = true)
     val time =
         getTime(
             order,
             group.isEvening
         )
 
+    @Json(ignored = true)
     val localTime =
         getLocalTime(
             order,
