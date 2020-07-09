@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper.repository.schedule
 
 import android.util.Log
-import com.mospolytech.mospolyhelper.TAG
+import com.mospolytech.mospolyhelper.utils.TAG
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.ConstantCookiesStorage
 import io.ktor.client.features.cookies.CookiesStorage

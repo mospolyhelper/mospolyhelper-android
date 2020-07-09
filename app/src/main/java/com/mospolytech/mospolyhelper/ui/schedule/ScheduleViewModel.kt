@@ -36,9 +36,8 @@ class ScheduleViewModel(
     var isAdvancedSearch = false
     var groupList = MutableStateFlow(emptyList<String>())
 
-    val endDownloading: Event0 = Action0()
-    var isLoading = true
-        private set
+    val isLoading = MutableStateFlow(true)
+    var firstLoading = true
 
     val onMessage: Event1<String> = Action1()
 
@@ -47,7 +46,8 @@ class ScheduleViewModel(
         getGroupList(true)
 
         combine(this.isSession, this.groupTitle) { isSession, groupTitle ->
-            setUpSchedule(isSession, groupTitle, true)
+            setUpSchedule(isSession, groupTitle, firstLoading)
+            firstLoading = true
         }.launchIn(viewModelScope)
     }
 
@@ -68,8 +68,7 @@ class ScheduleViewModel(
     }
 
     private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
-        isLoading = true
-        schedule.value = null
+        isLoading.value = true
         viewModelScope.async {
             val schedule = if (groupTitle.isEmpty()) {
                 null
@@ -88,9 +87,8 @@ class ScheduleViewModel(
                     )
             }
             withContext(Dispatchers.Main) {
+                isLoading.value = false
                 this@ScheduleViewModel.schedule.value = schedule
-                isLoading = false
-                (endDownloading as Action0).invoke()
             }
         }
     }

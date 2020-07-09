@@ -1,17 +1,12 @@
 package com.mospolytech.mospolyhelper.repository.schedule
 
 import android.util.Log
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
-import com.mospolytech.mospolyhelper.utils.ContextProvider
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.receiveAsFlow
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.HashSet
 
 
 class ScheduleDao(
@@ -21,7 +16,6 @@ class ScheduleDao(
 ) {
 
     companion object {
-        private const val TAG = "ScheduleDao"
         const val CurrentExtension = "current"
         const val OldExtension = "backup"
         const val CustomExtension = "custom"
@@ -44,7 +38,7 @@ class ScheduleDao(
     }
 
     fun read(groupTitle: String, isSession: Boolean): Schedule? {
-        val folder = ContextProvider.getFilesDir()
+        val folder = App.context.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(groupTitle)
             .resolve(if (isSession) SCHEDULE_SESSION_FOLDER else SCHEDULE_REGULAR_FOLDER)
@@ -78,7 +72,7 @@ class ScheduleDao(
     }
 
     fun save(schedule: Schedule) {
-        val folder = ContextProvider.getFilesDir()
+        val folder = App.context.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(schedule.group.title)
             .resolve(if (schedule.isSession) SCHEDULE_SESSION_FOLDER else SCHEDULE_REGULAR_FOLDER)
