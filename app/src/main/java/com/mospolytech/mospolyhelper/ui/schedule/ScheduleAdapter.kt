@@ -121,9 +121,10 @@ class ScheduleAdapter(
         private val nullView = view.findViewById<View>(R.id.viewgroup_null_lesson)
 
         init {
-//            list.setRecycledViewPool(commonPool)
+            // TODO check pool performance
+            list.setRecycledViewPool(commonPool)
             list.layoutManager = LinearLayoutManager(view.context)
-//                .apply { recycleChildrenOnDetach = true }
+                .apply { recycleChildrenOnDetach = true }
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
             val dp32 = dp8 * 4
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
