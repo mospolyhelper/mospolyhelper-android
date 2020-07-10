@@ -76,7 +76,7 @@
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
     <action
-        android:id="@+id/nav_deadline"
+        android:id="@+id/nav_deadlines"
         app:destination="@id/deadlineFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
