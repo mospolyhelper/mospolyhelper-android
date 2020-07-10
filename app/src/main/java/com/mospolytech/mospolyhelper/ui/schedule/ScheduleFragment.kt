@@ -310,7 +310,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             }
             viewModel.updateSchedule()
         }
-        viewPager.offscreenPageLimit = 1
+        viewPager.offscreenPageLimit = 2
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
                 swipeToRefresh.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
@@ -538,8 +538,13 @@ class ScheduleFragment : Fragment(), CoroutineScope {
     }
 
     private fun bindViewModel() {
-        combine(viewModel.schedule, viewModel.showEmptyLessons, viewModel.scheduleFilter, viewModel.isLoading) { a, _, _, isLoading ->
-            setUpSchedule(a, isLoading)
+        combine(
+            viewModel.schedule,
+            viewModel.showEmptyLessons,
+            viewModel.scheduleFilter,
+            viewModel.isLoading
+        ) { schedule, _, _, isLoading ->
+            setUpSchedule(schedule, isLoading)
             swipeToRefresh.isRefreshing = false
         }.launchIn(lifecycleScope)
 

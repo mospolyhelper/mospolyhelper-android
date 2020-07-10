@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
-import com.mospolytech.mospolyhelper.utils.AssetProvider
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -62,8 +61,6 @@ class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreference
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-
-        AssetProvider.assetManager = assets
 
         ActivityCompat.requestPermissions(
             this,

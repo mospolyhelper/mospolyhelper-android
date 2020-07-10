@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.repository.addresses
 import android.util.Log
 import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.utils.AssetProvider
 import com.mospolytech.mospolyhelper.utils.TAG
 import java.io.File
 import java.lang.Exception
@@ -53,7 +52,7 @@ class AddressesDao {
     }
 
     private fun getAddressesFromAssets(): Addresses? {
-        return Klaxon().parse<Addresses>(AssetProvider.getAsset("addresses.json")!!)
+        return Klaxon().parse<Addresses>(App.getAsset("addresses.json")!!)
     }
 
     fun getAddresses(downloadNew: Boolean): Addresses? {
