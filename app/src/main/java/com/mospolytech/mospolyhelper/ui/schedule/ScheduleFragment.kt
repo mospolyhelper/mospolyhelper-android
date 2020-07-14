@@ -11,8 +11,10 @@ import androidx.core.view.children
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,16 +28,12 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
-import com.mospolytech.mospolyhelper.ui.common.FragmentBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedFilter
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchAdapter
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchSelectFragment
 import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.SimpleFilter
-import com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment
-import com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment
 import com.mospolytech.mospolyhelper.utils.DefaultSettings
-import com.mospolytech.mospolyhelper.utils.PreferencesConstants
+import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -46,7 +44,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 
 
-class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
+class ScheduleFragment : Fragment(), CoroutineScope {
 
     companion object {
         fun newInstance() = ScheduleFragment()
@@ -86,9 +84,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
 
     private fun onLessonClick(lesson: Lesson, date: LocalDate) {
-        val fragment = LessonInfoFragment.newInstance()
+        findNavController().navigate(ScheduleFragmentDirections.actionScheduleFragmentToLessonInfoFragment())
         viewModel.openLessonInfo(lesson, date)
-        (activity as MainActivity).changeFragment(fragment, false)
     }
 
     private fun setUpGroupList(groupList: List<String>) {
@@ -96,7 +93,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             .setAdapter(ArrayAdapter(requireContext(), R.layout.item_group_list, groupList))
     }
 
-    private fun setUpSchedule(schedule: Schedule?, loading: Boolean = false) {
+    private fun setUpSchedule(schedule: Schedule?, isLoading: Boolean = false) {
         if (context != null && schedule != null && schedule.group.comment.isNotEmpty()) {
             Toast.makeText(requireContext(), schedule.group.comment, Toast.LENGTH_LONG).show()
         }
@@ -106,8 +103,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             viewModel.scheduleFilter.value,
             viewModel.showEmptyLessons.value,
             viewModel.isAdvancedSearch,
-            loading
+            isLoading
         )
+        //newAdapter.setHasStableIds(true)
         val toPosition = if (oldAdapter is ScheduleAdapter) {
             newAdapter.firstPosDate.until(oldAdapter.firstPosDate, ChronoUnit.DAYS) + viewPager.currentItem
         } else {
@@ -118,6 +116,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             newAdapter.lessonClick += ::onLessonClick
             viewPager.adapter?.notifyDataSetChanged()
             viewPager.setCurrentItem(toPosition.toInt(), false)
+
         }
     }
 
@@ -195,13 +194,13 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 R.id.btn_regular -> if (isChecked) {
                     viewModel.isSession.value = false
                     prefs.edit()
-                        .putBoolean(PreferencesConstants.ScheduleTypePreference, false)
+                        .putBoolean(PreferenceKeys.ScheduleTypePreference, false)
                         .apply()
                 }
                 R.id.btn_session ->  if (isChecked) {
                     viewModel.isSession.value = true
                     prefs.edit()
-                        .putBoolean(PreferencesConstants.ScheduleTypePreference, true)
+                        .putBoolean(PreferenceKeys.ScheduleTypePreference, true)
                         .apply()
                 }
             }
@@ -221,7 +220,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                     viewModel.scheduleFilter.value =
                         Schedule.Filter.Builder(viewModel.scheduleFilter.value)
                             .dateFilter(Schedule.Filter.DateFilter.values()[position]).build()
-                    prefs.edit().putInt(PreferencesConstants.ScheduleDateFilter, position).apply()
+                    prefs.edit().putInt(PreferenceKeys.ScheduleDateFilter, position).apply()
                 }
             }
         }
@@ -232,7 +231,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 viewModel.scheduleFilter.value =
                     Schedule.Filter.Builder(viewModel.scheduleFilter.value)
                         .sessionFilter(isChecked).build()
-                prefs.edit().putBoolean(PreferencesConstants.ScheduleSessionFilter, isChecked).apply()
+                prefs.edit().putBoolean(PreferenceKeys.ScheduleSessionFilter, isChecked).apply()
             }
         }
 
@@ -241,7 +240,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         scheduleEmptyPair.setOnCheckedChangeListener { _, isChecked ->
             if (viewModel.showEmptyLessons.value != isChecked) {
                 viewModel.showEmptyLessons.value = isChecked
-                prefs.edit().putBoolean(PreferencesConstants.ScheduleShowEmptyLessons, isChecked).apply()
+                prefs.edit().putBoolean(PreferenceKeys.ScheduleShowEmptyLessons, isChecked).apply()
             }
         }
 
@@ -263,7 +262,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
 
 
         setUpGroupList(viewModel.groupList.value)
-        textGroupTitle.setText(prefs.getString(PreferencesConstants.ScheduleGroupTitle, viewModel.groupTitle.value))
+        textGroupTitle.setText(prefs.getString(PreferenceKeys.ScheduleGroupTitle, viewModel.groupTitle.value))
         textGroupTitle.setOnKeyListener { v, keyCode, event ->
             when {
                 event.action != KeyEvent.ACTION_UP -> {
@@ -279,7 +278,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 keyCode == KeyEvent.KEYCODE_ENTER -> {
                     viewModel.isAdvancedSearch = false
                     val title = (v as AutoCompleteTextView).text.toString()
-                    prefs.edit().putString(PreferencesConstants.ScheduleGroupTitle, title).apply()
+                    prefs.edit().putString(PreferenceKeys.ScheduleGroupTitle, title).apply()
                     viewModel.groupTitle.value = title
                     textGroupTitle.dismissDropDown()
                     val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -295,7 +294,7 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
         textGroupTitle.setOnItemClickListener { parent, _, position, _ ->
             viewModel.isAdvancedSearch = false
             val title = parent.getItemAtPosition(position) as String
-            prefs.edit().putString(PreferencesConstants.ScheduleGroupTitle, title).apply()
+            prefs.edit().putString(PreferenceKeys.ScheduleGroupTitle, title).apply()
             viewModel.groupTitle.value = title
             val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(textGroupTitle.windowToken, 0)
@@ -539,8 +538,13 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
     }
 
     private fun bindViewModel() {
-        combine(viewModel.schedule, viewModel.showEmptyLessons, viewModel.scheduleFilter) { a, _, _ ->
-            setUpSchedule(a, viewModel.isLoading)
+        combine(
+            viewModel.schedule,
+            viewModel.showEmptyLessons,
+            viewModel.scheduleFilter,
+            viewModel.isLoading
+        ) { schedule, _, _, isLoading ->
+            setUpSchedule(schedule, isLoading)
             swipeToRefresh.isRefreshing = false
         }.launchIn(lifecycleScope)
 
@@ -585,9 +589,8 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
                 settingsDrawer.openDrawer(GravityCompat.END)
             }
             R.id.schedule_calendar -> {
-                val fragment = CalendarFragment.newInstance()
                 viewModel.openCalendar()
-                (activity as MainActivity).changeFragment(fragment, false)
+                findNavController().navigate(R.id.calendarFragment)
             }
         }
 
@@ -619,9 +622,9 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
     private fun prepareViewModelFactory(prefs: SharedPreferences) {
 
         val dateFilter = Schedule.Filter.DateFilter.values()[
-                prefs.getInt(PreferencesConstants.ScheduleDateFilter,
+                prefs.getInt(PreferenceKeys.ScheduleDateFilter,
                     Schedule.Filter.default.dateFilter.ordinal)]
-        val sessionFilter = prefs.getBoolean(PreferencesConstants.ScheduleSessionFilter,
+        val sessionFilter = prefs.getBoolean(PreferenceKeys.ScheduleSessionFilter,
             Schedule.Filter.default.sessionFilter)
 
         viewModelFactory.scheduleFilter = Schedule.Filter.Builder(
@@ -630,17 +633,17 @@ class ScheduleFragment : FragmentBase(Fragments.ScheduleMain), CoroutineScope {
             .sessionFilter(sessionFilter)
             .build()
 
-        viewModelFactory.groupTitle = prefs.getString(PreferencesConstants.ScheduleGroupTitle,
+        viewModelFactory.groupTitle = prefs.getString(PreferenceKeys.ScheduleGroupTitle,
             DefaultSettings.ScheduleGroupTitle)
 
         viewModelFactory.isSession = try {
-            prefs.getBoolean(PreferencesConstants.ScheduleTypePreference,
+            prefs.getBoolean(PreferenceKeys.ScheduleTypePreference,
                 DefaultSettings.ScheduleTypePreference);
         } catch (ex: Exception) {
-            prefs.getInt(PreferencesConstants.ScheduleTypePreference, 0) == 1;
+            prefs.getInt(PreferenceKeys.ScheduleTypePreference, 0) == 1;
         }
 
-        viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferencesConstants.ScheduleShowEmptyLessons,
+        viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferenceKeys.ScheduleShowEmptyLessons,
             DefaultSettings.ScheduleShowEmptyLessons)
 
         viewModel.onMessage += {

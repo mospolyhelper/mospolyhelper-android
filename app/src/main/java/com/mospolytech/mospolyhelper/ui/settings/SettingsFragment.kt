@@ -11,15 +11,15 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.ui.common.FragmentPreferenceBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
+import com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragmentDirections
 
-class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
+class SettingsFragment : PreferenceFragmentCompat(),
     PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
     companion object {
         fun newInstance() = SettingsFragment()
@@ -65,14 +65,10 @@ class SettingsFragment : FragmentPreferenceBase(Fragments.Settings),
         caller: PreferenceFragmentCompat,
         pref: PreferenceScreen
     ): Boolean {
-        val fragment = newInstance()
         val args = Bundle()
         args.putString(ARG_PREFERENCE_ROOT, pref.key)
-        fragment.arguments = args
-        activity?.supportFragmentManager
-            ?.beginTransaction()
-            ?.replace(R.id.frame_schedule, fragment, pref.key)
-            ?.addToBackStack(pref.key)?.commit()
+        //val action = SettingsFragmentDirections.actionSettingsFragmentSelf()
+        caller.findNavController().navigate(R.id.action_settingsFragment_self, args)
         return true
     }
 }

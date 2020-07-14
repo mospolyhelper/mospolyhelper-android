@@ -37,6 +37,7 @@ class ScheduleAdapter(
     }
     var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
+    private val commonPool = RecyclerView.RecycledViewPool()
 
     val lessonClick: Event2<Lesson, LocalDate> = Action2()
 
@@ -46,6 +47,11 @@ class ScheduleAdapter(
     }
 
     override fun getItemCount() = count
+
+//    override fun getItemId(position: Int): Long {
+//        val date = firstPosDate.plusDays(position.toLong())
+//        return 31L * schedule?.getSchedule(date).hashCode() + 31L * date.hashCode()
+//    }
 
     private fun setCount() {
         if (schedule == null) {
@@ -115,6 +121,10 @@ class ScheduleAdapter(
         private val nullView = view.findViewById<View>(R.id.viewgroup_null_lesson)
 
         init {
+            // TODO check pool performance
+            list.setRecycledViewPool(commonPool)
+            list.layoutManager = LinearLayoutManager(view.context)
+                .apply { recycleChildrenOnDetach = true }
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
             val dp32 = dp8 * 4
             list.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -143,7 +153,6 @@ class ScheduleAdapter(
                 }
             }
             list.itemAnimator = null
-            list.layoutManager = LinearLayoutManager(view.context)
         }
 
 
