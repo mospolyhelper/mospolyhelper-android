@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,10 +23,8 @@ import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.addresses.Addresses
-import com.mospolytech.mospolyhelper.ui.common.FragmentBase
-import com.mospolytech.mospolyhelper.ui.common.Fragments
 
-class AddressesFragment : FragmentBase(Fragments.Addresses) {
+class AddressesFragment : Fragment() {
 
     companion object {
         fun newInstance() = AddressesFragment()

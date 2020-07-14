@@ -2,9 +2,8 @@ package com.mospolytech.mospolyhelper.repository.addresses
 
 import android.util.Log
 import com.beust.klaxon.Klaxon
-import com.mospolytech.mospolyhelper.TAG
-import com.mospolytech.mospolyhelper.utils.AssetProvider
-import com.mospolytech.mospolyhelper.utils.ContextProvider
+import com.mospolytech.mospolyhelper.App
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.io.File
 import java.lang.Exception
 import java.net.URL
@@ -18,7 +17,7 @@ class AddressesDao {
     }
 
     private fun readAddresses(): Addresses? {
-        val filePath = ContextProvider.getFilesDir().resolve(ADDRESSES_FOLDER).resolve(
+        val filePath = App.context.filesDir.resolve(ADDRESSES_FOLDER).resolve(
             ADDRESSES_FILE
         )  // TODO: Add directory
         return if (!filePath.exists()) {
@@ -40,7 +39,7 @@ class AddressesDao {
     }
 
     private fun saveAddresses(buildings: Addresses) {
-        val filePath = File(ContextProvider.getFilesDir().resolve(ADDRESSES_FOLDER).resolve(
+        val filePath = File( App.context.filesDir.resolve(ADDRESSES_FOLDER).resolve(
             ADDRESSES_FILE
         ),
             ADDRESSES_FILE
@@ -53,7 +52,7 @@ class AddressesDao {
     }
 
     private fun getAddressesFromAssets(): Addresses? {
-        return Klaxon().parse<Addresses>(AssetProvider.getAsset("addresses.json")!!)
+        return Klaxon().parse<Addresses>(App.getAsset("addresses.json")!!)
     }
 
     fun getAddresses(downloadNew: Boolean): Addresses? {

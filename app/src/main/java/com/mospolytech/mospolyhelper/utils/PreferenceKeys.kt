@@ -1,6 +1,6 @@
 package com.mospolytech.mospolyhelper.utils
 
-class PreferencesConstants {
+class PreferenceKeys {
     companion object {
         const val ScheduleGroupTitle = "ScheduleGroupTitle"
         const val ScheduleDateFilter = "ScheduleDateFilter"
@@ -12,5 +12,6 @@ class PreferencesConstants {
         const val ScheduleShowColoredLessons = "ScheduleShowColoredLessons"
         const val Schedule = "Schedule"
         const val FirstLaunch = "FirstLaunch"
+        const val NightMode = "NightMode"
     }
 }
