@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter
 import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddBottomSheetDialogFragment
+class AddBottomSheetDialogFragment(ctx: Context)
     : BottomSheetDialogFragment(), View.OnClickListener {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
@@ -43,7 +43,7 @@ class AddBottomSheetDialogFragment
     private val viewModel by viewModel<DialogFragmentViewModel>()
 
     private val datePickerDialog = DatePickerDialog(
-        App.context,
+        ctx,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
             val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
@@ -53,7 +53,7 @@ class AddBottomSheetDialogFragment
         LocalDate.now().dayOfMonth)
 
     private val timePickerDialog = TimePickerDialog(
-        App.context,
+        ctx,
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -62,8 +62,8 @@ class AddBottomSheetDialogFragment
         LocalTime.now().minute,true)
 
     companion object {
-        fun newInstance(): AddBottomSheetDialogFragment {
-            return AddBottomSheetDialogFragment()
+        fun newInstance(context: Context): AddBottomSheetDialogFragment {
+            return AddBottomSheetDialogFragment(context)
         }
     }
 
