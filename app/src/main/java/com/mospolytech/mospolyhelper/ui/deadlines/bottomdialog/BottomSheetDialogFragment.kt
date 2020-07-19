@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -19,14 +20,19 @@ import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
+import kotlinx.android.synthetic.main.fragment_deadline.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.coroutines.CoroutineContext
 
 class AddBottomSheetDialogFragment(ctx: Context)
-    : BottomSheetDialogFragment(), View.OnClickListener {
+    : BottomSheetDialogFragment(), View.OnClickListener, CoroutineScope {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
@@ -41,6 +47,10 @@ class AddBottomSheetDialogFragment(ctx: Context)
     private var deadline: Deadline? = null
     private var name: String = ""
     private val viewModel by viewModel<DialogFragmentViewModel>()
+
+    private val job = SupervisorJob()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + job
 
     private val datePickerDialog = DatePickerDialog(
         ctx,
@@ -146,7 +156,6 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
         viewModel.newRepository()
         chipId = chipLow.id
         when (openType) {
@@ -188,6 +197,19 @@ class AddBottomSheetDialogFragment(ctx: Context)
                 R.id.chipMedium -> { chipId = R.id.chipMedium }
                 R.id.chipHigh -> { chipId = R.id.chipHigh }
                 else -> { view.findViewById<Chip>(chipId).isChecked = true }
+            }
+        }
+
+        val lessons = viewModel.getLessons()?.toList()
+        lessons?.let {
+            editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
+                R.layout.item_dropdown,
+                R.id.autoCompleteItem,
+                it))
+        }
+        viewModel.onMessage += {
+            launch(Dispatchers.Main) {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }
         }
     }
