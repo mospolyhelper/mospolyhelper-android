@@ -3,23 +3,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
-    android:elevation="3dp"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     android:layout_height="440dp"
     android:layout_width="match_parent">
+
     <TextView
-                android:background="@drawable/shape_bottom_sheet"
-            android:paddingHorizontal="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/advancedSearchHead"
+        android:fontFamily="sans-serif-black"
+        android:paddingHorizontal="18dp"
         android:paddingTop="10dp"
-            android:paddingBottom="1.5dp"
+        android:paddingBottom="1.5dp"
+        android:text="@string/advanced_search"
         android:textColor="@color/advancedSearchTextHead"
-            android:text="@string/advanced_search"
-            android:textSize="25sp"
-            android:fontFamily="sans-serif-black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:textSize="25sp" />
     <TextView
         android:background="@color/advancedSearchHead"
         android:textColor="@color/advancedSearchTextHeadSecondary"
