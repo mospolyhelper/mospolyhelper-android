@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"> 
     <TextView
-        android:id="@+id/text_schedule_date"
+        android:id="@+id/text_lesson_date"
         android:paddingVertical="4dp"
         android:paddingHorizontal="4dp"
         android:fontFamily="sans-serif-medium" 
