@@ -26,12 +26,8 @@ class GroupListClient {
     suspend fun getCookies() {
         val client = HttpClient()
         val data = client.get<String>(BASE_URL) {
-            header("referer",
-                BASE_URL
-            )
-            header("host",
-                BASE_URL
-            )
+            header("referer", BASE_URL)
+            //header("host", BASE_URL)
         }
         Log.i(TAG, data)
         val regex = Regex("cookie=\".*?;")
@@ -65,9 +61,8 @@ class GroupListClient {
         }
 
         return groupListClient.get(GET_GROUP_LIST) {
-            header("referer",
-                BASE_URL
-            )
+            header("referer", BASE_URL)
+            header("X-Requested-With", "XMLHttpRequest")
         }
     }
 }
