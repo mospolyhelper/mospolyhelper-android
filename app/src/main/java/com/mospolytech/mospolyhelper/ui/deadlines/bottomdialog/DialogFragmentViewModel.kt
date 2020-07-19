@@ -9,29 +9,18 @@ import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
+import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class DialogFragmentViewModel/*(app: Application)*/ :
-    /*AndroidViewModel(app) {*/
-    ViewModelBase(Mediator(), DialogFragmentViewModel::class.java.simpleName) {
-
-    companion object {
-        const val DeadlineAdd = "DeadlinesAdd"
-    }
-
-    private val groupTitle = "181-721"
-    private val scheduleRepository = ScheduleRepository(ScheduleDao())
-    private val database: AppDatabase = AppDatabase.getDatabase(App.context)
-    private lateinit var deadlinesRepository: DeadlinesRepository
+class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
+                              private val deadlinesRepository: DeadlinesRepository) :
+    ViewModelBase(mediator, DialogFragmentViewModel::class.java.simpleName) {
 
     fun newRepository() {
-        deadlinesRepository =
-            DeadlinesRepository(
-                database
-            )
+        deadlinesRepository.newJob()
     }
 
     fun saveInformation(deadline: Deadline) {
@@ -47,14 +36,4 @@ class DialogFragmentViewModel/*(app: Application)*/ :
         deadlinesRepository.cancel()
     }
 
-    fun setUpSchedule() =
-        GlobalScope.launch(Dispatchers.Main) {
-            val schedule = if (groupTitle.isEmpty()) {
-                null
-            } else {
-                scheduleRepository.getSchedule(groupTitle, false, false)
-                    ?: scheduleRepository.getSchedule(groupTitle, false, true)
-            }
-            scheduleRepository.allDataFromSchedule(schedule!!)
-        }
 }

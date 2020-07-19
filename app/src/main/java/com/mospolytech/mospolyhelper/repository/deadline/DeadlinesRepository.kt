@@ -13,9 +13,13 @@ class DeadlinesRepository(appDatabase: AppDatabase): CoroutineScope {
 
     val foundData: MutableLiveData<List<Deadline>> = MutableLiveData()
 
-    private val job : Job = Job()
+    private var job : Job = Job()
 
     private var deadlineDAO = appDatabase.getDeadlinesDAO()
+
+    fun newJob() {
+        job = Job()
+    }
 
     fun getDeadlines(): LiveData<List<Deadline>> {
         return deadlineDAO.getAllLive()
