@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddBottomSheetDialogFragment
     : BottomSheetDialogFragment(), View.OnClickListener {
@@ -38,8 +40,7 @@ class AddBottomSheetDialogFragment
     private var openType = OpenType.SIMPLE
     private var deadline: Deadline? = null
     private var name: String = ""
-    //private lateinit var viewModel: DialogFragmentViewModel
-    private val viewModel by viewModels<DialogFragmentViewModel>()
+    private val viewModel by viewModel<DialogFragmentViewModel>()
 
     private val datePickerDialog = DatePickerDialog(
         App.context,
