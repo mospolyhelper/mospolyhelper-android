@@ -18,8 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
-import androidx.core.view.marginBottom
-import androidx.core.view.marginTop
+import androidx.core.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
@@ -29,6 +28,7 @@ import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
+import kotlin.random.Random
 
 class LessonAdapter(
     var dailySchedule: List<Lesson>,
@@ -39,12 +39,15 @@ class LessonAdapter(
     var disabledColor: Int,
     var headColor: Int,
     var headCurrentColor: Int
-) : RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
             0xffeb4141.toInt(),   // Exam, Credit,..
             0xff29b6f6.toInt()    // Other
         )
+
+        const val VIEW_TYPE_NORMAL = 0
+        const val VIEW_TYPE_EMPTY = 1
     }
 
     private var itemCount = 0
@@ -101,26 +104,52 @@ class LessonAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.item_schedule, parent, false)
-        return ViewHolder(view) { (lessonClick as Action1).invoke(it) }
+    override fun getItemViewType(position: Int): Int {
+        return if (dailySchedule[position].isEmpty) {
+            VIEW_TYPE_EMPTY
+        } else {
+            VIEW_TYPE_NORMAL
+        }
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind(this)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_NORMAL -> {
+                val view = LayoutInflater
+                    .from(parent.context)
+                    .inflate(R.layout.item_lesson, parent, false)
+                ViewHolder(view) { (lessonClick as Action1).invoke(it) }
+            }
+            VIEW_TYPE_EMPTY -> {
+                val view = LayoutInflater
+                    .from(parent.context)
+                    .inflate(R.layout.item_lesson_empty, parent, false)
+                ViewHolderEmpty(view)
+            }
+            else -> onCreateViewHolder(parent, VIEW_TYPE_NORMAL)
+        }
+    }
+
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+        when (viewHolder.itemViewType) {
+            VIEW_TYPE_NORMAL -> {
+                (viewHolder as ViewHolder).bind(this)
+            }
+            VIEW_TYPE_EMPTY -> {
+                (viewHolder as ViewHolderEmpty).bind(this)
+            }
+        }
     }
 
     class ViewHolder(val view: View, onLessonClick: (Lesson) -> Unit) :
         RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
-        private val lessonTime = view.findViewById<TextView>(R.id.text_schedule_time)!!
+        private val lessonTime = view.findViewById<TextView>(R.id.text_lesson_time)!!
         private val lessonTime2 = view.findViewById<TextView>(R.id.text_schedule_time2)!!
         private val lessonType = view.findViewById<TextView>(R.id.text_schedule_type)!!
-        private val lessonTeachers = view.findViewById<TextView>(R.id.text_schedule_teachers)!!
-        private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_schedule_auditoriums)!!
+        private val lessonTeachers = view.findViewById<TextView>(R.id.text_lesson_teachers_title)!!
+        private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_lesson_auditoriums_title)!!
         private val lessonPlace = view.findViewById<LinearLayout>(R.id.layout_lesson)!!
         private val timeline = view.findViewById<View>(R.id.lesson_timeline)
         private val lessonInfo = view.findViewById<TextView>(R.id.lesson_info)
@@ -129,15 +158,33 @@ class LessonAdapter(
 
         init {
             lessonPlace.setOnClickListener { onLessonClick(lesson) }
+            (lessonPlace.layoutParams as FrameLayout.LayoutParams).marginStart = (
+                    lessonTime.maxEms * lessonTime.paint.fontSpacing +
+                            1.5 * lessonTimeLayout.marginStart
+                    ).toInt()
+
             lessonTimeLayout.minimumHeight = (
                     lessonTime.marginTop * 1.7f + lessonTime2.marginBottom * 1.7f +
                             lessonTime.paint.fontSpacing + lessonTime2.paint.fontSpacing
                     ).toInt()
+
+            setTimeLineMargins(prevEqual = false, nextEqual = false)
+        }
+
+        private fun setTimeLineMargins(prevEqual: Boolean, nextEqual: Boolean) {
             val dpTop = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, view.resources.displayMetrics)
             val dpBottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.7f, view.resources.displayMetrics)
             val timeLineParams = (timeline.layoutParams as FrameLayout.LayoutParams)
-            timeLineParams.topMargin = (lessonTime.marginTop + lessonTime.paint.fontSpacing + dpTop).toInt()
-            timeLineParams.bottomMargin = (lessonTime2.marginBottom + lessonTime2.paint.fontSpacing + dpBottom).toInt()
+            timeLineParams.topMargin = if (prevEqual) {
+                0
+            } else {
+                (lessonTime.marginTop + lessonTime.paint.fontSpacing + dpTop).toInt()
+            }
+            timeLineParams.bottomMargin = if (nextEqual) {
+                0
+            } else {
+                (lessonTime2.marginBottom + lessonTime2.paint.fontSpacing + dpBottom).toInt()
+            }
         }
 
         // ViewHolder class is not inner because recycler views have common pool
@@ -146,14 +193,11 @@ class LessonAdapter(
             lesson = adapter.dailySchedule[layoutPosition]
 
 
-            val lessonIsEmpty = lesson.isEmpty
-
-            val prevEqual =
-                !lessonIsEmpty && (layoutPosition != 0 && adapter.dailySchedule[layoutPosition - 1].equalsTime(lesson))
+            val prevEqual = layoutPosition != 0 &&
+                    adapter.dailySchedule[layoutPosition - 1].equalsTime(lesson)
             val nextEqual =
-                !lessonIsEmpty && (layoutPosition != adapter.itemCount - 1) && adapter.dailySchedule[layoutPosition + 1].equalsTime(
-                    lesson
-                )
+                (layoutPosition != adapter.itemCount - 1) &&
+                        adapter.dailySchedule[layoutPosition + 1].equalsTime(lesson)
 
             setTime(prevEqual, nextEqual, layoutPosition)
 
@@ -170,7 +214,6 @@ class LessonAdapter(
                         lessonPlace.context.resources.displayMetrics
                     )
                     view.setPadding(0, 0,0, (actionBarHeight * 1.6).toInt())
-
                 }
             } else {
                 view.setPadding(0, 0,0, 0)
@@ -180,9 +223,9 @@ class LessonAdapter(
             val enabledTo =
                 lesson.dateTo >= adapter.date || adapter.filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
             val enabled =
-                if (lesson.isImportant) lessonIsEmpty || enabledTo else lessonIsEmpty || enabledFrom && enabledTo
+                if (lesson.isImportant) enabledTo else enabledFrom && enabledTo
 
-            setFooter(nextEqual, enabled)
+            setFooter(enabled)
             setInfo(nextEqual)
             setLessonType(enabled)
             setAuditoriums(enabled)
@@ -191,57 +234,32 @@ class LessonAdapter(
         }
 
         private fun setTime(prevEqual: Boolean, nextEqual: Boolean, position: Int) {
-            //val set = ConstraintSet()
-            val dp5 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, lessonPlace.context.resources.displayMetrics).toInt()
-            //set.clone(lessonPlace)
+            val marginVerticalTimeLayout = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, view.resources.displayMetrics).toInt()
+            val timeLayoutParams = lessonTimeLayout.layoutParams as FrameLayout.LayoutParams
+            setTimeLineMargins(prevEqual, nextEqual)
             if (prevEqual && nextEqual) {
-//                set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, 0)
-//                set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, 0)
-//                set.connect(timeline.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-//                set.connect(timeline.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-                lessonTimeLayout.background = ColorDrawable(lessonPlace.context.getColor(R.color.lessonTimeBackground))
+                timeLayoutParams.topMargin = 0
+                timeLayoutParams.bottomMargin = 0
             } else {
                 if (prevEqual) {
-//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, 0)
-//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, dp5)
-                    lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_bottom)
-//                    set.connect(timeline.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-//                    set.connect(timeline.id, ConstraintSet.BOTTOM, lessonTime2.id, ConstraintSet.TOP)
+                    timeLayoutParams.topMargin = 0
+                    timeLayoutParams.bottomMargin = marginVerticalTimeLayout
                 } else {
-//                    set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
                     if (nextEqual) {
-//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
-//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, 0)
-                        lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
-//                        set.connect(timeline.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-//                        set.connect(timeline.id, ConstraintSet.TOP, lessonTime.id, ConstraintSet.BOTTOM)
+                        timeLayoutParams.topMargin = marginVerticalTimeLayout
+                        timeLayoutParams.bottomMargin = 0
                     } else {
-//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.BOTTOM, dp5)
-//                        set.setMargin(lessonTimeLayout.id, ConstraintSet.TOP, dp5)
-//                        set.connect(timeline.id, ConstraintSet.BOTTOM, lessonTime2.id, ConstraintSet.TOP)
-//                        set.connect(timeline.id, ConstraintSet.TOP, lessonTime.id, ConstraintSet.BOTTOM)
-                        lessonTimeLayout.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time)
+                        timeLayoutParams.topMargin = marginVerticalTimeLayout
+                        timeLayoutParams.bottomMargin = marginVerticalTimeLayout
                     }
                 }
             }
-            if (lesson.isEmpty) {
-                //lessonTimeLayout.visibility = View.GONE
-            } else {
-                //lessonTimeLayout.visibility = View.VISIBLE
-            }
             if (prevEqual) {
                 lessonTime.visibility = View.INVISIBLE
-                //set.connect(lessonTimeLayout.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-                //set.constrainHeight(lessonTimeLayout.id, ConstraintSet.MATCH_CONSTRAINT)
             } else {
-                if (lesson.isEmpty) {
-                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time)
-                    lessonTime.setTextColor(adapter.disabledColor)
-                } else if (adapter.currLessonOrder == lesson.order) {
-                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
+                if (adapter.currLessonOrder == lesson.order) {
                     lessonTime.setTextColor(adapter.headCurrentColor)
                 } else {
-                    //lessonTime.background = lessonPlace.context.getDrawable(R.drawable.shape_lesson_time_upper)
                     val deltaOrder = adapter.currLessonOrder - lesson.order
                     if (deltaOrder in 1..position && adapter.dailySchedule[position - deltaOrder].isEmpty) {
                         lessonTime.setTextColor(adapter.headCurrentColor)
@@ -251,7 +269,7 @@ class LessonAdapter(
                 }
                 lessonTime.visibility = View.VISIBLE
             }
-            if (nextEqual || lesson.isEmpty) {
+            if (nextEqual) {
                 lessonTime2.visibility = View.GONE
             } else {
                 if (adapter.currLessonOrder == lesson.order) {
@@ -271,27 +289,21 @@ class LessonAdapter(
             lessonTime2.setText(timeEnd, TextView.BufferType.NORMAL)
         }
 
-        private fun setFooter(nextEqual: Boolean, enabled: Boolean) {
-            if (lesson.isEmpty) {
-                timeline.visibility = View.GONE
-            } else {
-                timeline.background = ColorDrawable(if (enabled)
+        private fun setFooter(enabled: Boolean) {
+            timeline.background = ColorDrawable(
+                if (enabled) {
                     (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-                else
+                } else {
                     adapter.disabledColor
-                )
-                timeline.visibility = View.VISIBLE
-            }
+                }
+            )
+            timeline.visibility = View.VISIBLE
+
             lessonPlace.background = null
-//            if (nextEqual) {
-//                lessonPlace.background = null
-//            } else {
-//                lessonPlace.background = lessonPlace.context.getDrawable(R.drawable.bottom_stroke)
-//            }
         }
 
         private fun setInfo(nextEqual: Boolean) {
-            if (lesson.isEmpty || nextEqual) {
+            if (nextEqual) {
                 lessonInfo.visibility = View.GONE
                 return
             }
@@ -354,18 +366,31 @@ class LessonAdapter(
 
 
         private fun setLessonType(enabled: Boolean) {
-            val type = if (adapter.showGroup)
-                lesson.type.toUpperCase() + "  " + lesson.group.title
+            val builder = SpannableStringBuilder()
+            val color = if (enabled)
+                (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
             else
-                lesson.type.toUpperCase()
+                adapter.disabledColor
 
-            lessonType.setTextColor(
-                if (enabled)
-                    (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-                else
-                    adapter.disabledColor
+            builder.append("" + lesson.type.capitalize(),
+                ForegroundColorSpan(color),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-            lessonType.setText(type, TextView.BufferType.NORMAL)
+            if (adapter.showGroup) builder.append("  " + lesson.group.title)
+
+            if (Random.nextBoolean()) {
+                builder.append("  #Важное"//,
+//                    ForegroundColorSpan(0xffd2b4de.toInt()),
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            if (Random.nextBoolean()) {
+                builder.append("  #Сдано"//,
+//                    ForegroundColorSpan(0xff27ae60.toInt()),
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            lessonType.setText(builder, TextView.BufferType.NORMAL)
             lessonType.isEnabled = enabled
         }
 
@@ -507,6 +532,12 @@ class LessonAdapter(
                 lessonTeachers.visibility = View.VISIBLE
             }
         }
-
     }
+
+    class ViewHolderEmpty(view: View): RecyclerView.ViewHolder(view) {
+        fun bind(adapter: LessonAdapter) {
+            (itemView as TextView).text = adapter.dailySchedule[layoutPosition].time.first
+        }
+    }
+
 }
