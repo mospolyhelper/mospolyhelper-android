@@ -10,6 +10,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.Cookie
+import io.ktor.http.Url
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ScheduleClient {
     companion object {
@@ -27,12 +30,9 @@ class ScheduleClient {
     suspend fun getCookies() {
         val client = HttpClient()
         val data = client.get<String>(BASE_URL) {
-            header("referer",
-                BASE_URL
-            )
-            header("host",
-                BASE_URL
-            )
+            header("referer", BASE_URL)
+            //header("host", BASE_URL)
+            //header("X-Requested-With", "XMLHttpRequest")
         }
         Log.i(TAG, data)
         val regex = Regex("cookie=\".*?;")
@@ -66,9 +66,9 @@ class ScheduleClient {
         }
 
         return scheduleClient.get(GET_SCHEDULE) {
-            header("referer",
-                BASE_URL
-            )
+            header("referer", BASE_URL)
+            // Header below is for correct json error status when schedule is not ready but no html
+            header("X-Requested-With", "XMLHttpRequest")
             parameter("group", groupTitle)
             parameter("session", if (isSession) 1 else 0)
         }

@@ -1,26 +1,21 @@
 package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
-import android.content.Context
-import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
+import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.StaticDI
 import java.time.LocalDate
 
-class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfoViewModel::class.java.simpleName) {
+class LessonInfoViewModel(
+    mediator: Mediator<String, ViewModelMessage>,
+    val deadlinesRepository: DeadlinesRepository
+) : ViewModelBase(mediator, LessonInfoViewModel::class.java.simpleName) {
     companion object {
         const val LessonInfo = "LessonInfo"
     }
     var lesson: Lesson = Lesson.getEmpty(0)
     var date: LocalDate = LocalDate.now()
-    private val database: AppDatabase = AppDatabase.getDatabase(App.context)
-    var deadlinesRepository =
-        DeadlinesRepository(
-            database
-        )
 
     init {
         subscribe(::handleMessage)
@@ -33,10 +28,13 @@ class LessonInfoViewModel : ViewModelBase(StaticDI.viewModelMediator, LessonInfo
     private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
             LessonInfo -> {
-                val list = message.content as List<*>
-                lesson = list[0] as Lesson
-                date = list[1] as LocalDate
+                lesson = message.content[0] as Lesson
+                date = message.content[1] as LocalDate
             }
         }
+    }
+
+    fun openTeacherInfo(name: String) {
+
     }
 }

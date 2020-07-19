@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_menu_schedule"
             android:title="@string/nav_schedule" />
         <item
+            android:id="@+id/nav_deadlines"
+            android:icon="@drawable/nav_deadlines"
+            android:title="@string/nav_deadlines" />
+        <item
             android:id="@+id/nav_addresses"
             android:icon="@drawable/location_on_24px"
             android:title="@string/nav_addresses" />
@@ -16,10 +20,6 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/nav_settings_24px"
             android:title="@string/nav_settings"/>
-        <item
-            android:id="@+id/nav_deadlines"
-            android:icon="@drawable/nav_deadlines"
-            android:title="@string/nav_deadlines"/>
     </group>
 
 </menu>
