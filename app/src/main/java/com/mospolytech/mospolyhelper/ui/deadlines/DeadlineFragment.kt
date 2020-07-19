@@ -35,6 +35,8 @@ import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlin.math.roundToInt
+import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class DeadlineFragment : Fragment(),
@@ -48,7 +50,7 @@ class DeadlineFragment : Fragment(),
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
     private var isVibrated = false
-    private val viewModel by viewModels<DeadlineViewModel>()
+    private val viewModel by viewModel<DeadlineViewModel>()
 
     enum class DataType {
         FULL, NOTCOMP, FIND
