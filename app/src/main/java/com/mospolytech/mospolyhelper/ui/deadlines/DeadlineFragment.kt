@@ -15,12 +15,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,18 +33,25 @@ import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
+import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.coroutines.CoroutineContext
 
 
-class DeadlineFragment : Fragment(),
+class DeadlineFragment : Fragment(), CoroutineScope,
     View.OnClickListener {
 
     //private val viewModelFactory = ScheduleViewModel.Factory()
@@ -52,9 +61,13 @@ class DeadlineFragment : Fragment(),
     private lateinit var bot: AddBottomSheetDialogFragment
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
+    //private lateinit var lessons: Set<String>
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
 
+    private val job = SupervisorJob()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + job
 
 
     enum class DataType {
@@ -76,10 +89,12 @@ class DeadlineFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mainActivity = activity as MainActivity
         bot = AddBottomSheetDialogFragment.newInstance(requireContext())
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        //lessons = viewModel.getLessons()
         setRecycler()
         defaultData()
         editDeadline()
@@ -87,6 +102,11 @@ class DeadlineFragment : Fragment(),
         receiveName()
         setToolbar()
         fab.setOnClickListener(this)
+        viewModel.onMessage += {
+            launch(Dispatchers.Main) {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
