@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.widget.addTextChangedListener
@@ -61,7 +62,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     private lateinit var bot: AddBottomSheetDialogFragment
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
-    //private lateinit var lessons: Set<String>
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
 
@@ -89,12 +89,10 @@ class DeadlineFragment : Fragment(), CoroutineScope,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mainActivity = activity as MainActivity
         bot = AddBottomSheetDialogFragment.newInstance(requireContext())
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        //lessons = viewModel.getLessons()
         setRecycler()
         defaultData()
         editDeadline()
@@ -102,11 +100,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         receiveName()
         setToolbar()
         fab.setOnClickListener(this)
-        viewModel.onMessage += {
-            launch(Dispatchers.Main) {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
