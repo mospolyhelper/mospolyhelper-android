@@ -43,7 +43,7 @@ val appModule = module {
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
 
     viewModel<AddressesViewModel> { AddressesViewModel(get(), get()) }
-    viewModel<DeadlineViewModel> { DeadlineViewModel(get(), get()) }
+    viewModel<DeadlineViewModel> { DeadlineViewModel(get(), get(), get()) }
     viewModel<DialogFragmentViewModel> { DialogFragmentViewModel(get(), get()) }
 
     viewModel<ScheduleViewModel> { ScheduleViewModel.Factory.create(get(), get(), get(), get()) }
