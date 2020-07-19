@@ -2,6 +2,9 @@
 
   <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
     <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorOnPrimary">@color/textColorPrimary</item>
+    <item name="colorOnSurface">@color/textColorPrimary</item>
+    <item name="android:statusBarColor">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorSecondary">@color/colorSecondary</item>
     <item name="colorAccent">@color/colorSecondary</item>
@@ -29,7 +32,9 @@
 
   <style name="AppTheme.MaterialToggleButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
     <item name="colorPrimary">@color/colorSecondary</item>
-    <item name="colorOnSurface">@color/colorSecondary</item>
+    <item name="colorSurface">@color/secondary_text_color</item>
+    <item name="strokeWidth">1dp</item>
+    <item name="colorOnSurface">@color/secondary_text_color</item>
   </style>
 
   <style name="AppTheme.Splash">

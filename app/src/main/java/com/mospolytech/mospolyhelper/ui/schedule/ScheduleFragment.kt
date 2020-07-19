@@ -1,18 +1,14 @@
 package com.mospolytech.mospolyhelper.ui.schedule
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
-import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableList
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -21,23 +17,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
-import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedFilter
-import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchAdapter
-import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchSelectFragment
-import com.mospolytech.mospolyhelper.ui.schedule.advanced_search.SimpleFilter
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.coroutines.CoroutineContext
@@ -50,34 +41,20 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         fun newInstance() = ScheduleFragment()
     }
 
-    private val viewModelFactory = ScheduleViewModel.Factory()
-
     private lateinit var textGroupTitle: AutoCompleteTextView
     private lateinit var viewPager: ViewPager2
     private lateinit var swipeToRefresh: SwipeRefreshLayout
-    private var checkedGroups = ObservableArrayList<Int>()
-    private var checkedLessonTypes = ObservableArrayList<Int>()
-    private var checkedTeachers = ObservableArrayList<Int>()
-    private var checkedLessonTitles = ObservableArrayList<Int>()
-    private var checkedAuditoriums = ObservableArrayList<Int>()
-    private var schedules: Iterable<Schedule?> = emptyList()
-    private var lessonTitles = listOf<String>()
-    private var lessonTeachers = listOf<String>()
-    private var lessonAuditoriums = listOf<String>()
-    private var lessonTypes = listOf<String>()
 
-    private var downloadSchedulesJob = SupervisorJob()
     private val job = SupervisorJob()
 
     private lateinit var scheduleSessionFilter: Switch
     private lateinit var scheduleDateFilter: Spinner
     private lateinit var scheduleEmptyPair: Switch
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var settingsDrawer: DrawerLayout
     private lateinit var btnGroup: MaterialButtonToggleGroup
     private lateinit var homeBtn: FloatingActionButton
 
-    private val viewModel by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
+    private val viewModel by viewModel<ScheduleViewModel>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + job
@@ -182,7 +159,6 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 
         setDrawer()
         setScheduleViews()
-        setBottomSheet(view)
         bindViewModel()
     }
 
@@ -340,211 +316,13 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         homeBtn.setOnClickListener { viewModel.goHome() }
     }
 
-    private fun setBottomSheet(view: View) {
-        val bottomSheet = view.findViewById<LinearLayout>(R.id.bottom_sheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        val textGroups = view.findViewById<TextView>(R.id.text_groups)
-        textGroups.setOnClickListener {
-            if (activity == null) {
-                return@setOnClickListener
-            }
-            val dialog = AdvancedSearchSelectFragment.newInstance()
-            dialog.show(requireActivity().supportFragmentManager, "qq")
-            dialog.setAdapter(AdvancedSearchAdapter(
-                SimpleFilter(viewModel.groupList.value!!, checkedGroups)
-            ))
-        }
-        val textLessonTitles = view.findViewById<TextView>(R.id.text_lesson_titles)
-        val textTeachers = view.findViewById<TextView>(R.id.text_teachers)
-        val textAuditoriums = view.findViewById<TextView>(R.id.text_auditoriums)
-        val textLessonTypes = view.findViewById<TextView>(R.id.text_lesson_types)
-        val applyButton = view.findViewById<Button>(R.id.btn_search)
-
-        val progressBar = bottomSheet.findViewById<ProgressBar>(R.id.progressBar)
-        val progressText = bottomSheet.findViewById<TextView>(R.id.text_progress)
-        val cancelBtn = bottomSheet.findViewById<Button>(R.id.btn_cancel)
-        cancelBtn.setOnClickListener {
-            downloadSchedulesJob.cancel()
-            cancelBtn.visibility = View.GONE
-        }
-        checkedGroups.addOnListChangedCallback(ListChangedObserver {
-            textGroups.text = checkedGroups.joinToString { viewModel.groupList.value!![it] }
-            if (textGroups.text.isEmpty()) {
-                textGroups.text = getString(R.string.all_groups)
-            }
-            textLessonTitles.visibility = View.GONE
-            this.checkedLessonTitles.clear()
-            textTeachers.visibility = View.GONE
-            this.checkedTeachers.clear()
-            textAuditoriums.visibility = View.GONE
-            this.checkedAuditoriums.clear()
-            textLessonTypes.visibility = View.GONE
-            this.checkedLessonTypes.clear()
-            applyButton.visibility = View.GONE
-        })
-
-        val downloadSchedulesBtn = view.findViewById<Button>(R.id.btn_acceptGroups)
-        downloadSchedulesBtn.setOnClickListener {
-            downloadSchedulesJob = SupervisorJob()
-            async(Dispatchers.Main + downloadSchedulesJob) {
-                downloadSchedulesBtn.isEnabled = false
-                textGroups.isEnabled = false
-                textLessonTitles.visibility = View.GONE
-                textTeachers.visibility = View.GONE
-                textAuditoriums.visibility = View.GONE
-                textLessonTypes.visibility = View.GONE
-                applyButton.visibility = View.GONE
-                progressBar.visibility = View.VISIBLE
-                progressText.visibility = View.VISIBLE
-                cancelBtn.visibility = View.VISIBLE
-                try {
-                    val pack = viewModel.getAdvancedSearchData(
-                        if (checkedGroups.isEmpty()) viewModel.groupList.value else
-                            checkedGroups.map { viewModel.groupList.value[it] }
-                    ) {
-                        this@ScheduleFragment.launch(Dispatchers.Main) {
-                            synchronized(progressText) {
-                                progressBar.progress = (it * 10000).toInt()
-                                progressText.text = "${(it * 100).toInt()} %"
-                            }
-                        }
-                    }
-
-
-                    this@ScheduleFragment.lessonTitles = pack.lessonTitles.toList()
-                    this@ScheduleFragment.lessonTypes = pack.lessonTypes.toList()
-                    this@ScheduleFragment.lessonTeachers = pack.lessonTeachers.toList()
-                    this@ScheduleFragment.lessonAuditoriums = pack.lessonAuditoriums.toList()
-                    this@ScheduleFragment.schedules = pack.schedules
-
-                    Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
-                    downloadSchedulesBtn.isEnabled = true
-                    textGroups.isEnabled = true
-                    textLessonTitles.visibility = View.VISIBLE
-                    textTeachers.visibility = View.VISIBLE
-                    textAuditoriums.visibility = View.VISIBLE
-                    textLessonTypes.visibility = View.VISIBLE
-                    applyButton.visibility = View.VISIBLE
-
-                    progressBar.visibility = View.GONE
-                    progressText.visibility = View.GONE
-                    progressBar.progress = 0
-                    progressText.text = "0 %"
-                    cancelBtn.visibility = View.GONE
-                } catch (ex: Exception) {
-                    downloadSchedulesBtn.isEnabled = true
-                    textGroups.isEnabled = true
-                    Toast.makeText(context, "Загрузка отменена", Toast.LENGTH_SHORT).show()
-                    progressBar.progress = 0
-                    progressText.text = "0 %"
-                    textLessonTitles.visibility = View.GONE
-                    textTeachers.visibility = View.GONE
-                    textAuditoriums.visibility = View.GONE
-                    textLessonTypes.visibility = View.GONE
-                    applyButton.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    cancelBtn.visibility = View.GONE
-                    progressText.visibility = View.GONE
-                }
-            }
-        }
-
-
-        textLessonTitles.setOnClickListener {
-            val dialog = AdvancedSearchSelectFragment.newInstance()
-            dialog.show(requireActivity().supportFragmentManager, "qq")
-            dialog.setAdapter(AdvancedSearchAdapter(
-                AdvancedFilter(lessonTitles, checkedLessonTitles)
-            ))
-        }
-        checkedLessonTitles.addOnListChangedCallback(ListChangedObserver {
-            textLessonTitles.text = checkedLessonTitles.joinToString { lessonTitles[it] }
-            if (textLessonTitles.text.isEmpty()) {
-                textLessonTitles.text = getString(R.string.all_subjects)
-            }
-        })
-
-        textTeachers.setOnClickListener {
-            val dialog = AdvancedSearchSelectFragment.newInstance()
-            dialog.show(requireActivity().supportFragmentManager, "qq")
-            dialog.setAdapter(
-                AdvancedSearchAdapter(
-                    AdvancedFilter(lessonTeachers, checkedTeachers))
-            )
-        }
-        checkedTeachers.addOnListChangedCallback(ListChangedObserver {
-            textTeachers.text = checkedTeachers.joinToString { lessonTeachers[it] }
-            if (textTeachers.text.isEmpty()) {
-                textTeachers.text = getString(R.string.all_teachers)
-            }
-        })
-
-        textAuditoriums.setOnClickListener {
-            val dialog = AdvancedSearchSelectFragment.newInstance()
-            dialog.show(requireActivity().supportFragmentManager, "qq")
-            dialog.setAdapter(AdvancedSearchAdapter(
-                AdvancedFilter(lessonAuditoriums, checkedAuditoriums)))
-        }
-        checkedAuditoriums.addOnListChangedCallback(ListChangedObserver {
-            textAuditoriums.text = checkedAuditoriums.joinToString { lessonAuditoriums[it] }
-            if (textAuditoriums.text.isEmpty()) {
-                textAuditoriums.text = getString(R.string.all_auditoriums)
-            }
-        })
-
-        textLessonTypes.setOnClickListener {
-            val dialog = AdvancedSearchSelectFragment.newInstance()
-            dialog.show(requireActivity().supportFragmentManager, "qq")
-            dialog.setAdapter(AdvancedSearchAdapter(
-                SimpleFilter(lessonTypes, checkedLessonTypes)))
-        }
-        this.checkedLessonTypes.addOnListChangedCallback(ListChangedObserver {
-            textLessonTypes.text = checkedLessonTypes.joinToString { lessonTypes[it] }
-            if (textLessonTypes.text.isEmpty()) {
-                textLessonTypes.text = getString(R.string.all_lesson_types)
-            }
-        })
-        applyButton.setOnClickListener {
-            setUpSchedule(null, true)
-            val filter = Schedule.AdvancedSearch.Builder()
-                .lessonTitles(
-                    if (checkedLessonTitles.isEmpty()) lessonTitles
-                    else checkedLessonTitles.map { lessonTitles[it] })
-                .lessonTypes(
-                    if (this.checkedLessonTypes.isEmpty()) lessonTypes
-                    else checkedLessonTypes.map { lessonTypes[it] })
-                .lessonAuditoriums(
-                    if (checkedAuditoriums.isEmpty()) lessonAuditoriums
-                    else checkedAuditoriums.map { lessonAuditoriums[it] }
-                )
-                .lessonTeachers(
-                    if (checkedTeachers.isEmpty()) lessonTeachers
-                    else checkedTeachers.map { lessonTeachers[it] }
-                )
-                .build()
-            async(Dispatchers.IO) {
-                val newSchedule = filter.getFiltered(schedules)
-
-                viewModel.isAdvancedSearch = true
-
-                withContext(Dispatchers.Main) {
-                    viewModel.schedule.value = newSchedule
-                    textGroupTitle.setText("...")
-                }
-            }
-        }
-    }
-
     private fun bindViewModel() {
         combine(
             viewModel.schedule,
             viewModel.showEmptyLessons,
-            viewModel.scheduleFilter,
-            viewModel.isLoading
-        ) { schedule, _, _, isLoading ->
-            setUpSchedule(schedule, isLoading)
+            viewModel.scheduleFilter
+        ) { schedule, _, _ ->
+            setUpSchedule(schedule, viewModel.isLoading)
             swipeToRefresh.isRefreshing = false
         }.launchIn(lifecycleScope)
 
@@ -568,6 +346,10 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 scheduleSessionFilter.isChecked = it.sessionFilter
             }
         }.launchIn(lifecycleScope)
+
+        viewModel.advancedSearchStarted += {
+            textGroupTitle.setText("...")
+        }
     }
 
     override fun onResume() {
@@ -583,7 +365,13 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.schedule_advanced_search -> bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            R.id.schedule_advanced_search -> {
+                findNavController()
+                    .navigate(
+                        ScheduleFragmentDirections
+                            .actionScheduleFragmentToAdvancedSearchFragment()
+                    )
+            }
             R.id.schedule_filter -> {
                 settingsDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 settingsDrawer.openDrawer(GravityCompat.END)
@@ -606,6 +394,12 @@ class ScheduleFragment : Fragment(), CoroutineScope {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        viewModel.onMessage += {
+            launch(Dispatchers.Main) {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         val bottomAppBar = requireView().findViewById<BottomAppBar>(R.id.bottomAppBar) // TODO: Change
@@ -614,76 +408,8 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         bottomAppBar.setNavigationOnClickListener { drawer.openDrawer(GravityCompat.START) }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        prepareViewModelFactory(PreferenceManager.getDefaultSharedPreferences(context))
-    }
-
-    private fun prepareViewModelFactory(prefs: SharedPreferences) {
-
-        val dateFilter = Schedule.Filter.DateFilter.values()[
-                prefs.getInt(PreferenceKeys.ScheduleDateFilter,
-                    Schedule.Filter.default.dateFilter.ordinal)]
-        val sessionFilter = prefs.getBoolean(PreferenceKeys.ScheduleSessionFilter,
-            Schedule.Filter.default.sessionFilter)
-
-        viewModelFactory.scheduleFilter = Schedule.Filter.Builder(
-            Schedule.Filter.default)
-            .dateFilter(dateFilter)
-            .sessionFilter(sessionFilter)
-            .build()
-
-        viewModelFactory.groupTitle = prefs.getString(PreferenceKeys.ScheduleGroupTitle,
-            DefaultSettings.ScheduleGroupTitle)
-
-        viewModelFactory.isSession = try {
-            prefs.getBoolean(PreferenceKeys.ScheduleTypePreference,
-                DefaultSettings.ScheduleTypePreference);
-        } catch (ex: Exception) {
-            prefs.getInt(PreferenceKeys.ScheduleTypePreference, 0) == 1;
-        }
-
-        viewModelFactory.showEmptyLessons = prefs.getBoolean(PreferenceKeys.ScheduleShowEmptyLessons,
-            DefaultSettings.ScheduleShowEmptyLessons)
-
-        viewModel.onMessage += {
-            launch(Dispatchers.Main) {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     override fun onDestroy() {
         coroutineContext.cancelChildren()
         super.onDestroy()
-    }
-
-    class ListChangedObserver(private val block: (ObservableList<*>?) -> Unit) : ObservableList.OnListChangedCallback<ObservableList<*>>() {
-        override fun onChanged(sender: ObservableList<*>?) = block(sender)
-
-        override fun onItemRangeRemoved(
-            sender: ObservableList<*>?,
-            positionStart: Int,
-            itemCount: Int
-        ) = block(sender)
-
-        override fun onItemRangeMoved(
-            sender: ObservableList<*>?,
-            fromPosition: Int,
-            toPosition: Int,
-            itemCount: Int
-        ) = block(sender)
-
-        override fun onItemRangeInserted(
-            sender: ObservableList<*>?,
-            positionStart: Int,
-            itemCount: Int
-        ) = block(sender)
-
-        override fun onItemRangeChanged(
-            sender: ObservableList<*>?,
-            positionStart: Int,
-            itemCount: Int
-        ) = block(sender)
     }
 }
