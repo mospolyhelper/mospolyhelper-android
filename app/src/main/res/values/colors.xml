@@ -2,7 +2,7 @@
 <resources>
   <color name="splashScreenStartColor">#00b0ff</color>
   <color name="splashScreenEndColor">#ff5722</color>
-    <color name="colorPrimary">#F5F5F5</color>
+    <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#EEEEF0</color>
   <color name="colorPrimaryLight">#FFFFFF</color>
   <color name="textColorPrimary">#000000</color>

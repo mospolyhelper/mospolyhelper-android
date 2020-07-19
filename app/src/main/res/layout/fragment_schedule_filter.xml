@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:background="@drawable/schedule_seacrh_dialog_background_inset"
@@ -8,26 +9,27 @@
         android:id="@+id/button_check_all"
         android:layout_marginTop="15dp"
         android:layout_marginHorizontal="10dp"
-        android:text="Select all"
+        android:text="@string/select_all"
         android:background="?android:selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        
         android:layout_marginBottom="10dp"
-                    android:maxLength="100" 
-                android:maxLines="1"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                android:focusedByDefault="true" />
+        android:focusedByDefault="true"
+        android:maxLength="100"
+        android:maxLines="1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:iconifiedByDefault="false" />
 <androidx.recyclerview.widget.RecyclerView
         android:layout_marginHorizontal="10dp"
         android:id="@+id/recycler_advanced_search"
         android:scrollbars="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
