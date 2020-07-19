@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.deadlines
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -15,28 +16,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
-import com.mospolytech.mospolyhelper.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlin.math.roundToInt
 import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class DeadlineFragment : Fragment(),
@@ -51,6 +54,8 @@ class DeadlineFragment : Fragment(),
     private lateinit var vibrator: Vibrator
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
+
+
 
     enum class DataType {
         FULL, NOTCOMP, FIND
@@ -72,7 +77,7 @@ class DeadlineFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
-        bot = AddBottomSheetDialogFragment.newInstance()
+        bot = AddBottomSheetDialogFragment.newInstance(requireContext())
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
@@ -90,7 +95,7 @@ class DeadlineFragment : Fragment(),
     }
 
     private fun receiveName() {
-        viewModel.nameReceiver.observe(viewLifecycleOwner, Observer {
+        viewModel.nameReceiver.observe(viewLifecycleOwner, Observer<String> {
             bot.setName(it)
             bot.show(fm,
                 AddBottomSheetDialogFragment.TAG
@@ -99,7 +104,7 @@ class DeadlineFragment : Fragment(),
     }
 
     private fun editDeadline() {
-        viewModel.edit.observe(viewLifecycleOwner, Observer {
+        viewModel.edit.observe(viewLifecycleOwner, Observer<Deadline> {
             bot.setEdit(it)
             bot.show(fm,
                 AddBottomSheetDialogFragment.TAG
@@ -108,7 +113,7 @@ class DeadlineFragment : Fragment(),
     }
 
     private fun deleteDeadline() {
-        viewModel.delete.observe(viewLifecycleOwner, Observer {
+        viewModel.delete.observe(viewLifecycleOwner, Observer<Deadline> {
             viewModel.deleteOne(it)
             val snackbar = Snackbar.make(requireView(),
                 R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
@@ -131,7 +136,7 @@ class DeadlineFragment : Fragment(),
 
     private fun defaultData() {
         type = DataType.FULL
-        viewModel.data.observe(viewLifecycleOwner, Observer {
+        viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
             if (recycler.adapter == null) {
                 recycler.adapter =
                     MyDeadlineRecyclerViewAdapter(
@@ -150,7 +155,7 @@ class DeadlineFragment : Fragment(),
         unObserve()
         when(typeData){
             DataType.FULL -> {
-                viewModel.data.observe(viewLifecycleOwner, Observer {
+                viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
                     if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
                         (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
                     } else {
@@ -165,7 +170,7 @@ class DeadlineFragment : Fragment(),
                 })
             }
             DataType.FIND -> {
-                viewModel.foundData.observe(viewLifecycleOwner, Observer {
+                viewModel.foundData.observe(viewLifecycleOwner, Observer<List<Deadline>> {
                     if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
                         (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
                     } else {
@@ -180,7 +185,7 @@ class DeadlineFragment : Fragment(),
                 })
             }
             DataType.NOTCOMP -> {
-                viewModel.dataCurrent.observe(viewLifecycleOwner, Observer {
+                viewModel.dataCurrent.observe(viewLifecycleOwner, Observer<List<Deadline>> {
                     (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
                     noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
