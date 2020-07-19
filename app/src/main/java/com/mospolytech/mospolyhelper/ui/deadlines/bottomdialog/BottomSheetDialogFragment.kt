@@ -146,7 +146,6 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
         viewModel.newRepository()
         chipId = chipLow.id
         when (openType) {
