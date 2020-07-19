@@ -30,7 +30,7 @@ val appModule = module {
     single<ScheduleDao> { ScheduleDao() }
     single<GroupListDao> { GroupListDao() }
 
-    single {
+    single<AppDatabase> {
         Room.databaseBuilder(
         App.context,
         AppDatabase::class.java, "database")
