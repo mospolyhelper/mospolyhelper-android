@@ -44,7 +44,7 @@ val appModule = module {
 
     viewModel<AddressesViewModel> { AddressesViewModel(get(), get()) }
     viewModel<DeadlineViewModel> { DeadlineViewModel(get(), get()) }
-    viewModel<DialogFragmentViewModel> { DialogFragmentViewModel(get(), get()) }
+    viewModel<DialogFragmentViewModel> { DialogFragmentViewModel(get(), get(), get()) }
 
     viewModel<ScheduleViewModel> { ScheduleViewModel.Factory.create(get(), get(), get(), get()) }
     viewModel<AdvancedSearchViewModel> { AdvancedSearchViewModel(get(), get(), get()) }
