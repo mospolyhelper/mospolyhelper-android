@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -47,6 +48,8 @@ android {
 
 dependencies {
     def nav_version = "2.3.0"
+    def koin_version= "2.1.6"
+
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -70,6 +73,25 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+
+    // Koin for Kotlin
+    implementation "org.koin:koin-core:$koin_version"
+    // Koin Extended & experimental features
+    implementation "org.koin:koin-core-ext:$koin_version"
+    // Koin for Unit tests
+    testImplementation "org.koin:koin-test:$koin_version"
+    // Koin for Android
+    implementation "org.koin:koin-android:$koin_version"
+    // Koin AndroidX Scope feature
+    implementation "org.koin:koin-androidx-scope:$koin_version"
+    // Koin AndroidX ViewModel feature
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    // Koin AndroidX Fragment Factory
+    implementation "org.koin:koin-androidx-fragment:$koin_version"
+    // Koin AndroidX Experimental features
+    implementation "org.koin:koin-androidx-ext:$koin_version"
+    // Koin for Ktor Kotlin
+    implementation "org.koin:koin-ktor:$koin_version"
 
     // Network
     implementation "io.ktor:ktor-client-android:$ktor_version"

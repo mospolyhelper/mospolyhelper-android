@@ -15,8 +15,8 @@ abstract class ViewModelBase(
         mediator.unsubscribe(name)
     }
 
-    protected fun send(target: String, key: String, message: Any?) {
-        mediator.send(target, ViewModelMessage(key, message))
+    protected fun send(target: String, key: String, vararg messages: Any?) {
+        mediator.send(target, ViewModelMessage(key, messages))
     }
 
     override fun onCleared() {
