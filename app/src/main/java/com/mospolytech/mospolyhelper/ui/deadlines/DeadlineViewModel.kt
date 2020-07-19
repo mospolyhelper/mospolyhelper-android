@@ -9,10 +9,12 @@ import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
+import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
 
 
-class DeadlineViewModel/*(app: Application)*/ :
-    ViewModelBase(Mediator(), DeadlineViewModel::class.java.simpleName) {
+class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
+                        private val deadlinesRepository: DeadlinesRepository) :
+    ViewModelBase(mediator, DeadlineViewModel::class.java.simpleName) {
     //AndroidViewModel(app) {
     companion object {
         const val DeadlineInfo = "DeadlinesInfo"
@@ -21,11 +23,7 @@ class DeadlineViewModel/*(app: Application)*/ :
     val delete : MutableLiveData<Deadline> = MutableLiveData()
     val nameReceiver : MutableLiveData<String> = MutableLiveData()
     private var findstr: String = ""
-    private var database: AppDatabase = AppDatabase.getDatabase(App.context)
-    private val deadlinesRepository =
-        DeadlinesRepository(
-            database
-        )
+
 
     val data = deadlinesRepository.getDeadlines()
     val dataCurrent = deadlinesRepository.getDeadlinesCurrent()
