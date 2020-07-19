@@ -17,9 +17,6 @@
             android:id="@+id/action_scheduleFragment_to_advancedSearchFragment"
             app:destination="@id/advancedSearchFragment" />
         <action
-            android:id="@+id/action_scheduleFragment_to_advancedSearchSelectFragment"
-            app:destination="@id/advancedSearchSelectFragment" />
-        <action
             android:id="@+id/action_scheduleFragment_to_lessonInfoFragment"
             app:destination="@id/lessonInfoFragment"
             app:enterAnim="@anim/fragment_open_enter"
@@ -45,11 +42,15 @@
         tools:layout="@layout/fragment_schedule_calendar"
         android:name="com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment"
         android:label="CalendarFragment" />
-    <fragment
+    <dialog
         android:id="@+id/advancedSearchFragment"
         tools:layout="@layout/bottom_sheet_schedule"
         android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment"
-        android:label="AdvancedSearchFragment" />
+        android:label="AdvancedSearchFragment" >
+        <action
+            android:id="@+id/action_advancedSearchFragment_to_advancedSearchSelectFragment"
+            app:destination="@id/advancedSearchSelectFragment" />
+    </dialog>
     <dialog
         android:id="@+id/advancedSearchSelectFragment"
         tools:layout="@layout/fragment_schedule_filter"

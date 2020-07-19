@@ -20,7 +20,6 @@
             android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <include layout="@layout/bottom_app_bar_schedule" />
-    <include layout="@layout/bottom_sheet_schedule" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 <include layout="@layout/drawer_schedule"/>
 </androidx.drawerlayout.widget.DrawerLayout>
