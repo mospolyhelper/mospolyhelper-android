@@ -23,6 +23,8 @@ import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.addresses.Addresses
+import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AddressesFragment : Fragment() {
 
@@ -36,7 +38,7 @@ class AddressesFragment : Fragment() {
     lateinit var addressesTypeSpinner: Spinner
     var accumulator = 0
 
-    private val viewModel by viewModels<AddressesViewModel>()
+    private val viewModel by viewModel<AddressesViewModel>()
 
     fun setUpBuildings(buildings: Addresses?) {
         recyclerView.adapter = if (buildings == null) null else AddressesAdapter(buildings, viewModel.addressesType.value!!)

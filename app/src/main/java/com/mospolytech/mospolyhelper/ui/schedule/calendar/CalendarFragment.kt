@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.MainActivity
 
 import com.mospolytech.mospolyhelper.R
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.temporal.ChronoUnit
 
 class CalendarFragment : DialogFragment() {
@@ -26,7 +27,7 @@ class CalendarFragment : DialogFragment() {
 
     var dateChanged = false
 
-    private val viewModel by viewModels<CalendarViewModel>()
+    private val viewModel by viewModel<CalendarViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

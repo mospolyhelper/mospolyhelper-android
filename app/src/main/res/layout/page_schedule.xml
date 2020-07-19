@@ -1,33 +1,37 @@
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
-        android:layout_alignParentTop="true"
-        android:letterSpacing="0.08"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:paddingHorizontal="10dp"
-        android:elevation="0dp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textAlignment="textStart"
-        android:textColor="@color/textScheduleDay"
-        android:background="@color/scheduleBackgroundColor"
-        android:textSize="28sp"
-        android:fontFamily="sans-serif-thin"
         android:id="@+id/button_day"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <androidx.recyclerview.widget.RecyclerView 
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/scheduleBackgroundColor"
+        android:elevation="0dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/manrope_extra_light"
+        android:letterSpacing="0.08"
+        android:maxLines="1"
+        android:paddingHorizontal="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:text="Google Authenticator"
+        android:textAlignment="center"
+        android:textColor="@color/textScheduleDay"
+        android:textSize="25sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_schedule"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@id/button_day"
-        android:id="@+id/recycler_schedule" 
-        android:scrollbars="none"
         android:clickable="false"
         android:focusable="false"
-        android:layout_width="match_parent" 
-        android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>
+        android:scrollbars="none"
+        tools:listitem="@layout/item_lesson"></androidx.recyclerview.widget.RecyclerView>
     <LinearLayout android:id="@+id/viewgroup_null_lesson"
         android:layout_centerInParent="true"
         android:orientation="vertical"
@@ -44,13 +48,14 @@
             android:layout_marginBottom="10dp"
             android:layout_width="64dp"
             android:layout_height="64dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="sans-serif-light"
-            android:textSize="20sp"
-            android:text="@string/null_daily_schedule" />
+            android:fontFamily="@font/manrope_light"
+            android:text="@string/null_daily_schedule"
+            android:textAlignment="center"
+            android:textSize="20sp" />
     </LinearLayout>
 </RelativeLayout>

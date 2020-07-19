@@ -9,8 +9,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        def koin_version= "2.1.6"
+        classpath "org.koin:koin-gradle-plugin:$koin_version"
 
         // Navigation safe args
         def nav_version = "2.3.0"
@@ -21,6 +24,8 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+
+apply plugin: 'koin'
 
 allprojects {
     repositories {
