@@ -20,6 +20,10 @@
     <item name="background">@color/colorPrimaryLight</item>
   </style>
 
+  <style name="AppTheme.NavigationMenu">
+    <item name="colorPrimary">@color/colorSecondary</item>
+  </style>
+
   <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
     <item name="android:layout">@layout/fragment_settings</item>
   </style>

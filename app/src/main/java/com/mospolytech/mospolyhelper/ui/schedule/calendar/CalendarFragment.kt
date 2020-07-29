@@ -7,13 +7,11 @@ import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mospolytech.mospolyhelper.MainActivity
+import com.mospolytech.mospolyhelper.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -61,8 +59,6 @@ class CalendarFragment : DialogFragment() {
         (activity as MainActivity).setSupportActionBar(toolbar);
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
-        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_schedule_day)
         val colorTitle = requireContext().getColor(R.color.calendarTitle)
@@ -100,8 +96,6 @@ class CalendarFragment : DialogFragment() {
     }
 
     override fun onStop() {
-        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         if (dateChanged) {
             viewModel.dateChanged()
         }
