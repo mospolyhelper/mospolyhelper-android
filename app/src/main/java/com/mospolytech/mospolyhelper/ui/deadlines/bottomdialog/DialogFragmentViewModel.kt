@@ -1,37 +1,36 @@
 package com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog
 
 import android.content.Context
+import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleDao
 import com.mospolytech.mospolyhelper.repository.local.AppDatabase
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.Event1
+import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
-class DialogFragmentViewModel/*(app: Application)*/ :
-    /*AndroidViewModel(app) {*/
-    ViewModelBase(Mediator(), DialogFragmentViewModel::class.java.simpleName) {
+class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
+                              private val deadlinesRepository: DeadlinesRepository,
+                              private val scheduleRepository: ScheduleRepository) :
+    ViewModelBase(mediator, DialogFragmentViewModel::class.java.simpleName) {
 
-    companion object {
-        const val DeadlineAdd = "DeadlinesAdd"
-    }
-
-    private val groupTitle = "181-721"
-    private val scheduleRepository = ScheduleRepository(ScheduleDao())
-    private val database: AppDatabase = AppDatabase.getDatabase(App.context)
-    private lateinit var deadlinesRepository: DeadlinesRepository
+    val schedule: MutableStateFlow<Schedule?> = MutableStateFlow(null)
+    val onMessage: Event1<String> = Action1()
 
     fun newRepository() {
-        deadlinesRepository =
-            DeadlinesRepository(
-                database
-            )
+        deadlinesRepository.newJob()
     }
 
     fun saveInformation(deadline: Deadline) {
@@ -47,14 +46,45 @@ class DialogFragmentViewModel/*(app: Application)*/ :
         deadlinesRepository.cancel()
     }
 
-    fun setUpSchedule() =
-        GlobalScope.launch(Dispatchers.Main) {
+    fun getLessons(): Set<String>? {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(App.context)
+        val groupTitle = prefs.getString(
+            PreferenceKeys.ScheduleGroupTitle,
+            DefaultSettings.ScheduleGroupTitle)
+        val isSession =  prefs.getBoolean(
+            PreferenceKeys.ScheduleTypePreference,
+            DefaultSettings.ScheduleTypePreference
+        )
+        setUpSchedule(isSession, groupTitle!!, false)
+        return this@DialogFragmentViewModel.schedule.value?.let {
+            scheduleRepository.allDataFromSchedule(
+                it
+            ).lessonTitles
+        }
+    }
+
+    private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
+        viewModelScope.async {
             val schedule = if (groupTitle.isEmpty()) {
                 null
             } else {
-                scheduleRepository.getSchedule(groupTitle, false, false)
-                    ?: scheduleRepository.getSchedule(groupTitle, false, true)
+                scheduleRepository.getSchedule(
+                    groupTitle,
+                    isSession,
+                    downloadNew,
+                    (onMessage as Action1)::invoke
+                )
+                    ?: scheduleRepository.getSchedule(
+                        groupTitle,
+                        isSession,
+                        !downloadNew,
+                        (onMessage as Action1)::invoke
+                    )
             }
-            scheduleRepository.allDataFromSchedule(schedule!!)
+            withContext(Dispatchers.Main) {
+                this@DialogFragmentViewModel.schedule.value = schedule
+            }
         }
+    }
+
 }
