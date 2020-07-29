@@ -232,19 +232,28 @@
             android:textColor="@color/textLessonInfo"
             android:textSize="13sp" />
 
-        <TextView
-            android:id="@+id/text_lesson_tags"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipgroup_lesson_labels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="6dp"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-            android:fontFamily="@font/manrope_regular"
-            android:text="#Важное #Сдано #Можно_пропустить"
-            android:textColor="@color/textLessonInfo"
-            android:textIsSelectable="true"
-            android:textSize="17sp" />
+            android:animateLayoutChanges="true">
+
+            <TextView
+                android:id="@+id/text_label_one_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Только на 29 апреля" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="На всё время" />
+
+        </com.google.android.material.chip.ChipGroup>
 
         <View
             android:layout_width="match_parent"

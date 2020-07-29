@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.bottomappbar.BottomAppBar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomAppBar"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/fragment_settings"
+    android:layout_gravity="bottom"
+    app:navigationIcon="@drawable/ic_menu_24px"
+    app:backgroundTint="@color/lessonBackground"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    tools:ignore="BottomAppBar"/>

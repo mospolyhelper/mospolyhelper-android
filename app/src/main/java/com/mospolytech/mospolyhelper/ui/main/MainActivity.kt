@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper
+package com.mospolytech.mospolyhelper.ui.main
 
 import android.Manifest
 import android.content.SharedPreferences
@@ -6,36 +6,31 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
-import com.google.android.material.navigation.NavigationView
+import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 
-class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
         const val launchCode = 0
     }
     private var doubleBackToExitPressedOnce = false
 
-    private val viewModel by viewModels<MainViewModel>()
-    private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
+    private val viewModel by inject<MainViewModel>()
     private val navHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
     }
     private val navController by lazy { navHostFragment.navController }
-
-    private val navigationView by lazy { findViewById<NavigationView>(R.id.nav_view) }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -48,7 +43,9 @@ class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreference
                     AppCompatDelegate.MODE_NIGHT_NO
             )
             val firstLaunch = try {
-                prefs.getInt(PreferenceKeys.FirstLaunch, launchCode)
+                prefs.getInt(PreferenceKeys.FirstLaunch,
+                    launchCode
+                )
             } catch (e: Exception) {
                 launchCode
             }
@@ -61,6 +58,7 @@ class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreference
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+        viewModel.currentFragmentNavId = R.id.nav_schedule
 
         ActivityCompat.requestPermissions(
             this,
@@ -75,16 +73,6 @@ class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreference
                 }
 
             })
-        navigationView.setCheckedItem(R.id.nav_schedule)
-        navigationView.setNavigationItemSelectedListener {
-            val action = navController.graph.getAction(it.itemId)
-            val currentDestination = navController.currentBackStackEntry?.destination
-            if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
-                navController.navigate(it.itemId)
-            }
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
 
         doubleBackToExitPressedOnce = false
         PreferenceManager.getDefaultSharedPreferences(this)
@@ -92,22 +80,12 @@ class MainActivity() : AppCompatActivity(), SharedPreferences.OnSharedPreference
     }
 
     fun onBackPressedCustom() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val settingsDrawer = findViewById<DrawerLayout>(R.id.drawer_layout_schedule)
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-            return
-        }
-        if (settingsDrawer != null && settingsDrawer.isDrawerOpen(GravityCompat.END)) {
-            settingsDrawer.closeDrawer(GravityCompat.END)
-            return
-        }
-
         if (navController.previousBackStackEntry == null) {
             if (doubleBackToExitPressedOnce) {
                 finish()
             } else {
-                Toast.makeText(this, R.string.click_back_again, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    R.string.click_back_again, Toast.LENGTH_SHORT).show()
                 this.doubleBackToExitPressedOnce = true
                 lifecycleScope.async {
                     delay(2000)

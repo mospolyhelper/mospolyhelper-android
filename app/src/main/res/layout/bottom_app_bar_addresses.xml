@@ -1,0 +1,17 @@
+<com.google.android.material.bottomappbar.BottomAppBar
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomAppBar"
+    android:layout_width="match_parent"
+    android:layout_gravity="bottom"
+    app:navigationIcon="@drawable/ic_menu_24px"
+    app:backgroundTint="@color/lessonBackground"
+    android:layout_height="?attr/actionBarSize"
+    tools:showIn="@layout/fragment_addresses"
+    tools:ignore="BottomAppBar">
+    <Spinner
+        android:id="@+id/spinner_addresses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</com.google.android.material.bottomappbar.BottomAppBar>
