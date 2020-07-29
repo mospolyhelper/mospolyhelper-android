@@ -21,6 +21,9 @@
             app:destination="@id/lessonInfoFragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_scheduleSettingsFragment"
+            app:destination="@id/scheduleSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
@@ -44,13 +47,18 @@
         android:label="CalendarFragment" />
     <dialog
         android:id="@+id/advancedSearchFragment"
-        tools:layout="@layout/bottom_sheet_schedule"
+        tools:layout="@layout/bottom_sheet_schedule_advanced_search"
         android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment"
         android:label="AdvancedSearchFragment" >
         <action
             android:id="@+id/action_advancedSearchFragment_to_advancedSearchSelectFragment"
             app:destination="@id/advancedSearchSelectFragment" />
     </dialog>
+    <dialog
+        android:id="@+id/scheduleSettingsFragment"
+        tools:layout="@layout/bottom_sheet_schedule_settings"
+        android:name="com.mospolytech.mospolyhelper.ui.schedule.ScheduleSettingsFragment"
+        android:label="ScheduleSettingsFragment" />
     <dialog
         android:id="@+id/advancedSearchSelectFragment"
         tools:layout="@layout/fragment_schedule_filter"
@@ -86,5 +94,13 @@
         app:destination="@id/settingsFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
+    <dialog
+        android:id="@+id/mainMenuFragment"
+        tools:layout="@layout/bottom_sheet_main_menu"
+        android:name="com.mospolytech.mospolyhelper.ui.main.MainMenuFragment"
+        android:label="MainMenuFragment" />
+    <action
+        android:id="@+id/action_global_mainMenuFragment"
+        app:destination="@id/mainMenuFragment" />
 
 </navigation>
