@@ -1,31 +1,36 @@
 package com.mospolytech.mospolyhelper.ui.deadlines
 
-import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.repository.local.AppDatabase
+import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
+import com.mospolytech.mospolyhelper.App.Companion.context
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
+import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
+import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
+import com.mospolytech.mospolyhelper.ui.common.ViewModelMessage
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.Event1
+import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.withContext
 
 
-class DeadlineViewModel/*(app: Application)*/ :
-    ViewModelBase(Mediator(), DeadlineViewModel::class.java.simpleName) {
-    //AndroidViewModel(app) {
-    companion object {
-        const val DeadlineInfo = "DeadlinesInfo"
-    }
+class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
+                        private val deadlinesRepository: DeadlinesRepository) :
+    ViewModelBase(mediator, DeadlineViewModel::class.java.simpleName) {
+
     val edit : MutableLiveData<Deadline> = MutableLiveData()
     val delete : MutableLiveData<Deadline> = MutableLiveData()
     val nameReceiver : MutableLiveData<String> = MutableLiveData()
     private var findstr: String = ""
-    private var database: AppDatabase = AppDatabase.getDatabase(App.context)
-    private val deadlinesRepository =
-        DeadlinesRepository(
-            database
-        )
+
 
     val data = deadlinesRepository.getDeadlines()
     val dataCurrent = deadlinesRepository.getDeadlinesCurrent()
@@ -100,4 +105,5 @@ class DeadlineViewModel/*(app: Application)*/ :
     fun clearObserveFind(a: LifecycleOwner) {
         foundData.removeObservers(a)
     }
+
 }
