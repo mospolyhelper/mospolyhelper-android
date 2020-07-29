@@ -1,12 +1,8 @@
 package com.mospolytech.mospolyhelper.ui.settings
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,10 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import com.mospolytech.mospolyhelper.MainActivity
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.mospolytech.mospolyhelper.NavGraphDirections
+import com.mospolytech.mospolyhelper.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragmentDirections
 
 class SettingsFragment : PreferenceFragmentCompat(),
     PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
@@ -35,24 +32,24 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = getString(R.string.settings_title)
-        (activity as MainActivity).setSupportActionBar(toolbar)
+
+        val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
+        bottomAppBar.title = getString(R.string.settings_title)
+        (activity as MainActivity).setSupportActionBar(bottomAppBar)
+        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+
         if (preferenceScreen.key == "MainScreen") {
-            val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            val toggle = ActionBarDrawerToggle(
-                activity, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close
-            )
-            drawer.addDrawerListener(toggle)
-            toggle.syncState()
-            toggle.isDrawerIndicatorEnabled = true
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            bottomAppBar.setNavigationIcon(R.drawable.ic_menu_24px)
+            bottomAppBar.setNavigationOnClickListener {
+                findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+            }
         } else {
+            bottomAppBar.setNavigationIcon(R.drawable.ic_round_arrow_back_24)
+            bottomAppBar.setNavigationOnClickListener {
+                requireActivity().onBackPressed()
+            }
             (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
             (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
-            val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 

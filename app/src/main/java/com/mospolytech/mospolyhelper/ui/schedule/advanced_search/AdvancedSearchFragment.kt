@@ -5,19 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
-import com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragment
 import kotlinx.coroutines.*
-import org.koin.androidx.viewmodel.compat.ViewModelCompat.viewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.coroutines.CoroutineContext
 
 class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
@@ -46,11 +39,7 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.bottom_sheet_schedule, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        return inflater.inflate(R.layout.bottom_sheet_schedule_advanced_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

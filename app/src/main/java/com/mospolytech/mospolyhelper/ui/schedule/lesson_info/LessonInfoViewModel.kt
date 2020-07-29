@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
 import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.schedule.LessonLabelRepository
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.ui.common.Mediator
 import com.mospolytech.mospolyhelper.ui.common.ViewModelBase
@@ -9,7 +10,8 @@ import java.time.LocalDate
 
 class LessonInfoViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    val deadlinesRepository: DeadlinesRepository
+    val lessonLabelRepository: LessonLabelRepository,
+    private val deadlinesRepository: DeadlinesRepository
 ) : ViewModelBase(mediator, LessonInfoViewModel::class.java.simpleName) {
     companion object {
         const val LessonInfo = "LessonInfo"

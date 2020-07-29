@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageButton
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -23,14 +24,16 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.mospolytech.mospolyhelper.NavGraphDirections
+import com.mospolytech.mospolyhelper.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.MainActivity
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import com.mospolytech.mospolyhelper.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
@@ -62,6 +65,8 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     private lateinit var bot: AddBottomSheetDialogFragment
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
+    private lateinit var menuBtn: ImageButton
+
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
 
@@ -322,16 +327,11 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun setToolbar(){
+        menuBtn = requireView().findViewById(R.id.button_menu)
         mainActivity.setSupportActionBar(toolbar)
-        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        val toggle = ActionBarDrawerToggle(
-            activity, drawer, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-        toggle.isDrawerIndicatorEnabled = true
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        menuBtn.setOnClickListener {
+            findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+        }
         val inputMethodManager =
             requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         button_search_deadline.setOnClickListener {

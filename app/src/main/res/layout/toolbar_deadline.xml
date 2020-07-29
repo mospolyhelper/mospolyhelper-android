@@ -7,6 +7,12 @@
     android:background="@drawable/bottom_stroke_calendar"
     tools:showIn="@layout/fragment_deadline"
     android:layout_height="?attr/actionBarSize">
+    <ImageButton
+        android:id="@+id/button_menu"
+        android:background="@null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_24px"/>
     <RelativeLayout
         android:id="@+id/toolbar_deadline_main"
         android:layout_width="wrap_content"
