@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -19,12 +20,19 @@ import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.repository.deadline.Deadline
 import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
+import kotlinx.android.synthetic.main.fragment_deadline.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.coroutines.CoroutineContext
 
-class AddBottomSheetDialogFragment
-    : BottomSheetDialogFragment(), View.OnClickListener {
+class AddBottomSheetDialogFragment(ctx: Context)
+    : BottomSheetDialogFragment(), View.OnClickListener, CoroutineScope {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
@@ -38,11 +46,14 @@ class AddBottomSheetDialogFragment
     private var openType = OpenType.SIMPLE
     private var deadline: Deadline? = null
     private var name: String = ""
-    //private lateinit var viewModel: DialogFragmentViewModel
-    private val viewModel by viewModels<DialogFragmentViewModel>()
+    private val viewModel by viewModel<DialogFragmentViewModel>()
+
+    private val job = SupervisorJob()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Default + job
 
     private val datePickerDialog = DatePickerDialog(
-        App.context,
+        ctx,
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
             val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
@@ -52,7 +63,7 @@ class AddBottomSheetDialogFragment
         LocalDate.now().dayOfMonth)
 
     private val timePickerDialog = TimePickerDialog(
-        App.context,
+        ctx,
         TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -61,8 +72,8 @@ class AddBottomSheetDialogFragment
         LocalTime.now().minute,true)
 
     companion object {
-        fun newInstance(): AddBottomSheetDialogFragment {
-            return AddBottomSheetDialogFragment()
+        fun newInstance(context: Context): AddBottomSheetDialogFragment {
+            return AddBottomSheetDialogFragment(context)
         }
     }
 
@@ -145,7 +156,6 @@ class AddBottomSheetDialogFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel = ViewModelProvider(this).get(DialogFragmentViewModel::class.java)
         viewModel.newRepository()
         chipId = chipLow.id
         when (openType) {
@@ -187,6 +197,19 @@ class AddBottomSheetDialogFragment
                 R.id.chipMedium -> { chipId = R.id.chipMedium }
                 R.id.chipHigh -> { chipId = R.id.chipHigh }
                 else -> { view.findViewById<Chip>(chipId).isChecked = true }
+            }
+        }
+
+        val lessons = viewModel.getLessons()?.toList()
+        lessons?.let {
+            editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
+                R.layout.item_dropdown,
+                R.id.autoCompleteItem,
+                it))
+        }
+        viewModel.onMessage += {
+            launch(Dispatchers.Main) {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }
         }
     }
