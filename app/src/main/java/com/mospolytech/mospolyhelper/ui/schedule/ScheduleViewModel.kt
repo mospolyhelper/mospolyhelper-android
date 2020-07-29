@@ -4,10 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.repository.schedule.GroupListDao
-import com.mospolytech.mospolyhelper.repository.schedule.GroupListRepository
-import com.mospolytech.mospolyhelper.repository.schedule.ScheduleDao
-import com.mospolytech.mospolyhelper.repository.schedule.ScheduleRepository
+import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.schedule.*
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.ui.common.Mediator
@@ -28,6 +26,8 @@ class ScheduleViewModel(
     mediator: Mediator<String, ViewModelMessage>,
     private val scheduleRepository: ScheduleRepository,
     private val groupListRepository: GroupListRepository,
+    val lessonLabelRepository: LessonLabelRepository,
+    val deadlinesRepository: DeadlinesRepository,
     val schedule: MutableStateFlow<Schedule?>,
     val date: MutableStateFlow<LocalDate>,
     val isSession: MutableStateFlow<Boolean>,
@@ -42,21 +42,21 @@ class ScheduleViewModel(
     var isAdvancedSearch = false
     var groupList = MutableStateFlow(emptyList<String>())
 
-    var isLoading = true
+    var isLoading = MutableStateFlow(true)
     var firstLoading = true
 
     val onMessage: Event1<String> = Action1()
-    val advancedSearchStarted: Event0 = Action0()
 
     init {
         subscribe(::handleMessage)
         getGroupList(true)
 
         combine(this.isSession, this.groupTitle) { isSession, groupTitle ->
-            setUpSchedule(isSession, groupTitle, firstLoading)
-            firstLoading = true
+            setUpSchedule(isSession, groupTitle, !firstLoading)
+            firstLoading = false
         }.launchIn(viewModelScope)
     }
+
 
     private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
@@ -64,24 +64,24 @@ class ScheduleViewModel(
                 date.value = message.content[0] as LocalDate
             }
             MessageSetAdvancedSearchSchedule -> {
+                isLoading.value = true
                 isAdvancedSearch = true
                 schedule.value = message.content[0] as Schedule
-                (advancedSearchStarted as Action0).invoke()
+                isLoading.value = false
             }
         }
     }
 
     fun updateSchedule() {
         setUpSchedule(
-            this@ScheduleViewModel.isSession.value,
-            this@ScheduleViewModel.groupTitle.value,
+            isSession.value,
+            groupTitle.value,
             true
         )
     }
 
     private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
-        isLoading = true
-        schedule.value = schedule.value
+        isLoading.value = true
         viewModelScope.async {
             val schedule = if (groupTitle.isEmpty()) {
                 null
@@ -100,8 +100,8 @@ class ScheduleViewModel(
                     )
             }
             withContext(Dispatchers.Main) {
-                isLoading = false
                 this@ScheduleViewModel.schedule.value = schedule
+                isLoading.value = false
             }
         }
     }
@@ -145,6 +145,8 @@ class ScheduleViewModel(
                 mediator: Mediator<String, ViewModelMessage>,
                 scheduleRepository: ScheduleRepository,
                 groupListRepository: GroupListRepository,
+                lessonLabelRepository: LessonLabelRepository,
+                deadlinesRepository: DeadlinesRepository,
                 preferences: SharedPreferences
             ): ScheduleViewModel {
                 val dateFilter = Schedule.Filter.DateFilter.values()[
@@ -185,12 +187,14 @@ class ScheduleViewModel(
                     mediator,
                     scheduleRepository,
                     groupListRepository,
+                    lessonLabelRepository,
+                    deadlinesRepository,
                     MutableStateFlow(null),
                     MutableStateFlow(LocalDate.now()),
                     MutableStateFlow(isSession),
                     MutableStateFlow(groupTitle ?: ""),
-                    MutableStateFlow(scheduleFilter ?: Schedule.Filter.default),
-                    MutableStateFlow(showEmptyLessons ?: false)
+                    MutableStateFlow(scheduleFilter),
+                    MutableStateFlow(showEmptyLessons)
                 )
             }
         }

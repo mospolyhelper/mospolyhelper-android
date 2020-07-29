@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <PreferenceScreen
       app:title="@string/appearance"
+      app:icon="@drawable/ic_round_brush_24"
       app:key="DecorScreen"
       app:persistent="false">
     <SwitchPreferenceCompat

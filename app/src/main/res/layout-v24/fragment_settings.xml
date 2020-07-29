@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/scheduleBackgroundColor"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
-        <include
-        layout="@layout/toolbar_settings"/>
+        <include layout="@layout/bottom_app_bar_settings"/>
     <FrameLayout
         android:id="@android:id/list_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="?attr/actionBarSize"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
