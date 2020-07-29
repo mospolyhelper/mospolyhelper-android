@@ -11,9 +11,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.repository.deadline.DeadlinesRepository
+import com.mospolytech.mospolyhelper.repository.schedule.LessonLabelRepository
 import com.mospolytech.mospolyhelper.repository.schedule.models.Lesson
 import com.mospolytech.mospolyhelper.repository.schedule.models.Schedule
 import com.mospolytech.mospolyhelper.repository.schedule.utils.EmptyPairsListDecorator
+import com.mospolytech.mospolyhelper.repository.schedule.utils.ScheduleWindowsDecorator
 import com.mospolytech.mospolyhelper.utils.Action2
 import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
@@ -23,6 +26,8 @@ import java.time.temporal.ChronoUnit
 
 class ScheduleAdapter(
     val schedule: Schedule?,
+    private val lessonLabelRepository: LessonLabelRepository,
+    private val deadlinesRepository: DeadlinesRepository,
     private val scheduleFilter: Schedule.Filter,
     private val showEmptyLessons: Boolean,
     private val showGroup: Boolean,
@@ -157,18 +162,19 @@ class ScheduleAdapter(
 
 
         fun bind() {
-            val date = firstPosDate.plusDays(layoutPosition.toLong())
-            val dailySchedule = schedule!!.getSchedule(date, scheduleFilter)
-
+            val date = firstPosDate.plusDays(adapterPosition.toLong())
+            val dailySchedule = ScheduleWindowsDecorator(schedule!!.getSchedule(date, scheduleFilter))
 
             list.scrollToPosition(0)
             accumulator = 0f
             dayTitle.elevation = 0f
-            dayTitle.text = firstPosDate.plusDays(layoutPosition.toLong()).format(dateFormatter).capitalize()
+            dayTitle.text = date.format(dateFormatter).capitalize()
             nullView.visibility = if (dailySchedule.isNotEmpty()) View.GONE else View.VISIBLE
             if (listAdapter == null) {
                 listAdapter = LessonAdapter(
                     if (showEmptyLessons) EmptyPairsListDecorator(dailySchedule) else dailySchedule,
+                    lessonLabelRepository,
+                    deadlinesRepository,
                     scheduleFilter,
                     date,
                     showGroup,
@@ -178,8 +184,8 @@ class ScheduleAdapter(
                     headCurrentColor
                 )
                 listAdapter?.let {
-                    it.lessonClick += { lesson ->
-                        (lessonClick as Action2).invoke(lesson, it.date)
+                    it.lessonClick += { lesson, date ->
+                        (lessonClick as Action2).invoke(lesson, date)
                     }
                 }
                 list.adapter = listAdapter

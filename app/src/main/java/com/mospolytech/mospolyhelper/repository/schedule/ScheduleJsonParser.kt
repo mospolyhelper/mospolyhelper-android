@@ -184,6 +184,7 @@ class ScheduleJsonParser {
                     val parsedLesson = parseLesson(lesson, parsedOrder, group, isByDate, date)
                     tempList[parsedDay].add(parsedLesson)
                 }
+                tempList[parsedDay].sort()
             }
         }
         return tempList

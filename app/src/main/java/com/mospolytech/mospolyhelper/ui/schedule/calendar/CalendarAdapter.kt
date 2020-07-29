@@ -55,7 +55,7 @@ class CalendarAdapter(
 
     }
 
-    fun setFirstPosDate() {
+    private fun setFirstPosDate() {
         firstPosDate = if (itemCount == MAX_COUNT)
             LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
         else
@@ -68,13 +68,13 @@ class CalendarAdapter(
             .inflate(R.layout.item_daily_schedule, parent, false)
         val vh = ViewHolder(view)
         vh.lessonPlace.setOnClickListener {
-            (dayClick as Action1).invoke(firstPosDate.plusDays(vh.layoutPosition.toLong()))
+            (dayClick as Action1).invoke(firstPosDate.plusDays(vh.adapterPosition.toLong()))
         }
 
         return vh
     }
 
-    fun ViewHolder.setHead(date: LocalDate) {
+    private fun ViewHolder.setHead(date: LocalDate) {
         lessonTime.setTextColor(colorTitle)
         val today = LocalDate.now()
 
@@ -84,7 +84,7 @@ class CalendarAdapter(
         lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
     }
 
-    fun ViewHolder.setLessons(dailySchedule: List<Lesson>, date: LocalDate) {
+    private fun ViewHolder.setLessons(dailySchedule: List<Lesson>, date: LocalDate) {
         val res = SpannableStringBuilder()
 
         if (dailySchedule.isNotEmpty()) {
@@ -178,7 +178,7 @@ class CalendarAdapter(
         lessonType.setText(res, TextView.BufferType.NORMAL);
     }
 
-    fun spansAppend(builder: SpannableStringBuilder, text: String, flags: Int, vararg spans: Any) {
+    private fun spansAppend(builder: SpannableStringBuilder, text: String, flags: Int, vararg spans: Any) {
         val start = builder.length
         builder.append(text)
         val length = builder.length

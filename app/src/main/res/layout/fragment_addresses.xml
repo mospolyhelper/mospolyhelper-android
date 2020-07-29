@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-    
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:background="@color/scheduleBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include  layout="@layout/toolbar_addresses" />
+    <include  layout="@layout/bottom_app_bar_addresses" />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/addresses_update"
+        android:layout_marginBottom="?attr/actionBarSize"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
     <androidx.recyclerview.widget.RecyclerView
@@ -15,5 +16,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

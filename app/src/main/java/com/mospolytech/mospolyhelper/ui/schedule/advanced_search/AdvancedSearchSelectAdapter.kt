@@ -61,7 +61,7 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
 
         init {
             this.checkBox.setOnCheckedChangeListener { _, isChecked ->
-                checkedChanged(layoutPosition, isChecked)
+                checkedChanged(adapterPosition, isChecked)
             }
         }
     }

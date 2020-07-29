@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.ui.schedule.lesson_info
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -10,17 +12,18 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
+import android.util.TypedValue
 import android.view.*
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.mospolytech.mospolyhelper.MainActivity
+import com.mospolytech.mospolyhelper.ui.main.MainActivity
+import com.mospolytech.mospolyhelper.NavGraphDirections
 
 import com.mospolytech.mospolyhelper.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -36,6 +39,7 @@ class LessonInfoFragment : DialogFragment() {
             0xff29b6f6.toInt()    // Other
         )
     }
+    private val lessonLabelOneDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM,")
     private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val viewModel by viewModel<LessonInfoViewModel>()
@@ -47,7 +51,9 @@ class LessonInfoFragment : DialogFragment() {
     private lateinit var teacherChips: ChipGroup
     private lateinit var lessonDateTextView: TextView
     private lateinit var lessonGroupInfoTextView: TextView
+    private lateinit var lessonLabelsChipGroup: ChipGroup
     private lateinit var lessonDeadlinesTextView: TextView
+    private lateinit var lessonLabelOneDateTextView: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +94,8 @@ class LessonInfoFragment : DialogFragment() {
         lessonDateTextView = view.findViewById(R.id.text_lesson_date)
         lessonGroupInfoTextView = view.findViewById(R.id.text_lesson_group_info)
         lessonDeadlinesTextView = view.findViewById(R.id.text_schedule_deadlines)
+        lessonLabelsChipGroup = view.findViewById(R.id.chipgroup_lesson_labels)
+        lessonLabelOneDateTextView = view.findViewById(R.id.text_label_one_date)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
@@ -96,8 +104,6 @@ class LessonInfoFragment : DialogFragment() {
         }
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
-        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         if (viewModel.lesson.isEmpty) {
             lessonTitleTextView.text = "Нет занятия"
@@ -110,6 +116,7 @@ class LessonInfoFragment : DialogFragment() {
             setTeachers()
             setDate()
             setGroupInfo()
+            setLabels()
             setDeadlines()
         }
 
@@ -203,7 +210,11 @@ class LessonInfoFragment : DialogFragment() {
         for (teacher in viewModel.lesson.teachers) {
             teacherChips.addView(
                 Chip(context).apply {
-                    text = teacher.getShortName()
+                    text = if (viewModel.lesson.teachers.size < 3) {
+                        teacher.getFullName()
+                    } else {
+                        teacher.getShortName()
+                    }
                     setOnClickListener { Toast.makeText(context, teacher.getFullName(), Toast.LENGTH_SHORT).show() }
                 }
             )
@@ -232,7 +243,89 @@ class LessonInfoFragment : DialogFragment() {
         lessonGroupInfoTextView.text = text
     }
 
+    private fun createChip(text: String, isOneDate: Boolean): Chip {
+        val chip = Chip(context)
+        chip.text = text
+        chip.isCloseIconVisible = true
+        chip.setOnCloseIconClickListener {
+            lessonLabelsChipGroup.removeView(chip)
+            viewModel.lessonLabelRepository.removeLabel(text, viewModel.lesson, viewModel.date, isOneDate)
+        }
+        return chip
+    }
+
+    private fun createAddButton(): ImageButton {
+        val addBtn = ImageButton(context)
+        addBtn.setImageDrawable(requireContext().getDrawable(R.drawable.ic_round_add_24))
+        addBtn.setOnClickListener {
+            val view = LayoutInflater.from(requireContext()).inflate(R.layout.alertdialog_schedule_lesson_label_add, null)
+            val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.text_lesson_label)
+            val alertDialog = AlertDialog.Builder(requireContext())
+                .setTitle("Add lesson label")
+                .setMessage("Enter lesson label\n\"#Some_label\"")
+                .setPositiveButton("Добавить") { _, _ ->
+                    viewModel.lessonLabelRepository
+                        .addLabel("", viewModel.lesson, viewModel.date, false)
+                }.setNegativeButton("Отмена") { _, _ ->
+                }.create()
+            val dp20 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, addBtn.resources.displayMetrics).toInt()
+            alertDialog.setView(view, dp20, 0, dp20, 0)
+            alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            autoCompleteTextView.setAdapter(
+                ArrayAdapter<String>(
+                    alertDialog.context,
+                    R.layout.item_group_list,
+                    viewModel.lessonLabelRepository.getAllLabels().toTypedArray()
+                )
+            )
+            alertDialog.show()
+        }
+        val tv = TypedValue()
+        if (requireContext().theme.resolveAttribute(
+                android.R.attr.actionBarItemBackground,
+                tv,
+                true
+            )
+        ) {
+            addBtn.setBackgroundResource(tv.resourceId)
+        } else {
+            addBtn.background = ColorDrawable(requireContext().getColor(R.color.scheduleBackgroundColor))
+        }
+        return addBtn
+    }
+
+    private fun setLabels() {
+        lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
+
+        val (oneDateLabels, allTimeLabels) = viewModel.lessonLabelRepository
+            .getLabels(viewModel.lesson, viewModel.date)
+        var index = 1
+        for (label in oneDateLabels) {
+            lessonLabelsChipGroup.addView(createChip(label, true), index++)
+        }
+
+        var addBtn = createAddButton()
+        lessonLabelsChipGroup.addView(addBtn, index)
+        var params = (addBtn.layoutParams as ChipGroup.LayoutParams)
+        params.marginStart = lessonLabelsChipGroup.chipSpacingHorizontal
+        params.marginEnd = lessonLabelsChipGroup.chipSpacingHorizontal
+        addBtn.layoutParams = params
+
+
+        for (label in allTimeLabels) {
+            lessonLabelsChipGroup.addView(createChip(label, false))
+        }
+
+        addBtn = createAddButton()
+        lessonLabelsChipGroup.addView(addBtn)
+        params = (addBtn.layoutParams as ChipGroup.LayoutParams)
+        params.marginStart = lessonLabelsChipGroup.chipSpacingHorizontal
+        params.marginEnd = lessonLabelsChipGroup.chipSpacingHorizontal
+        addBtn.layoutParams = params
+    }
+
     private fun setDeadlines() {
+        lessonDeadlinesTextView.setOnClickListener { findNavController().navigate(NavGraphDirections.navDeadlines()) }
 //        viewModel.deadlinesRepository.foundData.observe(viewLifecycleOwner, Observer { deadlines ->
 //            textView.text = deadlines?.joinToString(separator = "\n") { "${it.name} ${it.description}" } ?: "Дедлайнов нет"
 //        })
@@ -244,11 +337,5 @@ class LessonInfoFragment : DialogFragment() {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         // TODO: Use the ViewModel
-    }
-
-    override fun onStop() {
-        val drawer = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        super.onStop()
     }
 }
