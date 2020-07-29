@@ -17,13 +17,15 @@
         android:paddingTop="0dp"
                 android:paddingBottom="4dp" 
                 android:textSize="12sp" />
-            <TextView android:layout_width="match_parent" 
-                android:paddingHorizontal="2dp" 
+
+    <TextView
+        android:id="@+id/text_schedule_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:paddingHorizontal="2dp"
         android:paddingTop="3dp"
         android:paddingBottom="2dp"
-                android:layout_height="wrap_content" 
-                android:textColor="@color/textColorPrimary" 
-                android:id="@+id/text_schedule_grid" 
-                android:clickable="false"
-                android:textSize="10sp"/>
+        android:textColor="@color/textColorPrimary"
+        android:textSize="10.5sp" />
 </LinearLayout>
