@@ -11,11 +11,18 @@
   <color name="colorSecondaryLight">#69e2ff</color>
   <color name="textColorSecondary">#000000</color>
 
+  <color name="colorLevelZero">#EEEEF0</color>
+  <color name="colorLevelOne">#fafafa</color>
+  <color name="colorLevelTwo">#FFFFFF</color>
+  <color name="colorLevelThree">#FFFFFF</color>
+
+  <color name="chipColor">#D5D5D5</color>
+
   <color name="iconColor">#555555</color>
-  
-  <color name="scheduleBackgroundColor">#fafafa</color>
-  <color name="lessonBackground">#FFFFFF</color>
-  <color name="lessonBackgroundRipple">#DEDEDE</color>
+
+  <color name="scheduleBackgroundColor">@color/colorLevelZero</color>
+  <color name="lessonBackground">@color/colorLevelOne</color>
+  <color name="lessonBackgroundRipple">#D0D0D0</color>
   <color name="lessonHeadDivider">#E6E6E6</color>
   <color name="lessonIndicator">#00C300</color>
   
@@ -67,4 +74,10 @@
   <color name="colorFabIcon">#FFFFFF</color>
   <color name="pushPin">#878787</color>
   <color name="pushUnPin">#D5D5D5</color>
+
+<!--  Schedule App Widget -->
+  <color name="widgetBackground">#303136</color>
+  <color name="widgetTitleText">#7A858D</color>
+  <color name="widgetLessonTitleText">#EAEAEA</color>
+  <color name="widgetSecondaryTextColor">#AAAAAA</color>
 </resources>

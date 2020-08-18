@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper
 
-import com.mospolytech.mospolyhelper.repository.schedule.ScheduleClient
-import com.mospolytech.mospolyhelper.repository.schedule.ScheduleJsonParser
+import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
+import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
@@ -16,7 +16,7 @@ class ExampleUnitTest {
         val client =
             ScheduleClient()
         val parser =
-            ScheduleJsonParser()
+            ScheduleRemoteConverter()
         runBlocking {
             val q = client.getSchedule("181-721", false)
             val a = parser.parse(q, false)

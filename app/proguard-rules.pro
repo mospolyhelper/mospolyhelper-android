@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+## Klaxon
+#-keep public class kotlin.reflect.jvm.internal.impl.* { public *; }
+#-keep class com.beust.klaxon.** { *; }
+#-keep interface com.beust.klaxon.** { *; }
+#-keep class kotlin.Metadata { *; }
+#
+#-keep class com.mospolytech.mospolyhelper.data.** { *;}
+#-keep class com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter { *; }
+
+
