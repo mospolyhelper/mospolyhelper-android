@@ -31,6 +31,13 @@ interface Event3<T1, T2, T3> {
     operator fun minusAssign(block: (T1, T2, T3) -> Unit)
 }
 
+interface Event4<T1, T2, T3, T4> {
+    fun addListener(block: (T1, T2, T3, T4) -> Unit)
+    fun removeListener(block: (T1, T2, T3, T4) -> Unit)
+    operator fun plusAssign(block: (T1, T2, T3, T4) -> Unit)
+    operator fun minusAssign(block: (T1, T2, T3, T4) -> Unit)
+}
+
 class Action0: Event0 {
     private val list = LinkedHashSet<() -> Unit>()
 
@@ -131,6 +138,32 @@ class Action3<T1, T2, T3>: Event3<T1, T2, T3> {
     }
 
     override operator fun minusAssign(block: (T1, T2, T3) -> Unit) {
+        list.remove(block)
+    }
+}
+
+class Action4<T1, T2, T3, T4>: Event4<T1, T2, T3, T4> {
+    private val list = LinkedHashSet<(T1, T2, T3, T4) -> Unit>()
+
+    operator fun invoke(obj1: T1, obj2: T2, obj3: T3, obj4: T4) {
+        for (e in list) {
+            e(obj1, obj2, obj3, obj4)
+        }
+    }
+
+    override fun addListener(block: (T1, T2, T3, T4) -> Unit) {
+        list.add(block)
+    }
+
+    override fun removeListener(block: (T1, T2, T3, T4) -> Unit) {
+        list.remove(block)
+    }
+
+    override operator fun plusAssign(block: (T1, T2, T3, T4) -> Unit) {
+        list.add(block)
+    }
+
+    override operator fun minusAssign(block: (T1, T2, T3, T4) -> Unit) {
         list.remove(block)
     }
 }
