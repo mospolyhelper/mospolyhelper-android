@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.mospolytech.mospolyhelper.repository.deadline.Deadline
+import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 
 class DeadlinesDiffCallback(private val oldDeadlinesList: List<Deadline>?, private val newDeadlinesList: List<Deadline>?) : DiffUtil.Callback() {
 
