@@ -11,8 +11,9 @@
     android:clickable="false"
     android:drawableStart="@drawable/ic_round_local_cafe_24"
     android:drawablePadding="8dp"
-    android:fontFamily="@font/manrope_medium"
+    android:drawableTint="@color/textLessonHead"
+    android:fontFamily="@font/manrope_regular"
     android:gravity="center_vertical"
     android:text="окно в 1 час 50 минут"
     android:textColor="@color/textLessonHead"
-    android:textSize="14sp" />
+    android:textSize="16sp" />

@@ -5,10 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-        <include layout="@layout/bottom_app_bar_settings"/>
     <FrameLayout
         android:id="@android:id/list_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="?attr/actionBarSize"/>
+    <include layout="@layout/bottom_app_bar_settings"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

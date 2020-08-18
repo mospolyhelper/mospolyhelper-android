@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/scheduleBackgroundColor"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="200dp">
+            <include layout="@layout/appwidget_schedule"/>
+        </FrameLayout>
+        <FrameLayout
+            android:id="@android:id/list_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="?attr/actionBarSize"/>
+    </LinearLayout>
+    <include layout="@layout/bottom_app_bar_settings"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
