@@ -4,7 +4,7 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorOnPrimary">@color/textColorPrimary</item>
     <item name="colorOnSurface">@color/textColorPrimary</item>
-    <item name="android:statusBarColor">@color/colorPrimary</item>
+    <item name="android:statusBarColor">@color/colorLevelTwo</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorSecondary">@color/colorSecondary</item>
     <item name="colorAccent">@color/colorSecondary</item>
@@ -26,6 +26,30 @@
 
   <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
     <item name="android:layout">@layout/fragment_settings</item>
+  </style>
+  
+  <style name="ExpandedTextAppearance" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+    <item name="fontFamily">@font/manrope_light</item>
+    <item name="android:letterSpacing">0.04</item>
+    <item name="android:ellipsize">end</item>
+    <item name="maxLines">1</item>
+    <item name="paddingStart">4dp</item>
+    <item name="paddingEnd">4dp</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textColor">@color/textScheduleDay</item>
+    <item name="android:textSize">25sp</item>
+  </style>
+
+  <style name="CollapsedTextAppearance" parent="Widget.MaterialComponents.Toolbar">
+    <item name="fontFamily">@font/manrope_bold</item>
+    <item name="android:letterSpacing">0.04</item>
+    <item name="android:ellipsize">end</item>
+    <item name="maxLines">1</item>
+    <item name="paddingStart">2dp</item>
+    <item name="paddingEnd">6dp</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textColor">@color/textScheduleDay</item>
+    <item name="android:textSize">15sp</item>
   </style>
 
   <style name="AppTheme.NoActionBar">
