@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
-    android:orientation="vertical"
-    android:layout_height="440dp"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -16,164 +17,179 @@
         android:text="@string/advanced_search"
         android:textColor="@color/advancedSearchTextHead"
         android:textSize="25sp" />
+
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/advancedSearchHead"
+        android:breakStrategy="balanced"
+        android:paddingHorizontal="18dp"
+        android:paddingBottom="14dp"
+        android:text="@string/advanced_search_hint"
         android:textColor="@color/advancedSearchTextHeadSecondary"
-            android:paddingHorizontal="18dp"
-            android:paddingBottom="14dp"
-            android:text="@string/advanced_search_hint"
-        android:breakStrategy="balanced" 
-            android:textSize="13sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:textSize="13sp" />
+
     <androidx.core.widget.NestedScrollView
-    android:background="@color/advancedSearchBody"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/advancedSearchBody"
         android:clickable="true"
-    android:fillViewport="true"
-    android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <RelativeLayout
-        android:paddingTop="18dp"
+        android:fillViewport="true">
+
+        <LinearLayout
             android:id="@+id/linLayout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_alignParentTop="true"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-                android:text="@string/all_groups"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/shape_advanced_search_text"
-            android:id="@+id/text_groups" />
-            <Button
-                android:layout_below="@id/text_groups"
-            android:textAllCaps="false"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/selector_schedule_type"
-                android:textColor="@color/accent_text_color"
+            android:orientation="vertical"
+            android:paddingTop="18dp">
+
+            <TextView
+                android:id="@+id/text_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:fontFamily="@font/manrope_medium"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_groups" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/btn_group"
                 android:layout_width="wrap_content"
-                android:text="@string/download_schedules"
-            android:id="@+id/btn_acceptGroups" />
-            <TextView
-                android:layout_below="@id/btn_acceptGroups"
-            android:visibility="gone"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-                android:text="@string/all_subjects"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/shape_advanced_search_text"
-            android:id="@+id/text_lesson_titles" />
-            <TextView
-                android:layout_below="@id/text_lesson_titles"
-            android:visibility="gone"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-                android:text="@string/all_lesson_types"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/shape_advanced_search_text"
-            android:id="@+id/text_lesson_types" />
-            <TextView
-                android:layout_below="@id/text_lesson_types"
-            android:visibility="gone"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-                android:text="@string/all_auditoriums"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/shape_advanced_search_text"
-            android:id="@+id/text_auditoriums" />
-            <TextView
-                android:layout_below="@id/text_auditoriums"
-            android:visibility="gone"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-                android:text="@string/all_teachers"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:paddingHorizontal="14dp"
-                android:background="@drawable/shape_advanced_search_text"
-            android:id="@+id/text_teachers" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="18dp"
+                app:checkedButton="@id/btn_regular"
+                app:selectionRequired="true"
+                app:singleSelection="false">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_regular"
+                    style="@style/AppTheme.MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_schedule_type_regular"
+                    android:theme="@style/AppTheme.MaterialToggleButton" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_session"
+                    style="@style/AppTheme.MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_schedule_type_session"
+                    android:theme="@style/AppTheme.MaterialToggleButton" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <Button
-                android:layout_below="@id/text_teachers"
-            android:visibility="gone"
-            android:textAllCaps="false"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginBottom="8dp"
-            android:layout_height="32sp" 
-            android:paddingHorizontal="16dp"
-            android:background="@drawable/selector_schedule_type" 
-                android:textColor="@color/textAccent"
+                android:id="@+id/btn_acceptGroups"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/download_schedules"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_text_color" />
+
+            <TextView
+                android:id="@+id/text_lesson_titles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_subjects" />
+
+            <TextView
+                android:id="@+id/text_lesson_types"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_lesson_types" />
+
+            <TextView
+                android:id="@+id/text_auditoriums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_auditoriums" />
+
+            <TextView
+                android:id="@+id/text_teachers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_teachers" />
+
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="16dp"
                 android:text="@string/apply"
-            android:id="@+id/btn_search" />
+                android:textAllCaps="false"
+                android:textColor="@color/textAccent" />
+
             <ProgressBar
-                android:layout_below="@id/btn_acceptGroups"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:visibility="gone"
                 android:id="@+id/progressBar"
                 android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:indeterminate="false"
-        android:progressDrawable="@drawable/circular_progress_bar"
-        android:background="@drawable/circle_shape"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:max="10000" />
+                android:layout_height="200dp"
+                android:background="@drawable/circle_shape"
+                android:indeterminate="false"
+                android:max="10000"
+                android:progressDrawable="@drawable/circular_progress_bar" />
+
             <TextView
                 android:id="@+id/text_progress"
-            android:layout_below="@id/btn_acceptGroups"
-                android:layout_centerHorizontal="true"
-                android:visibility="gone"
-                android:textAlignment="center"
-                android:text="0 %"
-                android:textStyle="bold"
-                android:textColor="@color/textColorPrimary"
-            android:layout_marginTop="60dp"
-                android:textSize="40sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-                <Button
-                android:textSize="16sp"
-                android:layout_below="@id/text_progress"
-                android:layout_centerHorizontal="true"
-                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:text="0 %"
+                android:textAlignment="center"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/btn_cancel"
-                    android:text="@string/cancel"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/colorSecondary"
-                    android:background="@android:color/transparent"
-                    android:layout_height="wrap_content"/>
-        </RelativeLayout>
-</androidx.core.widget.NestedScrollView>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/cancel"
+                android:textColor="@color/colorSecondary"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
