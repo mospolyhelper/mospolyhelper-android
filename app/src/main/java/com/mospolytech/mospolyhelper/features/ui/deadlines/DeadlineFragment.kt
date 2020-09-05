@@ -23,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mospolytech.mospolyhelper.NavGraphDirections
@@ -313,9 +314,10 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun setToolbar(){
-        menuBtn = requireView().findViewById(R.id.button_menu)
-        mainActivity.setSupportActionBar(toolbar)
-        menuBtn.setOnClickListener {
+        val bottomAppBar = bottomAppBar
+        (activity as MainActivity).setSupportActionBar(bottomAppBar)
+        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+        bottomAppBar.setNavigationOnClickListener {
             findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
         }
         val inputMethodManager =
