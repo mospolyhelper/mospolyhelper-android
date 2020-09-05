@@ -54,6 +54,7 @@ android {
 dependencies {
     def nav_version = "2.3.0"
     def koin_version= "2.1.6"
+    def room_version = "2.2.5"
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -114,8 +115,11 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
 
     // Room
-    implementation "android.arch.persistence.room:runtime:1.1.1"
-    kapt "android.arch.persistence.room:compiler:1.1.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
 
 //    implementation 'com.github.MicroRJ:android_superellipse:2.0'
 }
