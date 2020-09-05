@@ -1,0 +1,43 @@
+package com.mospolytech.mospolyhelper.data.schedule.utils
+
+import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
+import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+
+class ScheduleIterable(
+    private val groupList: Iterable<String>
+): Iterable<Schedule?> {
+    private val dataSource = ScheduleLocalDataSource(ScheduleLocalConverter())
+
+    override fun iterator(): Iterator<Schedule?> {
+        return ScheduleIterator(
+            groupList.iterator(),
+            dataSource
+        )
+    }
+
+    class ScheduleIterator(
+        private var groupListIterator: Iterator<String>,
+        private var dataSource: ScheduleLocalDataSource
+    ): Iterator<Schedule?> {
+        private var isSessionFlag = false
+        private var curGroupTitle = ""
+
+        override fun hasNext() = groupListIterator.hasNext() || isSessionFlag
+
+        override fun next() = try {
+            if (isSessionFlag) {
+                val result = dataSource.get(curGroupTitle, isSessionFlag)
+                isSessionFlag = false
+                result
+            } else {
+                curGroupTitle = groupListIterator.next()
+                val result = dataSource.get(curGroupTitle, isSessionFlag)
+                isSessionFlag = true
+                result
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+}

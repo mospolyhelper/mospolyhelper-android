@@ -1,61 +1,11 @@
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_schedule"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/button_day"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/scheduleBackgroundColor"
-        android:elevation="0dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/manrope_extra_light"
-        android:letterSpacing="0.08"
-        android:maxLines="1"
-        android:paddingHorizontal="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="20dp"
-        android:text="Google Authenticator"
-        android:textAlignment="center"
-        android:textColor="@color/textScheduleDay"
-        android:textSize="25sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_schedule"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/button_day"
-        android:clickable="false"
-        android:focusable="false"
-        android:scrollbars="none"
-        tools:listitem="@layout/item_lesson"></androidx.recyclerview.widget.RecyclerView>
-    <LinearLayout android:id="@+id/viewgroup_null_lesson"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:layout_marginStart="20dp"
-        android:visibility="invisible"
-        android:layout_marginEnd="20dp"
-        android:paddingBottom="?actionBarSize"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:src="@drawable/ic_sleeping_face"
-            android:layout_gravity="center_horizontal"
-            android:adjustViewBounds="true"
-            android:layout_marginBottom="10dp"
-            android:layout_width="64dp"
-            android:layout_height="64dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/manrope_light"
-            android:text="@string/null_daily_schedule"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-    </LinearLayout>
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="false"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    tools:listitem="@layout/item_lesson" />
