@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/advancedSearchHead"
+        android:fontFamily="sans-serif-black"
+        android:paddingHorizontal="18dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="1.5dp"
+        android:text="@string/advanced_search"
+        android:textColor="@color/advancedSearchTextHead"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/advancedSearchHead"
+        android:breakStrategy="balanced"
+        android:paddingHorizontal="18dp"
+        android:paddingBottom="14dp"
+        android:text="@string/advanced_search_hint"
+        android:textColor="@color/advancedSearchTextHeadSecondary"
+        android:textSize="13sp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/advancedSearchBody"
+        android:clickable="true"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/linLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="18dp">
+
+            <TextView
+                android:id="@+id/text_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:fontFamily="@font/manrope_medium"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_groups" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/btn_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="18dp"
+                app:checkedButton="@id/btn_regular"
+                app:selectionRequired="true"
+                app:singleSelection="false">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_regular"
+                    style="@style/AppTheme.MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_schedule_type_regular"
+                    android:theme="@style/AppTheme.MaterialToggleButton" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_session"
+                    style="@style/AppTheme.MaterialToggleButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_schedule_type_session"
+                    android:theme="@style/AppTheme.MaterialToggleButton" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <Button
+                android:id="@+id/btn_acceptGroups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/download_schedules"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_text_color" />
+
+            <TextView
+                android:id="@+id/text_lesson_titles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_subjects" />
+
+            <TextView
+                android:id="@+id/text_lesson_types"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_lesson_types" />
+
+            <TextView
+                android:id="@+id/text_auditoriums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_auditoriums" />
+
+            <TextView
+                android:id="@+id/text_teachers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_advanced_search_text"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="@string/all_teachers" />
+
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginBottom="8dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/apply"
+                android:textAllCaps="false"
+                android:textColor="@color/textAccent" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:background="@drawable/circle_shape"
+                android:indeterminate="false"
+                android:max="10000"
+                android:progressDrawable="@drawable/circular_progress_bar" />
+
+            <TextView
+                android:id="@+id/text_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 %"
+                android:textAlignment="center"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/cancel"
+                android:textColor="@color/colorSecondary"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     android:layout_gravity="bottom"
-    app:backgroundTint="@color/lessonTimeBackground"
+    app:backgroundTint="@color/colorLevelTwo"
     app:fabCradleMargin="15dp"
     app:fabCradleRoundedCornerRadius="25dp"
     app:navigationIcon="@drawable/ic_menu_24px"
