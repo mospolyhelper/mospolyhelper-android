@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <AutoCompleteTextView
+        android:id="@+id/text_lesson_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@null"
+        android:completionThreshold="1"
+        android:dropDownHeight="100dp"
+        android:fontFamily="sans-serif-light"
+        android:hint="Enter label"
+        android:inputType="text"
+        android:maxLength="100"
+        android:maxLines="1"
+        android:minEms="4"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="3dp"
+        android:textColor="@color/textScheduleTitle"
+        android:textColorHint="@color/textAccentDisabled"
+        android:textSize="19sp" />
+</com.google.android.material.textfield.TextInputLayout>

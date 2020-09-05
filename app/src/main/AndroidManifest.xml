@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -15,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Splash">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.mospolytech.mospolyhelper.features.ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,6 +25,21 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <receiver android:name="com.mospolytech.mospolyhelper.features.ui.schedule.appwidget.ScheduleAppWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/schedule_appwidget_provider" />
+        </receiver>
+
+        <receiver android:name="com.mospolytech.mospolyhelper.features.broadcast_receivers.ScheduleCurrentLessonBroadcastReceiver"/>
+
+        <service
+            android:name="com.mospolytech.mospolyhelper.features.ui.schedule.appwidget.LessonAdapterService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
+
 
 </manifest>

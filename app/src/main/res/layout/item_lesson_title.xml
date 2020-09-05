@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:fontFamily="@font/manrope_bold"
+    android:letterSpacing="0.04"
+    android:maxLines="1"
+    android:paddingHorizontal="10dp"
+    android:paddingTop="13dp"
+    android:paddingBottom="18dp"
+    android:text="Google Authenticator"
+    android:textAlignment="center"
+    android:textColor="@color/textScheduleDay"
+    android:textSize="22sp" />

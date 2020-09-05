@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/scheduleFragment"
         tools:layout="@layout/fragment_schedule"
-        android:name="com.mospolytech.mospolyhelper.ui.schedule.ScheduleFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFragment"
         android:label="ScheduleFragment" >
         <action
             android:id="@+id/action_scheduleFragment_to_calendarFragment"
@@ -19,18 +19,21 @@
         <action
             android:id="@+id/action_scheduleFragment_to_lessonInfoFragment"
             app:destination="@id/lessonInfoFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit" />
+            app:enterAnim="@android:anim/fade_in"
+            app:popEnterAnim="@android:anim/fade_in" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_scheduleSettingsFragment"
+            app:destination="@id/scheduleSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
         tools:layout="@layout/fragment_addresses"
-        android:name="com.mospolytech.mospolyhelper.ui.addresses.AddressesFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.addresses.AddressesFragment"
         android:label="AddressesFragment" />
     <fragment
         android:id="@+id/settingsFragment"
         tools:layout="@layout/fragment_settings"
-        android:name="com.mospolytech.mospolyhelper.ui.settings.SettingsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.settings.SettingsFragment"
         android:label="SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_self"
@@ -40,31 +43,40 @@
     <dialog
         android:id="@+id/calendarFragment"
         tools:layout="@layout/fragment_schedule_calendar"
-        android:name="com.mospolytech.mospolyhelper.ui.schedule.calendar.CalendarFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.calendar.CalendarFragment"
         android:label="CalendarFragment" />
     <dialog
         android:id="@+id/advancedSearchFragment"
-        tools:layout="@layout/bottom_sheet_schedule"
-        android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchFragment"
+        tools:layout="@layout/bottom_sheet_schedule_advanced_search"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchFragment"
         android:label="AdvancedSearchFragment" >
         <action
             android:id="@+id/action_advancedSearchFragment_to_advancedSearchSelectFragment"
             app:destination="@id/advancedSearchSelectFragment" />
     </dialog>
     <dialog
+        android:id="@+id/scheduleSettingsFragment"
+        tools:layout="@layout/bottom_sheet_schedule_settings"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleSettingsFragment"
+        android:label="ScheduleSettingsFragment" />
+    <dialog
         android:id="@+id/advancedSearchSelectFragment"
         tools:layout="@layout/fragment_schedule_filter"
-        android:name="com.mospolytech.mospolyhelper.ui.schedule.advanced_search.AdvancedSearchSelectFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchSelectFragment"
         android:label="AdvancedSearchSelectFragment" />
     <dialog
         android:id="@+id/lessonInfoFragment"
         tools:layout="@layout/fragment_schedule_lesson_info"
-        android:name="com.mospolytech.mospolyhelper.ui.schedule.lesson_info.LessonInfoFragment"
-        android:label="LessonInfoFragment" />
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoFragment"
+        android:label="LessonInfoFragment" >
+        <argument
+            android:name="titleTransitionNames"
+            app:argType="string[]" />
+    </dialog>
     <fragment
         android:id="@+id/deadlineFragment"
         tools:layout="@layout/fragment_deadline"
-        android:name="com.mospolytech.mospolyhelper.ui.deadlines.DeadlineFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.deadlines.DeadlineFragment"
         android:label="DeadlineFragment" />
     <action
         android:id="@+id/nav_schedule"
@@ -86,5 +98,13 @@
         app:destination="@id/settingsFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
+    <dialog
+        android:id="@+id/mainMenuFragment"
+        tools:layout="@layout/bottom_sheet_main_menu"
+        android:name="com.mospolytech.mospolyhelper.features.ui.main.MainMenuFragment"
+        android:label="MainMenuFragment" />
+    <action
+        android:id="@+id/action_global_mainMenuFragment"
+        app:destination="@id/mainMenuFragment" />
 
 </navigation>
