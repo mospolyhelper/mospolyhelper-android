@@ -13,7 +13,9 @@
     tools:ignore="BottomAppBar"
     app:fabCradleMargin="0dp"
     app:fabCradleRoundedCornerRadius="0dp"
-    app:fabAlignmentMode="end">
+    app:fabAlignmentMode="end"
+    app:hideOnScroll="true"
+    app:layout_scrollFlags="scroll|enterAlways">
     <RelativeLayout
         android:id="@+id/toolbar_deadline_main"
         android:layout_width="wrap_content"
