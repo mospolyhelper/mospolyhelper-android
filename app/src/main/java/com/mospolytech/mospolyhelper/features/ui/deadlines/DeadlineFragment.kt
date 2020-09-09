@@ -45,14 +45,11 @@ import kotlin.coroutines.CoroutineContext
 class DeadlineFragment : Fragment(), CoroutineScope,
     View.OnClickListener {
 
-    //private val viewModelFactory = ScheduleViewModel.Factory()
-    //private val viewModelShedule by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
     private lateinit var mainActivity: MainActivity
     private lateinit var bot: AddBottomSheetDialogFragment
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
-    private lateinit var menuBtn: ImageButton
 
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
@@ -72,6 +69,11 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             DeadlineFragment()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,17 +88,38 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         fm = mainActivity.supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
-        defaultData()
-        editDeadline()
-        deleteDeadline()
-        receiveName()
         setToolbar()
         fab.setOnClickListener(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        
+    // простите меня за это
+    private fun temporaryFix() {
+        bot.show(fm,
+            AddBottomSheetDialogFragment.TAG
+        )
+        bot.dismiss()
+        bot.show(fm,
+            AddBottomSheetDialogFragment.TAG
+        )
+        bot.dismiss()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        temporaryFix()
+        defaultData()
+        editDeadline()
+        deleteDeadline()
+        receiveName()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.nameReceiver.removeObservers(viewLifecycleOwner)
+        viewModel.edit.removeObservers(viewLifecycleOwner)
+        viewModel.foundData.removeObservers(viewLifecycleOwner)
+        viewModel.delete.removeObservers(viewLifecycleOwner)
+        bot.dismiss()
     }
 
     private fun receiveName() {
@@ -211,7 +234,9 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                     fab.hide()
                 }
                 else if (dy < 0) {
-                    fab.show()
+                    if (toolbar_deadline_main.visibility != View.GONE) {
+                        fab.show()
+                    }
                 }
             }
         })
@@ -327,20 +352,25 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             toolbar_deadline_search.visibility = View.VISIBLE
             edit_search_deadline.requestFocus()
             inputMethodManager.showSoftInput(edit_search_deadline, 0)
+            if (!viewModel.foundData.hasActiveObservers()) {
+                requestData(DataType.FIND)
+            } else if (it.toString().isEmpty()) {
+                requestData(DataType.FULL)
+            }
+            fab.hide()
         }
         button_search_clear.setOnClickListener {
             toolbar_deadline_main.visibility = View.VISIBLE
             toolbar_deadline_search.visibility = View.GONE
             edit_search_deadline.text.clear()
             inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
+            requestData(DataType.FULL)
+            fab.show()
         }
         edit_search_deadline.addTextChangedListener {
-            if (!viewModel.foundData.hasActiveObservers()) {
-                requestData(DataType.FIND)
-            } else if (it.toString().isEmpty()) {
-                requestData(DataType.FULL)
+            if (viewModel.foundData.hasActiveObservers()) {
+                viewModel.find(it.toString())
             }
-            viewModel.find(it.toString())
         }
     }
 
