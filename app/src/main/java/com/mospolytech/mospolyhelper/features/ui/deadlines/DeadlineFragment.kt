@@ -85,7 +85,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
         bot = AddBottomSheetDialogFragment.newInstance(requireContext())
-        fm = mainActivity.supportFragmentManager
+        fm = (activity as MainActivity).supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
         setToolbar()
@@ -133,36 +133,43 @@ class DeadlineFragment : Fragment(), CoroutineScope,
 
     private fun editDeadline() {
         viewModel.edit.observe(viewLifecycleOwner, Observer<Deadline> {
-            bot.setEdit(it)
-            bot.show(fm,
-                AddBottomSheetDialogFragment.TAG
-            )
+            if (!viewModel.isUpdated(it))
+            {
+                bot.setEdit(it)
+                bot.show(fm,
+                    AddBottomSheetDialogFragment.TAG
+                )
+            }
         })
     }
 
     private fun deleteDeadline() {
         viewModel.delete.observe(viewLifecycleOwner, Observer<Deadline> {
-            viewModel.deleteOne(it)
-            val snackbar = Snackbar.make(requireView(),
-                R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
-            var isRemoved = true
-            snackbar
-                .setAction(R.string.cancel) {
-                    isRemoved = false
-                }
-                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        super.onDismissed(transientBottomBar, event)
-                        if (!isRemoved) {
-                            viewModel.saveInformation(it)
-                        }
+            if (!viewModel.isDeleted(it))
+            {
+                viewModel.deleteOne(it)
+                val snackbar = Snackbar.make(requireView(),
+                    R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
+                var isRemoved = true
+                snackbar
+                    .setAction(R.string.cancel) {
+                        isRemoved = false
                     }
-                })
-                .show()
+                    .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            super.onDismissed(transientBottomBar, event)
+                            if (!isRemoved) {
+                                viewModel.saveInformation(it)
+                            }
+                        }
+                    })
+                    .show()
+            }
         })
     }
 
     private fun defaultData() {
+        loading_spinner.visibility = View.VISIBLE
         type = DataType.FULL
         viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
             if (recycler.adapter == null) {
@@ -175,6 +182,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             } else {
                 (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
             }
+            loading_spinner.visibility = View.GONE
             noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
         })
     }
@@ -278,7 +286,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         ) {
             val trashBinIcon = resources.getDrawable(
                 R.drawable.ic_delete_black_24dp,
-                mainActivity.theme
+                (activity as MainActivity).theme
             )
             //c.clipRect(viewHolder.itemView.width.toFloat(), viewHolder.itemView.top.toFloat(),
             //    dX, viewHolder.itemView.bottom.toFloat())
@@ -300,7 +308,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                             20,
                             VibrationEffect.EFFECT_TICK
                         ))
-                } else {
+                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     vibrator.vibrate(20)
                     // api 23??
                 }
