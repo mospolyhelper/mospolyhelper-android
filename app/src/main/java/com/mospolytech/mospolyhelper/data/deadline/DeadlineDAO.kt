@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.data.deadline
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DeadlineDAO {
@@ -46,5 +47,25 @@ interface DeadlineDAO {
 
     @Delete
     fun deleteList(deadline: List<Deadline>)
+
+    @Query("Select * from deadlines where (pinned = 1 and  completed = 0) " +
+            "union all Select * from deadlines where (pinned = 0 and  completed = 0) " +
+            "union all select * from deadlines where (pinned = 1 and completed = 1)" +
+            "union all select * from deadlines where (pinned = 0 and completed = 1)")
+    fun getAllFlow(): Flow<List<Deadline>>
+
+    @Query("Select * from deadlines where (pinned = 1 and completed = 0) " +
+            "union all Select * from deadlines where (pinned = 0 and  completed = 0)")
+    fun getAllCurrentFlow(): Flow<List<Deadline>>
+
+    @Query("Select * from deadlines where (pinned = 1 and  completed = 0 " +
+            "and name like '%' || :predmet || '%') " +
+            "union all Select * from deadlines where (pinned = 0 and  completed = 0 " +
+            "and name like '%' || :predmet || '%') " +
+            "union all select * from deadlines where (pinned = 1 and completed = 1 " +
+            "and name like '%' || :predmet || '%')" +
+            "union all select * from deadlines where (pinned = 0 and completed = 1 " +
+            "and name like '%' || :predmet || '%')")
+    fun findDeadlineFlow(predmet: String): Flow<List<Deadline>>
 
 }

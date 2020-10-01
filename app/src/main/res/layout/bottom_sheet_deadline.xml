@@ -30,9 +30,10 @@
             android:id="@+id/editPredmet"
             android:inputType="textCapSentences"
             android:hint="@string/predmet_title"
-            android:autofillHints=""
             android:background="@android:color/transparent"
-            android:layout_marginStart="@dimen/bottomDimen"/>
+            android:layout_marginStart="@dimen/bottomDimen"
+            android:enabled="true"
+            android:imeOptions="actionNext"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,7 +54,8 @@
             android:hint="@string/deadline_descr"
             android:autofillHints=""
             android:background="@android:color/transparent"
-            android:layout_marginStart="@dimen/bottomDimen"/>
+            android:layout_marginStart="@dimen/bottomDimen"
+            android:imeOptions="actionDone"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
