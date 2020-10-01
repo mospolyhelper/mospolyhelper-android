@@ -35,11 +35,16 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
 
     fun saveInformation(deadline: Deadline) {
         deadlinesRepository.insertDeadline(deadline)
+
     }
 
     fun updateOne(deadline: Deadline) {
         deadlinesRepository.updateDeadline(deadline)
+
     }
+
+
+
 
     override fun onCleared() {
         super.onCleared()

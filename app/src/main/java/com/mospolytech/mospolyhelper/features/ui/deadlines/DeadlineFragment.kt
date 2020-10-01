@@ -23,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mospolytech.mospolyhelper.NavGraphDirections
@@ -44,14 +45,11 @@ import kotlin.coroutines.CoroutineContext
 class DeadlineFragment : Fragment(), CoroutineScope,
     View.OnClickListener {
 
-    //private val viewModelFactory = ScheduleViewModel.Factory()
-    //private val viewModelShedule by viewModels<ScheduleViewModel>(factoryProducer = ::viewModelFactory)
 
     private lateinit var mainActivity: MainActivity
     private lateinit var bot: AddBottomSheetDialogFragment
     private lateinit var fm: FragmentManager
     private lateinit var vibrator: Vibrator
-    private lateinit var menuBtn: ImageButton
 
     private var isVibrated = false
     private val viewModel by viewModel<DeadlineViewModel>()
@@ -71,6 +69,11 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             DeadlineFragment()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,20 +85,41 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
         bot = AddBottomSheetDialogFragment.newInstance(requireContext())
-        fm = mainActivity.supportFragmentManager
+        fm = (activity as MainActivity).supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
-        defaultData()
-        editDeadline()
-        deleteDeadline()
-        receiveName()
         setToolbar()
         fab.setOnClickListener(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        
+    // простите меня за это
+    private fun temporaryFix() {
+        bot.show(fm,
+            AddBottomSheetDialogFragment.TAG
+        )
+        bot.dismiss()
+        bot.show(fm,
+            AddBottomSheetDialogFragment.TAG
+        )
+        bot.dismiss()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        temporaryFix()
+        defaultData()
+        editDeadline()
+        deleteDeadline()
+        receiveName()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.nameReceiver.removeObservers(viewLifecycleOwner)
+        viewModel.edit.removeObservers(viewLifecycleOwner)
+        viewModel.foundData.removeObservers(viewLifecycleOwner)
+        viewModel.delete.removeObservers(viewLifecycleOwner)
+        bot.dismiss()
     }
 
     private fun receiveName() {
@@ -109,36 +133,43 @@ class DeadlineFragment : Fragment(), CoroutineScope,
 
     private fun editDeadline() {
         viewModel.edit.observe(viewLifecycleOwner, Observer<Deadline> {
-            bot.setEdit(it)
-            bot.show(fm,
-                AddBottomSheetDialogFragment.TAG
-            )
+            if (!viewModel.isUpdated(it))
+            {
+                bot.setEdit(it)
+                bot.show(fm,
+                    AddBottomSheetDialogFragment.TAG
+                )
+            }
         })
     }
 
     private fun deleteDeadline() {
         viewModel.delete.observe(viewLifecycleOwner, Observer<Deadline> {
-            viewModel.deleteOne(it)
-            val snackbar = Snackbar.make(requireView(),
-                R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
-            var isRemoved = true
-            snackbar
-                .setAction(R.string.cancel) {
-                    isRemoved = false
-                }
-                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        super.onDismissed(transientBottomBar, event)
-                        if (!isRemoved) {
-                            viewModel.saveInformation(it)
-                        }
+            if (!viewModel.isDeleted(it))
+            {
+                viewModel.deleteOne(it)
+                val snackbar = Snackbar.make(requireView(),
+                    R.string.deleteDeadline, Snackbar.LENGTH_SHORT)
+                var isRemoved = true
+                snackbar
+                    .setAction(R.string.cancel) {
+                        isRemoved = false
                     }
-                })
-                .show()
+                    .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            super.onDismissed(transientBottomBar, event)
+                            if (!isRemoved) {
+                                viewModel.saveInformation(it)
+                            }
+                        }
+                    })
+                    .show()
+            }
         })
     }
 
     private fun defaultData() {
+        loading_spinner.visibility = View.VISIBLE
         type = DataType.FULL
         viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
             if (recycler.adapter == null) {
@@ -151,6 +182,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             } else {
                 (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
             }
+            loading_spinner.visibility = View.GONE
             noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
         })
     }
@@ -210,7 +242,9 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                     fab.hide()
                 }
                 else if (dy < 0) {
-                    fab.show()
+                    if (toolbar_deadline_main.visibility != View.GONE) {
+                        fab.show()
+                    }
                 }
             }
         })
@@ -252,7 +286,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         ) {
             val trashBinIcon = resources.getDrawable(
                 R.drawable.ic_delete_black_24dp,
-                mainActivity.theme
+                (activity as MainActivity).theme
             )
             //c.clipRect(viewHolder.itemView.width.toFloat(), viewHolder.itemView.top.toFloat(),
             //    dX, viewHolder.itemView.bottom.toFloat())
@@ -274,7 +308,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                             20,
                             VibrationEffect.EFFECT_TICK
                         ))
-                } else {
+                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     vibrator.vibrate(20)
                     // api 23??
                 }
@@ -313,9 +347,10 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun setToolbar(){
-        menuBtn = requireView().findViewById(R.id.button_menu)
-        mainActivity.setSupportActionBar(toolbar)
-        menuBtn.setOnClickListener {
+        val bottomAppBar = bottomAppBar
+        (activity as MainActivity).setSupportActionBar(bottomAppBar)
+        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+        bottomAppBar.setNavigationOnClickListener {
             findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
         }
         val inputMethodManager =
@@ -325,20 +360,25 @@ class DeadlineFragment : Fragment(), CoroutineScope,
             toolbar_deadline_search.visibility = View.VISIBLE
             edit_search_deadline.requestFocus()
             inputMethodManager.showSoftInput(edit_search_deadline, 0)
+            if (!viewModel.foundData.hasActiveObservers()) {
+                requestData(DataType.FIND)
+            } else if (it.toString().isEmpty()) {
+                requestData(DataType.FULL)
+            }
+            fab.hide()
         }
         button_search_clear.setOnClickListener {
             toolbar_deadline_main.visibility = View.VISIBLE
             toolbar_deadline_search.visibility = View.GONE
             edit_search_deadline.text.clear()
             inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
+            requestData(DataType.FULL)
+            fab.show()
         }
         edit_search_deadline.addTextChangedListener {
-            if (!viewModel.foundData.hasActiveObservers()) {
-                requestData(DataType.FIND)
-            } else if (it.toString().isEmpty()) {
-                requestData(DataType.FULL)
+            if (viewModel.foundData.hasActiveObservers()) {
+                viewModel.find(it.toString())
             }
-            viewModel.find(it.toString())
         }
     }
 
