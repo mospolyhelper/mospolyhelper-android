@@ -37,23 +37,27 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val modules = listOf(
+            appModule,
+            coreModule,
+            mainModule,
+
+            addressesModule,
+            deadlineModule,
+            scheduleModule
+        )
+
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@App)
 
-            modules(
-                appModule,
-                coreModule,
-                mainModule,
-
-                addressesModule,
-                deadlineModule,
-                scheduleModule
-            )
+            modules(modules)
         }
 
         context = applicationContext
         App.assets = assets
+
+
 
         //createNotificationChannel()
     }

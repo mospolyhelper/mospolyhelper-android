@@ -1,13 +1,13 @@
 package com.mospolytech.mospolyhelper.data.schedule.repository
 
-import android.util.Log
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
+import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleIterable
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.utils.TAG
+import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -17,7 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduleRepositoryImpl(
     private val localDataSource: ScheduleLocalDataSource,
-    private val remoteDataSource: ScheduleRemoteDataSource
+    private val remoteDataSource: ScheduleRemoteDataSource,
+    private val remoteTeacherDataSource: ScheduleRemoteTeacherDataSource
 ) : ScheduleRepository {
     companion object {
         fun allDataFromSchedule(schedule: Schedule): SchedulePack {
@@ -52,55 +53,35 @@ class ScheduleRepositoryImpl(
     private val scheduleCounter = AtomicInteger(0)
 
     override fun getSchedule(
-        group: String,
-        isSession: Boolean,
+        id: String,
+        isStudent: Boolean,
         refresh: Boolean
-    ) = flow<Schedule?> {
-        var schedule: Schedule? = null
-        if (refresh) {
-            try {
-                schedule = refresh(group, isSession)
-            } catch (e1: Exception) {
-                Log.e(TAG, "Download schedule fail", e1)
-            }
+    ) = flow {
+        val schedule = if (refresh) {
+            refresh(id, isStudent) ?: localDataSource.get(id, isStudent)
         } else {
-            try {
-                schedule = localDataSource.get(group, isSession)
-            } catch (e: Exception) {
-                Log.e(TAG, "Read schedule error", e)
-            }
-        }
-        if (schedule == null) {
-            if (!refresh) {
-                try {
-                    schedule = refresh(group, isSession)
-                } catch (e1: Exception) {
-                    Log.e(TAG, "Download schedule fail", e1)
-                }
-            } else {
-                try {
-                    schedule = localDataSource.get(group, isSession)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Read schedule error", e)
-                }
-            }
+            localDataSource.get(id, isStudent) ?: refresh(id, isStudent)
         }
         emit(schedule)
     }
 
-    private suspend fun refresh(group: String, isSession: Boolean): Schedule? {
-        val schedule = remoteDataSource.get(group, isSession)
+    private suspend fun refresh(id: String, isStudent: Boolean): Schedule? {
+        val schedule = if (isStudent) {
+            combine(
+                remoteDataSource.get(id, false),
+                remoteDataSource.get(id, true)
+            )
+        } else {
+            remoteTeacherDataSource.get(id)
+        }
         if (schedule != null) {
-            try {
-                localDataSource.set(schedule)
-            } catch (e: Exception) {
-            }
+            localDataSource.set(schedule, id, isStudent)
         }
         return schedule
     }
 
-    override suspend fun getAnySchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
-        if (groupList.isEmpty()) {
+    override suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
+        if (ids.isEmpty()) {
             return@coroutineScope SchedulePackList(
                 emptyList(),
                 mutableSetOf(),
@@ -111,20 +92,16 @@ class ScheduleRepositoryImpl(
         }
 
         scheduleCounter.set(0)
-        val maxProgress = groupList.size * 4
+        val maxProgress = ids.size * 2
 
-        val chunkSize = groupList.size / (Runtime.getRuntime().availableProcessors() * 3)
-        val chunks = if (chunkSize > 3) groupList.chunked(chunkSize) else listOf(groupList)
+        val chunkSize = ids.size / (Runtime.getRuntime().availableProcessors() * 3)
+        val chunks = if (chunkSize > 3) ids.chunked(chunkSize) else listOf(ids)
 
         val channel = Channel<Schedule?>()
         val deferredList = chunks.map { chunk ->
             async(context = Dispatchers.IO) {
                 for (groupTitle in chunk) {
-                    channel.send(refresh(groupTitle, false))
-                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
-                }
-                for (groupTitle in chunk) {
-                    channel.send(refresh(groupTitle, true))
+                    channel.send(refresh(groupTitle, isStudent))
                     onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
                 }
             }
@@ -138,7 +115,7 @@ class ScheduleRepositoryImpl(
         val packList =
             SchedulePackList(
                 ScheduleIterable(
-                    groupList
+                    ids
                 ),
                 sortedSetOf(),
                 sortedSetOf(),
@@ -146,7 +123,6 @@ class ScheduleRepositoryImpl(
                 sortedSetOf()
             )
         channel.receiveAsFlow().collect {
-            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
             if (it == null) {
                 return@collect
             }
@@ -162,6 +138,7 @@ class ScheduleRepositoryImpl(
                     packList.lessonTypes.add(lesson.type)
                 }
             }
+            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
         }
         return@coroutineScope packList
     }

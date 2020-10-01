@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.data.deadline
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.mospolytech.mospolyhelper.data.core.AppDatabase
+import com.mospolytech.mospolyhelper.data.core.local.AppDatabase
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext

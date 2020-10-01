@@ -14,7 +14,7 @@ class LessonLabelRepository(private val dataSource: LessonLabelLocalDataSource) 
             lesson.teachers,
             lesson.auditoriums,
             lesson.type,
-            lesson.group.title,
+            lesson.groups.joinToString { it.title },
             date.dayOfWeek,
             date
         )
@@ -24,7 +24,7 @@ class LessonLabelRepository(private val dataSource: LessonLabelLocalDataSource) 
             lesson.teachers,
             lesson.auditoriums,
             lesson.type,
-            lesson.group.title,
+            lesson.groups.joinToString { it.title },
             date.dayOfWeek,
             null
         )
@@ -38,7 +38,7 @@ class LessonLabelRepository(private val dataSource: LessonLabelLocalDataSource) 
             lesson.teachers,
             lesson.auditoriums,
             lesson.type,
-            lesson.group.title,
+            lesson.groups.joinToString { it.title },
             date.dayOfWeek,
             if (isOneDate) date else null
         )
@@ -52,7 +52,7 @@ class LessonLabelRepository(private val dataSource: LessonLabelLocalDataSource) 
             lesson.teachers,
             lesson.auditoriums,
             lesson.type,
-            lesson.group.title,
+            lesson.groups.joinToString { it.title },
             date.dayOfWeek,
             if (isOneDate) date else null
         )

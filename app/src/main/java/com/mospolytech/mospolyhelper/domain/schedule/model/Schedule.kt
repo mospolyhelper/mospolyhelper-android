@@ -1,123 +1,62 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
-import com.beust.klaxon.Json
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filterByDate
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 data class Schedule(
     val dailySchedules: List<List<Lesson>>,
-    @Json(ignored = true) val lastUpdate: LocalDateTime,
-    val group: Group,
-    @Json(ignored = true) val isSession: Boolean,
     val dateFrom: LocalDate,
     val dateTo: LocalDate
 ) {
-    class Builder(
-        private var dailySchedules: List<List<Lesson>>,
-        private var lastUpdate: LocalDateTime? = null,
-        private var group: Group = Group.empty,
-        private var isSession: Boolean,
-        private var dateFrom: LocalDate? = null,
-        private var dateTo: LocalDate? = null
-    ) {
-        fun dailySchedules(dailySchedules: List<List<Lesson>>) = apply { this.dailySchedules = dailySchedules }
-
-        fun lastUpdate(lastUpdate: LocalDateTime) = apply { this.lastUpdate = lastUpdate }
-
-        fun group(group: Group) = apply { this.group = group }
-
-        fun isSession(isSession: Boolean) = apply { this.isSession = isSession }
-
-        fun dateFrom(dateFrom: LocalDate) = apply { this.dateFrom = dateFrom }
-
-        fun dateTo(dateTo: LocalDate) = apply { this.dateTo = dateTo }
-
-        fun build(): Schedule {
-            var dateFrom = this.dateFrom ?: LocalDate.MAX
-            var dateTo = this.dateTo ?: LocalDate.MIN
-            if (this.dateFrom == null || this.dateTo == null) {
-                for (dailySchedule in dailySchedules) {
-                    for (lesson in dailySchedule) {
-                        if (lesson.dateFrom < dateFrom)
-                            dateFrom = lesson.dateFrom;
-                        if (lesson.dateTo > dateTo)
-                            dateTo = lesson.dateTo;
-                    }
+    companion object {
+        fun from(dailySchedules: List<List<Lesson>>): Schedule {
+            var dateFrom = LocalDate.MAX
+            var dateTo = LocalDate.MIN
+            for (dailySchedule in dailySchedules) {
+                for (lesson in dailySchedule) {
+                    if (lesson.dateFrom < dateFrom)
+                        dateFrom = lesson.dateFrom;
+                    if (lesson.dateTo > dateTo)
+                        dateTo = lesson.dateTo;
                 }
             }
-            val lastUpdate = lastUpdate ?: LocalDateTime.now()
 
             return Schedule(
                 dailySchedules,
-                lastUpdate,
-                group,
-                isSession,
                 dateFrom,
                 dateTo
             )
         }
     }
 
+    fun getSchedule(
+        date: LocalDate,
+        showEnded: Boolean = false,
+        showCurrent: Boolean = true,
+        showNotStarted: Boolean = false
+    ) = filterByDate(
+        dailySchedules[date.dayOfWeek.value % 7],
+        date,
+        showEnded,
+        showCurrent,
+        showNotStarted
+    )
 
-    fun getSchedule(date: LocalDate, filter: Filter = Filter.default) =
-        filter.getFiltered(dailySchedules[date.dayOfWeek.value % 7], date)
-
-    class Filter(val sessionFilter: Boolean, val dateFilter: DateFilter) {
-        companion object {
-            val default =
-                Filter(
-                    true,
-                    DateFilter.Hide
-                )
-            val none =
-                Filter(
-                    false,
-                    DateFilter.Show
-                )
+    fun getScheduleCount(date: LocalDate): Int {
+        val dailySchedule = getSchedule(date)
+        val orders = mutableSetOf<Int>()
+        for (lesson in dailySchedule) {
+            orders.add(lesson.order)
         }
-        enum class DateFilter{
-            Show,
-            Desaturate,
-            Hide
-        }
-
-        fun getFiltered(dailySchedule: List<Lesson>, date: LocalDate) =
-            dailySchedule.filter {
-                ((dateFilter != DateFilter.Hide ||
-                        ((it.isImportant || it.dateFrom <= date) && date <= it.dateTo)) &&
-                        (!sessionFilter ||
-                                !it.isImportant || (date in it.dateFrom..it.dateTo)))
-            }
-
-        class Builder(
-            private var sessionFilter: Boolean? = null,
-            private var dateFilter: DateFilter? = null
-        ) {
-            constructor(filter: Filter) : this(filter.sessionFilter, filter.dateFilter)
-
-            fun sessionFilter(sessionFilter: Boolean) =
-                apply { this.sessionFilter = sessionFilter }
-
-            fun dateFilter(dateFilter: DateFilter) =
-                apply { this.dateFilter = dateFilter }
-
-            fun build(): Filter {
-                val sessionFilter = this.sessionFilter ?: default.sessionFilter
-                val dateFilter = this.dateFilter ?: default.dateFilter
-                return Filter(
-                    sessionFilter,
-                    dateFilter
-                )
-            }
-        }
+        return orders.size
     }
 
     class AdvancedSearch(
-        val lessonTitles: Iterable<String>,
-        val lessonTeachers: Iterable<String>,
-        val lessonAuditoriums: Iterable<String>,
-        val lessonTypes: Iterable<String>
+        private val lessonTitles: Iterable<String>,
+        private val lessonTeachers: Iterable<String>,
+        private val lessonAuditoriums: Iterable<String>,
+        private val lessonTypes: Iterable<String>
     ) {
         class Builder(
             private var lessonTitles: Iterable<String> = listOf(),
@@ -148,9 +87,10 @@ data class Schedule(
         }
 
         fun getFiltered(schedules: Iterable<Schedule?>): Schedule {
-            val tempList: List<MutableList<Lesson>> = listOf(mutableListOf(), mutableListOf(),
-                mutableListOf(), mutableListOf(), mutableListOf(),
-                mutableListOf(), mutableListOf())
+            val tempList: List<MutableList<Lesson>> = listOf(
+                mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
+                mutableListOf(), mutableListOf(), mutableListOf()
+            )
 
             var dateFrom = LocalDate.MIN
             var dateTo = LocalDate.MAX
@@ -160,30 +100,63 @@ data class Schedule(
                     continue
                 }
                 if (schedule.dateFrom < dateFrom) {
-                    dateFrom = schedule.dateFrom;
+                    dateFrom = schedule.dateFrom
                 }
                 if (schedule.dateTo > dateTo) {
-                    dateTo = schedule.dateTo;
+                    dateTo = schedule.dateTo
                 }
                 for (i in schedule.dailySchedules.indices) {
-                    tempList[i].addAll(schedule.dailySchedules[i].asSequence().filter { lesson ->
-                        checkFilter(lessonTitles, lesson.title) &&
-                                checkFilter(lessonTeachers, lesson.teachers.map { it.getFullName() }) &&
-                                checkFilter(lessonAuditoriums, lesson.auditoriums.map { it.title }) &&
-                                checkFilter(lessonTypes, lesson.type)
-                    })
+                    tempList[i].addAll(
+                        schedule.dailySchedules[i].asSequence().filter { lesson ->
+                            checkFilter(lessonTitles, lesson.title) &&
+                                    checkFilter(
+                                        lessonTeachers,
+                                        lesson.teachers.map { it.getFullName() }
+                                    ) &&
+                                    checkFilter(
+                                        lessonAuditoriums,
+                                        lesson.auditoriums.map { it.title }
+                                    ) &&
+                                    checkFilter(lessonTypes, lesson.type)
+                        }
+                    )
                 }
             }
             tempList.forEach { it.sort() }
 
+            val tempList2: List<MutableList<Lesson>> = listOf(
+                mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
+                mutableListOf(), mutableListOf(), mutableListOf()
+            )
+
+            for (day in tempList.withIndex()) {
+                val day2 = tempList2[day.index]
+                for (lesson in day.value) {
+                    val index = day2.indexOfFirst { isEqualForGroups(lesson, it) }
+                    if (index == -1) {
+                        day2 += lesson
+                    } else {
+                        val lesson2 = day2[index]
+                        day2[index] = lesson2.copy(groups = lesson2.groups + lesson.groups)
+                    }
+                }
+            }
+
+
             return Schedule(
-                tempList,
-                LocalDateTime.now(),
-                Group.empty,
-                false,
+                tempList2,
                 dateFrom,
                 dateTo
             )
+        }
+
+        private fun isEqualForGroups(l1: Lesson, l2: Lesson): Boolean {
+            return l1.order == l2.order &&
+                    l1.title == l2.title &&
+                    l1.auditoriums == l2.auditoriums &&
+                    l1.teachers == l2.teachers &&
+                    l1.dateFrom == l2.dateFrom &&
+                    l1.dateTo == l2.dateTo
         }
 
         private fun checkFilter(filterList: Iterable<String>, value: String): Boolean {
@@ -201,7 +174,7 @@ data class Schedule(
 
         private fun checkFilter(filterList: Iterable<String>, values: Iterable<String>): Boolean {
             val filterIterator = filterList.iterator()
-            // if not empty
+            // if filters are not empty
             if (filterIterator.hasNext()) {
                 do {
                     val valueIterator = values.iterator()

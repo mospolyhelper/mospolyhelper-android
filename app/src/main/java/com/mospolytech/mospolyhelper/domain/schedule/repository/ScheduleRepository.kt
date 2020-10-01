@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
     fun getSchedule(
-        group: String,
-        isSession: Boolean,
+        id: String,
+        isStudent: Boolean,
         refresh: Boolean
     ): Flow<Schedule?>
 
-    suspend fun getAnySchedules(groupList: List<String>, onProgressChanged: (Float) -> Unit): SchedulePackList
+    suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList
 }
