@@ -2,18 +2,18 @@
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/fragment_schedule">
 <com.google.android.material.bottomappbar.BottomAppBar
     android:id="@+id/bottomAppBar"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     android:layout_gravity="bottom"
     app:backgroundTint="@color/colorLevelTwo"
-    app:fabCradleMargin="15dp"
-    app:fabCradleRoundedCornerRadius="25dp"
+    app:fabCradleMargin="0dp"
+    app:fabCradleRoundedCornerRadius="0dp"
     app:navigationIcon="@drawable/ic_menu_24px"
-    tools:ignore="BottomAppBar"
-    tools:showIn="@layout/fragment_schedule">
+    tools:ignore="BottomAppBar">
 </com.google.android.material.bottomappbar.BottomAppBar>
 <com.google.android.material.floatingactionbutton.FloatingActionButton
 android:layout_width="wrap_content"

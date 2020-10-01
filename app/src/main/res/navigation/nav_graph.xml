@@ -22,8 +22,11 @@
             app:enterAnim="@android:anim/fade_in"
             app:popEnterAnim="@android:anim/fade_in" />
         <action
-            android:id="@+id/action_scheduleFragment_to_scheduleSettingsFragment"
-            app:destination="@id/scheduleSettingsFragment" />
+            android:id="@+id/action_scheduleFragment_to_scheduleIdsFragment"
+            app:destination="@id/scheduleIdsFragment" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_scheduleFiltersFragment"
+            app:destination="@id/scheduleFiltersFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
@@ -39,6 +42,9 @@
             android:id="@+id/action_settingsFragment_self"
             app:destination="@id/settingsFragment">
         </action>
+        <action
+            android:id="@+id/action_settingsFragment_to_scheduleAppWidgetPreferences"
+            app:destination="@id/scheduleAppWidgetPreferences" />
     </fragment>
     <dialog
         android:id="@+id/calendarFragment"
@@ -54,11 +60,6 @@
             android:id="@+id/action_advancedSearchFragment_to_advancedSearchSelectFragment"
             app:destination="@id/advancedSearchSelectFragment" />
     </dialog>
-    <dialog
-        android:id="@+id/scheduleSettingsFragment"
-        tools:layout="@layout/bottom_sheet_schedule_settings"
-        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleSettingsFragment"
-        android:label="ScheduleSettingsFragment" />
     <dialog
         android:id="@+id/advancedSearchSelectFragment"
         tools:layout="@layout/fragment_schedule_filter"
@@ -106,5 +107,19 @@
     <action
         android:id="@+id/action_global_mainMenuFragment"
         app:destination="@id/mainMenuFragment" />
+    <fragment
+        android:id="@+id/scheduleAppWidgetPreferences"
+        android:name="com.mospolytech.mospolyhelper.features.ui.settings.schedule_appwidget.ScheduleAppWidgetPreferences"
+        android:label="ScheduleAppWidgetPreferences" />
+    <dialog
+        android:id="@+id/scheduleIdsFragment"
+        tools:layout="@layout/fragment_schedule_ids"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsFragment"
+        android:label="ScheduleIdsFragment" />
+    <dialog
+        android:id="@+id/scheduleFiltersFragment"
+        tools:layout="@layout/bottom_sheet_schedule_filters"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFiltersFragment"
+        android:label="ScheduleFiltersFragment" />
 
 </navigation>
