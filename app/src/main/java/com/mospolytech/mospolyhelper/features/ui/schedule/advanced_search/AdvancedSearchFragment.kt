@@ -128,7 +128,7 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
 
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
                     setFiltersVisibility(View.VISIBLE)
-                } catch (e: Throwable) {
+                } catch (e: Exception) {
                     Toast.makeText(context, "Загрузка отменена", Toast.LENGTH_SHORT).show()
                     setFiltersVisibility(View.GONE)
                 } finally {

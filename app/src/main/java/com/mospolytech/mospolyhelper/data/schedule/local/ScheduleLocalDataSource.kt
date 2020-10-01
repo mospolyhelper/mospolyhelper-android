@@ -1,10 +1,10 @@
 package com.mospolytech.mospolyhelper.data.schedule.local
 
+import android.util.Log
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import java.io.File
-import java.time.LocalDateTime
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.time.format.DateTimeFormatter
 
 class ScheduleLocalDataSource(
@@ -12,74 +12,43 @@ class ScheduleLocalDataSource(
 ) {
 
     companion object {
-        const val CurrentExtension = "current"
-        const val OldExtension = "backup"
-        const val CustomExtension = "custom"
         const val SCHEDULE_FOLDER = "cached_schedules"
-        const val SCHEDULE_SESSION_FOLDER = "session"
-        const val SCHEDULE_REGULAR_FOLDER = "regular"
+        const val SCHEDULE_STUDENT_FOLDER = "student"
+        const val SCHEDULE_TEACHER_FOLDER = "teacher"
     }
-    private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-
-    fun get(groupTitle: String, isSession: Boolean): Schedule? {
-        val folder = App.context!!.filesDir
+    fun get(id: String, isStudent: Boolean): Schedule? {
+        val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
-            .resolve(groupTitle)
-            .resolve(if (isSession) SCHEDULE_SESSION_FOLDER else SCHEDULE_REGULAR_FOLDER)
+            .resolve(if (isStudent) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
+            .resolve(id)
 
-        if (!folder.exists()) {
+        if (!file.exists()) {
             return null
         }
-        var fileToRead: File? = null
-        var fileToReadOld: File? = null
-        for (file in folder.listFiles()!!) {
-            val ext = file.extension
-            if (ext == CurrentExtension) {
-                fileToRead = file
-            } else if (ext == OldExtension) {
-                fileToReadOld = file
-            }
-        }
-
-        if (fileToRead == null) {
-            if (fileToReadOld == null) {
-                return null
-            }
-            fileToRead = fileToReadOld
-        }
-        val date = LocalDateTime.parse(fileToRead.nameWithoutExtension, dateTimeFormatter)
         return try {
-            localConverter.deserializeSchedule(fileToRead.readText(), isSession, date)
+            localConverter.deserializeSchedule(file.readText())
         } catch (e: Exception) {
+            Log.e(TAG, "Schedule reading and converting exception", e)
             null
         }
     }
 
-    fun set(schedule: Schedule) {
-        val folder = App.context!!.filesDir
+    fun set(schedule: Schedule, id: String, isStudent: Boolean) {
+        val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
-            .resolve(schedule.group.title)
-            .resolve(if (schedule.isSession) SCHEDULE_SESSION_FOLDER else SCHEDULE_REGULAR_FOLDER)
-        if (folder.exists()) {
-            val files = folder.listFiles()!!
-            for (file in files) {
-                if (file.extension == CurrentExtension) {
-                    val newFile = File(folder.path)
-                        .resolve(file.nameWithoutExtension + "." + OldExtension)
-                    newFile.delete()
-                    newFile.parentFile?.mkdirs()
-                    file.copyTo(newFile)
-                }
-                file.delete()
-            }
+            .resolve(if (isStudent) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
+            .resolve(id)
+        if (file.exists()) {
+            file.delete()
+        } else {
+            file.parentFile?.mkdirs()
         }
-        val file = folder
-            .resolve(schedule.lastUpdate.format(dateTimeFormatter) + "." + CurrentExtension)
-        file.delete()
-        file.parentFile?.mkdirs()
-        file.createNewFile()
-        val scheduleString = localConverter.serializeSchedule(schedule)
-        file.writeText(scheduleString)
+        try {
+            file.createNewFile()
+            file.writeText(localConverter.serializeSchedule(schedule))
+        } catch (e: Exception) {
+            Log.e(TAG, "Schedule converting and writing exception", e)
+        }
     }
 }

@@ -18,26 +18,20 @@ class ScheduleIterable(
 
     class ScheduleIterator(
         private var groupListIterator: Iterator<String>,
-        private var dataSource: ScheduleLocalDataSource
+        private var localDataSource: ScheduleLocalDataSource
     ): Iterator<Schedule?> {
         private var isSessionFlag = false
         private var curGroupTitle = ""
 
         override fun hasNext() = groupListIterator.hasNext() || isSessionFlag
 
-        override fun next() = try {
-            if (isSessionFlag) {
-                val result = dataSource.get(curGroupTitle, isSessionFlag)
-                isSessionFlag = false
-                result
-            } else {
+        override fun next(): Schedule? {
+            if (!isSessionFlag) {
                 curGroupTitle = groupListIterator.next()
-                val result = dataSource.get(curGroupTitle, isSessionFlag)
-                isSessionFlag = true
-                result
             }
-        } catch (e: Exception) {
-            null
+            val result = localDataSource.get(curGroupTitle, isSessionFlag)
+            isSessionFlag = !isSessionFlag
+            return result
         }
     }
 }

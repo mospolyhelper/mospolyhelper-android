@@ -53,7 +53,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
     ): Boolean {
         val args = Bundle()
         args.putString(ARG_PREFERENCE_ROOT, pref.key)
-        caller.findNavController().navigate(R.id.action_settingsFragment_self, args)
+        if (pref.key == "ScheduleAppWidgetScreen") {
+            caller.findNavController().navigate(R.id.action_settingsFragment_to_scheduleAppWidgetPreferences, args)
+        } else {
+            caller.findNavController().navigate(R.id.action_settingsFragment_self, args)
+        }
         return true
     }
 }

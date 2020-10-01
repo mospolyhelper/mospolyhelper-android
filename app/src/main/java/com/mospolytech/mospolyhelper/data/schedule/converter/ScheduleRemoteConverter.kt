@@ -48,9 +48,13 @@ class ScheduleRemoteConverter {
         // endregion
 
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+
+        private val regex1 = Regex("""(\p{L}|\))\(""")
+        private val regex2 = Regex("""\)(\p{L}|\()""")
+        private val regex3 = Regex("""(\p{L})-(\p{L})""")
     }
 
-    fun parse(scheduleString: String, isSession: Boolean): Schedule {
+    fun parse(scheduleString: String): Schedule {
         val parser: Parser = Parser.default()
         val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
         val status = json.string(STATUS_KEY)
@@ -70,20 +74,16 @@ class ScheduleRemoteConverter {
         val isByDate =
             json.boolean(IS_SESSION) ?: throw JsonParsingException("Key \"$IS_SESSION\" not found")
 
-        val group = parseGroup(json.obj(GROUP_KEY))
-        val dailySchedules = parseDailySchedules(json.obj(SCHEDULE_GRID_KEY), group, isByDate)
+        val groupInfo = parseGroup(json.obj(GROUP_KEY))
+        val dailySchedules = parseDailySchedules(json.obj(SCHEDULE_GRID_KEY), groupInfo.group, isByDate)
 
-        return Schedule.Builder(
-            dailySchedules = dailySchedules,
-            group = group,
-            isSession = isSession
-        ).build()
+        return Schedule.from(dailySchedules)
     }
 
-    private fun parseGroup(json: JsonObject?): Group {
+    private fun parseGroup(json: JsonObject?): GroupInfo {
         if (json == null) {
             Log.w(TAG, "GROUP_KEY \"$GROUP_KEY\" not found")
-            return Group.empty
+            return GroupInfo.empty
         }
 
         val title = json.string(GROUP_TITLE_KEY) ?: "".apply {
@@ -105,12 +105,11 @@ class ScheduleRemoteConverter {
             Log.w(TAG, "GROUP_COMMENT_KEY \"$GROUP_COMMENT_KEY\" not found")
         }
 
-        return Group(
-            title,
+        return GroupInfo(
+            Group(title, isEvening == 1),
             course,
             dateFrom,
             dateTo,
-            isEvening == 1,
             comment
         )
     }
@@ -216,21 +215,21 @@ class ScheduleRemoteConverter {
         }
 
         return Lesson(
-            order, title, teachers,
-            dateFrom, dateTo,
+            order,
+            title,
+            teachers,
+            dateFrom,
+            dateTo,
             auditoriums,
             Lesson.fixType(
                 type,
                 title
-            ), group
+            ),
+            listOf(group)
         )
     }
 
     private fun processTitle(rawTitle: String): String {
-        val regex1 = Regex("""(\p{L}|\))\(""")
-        val regex2 = Regex("""\)(\p{L}|\()""")
-        val regex3 = Regex("""(\p{L})-(\p{L})""")
-
         return rawTitle
             .trim()
             .replace(regex1, "\$1 (")
@@ -281,7 +280,9 @@ class ScheduleRemoteConverter {
 
         val tempList = mutableListOf<Auditorium>()
         for (auditorium in json) {
-            val name = auditorium.string(AUDITORIUM_TITLE_KEY)?.trim()?.capitalize() ?: continue
+            var name = auditorium.string(AUDITORIUM_TITLE_KEY)?.trim()?.capitalize() ?: continue
+            name = Auditorium.parseEmoji(name)
+
             val color = auditorium.string(AUDITORIUM_COLOR_KEY) ?: ""
             tempList.add((Auditorium(
                 name,
