@@ -20,8 +20,8 @@ data class Teacher(val names: List<String>) {
                         replace(idx, idx + 3, "-")
                         idx = indexOf(" -")
                     }
-                }.split(" ")
-                    .filter { it.isNotEmpty() }
+                }.split(' ', '.')
+                    .filter { it.isNotEmpty() || it.isNotBlank() }
             )
     }
 

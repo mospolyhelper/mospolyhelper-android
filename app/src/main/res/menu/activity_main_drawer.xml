@@ -14,7 +14,7 @@
             android:title="@string/nav_deadlines" />
         <item
             android:id="@+id/nav_addresses"
-            android:icon="@drawable/location_on_24px"
+            android:icon="@drawable/ic_lesson_location"
             android:title="@string/nav_addresses" />
         <item
             android:id="@+id/nav_settings"

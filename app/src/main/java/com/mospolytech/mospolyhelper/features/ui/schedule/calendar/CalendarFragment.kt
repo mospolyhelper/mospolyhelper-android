@@ -12,18 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.temporal.ChronoUnit
 
 class CalendarFragment : DialogFragment() {
 
-    companion object {
-        fun newInstance() = CalendarFragment()
-    }
-
-    var dateChanged = false
-
-    private val viewModel by viewModel<CalendarViewModel>()
+    private val viewModel by sharedViewModel<ScheduleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,31 +38,23 @@ class CalendarFragment : DialogFragment() {
         requireActivity().invalidateOptionsMenu()
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
-        var groupTitle = viewModel.schedule?.group?.title ?: ""
-        groupTitle = if (groupTitle.isEmpty()) {
-            getString(R.string.advanced_search)
-        } else {
-            "$groupTitle (" + (
-                    if (viewModel.schedule?.isSession == true)
-                        getString(R.string.text_schedule_type_session_s)
-                    else
-                        getString(R.string.text_schedule_type_regular_s)) + ")"
-        }
-        toolbar.title = groupTitle
-
-        (activity as MainActivity).setSupportActionBar(toolbar);
+        (activity as MainActivity).setSupportActionBar(toolbar)
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_schedule_day)
         val colorTitle = requireContext().getColor(R.color.calendarTitle)
         val colorCurrentTitle = requireContext().getColor(R.color.calendarCurrentTitle)
-        val recyclerAdapter = CalendarAdapter(viewModel.schedule!!, viewModel.scheduleFilter,
-        viewModel.isAdvancedSearch, requireContext().getColor(R.color.calendarParagraph),
-            requireContext().getColor(R.color.calendarTimeBackground), colorTitle, colorCurrentTitle);
+        val recyclerAdapter = CalendarAdapter(
+            viewModel.filteredSchedule.value.getOrNull()?.schedule,
+            viewModel.isAdvancedSearch,
+            requireContext().getColor(R.color.calendarParagraph),
+            requireContext().getColor(R.color.calendarTimeBackground),
+            colorTitle,
+            colorCurrentTitle
+        )
         recyclerAdapter.dayClick += { date ->
-            viewModel.date = date
-            dateChanged = true
+            viewModel.date.value = date
             findNavController().navigateUp()
         }
 
@@ -81,7 +69,7 @@ class CalendarFragment : DialogFragment() {
         //recyclerView.addItemDecoration(e)
 
         recyclerView.scrollToPosition(
-            recyclerAdapter.firstPosDate.until(viewModel.date, ChronoUnit.DAYS).toInt()
+            recyclerAdapter.firstPosDate.until(viewModel.date.value, ChronoUnit.DAYS).toInt()
         )
 
         return view
@@ -92,17 +80,4 @@ class CalendarFragment : DialogFragment() {
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
-
-    override fun onStop() {
-        if (dateChanged) {
-            viewModel.dateChanged()
-        }
-        super.onStop()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
-    }
-
 }

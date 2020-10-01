@@ -25,7 +25,7 @@ data class LessonLabelKey(
                 lesson.teachers,
                 lesson.auditoriums,
                 lesson.type,
-                lesson.group.title,
+                lesson.groups.joinToString { it.title },
                 date.dayOfWeek,
                 if (allDates) null else date
             )
