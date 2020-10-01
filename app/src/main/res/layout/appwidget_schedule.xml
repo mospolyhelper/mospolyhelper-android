@@ -1,10 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_schedule_widget"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="4dp"
     android:background="@drawable/shape_widget"
-    android:elevation="4dp"
     android:orientation="vertical">
 
     <TextView
@@ -12,18 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_stroke"
-        android:backgroundTint="#444444"
-        android:fontFamily="sans-serif-black"
-        android:minHeight="20dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:maxLines="2"
+        android:minHeight="30dp"
         android:paddingHorizontal="4dp"
-        android:paddingStart="8dp"
+        android:paddingStart="10dp"
         android:paddingTop="3dp"
-        android:paddingEnd="8dp"
+        android:paddingEnd="10dp"
         android:paddingBottom="5dp"
-        android:text="Пн, 29.08"
         android:textAlignment="center"
         android:textColor="@color/widgetTitleText"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <ListView
         android:id="@+id/list_schedule"
@@ -33,7 +31,8 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:clickable="false"
-        android:divider="@null"
+        android:divider="@color/widgetDivider"
+        android:dividerHeight="0.5dp"
         android:overScrollMode="never"
         android:scrollbarSize="4dp"
         android:scrollbarThumbVertical="@drawable/shape_scrollbar" />

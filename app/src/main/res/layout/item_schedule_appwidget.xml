@@ -1,54 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_schedule"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
     android:elevation="2dp"
     android:orientation="vertical"
+    android:paddingStart="3dp"
+    android:paddingEnd="3dp"
     android:paddingTop="3dp"
-    android:paddingBottom="1dp">
+    android:paddingBottom="3dp">
 
     <TextView
         android:id="@+id/text_lesson_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/widgetTitleText"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/text_schedule_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:breakStrategy="simple"
+        android:breakStrategy="balanced"
         android:clickable="false"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/widgetLessonTitleText"
-        android:textSize="11sp" />
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/text_lesson_teachers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
+        android:drawableStart="@drawable/ic_teacher_10dp"
+        android:drawablePadding="4dp"
+        android:drawableTint="@color/widgetSecondaryTextColor"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:textColor="@color/widgetSecondaryTextColor"
-        android:textSize="10sp" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/text_lesson_auditoriums"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
+        android:drawableStart="@drawable/ic_location_10dp"
+        android:drawablePadding="4dp"
+        android:drawableTint="@color/widgetSecondaryTextColor"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:textColor="@color/widgetSecondaryTextColor"
-        android:textSize="10sp" />
+        android:textSize="12sp" />
 </LinearLayout>

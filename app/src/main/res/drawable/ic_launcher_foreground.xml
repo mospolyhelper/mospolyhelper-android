@@ -2,17 +2,20 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item>
     <shape
-       android:shape="ring" android:innerRadius="9dp"
-    android:thickness="11dp" android:useLevel="false">
-      <gradient android:startColor="#00AAAAAA"  android:type="sweep"
-                android:endColor="#F2F2F2F2"  />
+        android:shape="ring" android:innerRadius="8.5dp"
+        android:thickness="10.5dp" android:useLevel="false">
+      <gradient android:startColor="#00ecf0f1 "  android:type="sweep"
+          android:endColor="#F2ecf0f1"  />
     </shape>
-  </item>
-  <item android:left="29.5dp">
-    <shape
-       android:shape="ring" android:innerRadius="0dp"
-    android:thickness="5.5dp" android:useLevel="false">
-      <solid android:color="#FFFFFF" />
-    </shape>
-  </item>
+</item>
+  <item
+    android:start="27.75dp">
+  <shape
+      android:innerRadius="0dp"
+      android:shape="ring"
+      android:thickness="5.25dp"
+      android:useLevel="false">
+    <solid android:color="#fdfefe" />
+  </shape>
+</item>
 </layer-list>

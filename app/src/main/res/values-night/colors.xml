@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="splashScreenStartColor">#00b0ff</color>
-  <color name="splashScreenEndColor">#ff5722</color>
-    <color name="colorPrimary">#202124</color>
+  <color name="colorPrimary">#202124</color>
     <color name="colorPrimaryDark">#0C0C0C</color>
   <color name="colorPrimaryLight">#47484c</color>
   <color name="textColorPrimary">#ffffff</color>
   <color name="colorSecondary">#ff5722</color>
-  <color name="colorSecondaryDark">#c41c00</color>
   <color name="colorSecondaryLight">#ff8a50</color>
-  <color name="textColorSecondary">#000000</color>
 
   <color name="colorLevelZero">#202124</color>
   <color name="colorLevelOne">#303136</color>
@@ -23,9 +19,7 @@
   <color name="scheduleBackgroundColor">@color/colorLevelZero</color>
   <color name="lessonBackground">@color/colorLevelOne</color>
   <color name="lessonBackgroundRipple">#646464</color>
-  <color name="lessonHeadDivider">#303030</color>
-  <color name="lessonIndicator">#00a300</color>
-  
+
   <color name="textLessonHeadCurrent">#BBBBBB</color>
   <color name="textLessonHead">#7A858D</color>
   
@@ -46,17 +40,11 @@
   <color name="calendarCurrentTitle">#00a300</color>
   <color name="calendarParagraph">#666666</color>
   <color name="calendarTimeBackground">#282828</color>
-  
-  <color name="buttonPressed">#222222</color>
-  <color name="buttonStroke">#2E2E2E</color>
 
   <color name="textAccent">#EAEAEA</color>
   <color name="textAccentDisabled">#545454</color>
-  <color name="textSecondary">#AAAAAA</color>
+  <color name="textSecondary">#999999</color>
   <color name="textSecondaryDisabled">#3F3F3F</color>
-  
-  <color name="textScheduleDay">#AAAAAA</color>
-  <color name="textScheduleTitle">#CCCCCC</color>
 
   <color name="predmetcolor">#0093CE</color>
   <color name="colorLow">#CC26E910</color>
@@ -65,8 +53,6 @@
   <color name="colorCompleted">#191919</color>
   <color name="colorPinned">#1E1E22</color>
 
-  <color name="colorAccent">#5ea3de</color>
-  <color name="colorHint">#C0C0C0</color>
   <color name="defaultCardColor">#1e1e1e</color>
   <color name="bottomColor">#121212</color>
   <color name="textColorDate">#6E6E6E</color>
