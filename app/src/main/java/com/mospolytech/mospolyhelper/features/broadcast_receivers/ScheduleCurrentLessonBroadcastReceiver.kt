@@ -110,8 +110,8 @@ class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
             return Pair(listOf(), false)
         }
         val time = LocalTime.now(ZoneId.of("Europe/Moscow"))
-        val order = Lesson.getOrder(time, schedule.group.isEvening)
-        val currentLessons = dailySchedule.filter { it.order == order.first }
-        return Pair(currentLessons, order.second)
+        val order = Lesson.getOrder(time, dailySchedule.firstOrNull()?.groupIsEvening ?: false)
+        val currentLessons = dailySchedule.filter { it.order == order.order }
+        return Pair(currentLessons, order.isStarted)
     }
 }

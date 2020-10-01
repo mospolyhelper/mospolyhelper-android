@@ -12,16 +12,12 @@
     <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
     <item name="android:windowLightStatusBar">false</item>
-    <item name="android:statusBarColor">@color/colorLevelTwo</item>
+    <item name="android:statusBarColor">@color/colorLevelZero</item>
     <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
     <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>
   </style>
 
-  <style name="AppThemeDayNight.ActionBar" parent="ThemeOverlay.MaterialComponents.ActionBar">
-    <item name="actionMenuTextColor">@color/textColorPrimary</item>
-  </style>
-
-  <style name="Dialog.Theme" parent="ThemeOverlay.MaterialComponents.Dialog">
+    <style name="Dialog.Theme" parent="ThemeOverlay.MaterialComponents.Dialog">
     <item name="colorPrimary">@color/textColorPrimary</item>
   </style>
 </resources>

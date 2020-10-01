@@ -9,14 +9,14 @@ import kotlinx.android.synthetic.main.item_deadline.view.*
 import java.util.*
 
 class DeadlinesViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-    val predmet = view.tvPred
-    val zadanie = view.tvZad
-    val completed = view.rbComp
-    val pinned = view.imgPin
-    val datetime = view.tvDateTime
+    private val predmet = view.tvPred
+    private val zadanie = view.tvZad
+    private val completed = view.rbComp
+    private val pinned = view.imgPin
+    private val datetime = view.tvDateTime
     //val importance : Int? = R.color.colorLow
-    val card = view.card
-    val img = view.imgClock
+    private val card = view.card
+    private val img = view.imgClock
     private var contextMenu: ContextMenu? = null
 
     private lateinit var deadline: Deadline

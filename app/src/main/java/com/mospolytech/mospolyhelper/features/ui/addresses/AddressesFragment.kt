@@ -5,43 +5,59 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.mospolytech.mospolyhelper.NavGraphDirections
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.addresses.model.Addresses
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleAdapter
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFragment
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
 
 class AddressesFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = AddressesFragment()
-    }
-
-    private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var addressesTypeSpinner: Spinner
+    private lateinit var addressesViewPager: ViewPager2
+    private lateinit var addressesTabLayout: TabLayout
 
     private val viewModel by viewModel<AddressesViewModel>()
 
-    private fun setUpBuildings(buildings: Addresses?) {
-        recyclerView.adapter = if (buildings == null) null else AddressesAdapter(buildings, viewModel.addressesType.value!!)
-        recyclerView.adapter?.notifyDataSetChanged()
+    private fun setUpBuildings(addresses: Addresses?) {
+        if (addresses == null) return
+        addressesViewPager.adapter = AddressesPageAdapter(addresses)
         swipeRefreshLayout.isRefreshing = false
+        TabLayoutMediator(addressesTabLayout, addressesViewPager) { tab, position->
+            tab.text = addresses.entries.toList()[position].key
+        }.attach()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_addresses, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addressesTypeSpinner = view.findViewById(R.id.spinner_addresses)
+        addressesViewPager = view.findViewById(R.id.viewpager_addresses)
+        addressesTabLayout = view.findViewById(R.id.tablayout_addresses)
+        swipeRefreshLayout = view.findViewById(R.id.addresses_update)
+
+
+        swipeRefreshLayout.setOnRefreshListener { viewModel.refresh() }
 
         val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
         (activity as MainActivity).setSupportActionBar(bottomAppBar)
@@ -50,56 +66,69 @@ class AddressesFragment : Fragment() {
             findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
         }
 
-        if (this.recyclerView.adapter == null) {
-            setUpBuildings(viewModel.addresses.value)
-        }
+        addressesViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                swipeRefreshLayout.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+            }
 
-        addressesTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
+            override fun onPageScrolled(
                 position: Int,
-                id: Long
+                positionOffset: Float,
+                positionOffsetPixels: Int
             ) {
-                if (view != null) {
-                    viewModel.addressesType.value = (view as TextView).text as String
-                }
+            }
+
+            override fun onPageSelected(position: Int) {
+            }
+        })
+
+
+//        addressesTypeChipGroup.setOnCheckedChangeListener { group, checkedId ->
+//            if (checkedId != View.NO_ID) {
+//                viewModel.addressesType.value = group.findViewById<Chip>(checkedId).text.toString()
+//            }
+//        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.addressesType.collect {
+//                val type = (recyclerView.adapter as? AddressesAdapter)?.type
+//                if (type != null && type != it) {
+//                    setUpBuildings(viewModel.addresses.value!!)
+//                }
             }
         }
 
-        viewModel.addressesType.observe(viewLifecycleOwner, Observer {
-            val type = (recyclerView.adapter as? AddressesAdapter)?.type
-            if (type != null && type != it) {
-                setUpBuildings(viewModel.addresses.value!!)
-            }
-        })
 
-        viewModel.addresses.observe(viewLifecycleOwner, Observer<Addresses?> {
-            addressesTypeSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it!!.keys.toTypedArray())
-            val prevType = (recyclerView.adapter as? AddressesAdapter)?.type
-            if (prevType != null && it!!.containsKey(prevType)) {
-                viewModel.addressesType.value = prevType
-            } else {
-                viewModel.addressesType.value = it!!.keys.first()
+        lifecycleScope.launchWhenResumed {
+            viewModel.addresses.collect {
+                if (it == null) return@collect
+//                val prevType = (recyclerView.adapter as? AddressesAdapter)?.type
+//                if (prevType != null && it.containsKey(prevType)) {
+//                    viewModel.addressesType.value = prevType
+//                } else {
+//                    viewModel.addressesType.value = it.keys.first()
+//                }
+//                addressesTypeChipGroup.isSingleSelection = false
+//                addressesTypeChipGroup.removeAllViews()
+//                var checkedId = -1
+//                for (type in it.keys.withIndex()) {
+//                    val chip = createChip(requireContext(), type.value, type.index + 1)
+//                    if (type.value == viewModel.addressesType.value) {
+//                        checkedId = chip.id
+//                    }
+//                    addressesTypeChipGroup.addView(chip)
+//                }
+//                try {
+//                    addressesTypeChipGroup.check(checkedId)
+//                    addressesTypeChipGroup.isSingleSelection = true
+//                    addressesTypeChipGroup.isSelectionRequired = true
+//                } catch (e: Exception) {
+//                    val q = 1
+//                    val r = q + 1
+//                }
+                setUpBuildings(it)
             }
-            setUpBuildings(it)
-        })
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_addresses, container, false)
-        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_addresses)
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
-        val scale = view.context.resources.displayMetrics.density
-        recyclerView.addItemDecoration(AddressesAdapter.ItemDecoration((8 * scale + 0.5f).toInt()))
-        swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.addresses_update)
-        swipeRefreshLayout.setOnRefreshListener { viewModel.refresh() }
-        return view
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

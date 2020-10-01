@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 class AdvancedSearchViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    val scheduleRepository: ScheduleRepository,
-    val groupListRepository: GroupListRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val groupListRepository: GroupListRepository
 ) :
     ViewModelBase(
         mediator,
@@ -37,7 +37,7 @@ class AdvancedSearchViewModel(
 
     init {
      viewModelScope.launch {
-         groupList = groupListRepository.getGroupList(true)
+         groupList = groupListRepository.getGroupList()
      }
     }
 
@@ -45,7 +45,7 @@ class AdvancedSearchViewModel(
         groupList: List<String>,
         onProgressChanged: (Float) -> Unit
     ): SchedulePackList {
-        return scheduleRepository.getAnySchedules(groupList, onProgressChanged)
+        return scheduleRepository.getAnySchedules(groupList, true, onProgressChanged)
     }
 
     fun sendSchedule(schedule: Schedule) {
