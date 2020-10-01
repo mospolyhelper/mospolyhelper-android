@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item >
-    <!--android:left="336px" android:right="336px" android:top="1096px" android:bottom="1096px"--> 
     <shape android:shape="rectangle">
-      <gradient  android:startColor="#080042" 
-android:endColor="#8b0042"
+      <gradient  android:startColor="#34495e"
+          android:endColor="#17202a"
                  android:angle="270" />
     </shape>
   </item>
@@ -13,8 +12,9 @@ android:endColor="#8b0042"
        android:shape="ring" android:innerRadius="36dp"
     android:thickness="44dp" android:useLevel="false">
       <gradient android:startColor="#00ffffff"
-android:centerColor="#99ffffff"
-                android:endColor="#eeffffff"  android:type="sweep"  />
+          android:centerColor="#99ffffff"
+          android:endColor="#eeffffff"
+          android:type="sweep"  />
     </shape>
   </item>
   <item android:left="116dp">

@@ -6,51 +6,160 @@
     android:orientation="vertical"
     android:background="@color/colorLevelZero"
     android:layout_height="match_parent">
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:background="#00000000"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:background="@drawable/shape_schedule_toolbar"
-            app:contentScrim="@color/colorLevelTwo"
-            app:titleEnabled="true"
-            app:collapsedTitleGravity="center_horizontal"
-            app:collapsedTitleTextAppearance="@style/CollapsedTextAppearance"
-            app:expandedTitleGravity="top|center_horizontal"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:expandedTitleTextAppearance="@style/ExpandedTextAppearance">
-            <TextView
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.7"
-                android:text="4 пары\nСейчас 5-е занятие"
-                android:textColor="@color/textScheduleDay"
-                android:gravity="bottom|center_horizontal"
-                android:layout_marginBottom="60dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="16dp"/>
-            <com.google.android.material.appbar.MaterialToolbar
-                app:title="Понедельник, 21 июл."
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                app:layout_collapseMode="pin"
-                android:layout_height="28dp" />
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/schedule_update"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:layout_width="match_parent"
-        app:behavior_overlapTop="55dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="match_parent">
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@drawable/shape_schedule_appbar"
+                android:visibility="gone" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:background="@drawable/top_list_gradient" />
+
+        </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        app:elevation="0dp"
+        android:paddingTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorLevelZero">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="1">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="31dp"
+                        android:text="Вторник"
+                        android:textAppearance="@style/ScheduleToolbarText" />
+
+                    <ImageButton
+                        android:id="@+id/button_calendar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center"
+                        android:layout_marginTop="2dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="3dp"
+                        android:src="@drawable/ic_baseline_calendar" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="7 июля"
+                    android:textAppearance="@style/ScheduleToolbarSubtitleText" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/appbar_gradient"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <HorizontalScrollView
+        app:layout_collapseMode="pin"
+        android:background="@color/colorLevelZero"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipgroup_ids"
+            app:singleLine="true"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:layout_gravity="center_vertical"
+            android:clipToPadding="false"
+            android:animateLayoutChanges="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+<!--    <com.google.android.material.tabs.TabLayout-->
+<!--        android:id="@+id/tablayout"-->
+<!--        app:layout_collapseMode="pin"-->
+<!--        style="@style/AppTabLayout"-->
+<!--        android:background="@color/colorLevelZero"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="?attr/actionBarSize"-->
+<!--        android:layout_marginStart="30dp"-->
+<!--        app:tabMode="fixed">-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <com.google.android.material.tabs.TabItem-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </com.google.android.material.tabs.TabLayout>-->
     <include layout="@layout/bottom_app_bar_schedule" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

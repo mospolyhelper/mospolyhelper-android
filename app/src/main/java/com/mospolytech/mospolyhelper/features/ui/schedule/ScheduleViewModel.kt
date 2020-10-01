@@ -1,57 +1,193 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.GroupListRepositoryImpl
-import com.mospolytech.mospolyhelper.data.schedule.repository.LessonLabelRepository
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleLabelDeadline
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
+import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.features.ui.schedule.calendar.CalendarViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.KoinComponent
+import java.lang.Exception
 import java.time.LocalDate
+import java.time.LocalTime
 
 
 class ScheduleViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val scheduleUseCase: ScheduleUseCase,
-    val schedule: MutableStateFlow<ScheduleLabelDeadline>,
-    val date: MutableStateFlow<LocalDate>,
-    val isSession: MutableStateFlow<Boolean>,
-    val groupTitle: MutableStateFlow<String>,
-    val scheduleFilter: MutableStateFlow<Schedule.Filter>,
-    val showEmptyLessons: MutableStateFlow<Boolean>
+    private val scheduleUseCase: ScheduleUseCase
 ) : ViewModelBase(mediator, ScheduleViewModel::class.java.simpleName), KoinComponent {
+
     companion object {
         const val MessageChangeDate = "ChangeDate"
         const val MessageSetAdvancedSearchSchedule = "SetAdvancedSearchSchedule"
+        const val MessageAddScheduleId = "AddScheduleId"
     }
-    var isAdvancedSearch = false
-    var groupList = MutableStateFlow(emptyList<String>())
 
-    var isLoading = MutableStateFlow(true)
+    var isAdvancedSearch = false
     private var firstLoading = true
+
+    val date = MutableStateFlow(LocalDate.now())
+    val currentLessonOrder: MutableStateFlow<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>>
+
+
+    val savedIds: MutableStateFlow<Set<Pair<Boolean, String>>>
+
+    val showEndedLessons: MutableStateFlow<Boolean>
+    val showCurrentLessons: MutableStateFlow<Boolean>
+    val showNotStartedLessons: MutableStateFlow<Boolean>
+    val filterTypes: MutableStateFlow<Set<String>>
+    val showImportantLessons: MutableStateFlow<Boolean>
+    val showAverageLessons: MutableStateFlow<Boolean>
+    val showNotImportantLessons: MutableStateFlow<Boolean>
+    val showNotLabeledLessons: MutableStateFlow<Boolean>
+
+
+
+    val filteredSchedule = MutableStateFlow<Result<ScheduleLabelDeadline>>(Result.loading())
+
+    val originalSchedule =  MutableStateFlow<Result<ScheduleLabelDeadline>>(Result.loading())
+    val id: MutableStateFlow<Pair<Boolean, String>>
+    val showEmptyLessons: MutableStateFlow<Boolean>
 
     val onMessage: Event1<String> = Action1()
 
     init {
         subscribe(::handleMessage)
-        getGroupList(true)
+        launchTimer()
 
-        combine(this.isSession, this.groupTitle) { isSession, groupTitle ->
-            setUpSchedule(isSession, groupTitle, !firstLoading)
-            firstLoading = false
-        }.launchIn(viewModelScope)
+        currentLessonOrder = MutableStateFlow(
+            Pair(
+                Lesson.getOrder(LocalTime.now(), false),
+                Lesson.getOrder(LocalTime.now(), true)
+            )
+        )
+
+        showEndedLessons = MutableStateFlow(scheduleUseCase.getShowEndedLessons())
+        showCurrentLessons = MutableStateFlow(scheduleUseCase.getShowCurrentLessons())
+        showNotStartedLessons = MutableStateFlow(scheduleUseCase.getShowNotStartedLessons())
+        filterTypes = MutableStateFlow(scheduleUseCase.getFilterTypes())
+        showImportantLessons = MutableStateFlow(scheduleUseCase.getShowImportantLessons())
+        showAverageLessons = MutableStateFlow(scheduleUseCase.getShowAverageLessons())
+        showNotImportantLessons = MutableStateFlow(scheduleUseCase.getShowNotImportantLessons())
+        showNotLabeledLessons = MutableStateFlow(scheduleUseCase.getShowNotLabeledLessons())
+
+        viewModelScope.async {
+            showEndedLessons.collect {
+                scheduleUseCase.setShowEndedLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            showCurrentLessons.collect {
+                scheduleUseCase.setShowCurrentLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            showNotStartedLessons.collect {
+                scheduleUseCase.setShowNotStartedLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            filterTypes.collect { filters ->
+                scheduleUseCase.setFilterTypes(filters)
+                originalSchedule.value.onSuccess {
+                    filteredSchedule.value = Result.success(it.copy(schedule = it.schedule?.filter(types = filters)))
+                }
+            }
+        }
+
+        viewModelScope.async {
+            showImportantLessons.collect {
+                scheduleUseCase.setShowImportantLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            showAverageLessons.collect {
+                scheduleUseCase.setShowAverageLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            showNotImportantLessons.collect {
+                scheduleUseCase.setShowNotImportantLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            showNotLabeledLessons.collect {
+                scheduleUseCase.setShowNotLabeledLessons(it)
+            }
+        }
+
+        savedIds = MutableStateFlow(
+            scheduleUseCase.getSavedIds()
+        )
+
+        viewModelScope.async {
+            savedIds.collect {
+                scheduleUseCase.setSavedIds(it)
+            }
+        }
+
+
+        id = MutableStateFlow(
+            Pair(
+            scheduleUseCase.getIsStudent(),
+            scheduleUseCase.getSelectedSavedId()
+            )
+        )
+
+        showEmptyLessons = MutableStateFlow(scheduleUseCase.getShowEmptyLessons())
+
+        viewModelScope.async {
+            id.collect {
+                scheduleUseCase.setIsStudent(it.first)
+                scheduleUseCase.setSelectedSavedId(it.second)
+                setUpSchedule(it.first, it.second, !firstLoading)
+                firstLoading = false
+            }
+        }
+
+        viewModelScope.async {
+            showEmptyLessons.collect {
+                scheduleUseCase.setShowEmptyLessons(it)
+            }
+        }
+
+        viewModelScope.async {
+            savedIds.value = scheduleUseCase.getSavedIds()
+        }
+        viewModelScope.async {
+            originalSchedule.collect { result ->
+                result.onSuccess {
+                    filteredSchedule.value =
+                        Result.success(
+                            it.copy(
+                                schedule = it.schedule?.filter(types = filterTypes.value)
+                            )
+                        )
+                    val schedule = it.schedule
+                    if (schedule != null) {
+                        filterTypes.value = filterTypes.value.intersect(schedule.getAllTypes())
+                    }
+                }
+                result.onLoading {
+                    filteredSchedule.value = Result.loading()
+                }
+            }
+        }
     }
 
 
@@ -61,51 +197,54 @@ class ScheduleViewModel(
                 date.value = message.content[0] as LocalDate
             }
             MessageSetAdvancedSearchSchedule -> {
-                isLoading.value = true
                 isAdvancedSearch = true
-                schedule.value = ScheduleLabelDeadline(message.content[0] as Schedule, emptyMap(), emptyMap())
-                isLoading.value = false
+                originalSchedule.value = Result.success(ScheduleLabelDeadline(message.content[0] as Schedule, emptyMap(), emptyMap()))
+            }
+            MessageAddScheduleId -> {
+                val pair = message.content[0] as Pair<Boolean, String>
+                savedIds.value += pair
             }
         }
     }
 
     fun updateSchedule() {
         setUpSchedule(
-            isSession.value,
-            groupTitle.value,
+            id.value.first,
+            id.value.second,
             true
         )
     }
 
-    private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
-        isLoading.value = true
+    private fun launchTimer() {
         viewModelScope.async {
-            scheduleUseCase.getScheduleWithFeatures(
-                groupTitle,
-                isSession,
-                downloadNew
-            ).collect {
-                withContext(Dispatchers.Main) {
-                    this@ScheduleViewModel.schedule.value = it
-                    isLoading.value = false
+            while (isActive) {
+                viewModelScope.async {
+                    currentLessonOrder.value = Pair(
+                        Lesson.getOrder(LocalTime.now(), false),
+                        Lesson.getOrder(LocalTime.now(), true)
+                    )
                 }
+                delay((60L - LocalTime.now().second) * 1000L)
+            }
+        }
+    }
+
+
+    private fun setUpSchedule(isStudent: Boolean, id: String, refresh: Boolean) {
+        viewModelScope.async {
+            this@ScheduleViewModel.originalSchedule.value = Result.loading()
+            scheduleUseCase.getScheduleWithFeatures(
+                id,
+                isStudent,
+                refresh
+            ).collect {
+                this@ScheduleViewModel.originalSchedule.value = Result.success(it)
             }
         }
     }
 
     fun goHome() {
         date.value = LocalDate.now()
-    }
-
-    fun openCalendar() {
-        send(
-            CalendarViewModel::class.java.simpleName,
-            CalendarViewModel.CalendarMode,
-            schedule.value!!,
-            scheduleFilter.value!!,
-            date.value!!,
-            isAdvancedSearch
-        )
     }
 
     fun openLessonInfo(lesson: Lesson, date: LocalDate) {
@@ -116,68 +255,6 @@ class ScheduleViewModel(
             date
         )
     }
-
-    private fun getGroupList(refresh: Boolean) {
-        viewModelScope.async {
-            val groupList = scheduleUseCase.getGroupList(refresh)
-            withContext(Dispatchers.Main) {
-                this@ScheduleViewModel.groupList.value = groupList
-            }
-        }
-    }
-
-    class Factory {
-        companion object {
-            fun create(
-                mediator: Mediator<String, ViewModelMessage>,
-                scheduleUseCase: ScheduleUseCase,
-                preferences: SharedPreferences
-            ): ScheduleViewModel {
-                val dateFilter = Schedule.Filter.DateFilter.values()[
-                        preferences.getInt(
-                            PreferenceKeys.ScheduleDateFilter,
-                            Schedule.Filter.default.dateFilter.ordinal
-                        )
-                ]
-                val sessionFilter = preferences.getBoolean(
-                    PreferenceKeys.ScheduleSessionFilter,
-                    Schedule.Filter.default.sessionFilter
-                )
-
-                val scheduleFilter = Schedule.Filter.Builder(Schedule.Filter.default)
-                    .dateFilter(dateFilter)
-                    .sessionFilter(sessionFilter)
-                    .build()
-
-                val groupTitle = preferences.getString(
-                    PreferenceKeys.ScheduleGroupTitle,
-                    DefaultSettings.ScheduleGroupTitle
-                )
-
-                val isSession = try {
-                    preferences.getBoolean(
-                        PreferenceKeys.ScheduleTypePreference,
-                        DefaultSettings.ScheduleTypePreference
-                    )
-                } catch (e: Exception) {
-                    preferences.getInt(PreferenceKeys.ScheduleTypePreference, 0) == 1;
-                }
-
-                val showEmptyLessons = preferences.getBoolean(
-                    PreferenceKeys.ScheduleShowEmptyLessons,
-                    DefaultSettings.ScheduleShowEmptyLessons
-                )
-                return ScheduleViewModel(
-                    mediator,
-                    scheduleUseCase,
-                    MutableStateFlow(ScheduleLabelDeadline(null, emptyMap(), emptyMap())),
-                    MutableStateFlow(LocalDate.now()),
-                    MutableStateFlow(isSession),
-                    MutableStateFlow(groupTitle ?: ""),
-                    MutableStateFlow(scheduleFilter),
-                    MutableStateFlow(showEmptyLessons)
-                )
-            }
-        }
-    }
 }
+
+

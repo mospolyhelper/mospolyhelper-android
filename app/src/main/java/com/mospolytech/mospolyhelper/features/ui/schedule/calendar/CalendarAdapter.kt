@@ -20,9 +20,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
+// TODO: Return filter
 class CalendarAdapter(
-    var schedule: Schedule,
-    var scheduleFilter: Schedule.Filter,
+    val schedule: Schedule?,
     var showGroup: Boolean,
     val colorParagraph: Int,
     val colorTimeBackground: Int,
@@ -50,18 +50,23 @@ class CalendarAdapter(
     override fun getItemCount() = itemCount
 
     private fun setCount() {
-        itemCount = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-        if (itemCount !in 1..MAX_COUNT) {
-            itemCount = MAX_COUNT
+        if (schedule == null) {
+            itemCount = 0
+        } else {
+            itemCount = schedule.dateFrom.until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
+            if (itemCount !in 1..MAX_COUNT) {
+                itemCount = MAX_COUNT
+            }
         }
-
     }
 
     private fun setFirstPosDate() {
-        firstPosDate = if (itemCount == MAX_COUNT)
+        firstPosDate = if (itemCount == MAX_COUNT) {
             LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
-        else
-            schedule.dateFrom
+        }
+        else {
+            schedule?.dateFrom ?: LocalDate.MIN
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -73,7 +78,7 @@ class CalendarAdapter(
 
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        (viewHolder as ViewHolder).bind()
+        viewHolder.bind()
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -88,8 +93,10 @@ class CalendarAdapter(
         }
 
         fun bind() {
+            if (schedule == null) return
+
             val date = firstPosDate.plusDays(adapterPosition.toLong())
-            val dailySchedule = schedule.getSchedule(date, scheduleFilter)
+            val dailySchedule = schedule.getSchedule(date)
             setLessons(dailySchedule, date)
             setHead(date)
             setPadding(date)
@@ -181,7 +188,7 @@ class CalendarAdapter(
                 if (showGroup) {
                     spansAppend(
                         res,
-                        "\n" + dailySchedule[0].type + "  " + dailySchedule[0].group.title,
+                        "\n" + dailySchedule[0].type + "  " + dailySchedule[0].groups.joinToString { it.title },
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                         ForegroundColorSpan(
                             if (dailySchedule[0].isImportant)
@@ -227,7 +234,7 @@ class CalendarAdapter(
                     if (showGroup) {
                         spansAppend(
                             res,
-                            "\n" + dailySchedule[i].type + "  " + dailySchedule[i].group.title,
+                            "\n" + dailySchedule[i].type + "  " + dailySchedule[i].groups.joinToString { it.title },
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                             ForegroundColorSpan(
                                 if (dailySchedule[i].isImportant)
