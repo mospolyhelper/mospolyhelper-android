@@ -52,7 +52,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
     private val datePickerDialog = DatePickerDialog(
         ctx,
-        DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+        { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
             val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
             editDate.setText(localDate.format(dateFormatter))
@@ -62,7 +62,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
     private val timePickerDialog = TimePickerDialog(
         ctx,
-        TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+        { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
             editTime.setText(localTime.format(timeFormatter))
@@ -138,6 +138,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
     override fun onResume() {
         super.onResume()
+        viewModel.newRepository()
         when (openType) {
             OpenType.EDIT -> {
                 setEditable(this.deadline as Deadline)
@@ -150,11 +151,13 @@ class AddBottomSheetDialogFragment(ctx: Context)
                 editPredmet.setText(this.name)
             }
         }
+
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.newRepository()
+
         chipId = chipLow.id
         when (openType) {
             OpenType.SIMPLE -> {
@@ -197,14 +200,14 @@ class AddBottomSheetDialogFragment(ctx: Context)
                 else -> { view.findViewById<Chip>(chipId).isChecked = true }
             }
         }
-
         val lessons = viewModel.getLessons()?.toList()
-        lessons?.let {
+        lessons.let {
             editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
                 R.layout.item_dropdown,
                 R.id.autoCompleteItem,
-                it))
+                it!!))
         }
+
         viewModel.onMessage += {
             launch(Dispatchers.Main) {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
