@@ -5,9 +5,8 @@
     android:paddingVertical="17.7dp"
     android:elevation="1dp"
     android:textIsSelectable="true"
-    android:background="@color/lessonBackground"
     android:textColor="@color/textColorPrimary"
-    android:textSize="14dp"
+    android:textSize="14sp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 </TextView>

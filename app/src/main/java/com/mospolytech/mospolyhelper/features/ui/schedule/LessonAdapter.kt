@@ -15,80 +15,137 @@ import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.LessonLabelRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
+import com.mospolytech.mospolyhelper.domain.schedule.model.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.utils.*
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.random.Random
+import kotlin.math.abs
+import kotlin.math.floor
 
 class LessonAdapter(
     var dailySchedule: List<Lesson>,
     var map: List<Boolean>,
     val labels: Map<LessonLabelKey, Set<String>>,
     val deadlines: Map<String, List<Deadline>>,
-    var filter: Schedule.Filter,
     var date: LocalDate,
-    var showGroup: Boolean,
+    var showGroups: Boolean,
+    var showTeachers: Boolean,
     var disabledColor: Int,
     var headColor: Int,
-    var headCurrentColor: Int
+    var headCurrentColor: Int,
+    currentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     companion object {
         val lessonTypeColors = listOf(
-            0xffe74c3c.toInt(),   // Exam, Credit,..
-            0xff2e86c1.toInt()    // Other
+            0xffe4503f.toInt(),   // Exam, Credit,..
+            0xff2573a7.toInt()    // Other
         )
-        const val VIEW_TYPE_NORMAL_SINGLE = 0
+
+        val orderColors = listOf(
+            0xffff764d.toInt(), // 1
+            0xffffccbc.toInt(), // 2
+            0xffbbdefb.toInt(), // 3
+            0xff55aef6.toInt(), // 4
+            0xff1359a0.toInt(), // 5
+            0xff302e88.toInt(), // 6
+            0xff310e84.toInt()  // 7
+        )
+
+        const val VIEW_TYPE_NORMAL = 0
         const val VIEW_TYPE_NORMAL_TOP = 1
-        const val VIEW_TYPE_NORMAL_MIDDLE = 2
-        const val VIEW_TYPE_NORMAL_BOTTOM = 3
+        const val VIEW_TYPE_NORMAL_BOTTOM = 2
+        const val VIEW_TYPE_NORMAL_MIDDLE = 3
         const val VIEW_TYPE_TITLE = 4
         const val VIEW_TYPE_EMPTY = 5
         const val VIEW_TYPE_INFO = 6
+
+        private val dateFormatter = DateTimeFormatter.ofPattern("d MMM")
     }
 
     val lessonClick: Event3<Lesson, LocalDate, List<View>> = Action3()
 
     override fun getItemCount() = dailySchedule.size
 
-    var currentOrder = -2
-    var currentOrderIsStarted = false
-    var cleared = false
+    private var currentOrder = -2
+    private var currentOrderIsStarted = false
+    private var cleared = true
 
-    fun updateTime(order: Int, isStarted: Boolean, groupIsEvening: Boolean, updatePreviousOrder: Boolean) {
-        // If not today then clear time and return
+    private var currentOrderEvening = -2
+    private var currentOrderIsStartedEvening = false
+    private var clearedEvening = true
+
+    init {
+        calculateCurrent(currentLesson.first)
+        calculateCurrentEvening(currentLesson.second)
+    }
+
+    private fun calculateCurrent(currentLesson: Lesson.CurrentLesson) {
         if (date != LocalDate.now()) {
             clearTime()
             return
         }
-        currentOrder = getCurrOrder(order)
+        currentOrder = getCurrOrder(currentLesson.order)
         // If lessons end then clear time and return
         if (currentOrder == 8) {
             clearTime()
             return
         }
-        currentOrderIsStarted = if (currentOrder == order) isStarted else false
+        currentOrderIsStarted = currentOrder == currentLesson.order && currentLesson.isStarted
 
         // If current date changed in settings and fragment will not update
         if (cleared) {
             cleared = false
         }
-        val prevOrder = order - 1
-        val size = dailySchedule
+    }
+
+    private fun calculateCurrentEvening(currentLesson: Lesson.CurrentLesson) {
+        if (date != LocalDate.now()) {
+            clearTimeEvening()
+            return
+        }
+        currentOrderEvening = getCurrOrder(currentLesson.order)
+        // If lessons end then clear time and return
+        if (currentOrderEvening == 8) {
+            clearTime()
+            return
+        }
+        currentOrderIsStartedEvening = currentOrderEvening == currentLesson.order && currentLesson.isStarted
+
+        // If current date changed in settings and fragment will not update
+        if (clearedEvening) {
+            clearedEvening = false
+        }
+    }
+
+    fun updateTime(currentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>, updatePreviousOrder: Boolean) {
+        val currLesson = currentLesson.first
+        calculateCurrent(currLesson)
+        val prevOrder = currLesson.order - 1
+
+        val currLessonEvening = currentLesson.second
+        calculateCurrentEvening(currLessonEvening )
+        val prevOrderEvening = currLessonEvening.order - 1
+
+
         for (lesson in dailySchedule.withIndex()) {
             if (
+                lesson.value.groupIsEvening == currLesson.isEvening &&
                 (lesson.value.order == currentOrder ||
-                        updatePreviousOrder &&
-                        lesson.value.order == prevOrder) &&
-                lesson.value.group.isEvening == groupIsEvening
+                        updatePreviousOrder && lesson.value.order == prevOrder)
+            ) {
+                notifyItemChanged(lesson.index)
+            }
+            if (
+                lesson.value.groupIsEvening == currLessonEvening.isEvening &&
+                (lesson.value.order == currentOrder ||
+                        updatePreviousOrder && lesson.value.order == prevOrderEvening)
             ) {
                 notifyItemChanged(lesson.index)
             }
@@ -102,6 +159,16 @@ class LessonAdapter(
         cleared = true
         currentOrder = -2
         currentOrderIsStarted = false
+        notifyDataSetChanged()
+    }
+
+    private fun clearTimeEvening() {
+        if (clearedEvening) {
+            return
+        }
+        clearedEvening  = true
+        currentOrderEvening = -2
+        currentOrderIsStartedEvening = false
         notifyDataSetChanged()
     }
 
@@ -121,15 +188,18 @@ class LessonAdapter(
     fun update(
         dailySchedule: List<Lesson>,
         map: List<Boolean>,
-        scheduleFilter: Schedule.Filter,
         date: LocalDate,
-        showGroup: Boolean
+        showGroups: Boolean,
+        showTeachers: Boolean,
+        currentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>
     ) {
         this.dailySchedule = dailySchedule
         this.map = map
-        this.showGroup = showGroup
+        this.showGroups = showGroups
+        this.showTeachers = showTeachers
         this.date = date
-        this.filter = scheduleFilter
+        calculateCurrent(currentLesson.first)
+        calculateCurrentEvening(currentLesson.second)
         notifyDataSetChanged()
     }
 
@@ -146,16 +216,16 @@ class LessonAdapter(
             val nextEqual = (position != itemCount - 1) && dailySchedule[position + 1].equalsTime(lesson)
             when {
                 prevEqual && nextEqual -> VIEW_TYPE_NORMAL_MIDDLE
-                prevEqual -> VIEW_TYPE_NORMAL_BOTTOM
                 nextEqual -> VIEW_TYPE_NORMAL_TOP
-                else -> VIEW_TYPE_NORMAL_SINGLE
+                prevEqual -> VIEW_TYPE_NORMAL_BOTTOM
+                else -> VIEW_TYPE_NORMAL
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_NORMAL_SINGLE,
+            VIEW_TYPE_NORMAL,
             VIEW_TYPE_NORMAL_TOP,
             VIEW_TYPE_NORMAL_BOTTOM,
             VIEW_TYPE_NORMAL_MIDDLE -> {
@@ -164,12 +234,6 @@ class LessonAdapter(
                     .inflate(R.layout.item_lesson, parent, false)
                 ViewHolder(view, viewType) { lesson, date, views ->
                     (lessonClick as Action3).invoke(lesson, date, views) }
-            }
-            VIEW_TYPE_TITLE -> {
-                val view = LayoutInflater
-                    .from(parent.context)
-                    .inflate(R.layout.item_lesson_title, parent, false)
-                ViewHolderTitle(view)
             }
             VIEW_TYPE_EMPTY -> {
                 val view = LayoutInflater
@@ -183,20 +247,17 @@ class LessonAdapter(
                     .inflate(R.layout.item_lesson_info, parent, false)
                 ViewHolderInfo(view)
             }
-            else -> onCreateViewHolder(parent, VIEW_TYPE_NORMAL_SINGLE)
+            else -> onCreateViewHolder(parent, VIEW_TYPE_NORMAL)
         }
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         when (viewHolder.itemViewType) {
-            VIEW_TYPE_NORMAL_SINGLE,
+            VIEW_TYPE_NORMAL,
             VIEW_TYPE_NORMAL_TOP,
             VIEW_TYPE_NORMAL_BOTTOM,
             VIEW_TYPE_NORMAL_MIDDLE -> {
                 (viewHolder as ViewHolder).bind(this)
-            }
-            VIEW_TYPE_TITLE -> {
-                (viewHolder as ViewHolderTitle).bind(this)
             }
             VIEW_TYPE_EMPTY -> {
                 (viewHolder as ViewHolderEmpty).bind(this)
@@ -209,13 +270,14 @@ class LessonAdapter(
 
     class ViewHolder(
         val view: View,
-        preLoadViewType: Int,
+        preViewType: Int,
         onLessonClick: (Lesson, LocalDate, List<View>) -> Unit
     ) : RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
         private val lessonTime = view.findViewById<TextView>(R.id.text_lesson_time)!!
         private val lessonTeachers = view.findViewById<TextView>(R.id.text_lesson_teachers)!!
+        private val lessonGroups = view.findViewById<TextView>(R.id.text_lesson_groups)!!
         private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_lesson_auditoriums)!!
         private val lessonPlace = view.findViewById<LinearLayout>(R.id.layout_lesson)!!
         private var lesson: Lesson = Lesson.getEmpty(0)
@@ -231,13 +293,12 @@ class LessonAdapter(
                 lessonAuditoriums.transitionName = lessonPlace.transitionName + "Auditoriums"
                 onLessonClick(lesson, adapter.date, listOf(lessonPlace, lessonTitle, lessonTeachers, lessonAuditoriums))
             }
-            setBackground(preLoadViewType)
-            hasTime = setHasTime(preLoadViewType)
-            setContextMenu()
+            setBackground(preViewType)
+            hasTime = setHasTime(preViewType)
         }
 
-        private fun setHasTime(viewType: Int): Boolean {
-            val hasTime = viewType == VIEW_TYPE_NORMAL_SINGLE || viewType == VIEW_TYPE_NORMAL_TOP
+        private fun setHasTime(preViewType: Int): Boolean {
+            val hasTime = preViewType != VIEW_TYPE_NORMAL_BOTTOM && preViewType != VIEW_TYPE_NORMAL_MIDDLE
             if (hasTime) {
                 lessonTime.visibility = View.VISIBLE
             } else {
@@ -246,41 +307,13 @@ class LessonAdapter(
             return hasTime
         }
 
-        private fun setContextMenu() {
-            lessonPlace.setOnCreateContextMenuListener { menu, _, _ ->
-                menu.add("Добавить дедлайн")
-                menu.add("Добавить метку на этот день")
-                menu.add("Добавить метку на всё время")
-            }
-        }
-
-        private fun setBackground(viewType: Int) {
-            when (viewType) {
-                VIEW_TYPE_NORMAL_SINGLE ->  {
-                    val dp8 = TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        8f,
-                        view.resources.displayMetrics
-                    ).toInt()
-                    val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
-                    lessonPlaceParams.topMargin = dp8
-                    lessonPlaceParams.bottomMargin = dp8
-                    lessonPlace.layoutParams = lessonPlaceParams
-
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson)
-                }
-                VIEW_TYPE_NORMAL_TOP ->  {
-                    val dp8 = TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        8f,
-                        view.resources.displayMetrics
-                    ).toInt()
-                    val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
-                    lessonPlaceParams.topMargin = dp8
+        private fun setBackground(preViewType: Int) {
+            val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
+            when(preViewType) {
+                VIEW_TYPE_NORMAL_MIDDLE -> {
+                    lessonPlaceParams.topMargin = 0
                     lessonPlaceParams.bottomMargin = 0
-                    lessonPlace.layoutParams = lessonPlaceParams
-
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_top)
+                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_middle)
                 }
                 VIEW_TYPE_NORMAL_BOTTOM ->  {
                     val dp8 = TypedValue.applyDimension(
@@ -288,22 +321,32 @@ class LessonAdapter(
                         8f,
                         view.resources.displayMetrics
                     ).toInt()
-                    val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
                     lessonPlaceParams.topMargin = 0
                     lessonPlaceParams.bottomMargin = dp8
-                    lessonPlace.layoutParams = lessonPlaceParams
-
                     lessonPlace.setBackgroundResource(R.drawable.shape_lesson_bottom)
                 }
-                VIEW_TYPE_NORMAL_MIDDLE -> {
-                    val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
-                    lessonPlaceParams.topMargin = 0
+                VIEW_TYPE_NORMAL_TOP ->  {
+                    val dp8 = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        8f,
+                        view.resources.displayMetrics
+                    ).toInt()
+                    lessonPlaceParams.topMargin = dp8
                     lessonPlaceParams.bottomMargin = 0
-                    lessonPlace.layoutParams = lessonPlaceParams
-
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_middle)
+                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_top)
+                }
+                else ->  {
+                    val dp8 = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        8f,
+                        view.resources.displayMetrics
+                    ).toInt()
+                    lessonPlaceParams.topMargin = dp8
+                    lessonPlaceParams.bottomMargin = dp8
+                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson)
                 }
             }
+            lessonPlace.layoutParams = lessonPlaceParams
         }
 
         // ViewHolder class is not inner because recycler views have common pool
@@ -311,21 +354,14 @@ class LessonAdapter(
             this.adapter = adapter
             lesson = adapter.dailySchedule[adapterPosition]
 
-
-            val enabledFrom =
-                lesson.dateFrom <= adapter.date || adapter.filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
-            val enabledTo =
-                lesson.dateTo >= adapter.date || adapter.filter.dateFilter != Schedule.Filter.DateFilter.Desaturate
-            val enabled =
-                if (lesson.isImportant) enabledTo else enabledFrom && enabledTo
-
+            val enabled = adapter.date in lesson.dateFrom..lesson.dateTo
 
             setBottomPadding()
-            //checkCurrentTime()
-            if (hasTime) setTime(enabled)
+            if (hasTime) setTime()
             setLessonTitleAndFeatures(enabled)
             setAuditoriums(enabled)
             setTeachers(enabled)
+            setGroups(enabled)
         }
 
         private fun setBottomPadding() {
@@ -342,53 +378,20 @@ class LessonAdapter(
                         tv.data,
                         lessonPlace.context.resources.displayMetrics
                     )
-                    paddingBottom = (actionBarHeight * 1.6).toInt()
+                    paddingBottom = (actionBarHeight * 0.6).toInt()
                 }
             }
-            view.setPadding(0, 0,0, paddingBottom)
+            val dp8 = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                8f,
+                view.resources.displayMetrics
+            ).toInt()
+            view.setPadding(view.paddingLeft, if (adapterPosition == 0) dp8 else 0,view.paddingRight, paddingBottom)
         }
 
-//        private fun checkCurrentTime() {
-//            if (adapter.date == LocalDate.now()) {
-//                val (currentOrder, isStarted) = Lesson.getOrder(LocalTime.now(), lesson.group.isEvening)
-//                if (lesson.order == currentOrder) {
-//                    isCurrent = isStarted
-//                    hasLeftTimeLabel = false
-//                } else {
-//                    if (currentOrder < lesson.order) {
-//                        var lessonWithCurrentOrderBeforeExist = false
-//                        var order = lesson.order - 1
-//                        while (currentOrder != order) {
-//                            if (adapter.map[order]) {
-//                                lessonWithCurrentOrderBeforeExist = true
-//                                break
-//                            }
-//                            order--
-//                        }
-//                        if (lessonWithCurrentOrderBeforeExist) {
-//                            isCurrent = false
-//                            hasLeftTimeLabel = false
-//                        } else {
-//                            isCurrent = false
-//                            hasLeftTimeLabel = true
-//                        }
-//                    } else {
-//                        isCurrent = false
-//                        hasLeftTimeLabel = false
-//                    }
-//                }
-//            } else {
-//                isCurrent = false
-//                hasLeftTimeLabel = false
-//            }
-//        }
-
-        private fun setTime(enabled: Boolean) {
-            if (lesson.order == -1) {
-                val q = 1
-            }
+        private fun setTime() {
             val (timeStart, timeEnd) = lesson.time
-            lessonTime.text = "$timeStart - $timeEnd,  ${lesson.order + 1}-е занятие"
+            lessonTime.text = "$timeStart - $timeEnd, ${lesson.order + 1}-е занятие"
         }
 
 
@@ -426,9 +429,13 @@ class LessonAdapter(
                 view.resources.displayMetrics
             ).toInt()
 
-            builder.append(lesson.title)
-            builder.append("  ")
 
+            // Lesson title
+            builder.append(lesson.title)
+
+
+            // Lesson type label
+            builder.append("  ")
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
@@ -436,89 +443,103 @@ class LessonAdapter(
                 StyleSpan(Typeface.BOLD)
             )
 
-            if (adapter.currentOrderIsStarted && lesson.order == adapter.currentOrder) {
-                val time = getTime(lesson.localTime.first.until(LocalTime.now(), ChronoUnit.MINUTES), true)
-                builder.append("  ")
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(0xff229954.toInt(), height = sp17, text = "Идёт  ${time.replace(" ", "  ").toLowerCase()}"),
-                    StyleSpan(Typeface.BOLD)
-                )
-            }
-            if (!adapter.currentOrderIsStarted && lesson.order == adapter.currentOrder) {
-                val time = getTime(LocalTime.now().until(lesson.localTime.first, ChronoUnit.MINUTES), false)
-                builder.append("  ")
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(0xffe67e22.toInt(), height = sp17, text = "${time.replace(" ", "  ").toLowerCase()}  до  начала"),
-                    StyleSpan(Typeface.BOLD)
-                )
-            }
 
+            // Duration label
+            builder.append("  ")
+            builder.appendAny(
+                "\u00A0",
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                RoundedBackgroundSpan(color, height = sp17, text = getDuration()),
+                StyleSpan(Typeface.BOLD)
+            )
 
-            if (adapter.showGroup) {
-                builder.append("  ")
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(color, height = sp17, text = lesson.group.title.toLowerCase()),
-                    StyleSpan(Typeface.BOLD)
-                )
-            }
-            var deadlinesCount = Random.nextInt(4)
-            if (deadlinesCount != 0) {
-                deadlinesCount = Random.nextInt(4)
-            }
-            if (deadlinesCount != 0) {
-                deadlinesCount = Random.nextInt(4)
+            val currentOrder: Int
+            val currentLessonIsStarted: Boolean
+            if (lesson.groupIsEvening) {
+                currentOrder = adapter.currentOrder
+                currentLessonIsStarted = adapter.currentOrderIsStarted
+            } else {
+                currentOrder = adapter.currentOrderEvening
+                currentLessonIsStarted = adapter.currentOrderIsStartedEvening
             }
 
-            val count = deadlinesCount
-            if (count != 0) {
-                builder.append("  ")
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(color, height = sp17, text = "$count  дедлайн${getDeadlinesEnd(count)}"),
-                    StyleSpan(Typeface.BOLD)
-                )
-            }
 
-            val labelsAllDates = adapter.labels[LessonLabelKey.from(lesson, adapter.date, true)]
-            val labelsOneDates = adapter.labels[LessonLabelKey.from(lesson, adapter.date, false)]
-
-
-            // TODO delete random
-            if (labelsAllDates!= null && Random.nextBoolean() && Random.nextBoolean() && labelsAllDates.isNotEmpty()) {
-                for (label in labelsAllDates) {
-                    if (Random.nextBoolean()) {
-                        builder.append("  ", AbsoluteSizeSpan(sp17), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        builder.appendAny(
-                            "\u00A0",
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                            RoundedBackgroundSpan(color, height = sp17, text = label.toLowerCase()),
-                            StyleSpan(Typeface.BOLD)
-                        )
-                    }
+            // Current lessons label
+            if (lesson.order == currentOrder) {
+                val currentLessonText: String
+                val currentLessonColor: Int
+                if (currentLessonIsStarted) {
+                    val time = getTime(lesson.localTime.first.until(LocalTime.now(), ChronoUnit.MINUTES), true)
+                    currentLessonColor = 0xff229954.toInt()
+                    currentLessonText = "Идёт ${time.toLowerCase()}"
+                } else {
+                    val time = getTime(LocalTime.now().until(lesson.localTime.first, ChronoUnit.MINUTES), false)
+                    currentLessonColor = 0xffe67e22.toInt()
+                    currentLessonText = "${time.toLowerCase()} до начала"
                 }
+
+                builder.append("  ")
+                builder.appendAny(
+                    "\u00A0",
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    RoundedBackgroundSpan(currentLessonColor, height = sp17, text = currentLessonText),
+                    StyleSpan(Typeface.BOLD)
+                )
             }
-            if (labelsOneDates != null && Random.nextBoolean() && Random.nextBoolean() && labelsOneDates.isNotEmpty()) {
-                for (label in labelsOneDates) {
-                    if (Random.nextBoolean()) {
-                        builder.append("  ", AbsoluteSizeSpan(sp17), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        builder.appendAny(
-                            "\u00A0",
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                            RoundedBackgroundSpan(color, height = sp17, text = label.toLowerCase()),
-                            StyleSpan(Typeface.BOLD)
-                        )
-                    }
-                }
-            }
+
             lessonTitle.text = builder
             lessonTitle.isEnabled = enabled
+        }
+
+        private fun getDuration(): String {
+            val expectedValueOfDaysInMonth = 30.44f
+
+            val dayDuration = (lesson.dateFrom.until(lesson.dateTo, ChronoUnit.DAYS) + 1)
+
+            val monthDuration = dayDuration / expectedValueOfDaysInMonth
+
+            val monthDurationRounded: Float
+
+            val floorDuration0 = floor(monthDuration)
+            val floorDuration1 = floorDuration0 + 0.5f
+            val floorDuration2 = floorDuration0 + 1f
+
+            val decimalPlaces: Int
+            monthDurationRounded = when {
+                (monthDuration - floorDuration0) < abs(monthDuration - floorDuration1) -> {
+                    decimalPlaces = 0
+                    floorDuration0
+                }
+                abs(monthDuration - floorDuration1) < abs(floorDuration2 - monthDuration) -> {
+                    decimalPlaces = 1
+                    floorDuration1
+                }
+                else -> {
+                    decimalPlaces = 0
+                    floorDuration2
+                }
+            }
+
+            return if (monthDurationRounded == 0f) {
+                if (dayDuration == 1L) {
+                    dateFormatter.format(lesson.dateFrom)
+                } else {
+                    "$dayDuration ${getEnding(dayDuration)}"
+                }
+            } else {
+                "%.${decimalPlaces}f мес.".format(monthDurationRounded)
+            }
+        }
+
+        private fun getEnding(days: Long): String {
+            // *1 день .. *2, *3, *4 дня .. *5, *6, *7, *8, *9, *0 дней .. искл. - 11 - 14
+            val lastNumberOfDays = days % 10L
+            return when {
+                days in 11L..14L -> "дней"
+                lastNumberOfDays == 1L -> "день"
+                lastNumberOfDays in 2L..4L -> "дня"
+                else -> "дней"
+            }
         }
 
         private fun setAuditoriums(enabled: Boolean) {
@@ -537,8 +558,8 @@ class LessonAdapter(
             val str = SpannableString(
                 HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY)
             ).toString()
-            val index = str.indexOfFirst { it.isLetterOrDigit() }
-            return if (index == -1) str else str.substring(index)
+            //val index = str.indexOfFirst { it.isLetterOrDigit() }
+            return str//if (index == -1) str else str.substring(index)
         }
 
 
@@ -549,7 +570,7 @@ class LessonAdapter(
             else
                 lesson.teachers.joinToString(", ") { it.getShortName() }
 
-            if (teachers.isEmpty()) {
+            if (!adapter.showTeachers || teachers.isEmpty()) {
                 lessonTeachers.visibility = View.GONE
             } else {
                 lessonTeachers.setText(teachers, TextView.BufferType.NORMAL)
@@ -557,34 +578,49 @@ class LessonAdapter(
                 lessonTeachers.visibility = View.VISIBLE
             }
         }
+
+        private fun setGroups(enabled: Boolean) {
+
+            val groupsText = Group.getShort(lesson.groups)
+
+            if (!adapter.showGroups || groupsText.isEmpty()) {
+                lessonGroups.visibility = View.GONE
+            } else {
+                lessonGroups.setText(groupsText, TextView.BufferType.NORMAL)
+                lessonGroups.isEnabled = enabled
+                lessonGroups.visibility = View.VISIBLE
+            }
+        }
+
     }
 
-    class ViewHolderTitle(view: View): RecyclerView.ViewHolder(view) {
-        companion object {
-            private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
-        }
-        private val textView = (view as TextView)
-
-        fun bind(adapter: LessonAdapter) {
-            textView.text = adapter.date.format(dateFormatter).capitalize()
-        }
-    }
-
-    class ViewHolderEmpty(view: View): RecyclerView.ViewHolder(view) {
-        private val textView = (view as TextView)
+    class ViewHolderEmpty(private val view: View): RecyclerView.ViewHolder(view) {
+        private val lessonTime: TextView = view.findViewById(R.id.text_lesson_time)
 
         fun bind(adapter: LessonAdapter) {
             val lesson = adapter.dailySchedule[adapterPosition]
-            if (lesson.order == -1) {
-                val q = 1
-            }
-            textView.text = "${lesson.time.first},  ${lesson.order + 1}-е занятие"
+            setBottomPadding()
+            lessonTime.text = "${lesson.time.first}, ${lesson.order + 1}-е занятие"
+        }
+
+        private fun setBottomPadding() {
+            val dp8 = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                8f,
+                view.resources.displayMetrics
+            ).toInt()
+            view.setPadding(
+                view.paddingLeft,
+                if (adapterPosition == 0) dp8 else 0,
+                view.paddingRight,
+                view.paddingBottom
+            )
         }
     }
 
     class ViewHolderInfo(view: View): RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
-        private val lessonInfo: TextView = (itemView as TextView)
+        private val lessonInfo: TextView = view.findViewById(R.id.text_info)
 
         fun bind(adapter: LessonAdapter) {
             this.adapter = adapter
@@ -634,7 +670,7 @@ class LessonAdapter(
                     else -> R.drawable.ic_round_sports_volleyball_24
                 }
                 lessonInfo.setCompoundDrawablesWithIntrinsicBounds(
-                    id, 0, 0, 0
+                        id, 0, 0, 0
                 )
             }
         }
@@ -642,7 +678,7 @@ class LessonAdapter(
 }
 
 fun getTime(totalMinutes: Long, isGenitive: Boolean): String {
-    var timeLeft = StringBuilder()
+    val timeLeft = StringBuilder()
     val windowTimeHours = totalMinutes / 60L
     val windowTimeMinutes = totalMinutes % 60
     // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14

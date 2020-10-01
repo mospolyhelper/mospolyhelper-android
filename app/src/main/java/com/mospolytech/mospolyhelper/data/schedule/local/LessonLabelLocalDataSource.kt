@@ -4,10 +4,10 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 
 class LessonLabelLocalDataSource {
     fun get(lessonLabelKeyKey: LessonLabelKey): Set<String> {
-        if (lessonLabelKeyKey.lessonDate == null) {
-            return setOf("#Важное")
+        return if (lessonLabelKeyKey.lessonDate == null) {
+            setOf("#Важное")
         } else {
-            return setOf("#Неважное", "#Сдано")
+            setOf("#Неважное", "#Сдано")
         }
     }
 

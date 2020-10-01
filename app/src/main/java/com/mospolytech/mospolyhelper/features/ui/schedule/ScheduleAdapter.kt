@@ -18,10 +18,7 @@ import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleEmptyPairsDecor
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleWindowsDecorator
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
-import com.mospolytech.mospolyhelper.utils.Action3
-import com.mospolytech.mospolyhelper.utils.Action4
-import com.mospolytech.mospolyhelper.utils.Event3
-import com.mospolytech.mospolyhelper.utils.Event4
+import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -34,13 +31,15 @@ class ScheduleAdapter(
     val schedule: Schedule?,
     private val labels: Map<LessonLabelKey, Set<String>>,
     private val deadlines: Map<String, List<Deadline>>,
-    private val scheduleFilter: Schedule.Filter,
+    private val showEndedLessons: Boolean,
+    private val showCurrentLessons: Boolean,
+    private val showNotStartedLessons: Boolean,
     private val showEmptyLessons: Boolean,
-    private val showGroup: Boolean,
-    private val isLoading: Boolean
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
+    private val showGroups: Boolean,
+    private val showTeachers: Boolean,
+    private var prevCurrentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMM")
 
         private const val MAX_COUNT = 400
         private const val VIEW_TYPE_NULL = 0
@@ -48,66 +47,33 @@ class ScheduleAdapter(
         private const val VIEW_TYPE_NORMAL = 2
         private const val VIEW_TYPE_EMPTY = 3
     }
+    private var isLoading = false
     var firstPosDate: LocalDate = LocalDate.now()
     private var count = 0
     private val commonPool = RecyclerView.RecycledViewPool()
 
     val lessonClick: Event3<Lesson, LocalDate, List<View>> = Action3()
-    private val timerTick: Event4<Int, Boolean, Boolean, Boolean> = Action4()
-
-
-    private val job = SupervisorJob()
-    override val coroutineContext: CoroutineContext = job + Dispatchers.Default
+    private val timerTick: Event2<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>, Boolean> = Action2()
 
     init {
         setCount()
         setFirstPosDate()
-        launchTimer()
     }
 
-    private var currentOrder = -2
-    private var currentOrderEvening = -2
-
-    private fun launchTimer() {
-        async {
-            timerTick as Action4
-            var pair: Pair<Int, Boolean>
-            var updatePrev: Boolean
-            while (isActive) {
-                // Group is not evening
-                pair = calculateCurrentLesson(false)
-                updatePrev = currentOrder == pair.first - 1
-                currentOrder = pair.first
-                withContext(Dispatchers.Main) {
-                    timerTick.invoke(pair.first, pair.second, false, updatePrev)
-                }
-
-
-                // Group is evening
-                pair = calculateCurrentLesson(true)
-                updatePrev = currentOrder == pair.first - 1
-                currentOrderEvening = pair.first
-                withContext(Dispatchers.Main) {
-                    timerTick.invoke(pair.first, pair.second, true, updatePrev)
-                }
-                val q = 60L - LocalTime.now().second
-
-                delay(q * 1000)
-            }
-        }
+    fun setLoading() {
+        isLoading = true
+        notifyDataSetChanged()
     }
 
-    private fun calculateCurrentLesson(groupIsEvening: Boolean): Pair<Int, Boolean> {
-        return Lesson.getOrder(LocalTime.now(), groupIsEvening)
+    fun updateCurrentLesson(currentLessons: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>) {
+        timerTick as Action2
+        val updatePrev = prevCurrentLesson.first.order != currentLessons.first.order ||
+                prevCurrentLesson.second.order != currentLessons.second.order
+        prevCurrentLesson = currentLessons
+        timerTick.invoke(currentLessons, updatePrev)
     }
-
 
     override fun getItemCount() = count
-
-//    override fun getItemId(position: Int): Long {
-//        val date = firstPosDate.plusDays(position.toLong())
-//        return 31L * schedule?.getSchedule(date).hashCode() + 31L * date.hashCode()
-//    }
 
     private fun setCount() {
         if (schedule == null) {
@@ -130,16 +96,21 @@ class ScheduleAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = if (schedule == null) {
-            if (isLoading) VIEW_TYPE_LOADING else VIEW_TYPE_NULL
-        } else if (schedule
+    override fun getItemViewType(position: Int) = when {
+        isLoading -> VIEW_TYPE_LOADING
+        schedule == null -> VIEW_TYPE_NULL
+        schedule
             .getSchedule(
                 firstPosDate.plusDays(position.toLong()),
-                scheduleFilter
-            ).isEmpty()) {
-        VIEW_TYPE_EMPTY
-    } else {
-        VIEW_TYPE_NORMAL
+                showEndedLessons,
+                showCurrentLessons,
+                showNotStartedLessons
+            ).isEmpty() -> {
+            VIEW_TYPE_EMPTY
+        }
+        else -> {
+            VIEW_TYPE_NORMAL
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -192,7 +163,7 @@ class ScheduleAdapter(
         private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
         private val headColor = view.context.getColor(R.color.textLessonHead)
         private val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
-        var accumulator = 0f
+        private var accumulator = 0f
 
         init {
             // TODO check pool performance
@@ -236,7 +207,15 @@ class ScheduleAdapter(
 
         fun bind() {
             val date = firstPosDate.plusDays(adapterPosition.toLong())
-            val dailySchedule = ScheduleWindowsDecorator(schedule!!.getSchedule(date, scheduleFilter))
+            val dailySchedule = ScheduleWindowsDecorator(
+                schedule!!.getSchedule(
+                    date,
+                    showEndedLessons,
+                    showCurrentLessons,
+                    showNotStartedLessons
+                )
+            )
+
             val map = dailySchedule.map
             listSchedule.scrollToPosition(0)
             accumulator = 0f
@@ -246,12 +225,13 @@ class ScheduleAdapter(
                     map,
                     labels,
                     deadlines,
-                    scheduleFilter,
                     date,
-                    showGroup,
+                    showGroups,
+                    showTeachers,
                     disabledColor,
                     headColor,
-                    headCurrentColor
+                    headCurrentColor,
+                    prevCurrentLesson
                 )
                 listAdapter?.let {
                     it.lessonClick += { lesson, date, view ->
@@ -266,9 +246,10 @@ class ScheduleAdapter(
                 listAdapter!!.update(
                     if (showEmptyLessons) ScheduleEmptyPairsDecorator(dailySchedule) else dailySchedule,
                     map,
-                    scheduleFilter,
                     date,
-                    showGroup
+                    showGroups,
+                    showTeachers,
+                    prevCurrentLesson
                 )
             }
         }
