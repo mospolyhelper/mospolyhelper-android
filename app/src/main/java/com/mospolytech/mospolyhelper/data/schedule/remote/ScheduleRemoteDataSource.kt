@@ -15,9 +15,9 @@ class ScheduleRemoteDataSource(
     suspend fun get(groupTitle: String, isSession: Boolean): Schedule? {
         return try {
             val scheduleString = client.getSchedule(groupTitle, isSession)
-            scheduleParser.parse(scheduleString, isSession)
+            scheduleParser.parse(scheduleString)
         } catch (e: Exception) {
-            Log.e(TAG, "Schedule downloading and parsing error: groupTitle: $groupTitle, isSession: $isSession", e)
+            Log.e(TAG, "Schedule downloading and parsing exception: groupTitle: $groupTitle, isSession: $isSession", e)
             null
         }
     }

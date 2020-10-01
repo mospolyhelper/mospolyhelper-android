@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
     : RecyclerView.Adapter<AdvancedSearchAdapter.ViewHolder>() {
 
-    var dataSet: List<Int> = filter.getFiltered("")
+    private var dataSet: List<Int> = filter.getFiltered("")
 
     val allCheckedChanged: Event1<Boolean> = Action1()
 
@@ -38,7 +38,7 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
         notifyDataSetChanged()
     }
 
-    fun checkBoxChanged(position: Int, isChecked: Boolean) {
+    private fun checkBoxChanged(position: Int, isChecked: Boolean) {
         filter.setChecked(dataSet[position], isChecked)
         val isAllChecked = isAllChecked()
         (allCheckedChanged as Action1).invoke(isAllChecked)
@@ -68,11 +68,11 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
 }
 
 class AdvancedFilter(
-    val originDataSet: List<String>,
-    val checkedIndices: ObservableList<Int>
+    private val originDataSet: List<String>,
+    private val checkedIndices: ObservableList<Int>
 ) : AdvancedSearchFilter {
-    var checkedArray = mutableListOf<Boolean>()
-    var normalized = mutableListOf<String>()
+    private var checkedArray = mutableListOf<Boolean>()
+    private var normalized = mutableListOf<String>()
 
     override fun isAllChecked(localDataSet: List<Int>): Boolean {
         if (localDataSet.size > checkedIndices.size) {
@@ -152,7 +152,7 @@ class AdvancedFilter(
     }
 
 
-    fun buildRegex(str: String): Regex {
+    private fun buildRegex(str: String): Regex {
         val str = Regex.escapeReplacement(str)
         val res = ArrayList<Char>(str.length)
         var i = 0
@@ -187,10 +187,10 @@ class AdvancedFilter(
 }
 
 class SimpleFilter(
-    val originDataSet: List<String>,
-    val checkedIndices: ObservableList<Int>
+    private val originDataSet: List<String>,
+    private val checkedIndices: ObservableList<Int>
 ) : AdvancedSearchFilter {
-    var checkedArray = mutableListOf<Boolean>()
+    private var checkedArray = mutableListOf<Boolean>()
 
     init {
         checkedArray = MutableList(originDataSet.size) { false }

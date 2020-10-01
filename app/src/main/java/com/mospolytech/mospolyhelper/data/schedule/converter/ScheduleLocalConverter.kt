@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter
 
 class ScheduleLocalConverter {
     companion object {
-        val SCHEDULE_GROUP = Schedule::group.name
         val SCHEDULE_DATE_FROM = Schedule::dateFrom.name
         val SCHEDULE_DATE_TO = Schedule::dateTo.name
         val DAILY_SCHEDULES = Schedule::dailySchedules.name
@@ -20,6 +19,7 @@ class ScheduleLocalConverter {
         val LESSON_DATE_TO = Lesson::dateTo.name
         val LESSON_AUDITORIUMS = Lesson::auditoriums.name
         val LESSON_TYPE = Lesson::type.name
+        val LESSON_GROUPS = Lesson::groups.name
         val TEACHER_NAMES = Teacher::names.name
         val AUDITORIUM_TITLE = Auditorium::title.name
         val AUDITORIUM_COLOR = Auditorium::color.name
@@ -54,15 +54,74 @@ class ScheduleLocalConverter {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     fun serializeSchedule(schedule: Schedule): String {
-        val converter = Klaxon().converter(localDateConverter)
-        return converter.toJsonString(schedule)
+//        val converter = Klaxon().converter(localDateConverter)
+//        return converter.toJsonString(schedule)
+
+        val obj = json {
+            obj(
+                Schedule::dateFrom.name to schedule.dateFrom.format(dateFormatter),
+                Schedule::dateTo.name to schedule.dateTo.format(dateFormatter),
+                Schedule::dailySchedules.name to
+                        array(
+                            List(schedule.dailySchedules.size) { day ->
+                                val dailySchedule = schedule.dailySchedules[day]
+                                array(
+                                    List(dailySchedule.size) { order ->
+                                        val lesson = dailySchedule[order]
+                                        obj(
+                                            Lesson::order.name to lesson.order,
+                                            Lesson::title.name to lesson.title,
+                                            Lesson::type.name to lesson.type,
+                                            Lesson::dateTo.name to lesson.dateTo.format(
+                                                dateFormatter
+                                            ),
+                                            Lesson::dateFrom.name to lesson.dateFrom.format(
+                                                dateFormatter
+                                            ),
+                                            Lesson::teachers.name to array(
+                                                List(lesson.teachers.size) { i ->
+                                                    val teacher = lesson.teachers[i]
+                                                    obj(
+                                                        Teacher::names.name to array(
+                                                            List(teacher.names.size) { j ->
+                                                                teacher.names[j]
+                                                            }
+                                                        )
+                                                    )
+                                                }
+                                            ),
+                                            Lesson::auditoriums.name to array(
+                                                List(lesson.auditoriums.size) { i ->
+                                                    val auditorium = lesson.auditoriums[i]
+                                                    obj(
+                                                        Auditorium::title.name to auditorium.title,
+                                                        Auditorium::color.name to auditorium.color
+                                                    )
+                                                }
+                                            ),
+                                            Lesson::groups.name to array(
+                                                List(lesson.groups.size) { i ->
+                                                    val group = lesson.groups[i]
+                                                    obj(
+                                                        Group::title.name to group.title,
+                                                        Group::isEvening.name to group.isEvening
+                                                    )
+                                                }
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        )
+            )
+        }
+        val q = obj.toJsonString()
+        return obj.toJsonString()
     }
 
-    fun deserializeSchedule(scheduleString: String, isSession: Boolean, lastUpdate: LocalDateTime): Schedule {
-        val converter = Klaxon().converter(localDateConverter)
+    fun deserializeSchedule(scheduleString: String): Schedule {
         val parser = Parser.default()
         val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
-        val group = converter.parseFromJsonObject<Group>(json.obj(SCHEDULE_GROUP)!!)!!
         val dateFrom = LocalDate.parse(json.string(SCHEDULE_DATE_FROM)!!, dateFormatter)
         val dateTo = LocalDate.parse(json.string(SCHEDULE_DATE_TO)!!, dateFormatter)
 
@@ -87,23 +146,19 @@ class ScheduleLocalConverter {
                             )
                         },
                         lesson.string(LESSON_TYPE)!!,
-                        group
+                        lesson.array<JsonObject>(LESSON_GROUPS)!!.map {
+                            Group(
+                                it.string(Group::title.name)!!,
+                                it.boolean(Group::isEvening.name)!!
+                            )
+                        }
                     )
                 }
             }
         return Schedule(
             dailySchedules,
-            lastUpdate,
-            group,
-            isSession,
             dateFrom,
             dateTo
         )
     }
-
-    fun serializeGroupList(groupList: List<String>) =
-        Klaxon().toJsonString(groupList)
-
-    fun deserializeGroupList(groupListString: String) =
-        Klaxon().parseArray<String>(groupListString)!!
 }

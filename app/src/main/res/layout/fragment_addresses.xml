@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/scheduleBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include  layout="@layout/bottom_app_bar_addresses" />
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/addresses_update"
-        android:layout_marginBottom="?attr/actionBarSize"
+        android:layout_below="@id/tablayout_addresses"
+        android:layout_above="@id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_addresses"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager_addresses"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.tabs.TabLayout
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:clipToPadding="false"
+        android:id="@+id/tablayout_addresses"
+        android:layout_alignParentTop="true"
+        style="@style/TabLayoutAddresses"
+        android:background="@color/colorLevelZero"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:tabMode="scrollable">
+
+    </com.google.android.material.tabs.TabLayout>
+    <include layout="@layout/bottom_app_bar_addresses" />
+</RelativeLayout>
 

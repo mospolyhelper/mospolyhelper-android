@@ -27,8 +27,10 @@ import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.NavGraphDirections
 
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.domain.schedule.model.Group
 import kotlinx.android.synthetic.main.fragment_schedule_lesson_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class LessonInfoFragment : DialogFragment() {
@@ -54,7 +56,7 @@ class LessonInfoFragment : DialogFragment() {
     private lateinit var lessonAuditoriumsChips: ChipGroup
     private lateinit var teacherChips: ChipGroup
     private lateinit var lessonDateTextView: TextView
-    private lateinit var lessonGroupInfoTextView: TextView
+    private lateinit var lessonGroupsChipGroup: ChipGroup
     private lateinit var lessonLabelsChipGroup: ChipGroup
     private lateinit var lessonDeadlinesTextView: TextView
     private lateinit var lessonLabelOneDateTextView: TextView
@@ -76,7 +78,6 @@ class LessonInfoFragment : DialogFragment() {
         super.onStart()
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        //requireActivity().window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCreateView(
@@ -101,7 +102,7 @@ class LessonInfoFragment : DialogFragment() {
         lessonAuditoriumsChips = view.findViewById(R.id.chipgroup_lesson_auditoriums)
         teacherChips = view.findViewById(R.id.chipgroup_lesson_teachers)
         lessonDateTextView = view.findViewById(R.id.text_lesson_date)
-        lessonGroupInfoTextView = view.findViewById(R.id.text_lesson_group_info)
+        lessonGroupsChipGroup = view.findViewById(R.id.chipgroup_lesson_groups)
         lessonDeadlinesTextView = view.findViewById(R.id.text_schedule_deadlines)
         lessonLabelsChipGroup = view.findViewById(R.id.chipgroup_lesson_labels)
         lessonLabelOneDateTextView = view.findViewById(R.id.text_label_one_date)
@@ -113,11 +114,10 @@ class LessonInfoFragment : DialogFragment() {
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
-        if (toolbar != null) {
-            (activity as MainActivity).setSupportActionBar(toolbar)
-        }
+        (activity as MainActivity).setSupportActionBar(toolbar)
         (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
+        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         if (viewModel.lesson.isEmpty) {
             lessonTitleTextView.text = "Нет занятия"
@@ -161,7 +161,7 @@ class LessonInfoFragment : DialogFragment() {
         val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         for (auditorium in viewModel.lesson.auditoriums) {
             val audTitle = HtmlCompat.fromHtml(
-                auditorium.title.toLowerCase(),
+                auditorium.title,
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             val url = audTitle.getSpans<URLSpan>().firstOrNull()
@@ -182,9 +182,15 @@ class LessonInfoFragment : DialogFragment() {
                         audTitle
                     }
                     if (url != null) {
-                        setOnClickListener { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.url))) }
+                        setOnClickListener {
+                            AlertDialog.Builder(context).setTitle("Открыть ссылку?")
+                                .setPositiveButton("Да") { _, _ ->
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.url)))
+                            }.setNegativeButton("Нет") { _, _ -> }.create().show()
+
+                        }
                     } else {
-                        setOnClickListener { Toast.makeText(context, text, Toast.LENGTH_SHORT).show() }
+                        setOnClickListener { Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show() }
                     }
                 }
             )
@@ -248,16 +254,17 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setGroupInfo() {
-        var text = "Группа ${viewModel.lesson.group.title}, ${viewModel.lesson.group.course}-й курс, длительность семестра: " +
-        "с ${viewModel.lesson.group.dateFrom.format(shortDateFormatter)} " +
-                "до ${viewModel.lesson.group.dateTo.format(shortDateFormatter)}"
-        if (viewModel.lesson.group.isEvening) {
-            text += ", вечерняя"
+        for (group in viewModel.lesson.groups) {
+            lessonGroupsChipGroup.addView(
+                Chip(context).apply {
+                    text = group.title
+                    setOnClickListener {
+                        val text = "${group.title}"
+                        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
         }
-        if (viewModel.lesson.group.comment.isNotEmpty()) {
-            text += ", комментарий: " + viewModel.lesson.group.comment
-        }
-        lessonGroupInfoTextView.text = text
     }
 
     private fun createChip(text: String, isOneDate: Boolean): Chip {
@@ -271,74 +278,9 @@ class LessonInfoFragment : DialogFragment() {
         return chip
     }
 
-    private fun createAddButton(): ImageButton {
-        val addBtn = ImageButton(context)
-        addBtn.setImageDrawable(requireContext().getDrawable(R.drawable.ic_round_add_24))
-        addBtn.setOnClickListener {
-            val view = LayoutInflater.from(requireContext()).inflate(R.layout.alertdialog_schedule_lesson_label_add, null)
-            val autoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.text_lesson_label)
-            val alertDialog = AlertDialog.Builder(requireContext())
-                .setTitle("Add lesson label")
-                .setMessage("Enter lesson label\n\"#Some_label\"")
-                .setPositiveButton("Добавить") { _, _ ->
-                    viewModel.lessonLabelRepository
-                        .addLabel("", viewModel.lesson, viewModel.date, false)
-                }.setNegativeButton("Отмена") { _, _ ->
-                }.create()
-            val dp20 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20f, addBtn.resources.displayMetrics).toInt()
-            alertDialog.setView(view, dp20, 0, dp20, 0)
-            alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            autoCompleteTextView.setAdapter(
-                ArrayAdapter<String>(
-                    alertDialog.context,
-                    R.layout.item_group_list,
-                    viewModel.lessonLabelRepository.getAllLabels().toTypedArray()
-                )
-            )
-            alertDialog.show()
-        }
-        val tv = TypedValue()
-        if (requireContext().theme.resolveAttribute(
-                android.R.attr.actionBarItemBackground,
-                tv,
-                true
-            )
-        ) {
-            addBtn.setBackgroundResource(tv.resourceId)
-        } else {
-            addBtn.background = ColorDrawable(requireContext().getColor(R.color.scheduleBackgroundColor))
-        }
-        return addBtn
-    }
-
     private fun setLabels() {
-        lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
+        //lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
 
-        val (oneDateLabels, allTimeLabels) = viewModel.lessonLabelRepository
-            .getLabels(viewModel.lesson, viewModel.date)
-        var index = 1
-        for (label in oneDateLabels) {
-            lessonLabelsChipGroup.addView(createChip(label, true), index++)
-        }
-
-        var addBtn = createAddButton()
-        lessonLabelsChipGroup.addView(addBtn, index)
-        var params = (addBtn.layoutParams as ChipGroup.LayoutParams)
-        params.marginStart = lessonLabelsChipGroup.chipSpacingHorizontal
-        params.marginEnd = lessonLabelsChipGroup.chipSpacingHorizontal
-        addBtn.layoutParams = params
-
-
-        for (label in allTimeLabels) {
-            lessonLabelsChipGroup.addView(createChip(label, false))
-        }
-
-        addBtn = createAddButton()
-        lessonLabelsChipGroup.addView(addBtn)
-        params = (addBtn.layoutParams as ChipGroup.LayoutParams)
-        params.marginStart = lessonLabelsChipGroup.chipSpacingHorizontal
-        params.marginEnd = lessonLabelsChipGroup.chipSpacingHorizontal
-        addBtn.layoutParams = params
     }
 
     private fun setDeadlines() {
@@ -347,12 +289,5 @@ class LessonInfoFragment : DialogFragment() {
 //            textView.text = deadlines?.joinToString(separator = "\n") { "${it.name} ${it.description}" } ?: "Дедлайнов нет"
 //        })
 //        viewModel.getSubjectDeadlines(subjectTitle)
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
-        // TODO: Use the ViewModel
     }
 }
