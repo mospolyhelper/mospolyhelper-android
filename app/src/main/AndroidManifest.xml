@@ -26,7 +26,9 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <receiver android:name="com.mospolytech.mospolyhelper.features.ui.schedule.appwidget.ScheduleAppWidgetProvider" >
+
+        <!-- Schedule Appwidget -->
+        <receiver android:name=".features.appwidget.schedule.ScheduleAppWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -34,10 +36,10 @@
                 android:resource="@xml/schedule_appwidget_provider" />
         </receiver>
 
-        <receiver android:name="com.mospolytech.mospolyhelper.features.broadcast_receivers.ScheduleCurrentLessonBroadcastReceiver"/>
+<!--        <receiver android:name=".features.broadcast_receivers.ScheduleCurrentLessonBroadcastReceiver"/>-->
 
         <service
-            android:name="com.mospolytech.mospolyhelper.features.ui.schedule.appwidget.LessonAdapterService"
+            android:name=".features.appwidget.schedule.LessonAdapterService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 

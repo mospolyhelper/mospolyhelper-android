@@ -14,9 +14,20 @@ data class Lesson(
     val dateTo: LocalDate,
     val auditoriums: List<Auditorium>,
     val type: String,
-    @Json(ignored = true) val group: Group
+    val groups: List<Group>
 ) : Comparable<Lesson> {
     companion object {
+        private const val COURSE_PROJECT_SHORT = "КП"
+        private const val EXAM_SHORT = "Экз"
+        private const val CREDIT_SHORT = "Зач"
+        private const val CREDIT_WITH_MARK_SHORT = "ЗСО"
+        private const val EXAMINATION_SHOW_SHORT = "ЭП"
+        private const val CONSULTATION_SHORT = "Кон"
+        private const val LABORATORY_SHORT = "Лаб"
+        private const val PRACTICE_SHORT2 = "Пра"
+        private const val LECTURE_SHORT = "Лек"
+        private const val OTHER_SHORT = "Дру"
+
         private const val COURSE_PROJECT = "КП"
         private const val EXAM = "Экзамен"
         private const val CREDIT = "Зачет"
@@ -24,6 +35,7 @@ data class Lesson(
         private const val EXAMINATION_SHOW = "ЭП"
         private const val CONSULTATION = "Консультация"
         private const val LABORATORY = "Лаб"
+        private const val LABORATORY_FULL = "Лаб. работа"
         private const val PRACTICE = "Практика"
         private const val PRACTICE_SHORT = "Пр"
         private const val LECTURE = "Лекция"
@@ -48,28 +60,28 @@ data class Lesson(
                 LocalDate.MAX,
                 emptyList(),
                 "",
-                Group.empty
+                listOf()
             )
 
-        fun getOrder(time: LocalTime, groupIsEvening: Boolean): Pair<Int, Boolean> =
+        fun getOrder(time: LocalTime, groupIsEvening: Boolean): CurrentLesson =
             if (time > Time.thirdPair.second) when {
-                time <= Time.fourthPair.second -> Pair(3, time >= Time.fourthPair.first)
-                time <= Time.fifthPair.second -> Pair(4, time >= Time.fifthPair.first)
+                time <= Time.fourthPair.second -> CurrentLesson(3, time >= Time.fourthPair.first, groupIsEvening)
+                time <= Time.fifthPair.second -> CurrentLesson(4, time >= Time.fifthPair.first, groupIsEvening)
                 groupIsEvening -> when {
-                    time <= Time.sixthPairEvening.second -> Pair(5, time >= Time.sixthPairEvening.first)
-                    time <= Time.seventhPairEvening.second -> Pair(6, time >= Time.seventhPairEvening.first)
-                    else -> Pair(8, false)
+                    time <= Time.sixthPairEvening.second -> CurrentLesson(5, time >= Time.sixthPairEvening.first, groupIsEvening)
+                    time <= Time.seventhPairEvening.second -> CurrentLesson(6, time >= Time.seventhPairEvening.first, groupIsEvening)
+                    else -> CurrentLesson(8, false, groupIsEvening)
                 }
                 else -> when {
-                    time <= Time.sixthPair.second -> Pair(5, time >= Time.sixthPair.first)
-                    time <= Time.seventhPair.second -> Pair(6, time >= Time.seventhPair.first)
-                    else -> Pair(8, false)
+                    time <= Time.sixthPair.second -> CurrentLesson(5, time >= Time.sixthPair.first, groupIsEvening)
+                    time <= Time.seventhPair.second -> CurrentLesson(6, time >= Time.seventhPair.first, groupIsEvening)
+                    else -> CurrentLesson(8, false, groupIsEvening)
                 }
             }
             else when {
-                time > Time.secondPair.second -> Pair(2, time >= Time.thirdPair.first)
-                time > Time.firstPair.second -> Pair(1, time >= Time.secondPair.first)
-                else -> Pair(0, time >= Time.firstPair.first)
+                time > Time.secondPair.second -> CurrentLesson(2, time >= Time.thirdPair.first, groupIsEvening)
+                time > Time.firstPair.second -> CurrentLesson(1, time >= Time.secondPair.first, groupIsEvening)
+                else -> CurrentLesson(0, time >= Time.firstPair.first, groupIsEvening)
             }
 
         fun getTime(order: Int, groupIsEvening: Boolean) = when (order) {
@@ -101,13 +113,37 @@ data class Lesson(
         }
 
 
-        fun fixType(type: String, subjectTitle: String): String {
+        fun fixType(type: String, lessonTitle: String): String {
             return when {
                 type.equals(COURSE_PROJECT, true) -> COURSE_PROJECT_FIXED
                 type.equals(CREDIT_WITH_MARK, true) -> CREDIT_WITH_MARK_FIXED
                 type.equals(EXAMINATION_SHOW, true) -> EXAMINATION_SHOW_FIXED
                 type.equals(OTHER, true) -> {
-                    val res = regex.findAll(subjectTitle).joinToString { it.value }
+                    val res = regex.findAll(lessonTitle).joinToString { it.value }
+                    if (res.isNotEmpty()) {
+                        findCombinedShortTypeOrNull(res) ?: type
+                    } else {
+                        type
+                    }
+                }
+                else -> type
+            }
+        }
+
+
+        fun fixTeacherType(type: String, lessonTitle: String): String {
+            return when {
+                type.equals(COURSE_PROJECT_SHORT, true) -> COURSE_PROJECT_FIXED
+                type.equals(CREDIT_WITH_MARK_SHORT, true) -> CREDIT_WITH_MARK_FIXED
+                type.equals(EXAMINATION_SHOW_SHORT, true) -> EXAMINATION_SHOW_FIXED
+                type.equals(EXAM_SHORT, true) -> EXAM
+                type.equals(CREDIT_SHORT , true) -> CREDIT
+                type.equals(CONSULTATION_SHORT, true) -> CONSULTATION
+                type.equals(LABORATORY_SHORT , true) -> LABORATORY_FULL
+                type.equals(PRACTICE_SHORT2, true) -> PRACTICE
+                type.equals(LECTURE_SHORT, true) -> LECTURE
+                type.equals(OTHER_SHORT, true) -> {
+                    val res = regex.findAll(lessonTitle).joinToString { it.value }
                     if (res.isNotEmpty()) {
                         findCombinedShortTypeOrNull(res) ?: type
                     } else {
@@ -119,7 +155,7 @@ data class Lesson(
         }
 
         private fun findCombinedShortTypeOrNull(type: String): String? {
-            val lecture = type.contains(LECTURE, true)
+            val lecture = type.contains(LECTURE_SHORT, true)
             val practise = type.contains(PRACTICE_SHORT, true)
             val lab = type.contains(LABORATORY, true)
             return when {
@@ -182,7 +218,7 @@ data class Lesson(
                 LocalTime.of(21, 10)
             )
 
-            val firstPairStr = "09:00" to "10:30"
+            val firstPairStr = "9:00" to "10:30"
             val secondPairStr = "10:40" to "12:10"
             val thirdPairStr = "12:20" to "13:50"
             val fourthPairStr = "14:30" to "16:00"
@@ -194,7 +230,9 @@ data class Lesson(
         }
     }
 
+    @Json(ignored = true)
     val isEmpty = title.isEmpty() && type.isEmpty()
+    @Json(ignored = true)
     val isNotEmpty = title.isNotEmpty() || type.isNotEmpty()
 
     @Json(ignored = true)
@@ -203,44 +241,68 @@ data class Lesson(
                 type.contains(CREDIT, true) ||
                 type.contains(COURSE_PROJECT_FIXED, true) ||
                 type.contains(CREDIT_WITH_MARK_FIXED, true) ||
-                type.contains(EXAMINATION_SHOW_FIXED, true)
+                type.contains(EXAMINATION_SHOW_FIXED, true) ||
+                type.contains(COURSE_PROJECT, true) ||
+                type.contains(CREDIT_WITH_MARK, true) ||
+                type.contains(EXAMINATION_SHOW, true) ||
+                EXAM.contains(type, true) ||
+                CREDIT.contains(type, true) ||
+                COURSE_PROJECT_FIXED.contains(type, true) ||
+                CREDIT_WITH_MARK_FIXED.contains(type, true) ||
+                EXAMINATION_SHOW_FIXED.contains(type, true) ||
+                COURSE_PROJECT.contains(type, true) ||
+                CREDIT_WITH_MARK.contains(type, true) ||
+                EXAMINATION_SHOW.contains(type, true)
 
     @Json(ignored = true)
     val time: Pair<String, String>
     get() {
-        if (order == -1) {
-            val q =1
-            Log.d("1", "1")
-        }
         return getTime(
             order,
-            group.isEvening
+            groupIsEvening
         )
     }
 
     @Json(ignored = true)
     val localTime: Pair<LocalTime, LocalTime>
         get() {
-            if (order == -1) {
-                val q =1
-                Log.d("1", "1")
-            }
             return getLocalTime(
                 order,
-                group.isEvening
+                groupIsEvening
             )
         }
 
+    @Json(ignored = true)
+    val groupIsEvening: Boolean
+        get() = groups.firstOrNull()?.isEvening ?: false
+
 
     fun equalsTime(lesson: Lesson) =
-        order == lesson.order && group.isEvening == lesson.group.isEvening
+        order == lesson.order && groupIsEvening == lesson.groupIsEvening
 
-    override fun compareTo(other: Lesson) = when {
+    override fun compareTo(other: Lesson): Int = when {
         order != other.order -> order.compareTo(other.order)
-        group.isEvening == other.group.isEvening -> group.title.compareTo(other.group.title)
-        group.isEvening -> 1
+        groupIsEvening != other.groupIsEvening -> if (groupIsEvening) 1 else -1
         dateFrom != other.dateFrom -> dateFrom.compareTo(other.dateFrom)
         dateTo != other.dateTo -> dateTo.compareTo(other.dateTo)
-        else -> -1
+        else -> groups.joinToString().compareTo(other.groups.joinToString())
+    }
+
+    data class CurrentLesson(
+        val order: Int,
+        val isStarted: Boolean,
+        val isEvening: Boolean
+    ) {
+        companion object {
+            const val ORDER_LESSONS_FINISHED = 8
+        }
+        val isFinished = order == ORDER_LESSONS_FINISHED
+        override fun equals(other: Any?) = false
+        override fun hashCode(): Int {
+            var result = order
+            result = 31 * result + isStarted.hashCode()
+            result = 31 * result + isEvening.hashCode()
+            return result
+        }
     }
 }

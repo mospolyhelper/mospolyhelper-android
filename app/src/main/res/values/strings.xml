@@ -1,61 +1,19 @@
 <resources>
     <string name="app_name">mospolyhelper</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_schedule">Расписание занятий</string>
+  <string name="nav_schedule">Расписание занятий</string>
   <string name="nav_addresses">Адреса</string>
   <string name="nav_settings">Настройки</string>
-  
-    <string name="schedule_preferences">Настройки</string>
-  <string name="none_module">Немодульное занятие</string>
-  <string name="first_module">1-й модуль</string>
-  <string name="second_module">2-й модуль</string>
-  <string name="odd_week">по нечётным неделям</string>
-  <string name="even_week">по чётным неделям</string>
-  <string name="none_week">не зависит от чётности недели</string>
-  <string name="enterGroup">Введите группу</string>
+
   <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
   <string name="null_schedule">Расписание не найдено</string>
-  <string name="group_title">Введите номер группы</string>
-  <string name="group_title_label">Расписание</string>
-  <string name="teacher_name">Имя преподавателя</string>
-  <string name="enter_group_title">Введите название гурппы</string>
-  <string name="enter_teacher_name">Введите имя преподавателя</string>
-  <string name="goto_schedule_manager">Менеджер расписаний</string>
 
   <string name="appearance">Внешний вид</string>
   <string name="night_mode">Тёмная тема</string>
   
   <!--Schedule Preferences-->
-  <string name="schedule_preferences_title">Настройки расписания</string>
-  <string name="text_schedule_type_prompt">Тип расписания</string>
-  <string name="text_schedule_type_regular">Обычное</string>
-  <string name="text_schedule_type_session">Сессия</string>
-  <string name="text_schedule_type_regular_s">обычное</string>
-  <string name="text_schedule_type_session_s">сессия</string>
-  <string name="schedule_target_prompt">Расписание для</string>
-  <string-array name="schedule_target_array">
-    <item>Студентов</item>
-    <!--<item>Преподавателей</item>-->
-  </string-array>
 
   <!--Schedule Filter-->
-  <string name="schedule_filter_title">Фильтр расписания</string>
-  <string name="schedule_date_filter_prompt">Фильтр по дате</string>
-  <string-array name="schedule_date_filter_array">
-    <item>Выкл</item>
-    <item>Обесцвечивать</item>
-    <item>Скрывать</item>
-  </string-array>
-  <string name="schedule_module_filter_prompt">Фильтр по модулю</string>
-  <string-array name="schedule_module_filter_array">
-    <item>Отключён</item>
-    <item>1-й модуль</item>
-    <item>2-й модуль</item>
-    <item>Авто</item>
-  </string-array>
-  <string name="schedule_session_filter">Скрыть экзамены, зачёты, КП, ЗСО и ЭП до их даты</string>
-  
+
   <!--Other-->
   <string name="click_back_again">Нажмите НАЗАД ещё раз, чтобы выйти</string>
 
@@ -68,13 +26,20 @@
   <string name="offline_group_list_found">Сохранённый список групп найден</string>
 
   <!--Preferences-->
-  <string name="pref_category_schedule">Расписание</string>
-  <string name="pref_title_schedule_empty_lessons">Пустые пары</string>
-  <string name="pref_summary_schedule_empty_lessons">Показывать пары, во время которых нет занятий</string>
-  <string name="pref_title_schedule_colored_lessons">Цветные шапки пар</string>
-  <string name="pref_summary_schedule_colored_lessons">Окрашивать шапки пар в завиимости от времени</string>
 
-  <string name="enter_note">Введите заметку</string>
+  <string name="pref_category_appwidget">Виджет</string>
+  <string name="pref_appwidget_schedule_show_order">Номер занятия</string>
+  <string name="pref_appwidget_schedule_show_order_summary">Показывать номер занятия</string>
+  <string name="pref_appwidget_schedule_show_start_time">Время начала занятия</string>
+  <string name="pref_appwidget_schedule_show_start_time_summary">Показывать время начала занятия</string>
+  <string name="pref_appwidget_schedule_show_end_time">Время конца занятия</string>
+  <string name="pref_appwidget_schedule_show_end_time_summary">Показывать время конца занятия</string>
+  <string name="pref_appwidget_schedule_show_type">Тип занятия</string>
+  <string name="pref_appwidget_schedule_show_type_summary">Показывать тип занятия</string>
+  <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
+  <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
+  <string name="pref_appwidget_schedule_show_teachers">Преподаватели</string>
+  <string name="pref_appwidget_schedule_show_teachers_summary">Показывать преподавателей</string>
 
   <string name="all_groups">Все группы</string>
   <string name="all_subjects">Все предметы</string>
@@ -89,22 +54,17 @@
   <string name="advanced_search">Расширенный поиск</string>
   <string name="advanced_search_hint">Загрузите нужные расписания для применения к ним фильтров</string>
 
-  <string name="addresses_title">Адреса</string>
   <string name="settings_title">Настройки</string>
 
   <!--Deadlines part-->
   <string name="predmet_title">Какой предмет?</string>
   <string name="deadline_descr">Что нужно сделать?</string>
-  <string name="importanceText">Важность</string>
   <string name="importanceLow">Неважно</string>
   <string name="importanceMedium">Средне</string>
   <string name="importanceHigh">Важно</string>
-  <string name="pinned">Закрепить</string>
   <string name="deadline_time">До какого времени?</string>
   <string name="deadline_date">До какого числа?</string>
   <string name="add">Добавить</string>
-  <string name="title">Дедлайны</string>
-  <string name="pressBack">Нажмите НАЗАД еще раз, чтобы выйти</string>
   <string name="updateButton">Обновить</string>
   <string name="emptyList">Дедлайнов нет :(</string>
   <string name="predmetError">Заполните описание!</string>
@@ -117,8 +77,8 @@
   <string name="pin">pinned</string>
   <string name="unpin">unpinned</string>
   <string name="nav_deadlines">Дедлайны</string>
-    <string name="bt_search">Search</string>
 
-<!--  Notification channels names -->
+  <!--  Notification channels names -->
   <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
+
 </resources>
