@@ -18,7 +18,6 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/imgPr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_library_books_black_24dp"
@@ -42,7 +41,6 @@
         android:layout_marginTop="@dimen/bottomDimenTop"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/imgDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_sort_black_24dp"
@@ -65,7 +63,6 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/bottomDimenTop">
         <TextView
-            android:id="@+id/imgCal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_date_range_24"
@@ -89,7 +86,6 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/bottomDimenTop">
         <TextView
-            android:id="@+id/imgClk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_access_time_24"

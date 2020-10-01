@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Фильтры"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="По дате" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipgroup_lesson_dates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_dates_ended"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Закончившиеся" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_dates_current"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Текущие" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_dates_not_started"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Неначавшиеся" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="По типу" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipgroup_lesson_types"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="По меткам" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipgroup_lesson_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_labels_important"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Важные" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_labels_average"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Средние" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_labels_not_important"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Неважные" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_lesson_labels_not_labeled"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Без метки" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+</LinearLayout>

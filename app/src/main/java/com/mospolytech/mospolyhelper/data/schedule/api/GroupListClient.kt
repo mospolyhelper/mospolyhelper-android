@@ -16,7 +16,7 @@ class GroupListClient {
         private const val GET_GROUP_LIST = "$BASE_URL/groups-list.json"
     }
     private var cookiesStorage: CookiesStorage? = null
-    var cookiesCheckedCount = 0
+    private var cookiesCheckedCount = 0
         private set
 
     private val groupListClient by lazy {

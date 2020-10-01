@@ -24,9 +24,9 @@ class AdvancedSearchSelectFragment : DialogFragment() {
     }
 
     private var adapter: AdvancedSearchAdapter? = null
-    var checkedAll: Boolean = false
-    var selectAll: String = ""
-    var unselectAll: String = ""
+    private var checkedAll: Boolean = false
+    private var selectAll: String = ""
+    private var unselectAll: String = ""
 
     private val viewModel by viewModels<AdvancedSearchSelectViewModel>()
 
@@ -102,10 +102,4 @@ class AdvancedSearchSelectFragment : DialogFragment() {
             }
         })
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
-    }
-
 }
