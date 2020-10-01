@@ -16,21 +16,29 @@ class Deadline(
     var date: String,
     var time:String,
     var importance: Int = R.color.colorLow) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Deadline) return false
-        //val deadline = other as? Deadline
-        return false
-        /*id == deadline?.id
-        && this.name == deadline?.name
-        && this.description == deadline.description
-        && this.completed == deadline.completed
-        && this.pinned == deadline.pinned*/
-    }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+
+//    override fun hashCode(): Int {
+//        return id.hashCode()
+//    }
+//
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (javaClass != other?.javaClass) return false
+//
+//        other as Deadline
+//
+//        if (id != other.id) return false
+//        if (name != other.name) return false
+//        if (description != other.description) return false
+//        if (completed != other.completed) return false
+//        //if (pinned != other.pinned) return false
+//        if (date != other.date) return false
+//        if (time != other.time) return false
+//        if (importance != other.importance) return false
+//
+//        return true
+//    }
 
 }
 
