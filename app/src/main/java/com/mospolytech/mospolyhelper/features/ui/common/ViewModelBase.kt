@@ -11,7 +11,7 @@ abstract class ViewModelBase(
         mediator.subscribe(name, block)
     }
 
-    protected fun unsubscribe() {
+    private fun unsubscribe() {
         mediator.unsubscribe(name)
     }
 

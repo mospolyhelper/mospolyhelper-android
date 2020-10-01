@@ -15,9 +15,12 @@ class ScheduleClient {
     companion object {
         private const val BASE_URL = "https://rasp.dmami.ru"
         private const val GET_SCHEDULE = "$BASE_URL/site/group"
+
+        private const val BASE_URL_TEACHER = "https://kaf.dmami.ru"
+        private const val GET_SCHEDULE_TEACHER = "https://kaf.dmami.ru/lessons/teacher-html"
     }
     private var cookiesStorage: CookiesStorage? = null
-    var cookiesCheckedCount = 0
+    private var cookiesCheckedCount = 0
         private set
 
     private val scheduleClient by lazy {
@@ -72,6 +75,18 @@ class ScheduleClient {
             header("X-Requested-With", "XMLHttpRequest")
             parameter("group", groupTitle)
             parameter("session", if (isSession) 1 else 0)
+        }
+    }
+
+    suspend fun getScheduleByTeacher(teacherId: String): String {
+
+        return scheduleClient.get(GET_SCHEDULE_TEACHER) {
+            header("referer",
+                BASE_URL_TEACHER
+            )
+            // Header below is for correct json error status when schedule is not ready but no html
+            header("X-Requested-With", "XMLHttpRequest")
+            parameter("id", teacherId)
         }
     }
 }

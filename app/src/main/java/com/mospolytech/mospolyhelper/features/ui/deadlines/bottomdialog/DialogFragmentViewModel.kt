@@ -56,11 +56,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         val groupTitle = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,
             DefaultSettings.ScheduleGroupTitle)
-        val isSession =  prefs.getBoolean(
-            PreferenceKeys.ScheduleTypePreference,
-            DefaultSettings.ScheduleTypePreference
-        )
-        setUpSchedule(isSession, groupTitle!!, false)
+        setUpSchedule(groupTitle!!, false)
         return this@DialogFragmentViewModel.schedule.value?.let {
             ScheduleRepositoryImpl.allDataFromSchedule(
                 it
@@ -68,16 +64,17 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         }
     }
 
-    private fun setUpSchedule(isSession: Boolean, groupTitle: String, downloadNew: Boolean) {
+    private fun setUpSchedule(id: String, downloadNew: Boolean) {
         viewModelScope.async {
-            if (groupTitle.isEmpty()) {
+            if (id.isEmpty()) {
                 withContext(Dispatchers.Main) {
                     this@DialogFragmentViewModel.schedule.value = null
                 }
             } else {
+                // TODO: Fix isStudentConstant
                 scheduleRepository.getSchedule(
-                    groupTitle,
-                    isSession,
+                    id,
+                    true,
                     downloadNew
                 ).collect {
                     withContext(Dispatchers.Main) {

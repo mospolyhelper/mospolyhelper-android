@@ -6,16 +6,17 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
-            android:drawableTop="@drawable/ic_sleeping_face"
-            android:drawablePadding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="?actionBarSize"
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:fontFamily="@font/manrope_light"
+            android:drawableTop="@drawable/ic_sleeping_face"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/open_sans_light"
+            android:paddingBottom="?actionBarSize"
             android:text="@string/null_daily_schedule"
             android:textAlignment="center"
             android:textSize="20sp" />
