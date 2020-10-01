@@ -17,6 +17,8 @@ class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
     val delete : MutableLiveData<Deadline> = MutableLiveData()
     val nameReceiver : MutableLiveData<String> = MutableLiveData()
     private var findstr: String = ""
+    var deleteD: Deadline? = null
+    var updateD: Deadline? = null
 
 
     val data = deadlinesRepository.getDeadlines()
@@ -62,6 +64,7 @@ class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
         if (foundData.hasActiveObservers()) {
             deadlinesRepository.findItem(findstr)
         }
+        updateD = d
     }
 
     fun delete(d: Deadline) {
@@ -69,6 +72,7 @@ class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
         if (foundData.hasActiveObservers()) {
             deadlinesRepository.findItem(findstr)
         }
+        deleteD = d
     }
 
     override fun onCleared() {
@@ -91,6 +95,14 @@ class DeadlineViewModel(mediator: Mediator<String, ViewModelMessage>,
 
     fun clearObserveFind(a: LifecycleOwner) {
         foundData.removeObservers(a)
+    }
+
+    fun isUpdated(deadline: Deadline): Boolean {
+        return deadline == updateD
+    }
+
+    fun isDeleted(deadline: Deadline): Boolean {
+        return deadline == deleteD
     }
 
 }
