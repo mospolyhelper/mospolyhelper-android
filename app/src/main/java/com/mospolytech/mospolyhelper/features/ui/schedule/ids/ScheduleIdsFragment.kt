@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
+import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -130,7 +131,7 @@ class ScheduleIdsFragment: DialogFragment() {
             viewModel.filterMode.value
         ) {
             viewModel.sendSelectedItem(it)
-            findNavController().navigateUp()
+            findNavController().safe { navigateUp() }
         }
     }
 }

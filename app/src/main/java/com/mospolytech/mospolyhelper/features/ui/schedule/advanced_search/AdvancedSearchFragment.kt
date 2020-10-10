@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.databinding.ObservableList
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import kotlin.coroutines.CoroutineContext
@@ -78,23 +80,25 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         }
         // TODO: Remove all callbacks after destroying
         viewModel.checkedGroups.addOnListChangedCallback(ListChangedObserver {
-            textGroups.text = viewModel.checkedGroups.joinToString { viewModel.groupList[it] }
-            if (textGroups.text.isEmpty()) {
-                textGroups.text = getString(R.string.all_groups)
+            lifecycleScope.launchWhenResumed {
+                textGroups.text = viewModel.checkedGroups.joinToString { viewModel.groupList[it] }
+                if (textGroups.text.isEmpty()) {
+                    textGroups.text = getString(R.string.all_groups)
+                }
+                setFiltersVisibility(View.GONE)
+
+                viewModel.lessonTitles = emptyList()
+                viewModel.checkedLessonTitles.clear()
+
+                viewModel.lessonTeachers = emptyList()
+                viewModel.checkedTeachers.clear()
+
+                viewModel.lessonAuditoriums = emptyList()
+                viewModel.checkedAuditoriums.clear()
+
+                viewModel.lessonTypes = emptyList()
+                viewModel.checkedLessonTypes.clear()
             }
-            setFiltersVisibility(View.GONE)
-
-            viewModel.lessonTitles = emptyList()
-            viewModel.checkedLessonTitles.clear()
-
-            viewModel.lessonTeachers = emptyList()
-            viewModel.checkedTeachers.clear()
-
-            viewModel.lessonAuditoriums = emptyList()
-            viewModel.checkedAuditoriums.clear()
-
-            viewModel.lessonTypes = emptyList()
-            viewModel.checkedLessonTypes.clear()
         })
 
         downloadSchedulesBtn.setOnClickListener {
@@ -143,31 +147,39 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
 
 
         viewModel.checkedLessonTitles.addOnListChangedCallback(ListChangedObserver {
-            textLessonTitles.text =
-                viewModel.checkedLessonTitles.joinToString { viewModel.lessonTitles[it] }
-            if (textLessonTitles.text.isEmpty()) {
-                textLessonTitles.text = getString(R.string.all_subjects)
+            lifecycleScope.launchWhenResumed {
+                textLessonTitles.text =
+                    viewModel.checkedLessonTitles.joinToString { viewModel.lessonTitles[it] }
+                if (textLessonTitles.text.isEmpty()) {
+                    textLessonTitles.text = getString(R.string.all_subjects)
+                }
             }
         })
         viewModel.checkedTeachers.addOnListChangedCallback(ListChangedObserver {
-            textTeachers.text =
-                viewModel.checkedTeachers.joinToString { viewModel.lessonTeachers[it] }
-            if (textTeachers.text.isEmpty()) {
-                textTeachers.text = getString(R.string.all_teachers)
+            lifecycleScope.launchWhenResumed {
+                textTeachers.text =
+                    viewModel.checkedTeachers.joinToString { viewModel.lessonTeachers[it] }
+                if (textTeachers.text.isEmpty()) {
+                    textTeachers.text = getString(R.string.all_teachers)
+                }
             }
         })
         viewModel.checkedAuditoriums.addOnListChangedCallback(ListChangedObserver {
-            textAuditoriums.text =
-                viewModel.checkedAuditoriums.joinToString { viewModel.lessonAuditoriums[it] }
-            if (textAuditoriums.text.isEmpty()) {
-                textAuditoriums.text = getString(R.string.all_auditoriums)
+            lifecycleScope.launchWhenResumed {
+                textAuditoriums.text =
+                    viewModel.checkedAuditoriums.joinToString { viewModel.lessonAuditoriums[it] }
+                if (textAuditoriums.text.isEmpty()) {
+                    textAuditoriums.text = getString(R.string.all_auditoriums)
+                }
             }
         })
         viewModel.checkedLessonTypes.addOnListChangedCallback(ListChangedObserver {
-            textLessonTypes.text =
-                viewModel.checkedLessonTypes.joinToString { viewModel.lessonTypes[it] }
-            if (textLessonTypes.text.isEmpty()) {
-                textLessonTypes.text = getString(R.string.all_lesson_types)
+            lifecycleScope.launchWhenResumed {
+                textLessonTypes.text =
+                    viewModel.checkedLessonTypes.joinToString { viewModel.lessonTypes[it] }
+                if (textLessonTypes.text.isEmpty()) {
+                    textLessonTypes.text = getString(R.string.all_lesson_types)
+                }
             }
         })
 
@@ -209,23 +221,16 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         }
         applyButton.setOnClickListener {
             async(Dispatchers.IO) {
-                val filter = Schedule.AdvancedSearch.Builder()
-                    .lessonTitles(
-                        if (viewModel.checkedLessonTitles.isEmpty()) viewModel.lessonTitles
-                        else viewModel.checkedLessonTitles.map { viewModel.lessonTitles[it] })
-                    .lessonTypes(
-                        if (viewModel.checkedLessonTypes.isEmpty()) viewModel.lessonTypes
-                        else viewModel.checkedLessonTypes.map { viewModel.lessonTypes[it] })
-                    .lessonAuditoriums(
-                        if (viewModel.checkedAuditoriums.isEmpty()) viewModel.lessonAuditoriums
-                        else viewModel.checkedAuditoriums.map { viewModel.lessonAuditoriums[it] }
-                    )
-                    .lessonTeachers(
-                        if (viewModel.checkedTeachers.isEmpty()) viewModel.lessonTeachers
-                        else viewModel.checkedTeachers.map { viewModel.lessonTeachers[it] }
-                    )
-                    .build()
-                val newSchedule = filter.getFiltered(viewModel.schedules)
+                val newSchedule = viewModel.schedules.filter(
+                    titles = if (viewModel.checkedLessonTitles.isEmpty()) viewModel.lessonTitles.toSet()
+                    else viewModel.checkedLessonTitles.map { viewModel.lessonTitles[it] }.toSet(),
+                    types = if (viewModel.checkedLessonTypes.isEmpty()) viewModel.lessonTypes.toSet()
+                    else viewModel.checkedLessonTypes.map { viewModel.lessonTypes[it] }.toSet(),
+                    auditoriums = if (viewModel.checkedAuditoriums.isEmpty()) viewModel.lessonAuditoriums.toSet()
+                    else viewModel.checkedAuditoriums.map { viewModel.lessonAuditoriums[it] }.toSet(),
+                    teachers = if (viewModel.checkedTeachers.isEmpty()) viewModel.lessonTeachers.toSet()
+                    else viewModel.checkedTeachers.map { viewModel.lessonTeachers[it] }.toSet()
+                )
                 withContext(Dispatchers.Main) {
                     viewModel.sendSchedule(newSchedule)
                 }

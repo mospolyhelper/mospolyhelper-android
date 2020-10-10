@@ -16,6 +16,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -58,7 +59,12 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        viewModel.currentFragmentNavId = R.id.nav_schedule
+        if (savedInstanceState == null) {
+            viewModel.currentFragmentNavId.value = R.id.nav_schedule
+        } else {
+            viewModel.currentFragmentNavId.value = savedInstanceState.getInt("menuItemId", R.id.nav_schedule)
+        }
+
 
         ActivityCompat.requestPermissions(
             this,
@@ -77,6 +83,11 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         doubleBackToExitPressedOnce = false
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("menuItemId", viewModel.currentFragmentNavId.value)
     }
 
     fun onBackPressedCustom() {
@@ -99,10 +110,6 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PreferenceKeys.ScheduleShowColoredLessons ->
-                viewModel.changeShowEmptyLessons(sharedPreferences.getBoolean(key, false))
-            PreferenceKeys.ScheduleShowEmptyLessons ->
-                viewModel.changeShowColoredLessons(sharedPreferences.getBoolean(key, false))
             PreferenceKeys.NightMode -> {
                 AppCompatDelegate.setDefaultNightMode(
                     if (sharedPreferences.getBoolean(key, false)) {

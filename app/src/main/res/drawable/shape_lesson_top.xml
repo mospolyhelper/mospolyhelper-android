@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/lessonBackgroundRipple">
+    android:color="@color/scheduleLessonBackgroundRipple">
   <item android:id="@android:id/mask">
     <shape android:shape="rectangle">
       <corners android:topLeftRadius="@dimen/lesson_corner_radius" android:topRightRadius="@dimen/lesson_corner_radius"/>
-      <solid android:color="@color/lessonBackgroundRipple" />
+      <solid android:color="@color/scheduleLessonBackgroundRipple" />
     </shape>
   </item>
   <item android:id="@android:id/background">
     <shape android:shape="rectangle">
       <corners android:topLeftRadius="@dimen/lesson_corner_radius" android:topRightRadius="@dimen/lesson_corner_radius"/>
-      <solid android:color="@color/lessonBackground" />
+      <solid android:color="@color/scheduleLessonBackground" />
     </shape>
   </item>
 </ripple>

@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.addresses
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +17,10 @@ import com.mospolytech.mospolyhelper.NavGraphDirections
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.addresses.model.Addresses
-import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleAdapter
-import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFragment
+import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
+import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDate
 
 class AddressesFragment : Fragment() {
 
@@ -33,12 +30,11 @@ class AddressesFragment : Fragment() {
 
     private val viewModel by viewModel<AddressesViewModel>()
 
-    private fun setUpBuildings(addresses: Addresses?) {
-        if (addresses == null) return
-        addressesViewPager.adapter = AddressesPageAdapter(addresses)
-        swipeRefreshLayout.isRefreshing = false
+    private fun setUpBuildings(addressMap: AddressMap?) {
+        if (addressMap == null) return
+        addressesViewPager.adapter = AddressesPageAdapter(addressMap)
         TabLayoutMediator(addressesTabLayout, addressesViewPager) { tab, position->
-            tab.text = addresses.entries.toList()[position].key
+            tab.text = addressMap.entries.toList()[position].key
         }.attach()
     }
 
@@ -63,7 +59,9 @@ class AddressesFragment : Fragment() {
         (activity as MainActivity).setSupportActionBar(bottomAppBar)
         (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
         bottomAppBar.setNavigationOnClickListener {
-            findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+            findNavController().safe {
+                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+            }
         }
 
         addressesViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -127,17 +125,15 @@ class AddressesFragment : Fragment() {
 //                    val r = q + 1
 //                }
                 setUpBuildings(it)
+                swipeRefreshLayout.isRefreshing = false
             }
         }
+
+        this.viewModel.setUpAddresses()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        this.viewModel.setUpAddresses()
     }
 }
