@@ -13,11 +13,14 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        def koin_version= "2.1.6"
+        def nav_version = "2.3.0"
+        def koin_version= "2.2.0-beta-1"
+        def ktor_version= "1.4.0"
+        def room_version = "2.2.5"
+
         classpath "org.koin:koin-gradle-plugin:$koin_version"
 
         // Navigation safe args
-        def nav_version = "2.3.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
 }
@@ -33,4 +36,4 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-//apply plugin: 'koin'
+apply plugin: 'koin'

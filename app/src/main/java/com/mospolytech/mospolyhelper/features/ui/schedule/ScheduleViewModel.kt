@@ -153,6 +153,7 @@ class ScheduleViewModel(
 
         viewModelScope.async {
             id.collect {
+                isAdvancedSearch = false
                 scheduleUseCase.setIsStudent(it.first)
                 scheduleUseCase.setSelectedSavedId(it.second)
                 setUpSchedule(it.first, it.second, !firstLoading)
@@ -208,11 +209,21 @@ class ScheduleViewModel(
     }
 
     fun updateSchedule() {
+        isAdvancedSearch = false
         setUpSchedule(
             id.value.first,
             id.value.second,
             true
         )
+    }
+
+    fun removeId(pair: Pair<Boolean, String>) {
+        savedIds.value -= pair
+        if (id.value.first == pair.first
+            && pair.second.contains(id.value.second)
+        ) {
+            id.value = Pair(true, "")
+        }
     }
 
     private fun launchTimer() {

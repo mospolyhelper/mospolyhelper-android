@@ -7,39 +7,31 @@
     android:layout_width="match_parent"
     android:layout_gravity="bottom"
     app:navigationIcon="@drawable/ic_menu_24px"
-    app:backgroundTint="@color/lessonBackground"
+    app:backgroundTint="@color/scheduleLessonBackground"
     android:layout_height="?attr/actionBarSize"
     tools:showIn="@layout/fragment_deadline"
     tools:ignore="BottomAppBar"
     app:fabCradleMargin="0dp"
     app:fabCradleRoundedCornerRadius="0dp"
-    app:fabAlignmentMode="end"
+    app:fabAlignmentMode="center"
     app:hideOnScroll="true"
     app:layout_scrollFlags="scroll|enterAlways">
     <RelativeLayout
         android:id="@+id/toolbar_deadline_main"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/nav_deadlines"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="20sp"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/button_search_deadline"
-            android:ellipsize="end"/>
+
         <Button
             android:id="@+id/button_search_deadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:background="@drawable/transparent_gfx"
+            android:drawableEnd="@drawable/ic_search_24"
             android:minWidth="0dp"
             android:minHeight="0dp"
-            android:padding="10dp"
-            android:background="@drawable/transparent_gfx"
-            android:drawableRight="@drawable/ic_search_24"/>
+            android:padding="10dp" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/toolbar_deadline_search"
