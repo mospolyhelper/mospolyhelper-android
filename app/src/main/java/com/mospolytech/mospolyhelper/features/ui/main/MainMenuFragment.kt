@@ -32,14 +32,14 @@ class MainMenuFragment : BottomSheetDialogFragment(), KoinComponent {
 
         navigationView = view.findViewById(R.id.nav_view)
         navController = findNavController()
-        if (viewModel.currentFragmentNavId != -1) {
-            navigationView.setCheckedItem(viewModel.currentFragmentNavId)
+        if (viewModel.currentFragmentNavId.value != -1) {
+            navigationView.setCheckedItem(viewModel.currentFragmentNavId.value)
         }
         navigationView.setNavigationItemSelectedListener {
             val action = navController.graph.getAction(it.itemId)
             val currentDestination = navController.currentBackStackEntry?.destination
             if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
-                viewModel.currentFragmentNavId = it.itemId
+                viewModel.currentFragmentNavId.value = it.itemId
                 navController.navigate(it.itemId)
             }
             true

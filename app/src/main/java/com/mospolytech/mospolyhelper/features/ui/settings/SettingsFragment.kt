@@ -11,6 +11,7 @@ import com.mospolytech.mospolyhelper.NavGraphDirections
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.utils.safe
 
 class SettingsFragment : PreferenceFragmentCompat(),
     PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
@@ -34,7 +35,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (preferenceScreen.key == "MainScreen") {
             bottomAppBar.setNavigationIcon(R.drawable.ic_menu_24px)
             bottomAppBar.setNavigationOnClickListener {
-                findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+                findNavController().safe {
+                    navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+                }
             }
         } else {
             bottomAppBar.setNavigationIcon(R.drawable.ic_round_arrow_back_24)
@@ -54,9 +57,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
         val args = Bundle()
         args.putString(ARG_PREFERENCE_ROOT, pref.key)
         if (pref.key == "ScheduleAppWidgetScreen") {
-            caller.findNavController().navigate(R.id.action_settingsFragment_to_scheduleAppWidgetPreferences, args)
+            caller.findNavController().safe {
+                navigate(R.id.action_settingsFragment_to_scheduleAppWidgetPreferences, args)
+            }
         } else {
-            caller.findNavController().navigate(R.id.action_settingsFragment_self, args)
+            caller.findNavController().safe {
+                navigate(R.id.action_settingsFragment_self, args)
+            }
         }
         return true
     }

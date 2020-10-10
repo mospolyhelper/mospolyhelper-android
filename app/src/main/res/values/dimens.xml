@@ -6,6 +6,7 @@
     <dimen name="bottomDimenTop">18dp</dimen>
     <dimen name="icon_margin">64dp</dimen>
 
+    <dimen name="lesson_info_divider_height">0.5dp</dimen>
     <dimen name="lesson_info_margin_horizontal">22dp</dimen>
     <dimen name="lesson_info_margin_vertical">10dp</dimen>
     <dimen name="lesson_info_drawable_padding">8dp</dimen>
