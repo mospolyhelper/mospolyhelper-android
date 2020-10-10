@@ -4,7 +4,6 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorOnPrimary">@color/textColorPrimary</item>
     <item name="colorOnSurface">@color/textColorPrimary</item>
-    <item name="android:statusBarColor">@color/colorLevelZero</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorSecondary">@color/colorSecondary</item>
     <item name="colorAccent">@color/colorSecondary</item>
@@ -12,6 +11,7 @@
     <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
     <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     <item name="android:navigationBarColor">#0C0C0C</item>
+    <item name="android:statusBarColor">@color/layerZero</item>
     <item name="android:windowLightStatusBar">true</item>
     <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
     <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>
@@ -84,7 +84,7 @@
     <item name="tabIndicatorGravity">center</item>
     <item name="tabBackground">@null</item>
     <item name="tabRippleColor">#00000000</item>
-    <item name="tabIndicatorColor">@color/colorLevelTwo</item>
+    <item name="tabIndicatorColor">#666666</item>
     <item name="tabIndicator">@drawable/background_tab_indicator_addresses</item>
     <item name="tabPaddingStart">14dp</item>
     <item name="tabPaddingEnd">14dp</item>
@@ -115,7 +115,7 @@
   <style name="ScheduleLessonTime" parent="TextAppearance.AppCompat">
     <item name="android:textSize">12.5sp</item>
     <item name="android:fontFamily">@font/open_sans_semibold</item>
-    <item name="android:textColor">@color/textLessonHead</item>
+    <item name="android:textColor">@color/lessonTimeText</item>
     <item name="android:textAlignment">center</item>
   </style>
 

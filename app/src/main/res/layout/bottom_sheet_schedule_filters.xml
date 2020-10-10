@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/scheduleBackground"
     android:orientation="vertical"
     android:paddingStart="20dp"
     android:paddingTop="10dp"
@@ -28,6 +30,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_dates_ended"
             style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="@color/chip_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Закончившиеся" />
@@ -35,6 +38,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_dates_current"
             style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="@color/chip_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Текущие" />
@@ -42,6 +46,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_dates_not_started"
             style="@style/Widget.MaterialComponents.Chip.Filter"
+            app:chipBackgroundColor="@color/chip_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Неначавшиеся" />

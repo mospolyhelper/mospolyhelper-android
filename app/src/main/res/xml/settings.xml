@@ -4,7 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
   <PreferenceScreen
       app:title="@string/appearance"
-      app:icon="@drawable/ic_round_brush_24"
       app:key="DecorScreen"
       app:persistent="false">
     <SwitchPreferenceCompat
@@ -12,16 +11,16 @@
         app:title="@string/night_mode"
         app:defaultValue="false"/>
   </PreferenceScreen>
-    <PreferenceScreen
-        app:title="Расписание"
-        app:key="ScheduleScreen"
-        app:persistent="false">
-        <SwitchPreferenceCompat
-            app:key="ShowEmptyLessons"
-            app:title="Пустые пары"
-            app:summary="Показывать пустые пары"
-            app:defaultValue="false"/>
-    </PreferenceScreen>
+<!--    <PreferenceScreen-->
+<!--        app:title="Расписание"-->
+<!--        app:key="ScheduleScreen"-->
+<!--        app:persistent="false">-->
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="ShowEmptyLessons"-->
+<!--            app:title="Пустые пары"-->
+<!--            app:summary="Показывать пустые пары"-->
+<!--            app:defaultValue="false"/>-->
+<!--    </PreferenceScreen>-->
   <PreferenceScreen
       app:title="@string/pref_category_appwidget"
       app:key="ScheduleAppWidgetScreen">

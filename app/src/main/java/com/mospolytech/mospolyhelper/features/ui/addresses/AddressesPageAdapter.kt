@@ -6,12 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.addresses.model.Addresses
+import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 
 class AddressesPageAdapter(
-    private val addresses: Addresses
+    private val addressMap: AddressMap
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -24,7 +23,7 @@ class AddressesPageAdapter(
         (holder as ViewHolder).bind()
     }
 
-    override fun getItemCount() = addresses.size
+    override fun getItemCount() = addressMap.size
 
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_addresses)
@@ -51,7 +50,7 @@ class AddressesPageAdapter(
 
         fun bind() {
 
-            val pair = addresses.entries.toList()[adapterPosition]
+            val pair = addressMap.entries.toList()[adapterPosition]
 
             recyclerView.adapter = AddressesAdapter(pair.value, pair.key)
             recyclerView.adapter?.notifyDataSetChanged()
