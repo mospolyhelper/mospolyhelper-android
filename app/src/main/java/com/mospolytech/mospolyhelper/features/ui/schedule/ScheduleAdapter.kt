@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.LessonLabelRepository
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleEmptyPairsDecorator
@@ -19,12 +17,8 @@ import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleWindowsDecorato
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.*
 import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.coroutines.CoroutineContext
 
 
 class ScheduleAdapter(
@@ -161,8 +155,9 @@ class ScheduleAdapter(
         private var listAdapter: LessonAdapter? = null
         private val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
-        private val headColor = view.context.getColor(R.color.textLessonHead)
-        private val headCurrentColor = view.context.getColor(R.color.textLessonHeadCurrent)
+        private val headColor = view.context.getColor(R.color.lessonTimeText)
+        private val chipTextColor = view.context.getColor(R.color.scheduleLessonChipText)
+        private val chipColor = view.context.getColor(R.color.scheduleLessonChip)
         private var accumulator = 0f
 
         init {
@@ -230,7 +225,8 @@ class ScheduleAdapter(
                     showTeachers,
                     disabledColor,
                     headColor,
-                    headCurrentColor,
+                    chipTextColor,
+                    chipColor,
                     prevCurrentLesson
                 )
                 listAdapter?.let {

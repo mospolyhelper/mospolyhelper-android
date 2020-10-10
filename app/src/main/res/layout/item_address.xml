@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/addressesItemBackground"
+    android:elevation="2dp"
     android:paddingHorizontal="17.7dp"
     android:paddingVertical="17.7dp"
-    android:elevation="1dp"
-    android:textIsSelectable="true"
     android:textColor="@color/textColorPrimary"
-    android:textSize="14sp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-</TextView>
+    android:textIsSelectable="true"
+    android:textSize="14sp"></TextView>

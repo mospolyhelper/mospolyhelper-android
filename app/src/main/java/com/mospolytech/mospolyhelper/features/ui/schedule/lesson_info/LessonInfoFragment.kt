@@ -28,6 +28,7 @@ import com.mospolytech.mospolyhelper.NavGraphDirections
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.Group
+import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.android.synthetic.main.fragment_schedule_lesson_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
@@ -138,7 +139,7 @@ class LessonInfoFragment : DialogFragment() {
 
     private fun setType() {
         lessonTypeTextView.setTextColor(if (viewModel.lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-        lessonTypeTextView.text = viewModel.lesson.type.capitalize()
+        lessonTypeTextView.text = viewModel.lesson.type
     }
 
     private fun setTitle() {
@@ -146,9 +147,6 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setTime() {
-        if (viewModel.lesson.order == -1) {
-            val q = 1
-        }
         val (startTime, endTime) = viewModel.lesson.time
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
         lessonTimeTextView.text = "$dateStr с $startTime до $endTime, ${viewModel.lesson.order + 1}-е занятие"
@@ -167,32 +165,35 @@ class LessonInfoFragment : DialogFragment() {
             val url = audTitle.getSpans<URLSpan>().firstOrNull()
             val color = convertColorFromString(auditorium.color, nightMode)
 
-            lessonAuditoriumsChips.addView(
-                Chip(context).apply {
-                    text = if (color != null) {
-                        SpannableString(audTitle).apply {
-                            setSpan(
-                                ForegroundColorSpan(color),
-                                0,
-                                audTitle.length,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                        }
-                    } else {
-                        audTitle
-                    }
-                    if (url != null) {
-                        setOnClickListener {
-                            AlertDialog.Builder(context).setTitle("Открыть ссылку?")
-                                .setPositiveButton("Да") { _, _ ->
-                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.url)))
-                            }.setNegativeButton("Нет") { _, _ -> }.create().show()
-
-                        }
-                    } else {
-                        setOnClickListener { Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show() }
-                    }
+            val text = if (color != null) {
+                SpannableString(audTitle).apply {
+                    setSpan(
+                        ForegroundColorSpan(color),
+                        0,
+                        audTitle.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                 }
+            } else {
+                audTitle
+            }
+
+            val onClickListener = if (url != null) {
+                { it: View ->
+                    AlertDialog.Builder(context).setTitle("Открыть ссылку?")
+                        .setPositiveButton("Да") { _, _ ->
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.url)))
+                        }.setNegativeButton("Нет") { _, _ -> }.create().show()
+
+                }
+            } else {
+                {  it: View ->
+                    Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            lessonAuditoriumsChips.addView(
+                createChip(text, lessonAuditoriumsChips, onClickListener)
             )
         }
     }
@@ -231,14 +232,14 @@ class LessonInfoFragment : DialogFragment() {
 
     private fun setTeachers() {
         for (teacher in viewModel.lesson.teachers) {
+            val text = if (viewModel.lesson.teachers.size < 3) {
+                teacher.getFullName()
+            } else {
+                teacher.getShortName()
+            }
             teacherChips.addView(
-                Chip(context).apply {
-                    text = if (viewModel.lesson.teachers.size < 3) {
-                        teacher.getFullName()
-                    } else {
-                        teacher.getShortName()
-                    }
-                    setOnClickListener { Toast.makeText(context, teacher.getFullName(), Toast.LENGTH_SHORT).show() }
+                createChip(text, teacherChips) {
+                    Toast.makeText(context, teacher.getFullName(), Toast.LENGTH_SHORT).show()
                 }
             )
         }
@@ -256,25 +257,18 @@ class LessonInfoFragment : DialogFragment() {
     private fun setGroupInfo() {
         for (group in viewModel.lesson.groups) {
             lessonGroupsChipGroup.addView(
-                Chip(context).apply {
-                    text = group.title
-                    setOnClickListener {
-                        val text = "${group.title}"
-                        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-                    }
+                createChip(group.title, lessonGroupsChipGroup) {
+                    val text = "${group.title}"
+                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                 }
             )
         }
     }
 
-    private fun createChip(text: String, isOneDate: Boolean): Chip {
-        val chip = Chip(context)
+    private fun createChip(text: CharSequence, root: ViewGroup, onClickListener: View.OnClickListener): Chip {
+        val chip = layoutInflater.inflate(R.layout.chip_schedule_lesson_info, null, false) as Chip
         chip.text = text
-        chip.isCloseIconVisible = true
-        chip.setOnCloseIconClickListener {
-            lessonLabelsChipGroup.removeView(chip)
-            viewModel.lessonLabelRepository.removeLabel(text, viewModel.lesson, viewModel.date, isOneDate)
-        }
+        chip.setOnClickListener(onClickListener)
         return chip
     }
 
@@ -284,7 +278,9 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setDeadlines() {
-        lessonDeadlinesTextView.setOnClickListener { findNavController().navigate(NavGraphDirections.navDeadlines()) }
+        lessonDeadlinesTextView.setOnClickListener {
+            findNavController().safe { navigate(NavGraphDirections.navDeadlines()) }
+        }
 //        viewModel.deadlinesRepository.foundData.observe(viewLifecycleOwner, Observer { deadlines ->
 //            textView.text = deadlines?.joinToString(separator = "\n") { "${it.name} ${it.description}" } ?: "Дедлайнов нет"
 //        })
