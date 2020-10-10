@@ -105,7 +105,7 @@ class CalendarAdapter(
         private fun setPadding(date: LocalDate) {
             val dp4 = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
-                4f,
+                8f,
                 itemView.resources.displayMetrics
             ).toInt()
 
@@ -116,7 +116,8 @@ class CalendarAdapter(
 
             when (date.dayOfWeek) {
                 DayOfWeek.MONDAY -> {
-                    if (adapterPosition % 3 == 0) paddingStart = 0
+                    //if (adapterPosition % 3 == 0) paddingStart = 0
+                    paddingStart = 0
                     paddingEnd = 0
                     paddingBottom = 0
                 }
@@ -154,7 +155,7 @@ class CalendarAdapter(
                 null -> {
                 }
             }
-            lessonPlace.setPaddingRelative(paddingStart, paddingTop, paddingEnd, paddingBottom)
+            lessonPlace.setPaddingRelative(paddingStart, 0, paddingEnd, paddingBottom)
         }
 
         private fun setHead(date: LocalDate) {
