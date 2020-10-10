@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     android:layout_gravity="bottom"
-    app:backgroundTint="@color/colorLevelTwo"
+    app:backgroundTint="@color/layerTwo"
     app:fabCradleMargin="0dp"
     app:fabCradleRoundedCornerRadius="0dp"
     app:navigationIcon="@drawable/ic_menu_24px"
