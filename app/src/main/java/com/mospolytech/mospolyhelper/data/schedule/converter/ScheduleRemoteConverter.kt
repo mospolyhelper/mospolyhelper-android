@@ -155,6 +155,7 @@ class ScheduleRemoteConverter {
             mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf()
         )
         for ((day, dailySchedule) in json) {
+            // TODO: Is empty not suitable
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
             var parsedDay: Int
