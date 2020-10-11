@@ -5,6 +5,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
+    signingConfigs {
+        tipapro {
+            storeFile file('C:\\Users\\tipapro\\Desktop\\MosPolyHelper\\tipapro\\tipapro.keystore')
+            storePassword 'protip'
+            keyAlias 'tipapro'
+            keyPassword 'protip'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
@@ -17,6 +25,7 @@ android {
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.tipapro
     }
 
     buildTypes {

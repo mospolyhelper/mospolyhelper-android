@@ -199,7 +199,12 @@ class ScheduleViewModel(
             }
             MessageSetAdvancedSearchSchedule -> {
                 isAdvancedSearch = true
-                originalSchedule.value = Result.success(ScheduleLabelDeadline(message.content[0] as Schedule, emptyMap(), emptyMap()))
+                val sch = message.content[0]
+                if (sch == null) {
+                    originalSchedule.value = Result.loading()
+                } else {
+                    originalSchedule.value = Result.success(ScheduleLabelDeadline(sch as Schedule, emptyMap(), emptyMap()))
+                }
             }
             MessageAddScheduleId -> {
                 val pair = message.content[0] as Pair<Boolean, String>
