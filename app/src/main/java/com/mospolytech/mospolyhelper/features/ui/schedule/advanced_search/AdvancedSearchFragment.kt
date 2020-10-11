@@ -221,19 +221,7 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         }
         applyButton.setOnClickListener {
             async(Dispatchers.IO) {
-                val newSchedule = viewModel.schedules.filter(
-                    titles = if (viewModel.checkedLessonTitles.isEmpty()) viewModel.lessonTitles.toSet()
-                    else viewModel.checkedLessonTitles.map { viewModel.lessonTitles[it] }.toSet(),
-                    types = if (viewModel.checkedLessonTypes.isEmpty()) viewModel.lessonTypes.toSet()
-                    else viewModel.checkedLessonTypes.map { viewModel.lessonTypes[it] }.toSet(),
-                    auditoriums = if (viewModel.checkedAuditoriums.isEmpty()) viewModel.lessonAuditoriums.toSet()
-                    else viewModel.checkedAuditoriums.map { viewModel.lessonAuditoriums[it] }.toSet(),
-                    teachers = if (viewModel.checkedTeachers.isEmpty()) viewModel.lessonTeachers.toSet()
-                    else viewModel.checkedTeachers.map { viewModel.lessonTeachers[it] }.toSet()
-                )
-                withContext(Dispatchers.Main) {
-                    viewModel.sendSchedule(newSchedule)
-                }
+                viewModel.sendSchedule()
             }
         }
 
