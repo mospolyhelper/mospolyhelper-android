@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:background="@color/colorLevelTwo"
+        android:background="@color/scheduleLessonBackground"
         android:elevation="2dp"
         android:orientation="vertical">
 
@@ -28,7 +28,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/shape_lesson"
-            android:backgroundTint="@color/colorLevelOne"
+            android:backgroundTint="@color/layerZero"
             android:drawableRight="@drawable/ic_search_24"
             android:drawablePadding="10dp"
             android:hint="Введите группу, ФИО или ID"
@@ -56,6 +56,8 @@
                 android:layout_height="wrap_content"
                 android:text="Все"
                 app:checkedIconEnabled="false"
+                android:elevation="2dp"
+                app:chipBackgroundColor="@color/chip_color_layer_two"
                 app:chipIconSize="20dp"
                 app:closeIconVisible="false"
                 app:iconStartPadding="5dp" />
@@ -68,6 +70,8 @@
                 android:text="Группы"
                 app:checkedIconEnabled="false"
                 app:chipIcon="@drawable/ic_lesson_group"
+                android:elevation="2dp"
+                app:chipBackgroundColor="@color/chip_color_layer_two"
                 app:chipIconSize="20dp"
                 app:closeIconVisible="false"
                 app:iconStartPadding="5dp" />
@@ -78,6 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Преподаватели"
+                android:elevation="2dp"
+                app:chipBackgroundColor="@color/chip_color_layer_two"
                 app:checkedIconEnabled="false"
                 app:chipIcon="@drawable/ic_lesson_teacher"
                 app:chipIconSize="20dp"
@@ -95,7 +101,7 @@
             android:id="@+id/recyclerview_schedule_ids"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorLevelZero"
+            android:background="@color/scheduleBackground"
             android:scrollbars="vertical"
             tools:listitem="@layout/item_schedule_id">
 

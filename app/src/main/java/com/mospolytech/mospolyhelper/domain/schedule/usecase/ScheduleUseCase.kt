@@ -31,7 +31,7 @@ class ScheduleUseCase(
     private val savedIdsRepository: SavedIdsRepository,
     private val lessonLabelRepository: LessonLabelRepository,
     private val deadlineRepository: DeadlinesRepository,
-    // TODO: Fix this
+    // TODO: Fix this (Replace By Rep)
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
     fun getSchedule(

@@ -457,11 +457,11 @@ class LessonAdapter(
             val currentOrder: Int
             val currentLessonIsStarted: Boolean
             if (lesson.groupIsEvening) {
-                currentOrder = adapter.currentOrder
-                currentLessonIsStarted = adapter.currentOrderIsStarted
-            } else {
                 currentOrder = adapter.currentOrderEvening
                 currentLessonIsStarted = adapter.currentOrderIsStartedEvening
+            } else {
+                currentOrder = adapter.currentOrder
+                currentLessonIsStarted = adapter.currentOrderIsStarted
             }
 
 
