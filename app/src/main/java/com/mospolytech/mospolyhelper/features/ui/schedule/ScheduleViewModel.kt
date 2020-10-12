@@ -153,6 +153,7 @@ class ScheduleViewModel(
 
         viewModelScope.async {
             id.collect {
+                isAdvancedSearch = false
                 scheduleUseCase.setIsStudent(it.first)
                 scheduleUseCase.setSelectedSavedId(it.second)
                 setUpSchedule(it.first, it.second, !firstLoading)
@@ -198,7 +199,12 @@ class ScheduleViewModel(
             }
             MessageSetAdvancedSearchSchedule -> {
                 isAdvancedSearch = true
-                originalSchedule.value = Result.success(ScheduleLabelDeadline(message.content[0] as Schedule, emptyMap(), emptyMap()))
+                val sch = message.content[0]
+                if (sch == null) {
+                    originalSchedule.value = Result.loading()
+                } else {
+                    originalSchedule.value = Result.success(ScheduleLabelDeadline(sch as Schedule, emptyMap(), emptyMap()))
+                }
             }
             MessageAddScheduleId -> {
                 val pair = message.content[0] as Pair<Boolean, String>
@@ -208,11 +214,21 @@ class ScheduleViewModel(
     }
 
     fun updateSchedule() {
+        isAdvancedSearch = false
         setUpSchedule(
             id.value.first,
             id.value.second,
             true
         )
+    }
+
+    fun removeId(pair: Pair<Boolean, String>) {
+        savedIds.value -= pair
+        if (id.value.first == pair.first
+            && pair.second.contains(id.value.second)
+        ) {
+            id.value = Pair(true, "")
+        }
     }
 
     private fun launchTimer() {

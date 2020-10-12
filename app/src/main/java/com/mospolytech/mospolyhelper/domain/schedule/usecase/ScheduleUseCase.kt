@@ -72,7 +72,7 @@ class ScheduleUseCase(
             )
     }
 
-    val comparator = Comparator<Pair<Boolean, String>> { o1, o2 ->
+    private val comparator = Comparator<Pair<Boolean, String>> { o1, o2 ->
         return@Comparator if (o1.first != o2.first) {
             if (o1.first) -1 else 1
         } else {

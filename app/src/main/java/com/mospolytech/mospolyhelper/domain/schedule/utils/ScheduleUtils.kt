@@ -1,10 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
-import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
-import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.Teacher
 import java.time.LocalDate
 
 fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
@@ -65,6 +62,65 @@ fun Schedule.filter(
     return Schedule.from(tempList)
 }
 
+fun Iterable<Schedule?>.filter(
+    titles: Set<String>? = null,
+    types: Set<String>? = null,
+    auditoriums: Set<String>? = null,
+    teachers: Set<String>? = null,
+    groups: Set<String>? = null
+): Schedule {
+    val filterTitles = titles == null
+    val filterTypes = types == null
+    val filterAuditoriums = auditoriums == null
+    val filterTeachers = teachers == null
+    val filterGroups = groups == null
+
+    val tempList: List<MutableList<Lesson>> = listOf(
+        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
+        mutableListOf(), mutableListOf(), mutableListOf()
+    )
+
+    for (schedule in this) {
+        if (schedule == null) continue
+        // !! used because filterTitles = titles == null
+        for (i in schedule.dailySchedules.indices) {
+            tempList[i].addAll(schedule.dailySchedules[i].asSequence().filter { lesson ->
+                (filterTitles || checkFilter(titles!!, lesson.title)) &&
+                        (filterTypes || checkFilter(types!!, lesson.type)) &&
+                        (filterTeachers || checkFilter(
+                            teachers!!,
+                            lesson.teachers.map { it.getFullName() })) &&
+                        (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
+                        (filterAuditoriums || checkFilter(
+                            auditoriums!!,
+                            lesson.auditoriums.map { it.title }))
+            })
+        }
+    }
+
+    tempList.forEach { it.sort() }
+
+    val tempListNew: List<MutableList<Lesson>> = listOf(
+        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
+        mutableListOf(), mutableListOf(), mutableListOf()
+    )
+
+    for (day in tempList.withIndex()) {
+        val dayNew = tempListNew[day.index]
+        for (lesson in day.value) {
+            val index = dayNew.indexOfFirst { isEqualForGroups(lesson, it) }
+            if (index == -1) {
+                dayNew += lesson
+            } else {
+                val lessonEqualForGroups = dayNew[index]
+                dayNew[index] = lesson.copy(groups = lessonEqualForGroups.groups + lesson.groups)
+            }
+        }
+    }
+
+    return Schedule.from(tempListNew)
+}
+
 fun filterByDate(
     dailySchedule: List<Lesson>,
     date: LocalDate,
@@ -123,4 +179,13 @@ private fun checkFilter(filterList: Iterable<String>, values: Iterable<String>):
     else {
         return true
     }
+}
+
+private fun isEqualForGroups(l1: Lesson, l2: Lesson): Boolean {
+    return l1.order == l2.order &&
+            l1.title == l2.title &&
+            l1.auditoriums == l2.auditoriums &&
+            l1.teachers == l2.teachers &&
+            l1.dateFrom == l2.dateFrom &&
+            l1.dateTo == l2.dateTo
 }

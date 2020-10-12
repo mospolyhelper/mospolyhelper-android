@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/scheduleBackgroundColor"
+    android:background="@color/addressesBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/addresses_update"
-        android:layout_below="@id/tablayout_addresses"
-        android:layout_above="@id/bottomAppBar"
+        android:layout_above="@id/frame_layout"
+        android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
     <androidx.viewpager2.widget.ViewPager2
@@ -17,19 +17,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    <com.google.android.material.tabs.TabLayout
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:clipToPadding="false"
-        android:id="@+id/tablayout_addresses"
-        android:layout_alignParentTop="true"
-        style="@style/TabLayoutAddresses"
-        android:background="@color/colorLevelZero"
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:layout_alignParentBottom="true"
+        android:elevation="4dp"
+        android:background="@color/layerTwo"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:tabMode="scrollable">
-
-    </com.google.android.material.tabs.TabLayout>
-    <include layout="@layout/bottom_app_bar_addresses" />
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabLayout
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:clipToPadding="false"
+            android:id="@+id/tablayout_addresses"
+            style="@style/TabLayoutAddresses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="?attr/actionBarSize"
+            app:tabMode="scrollable"/>
+        <include layout="@layout/bottom_app_bar_addresses" />
+    </FrameLayout>
 </RelativeLayout>
 
