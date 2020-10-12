@@ -74,12 +74,14 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 
     private fun onLessonClick(lesson: Lesson, date: LocalDate, views: List<View>) {
         val extras = FragmentNavigatorExtras()//*(views.map { it to it.transitionName!! }.toTypedArray()))
-        findNavController().navigate(
-            ScheduleFragmentDirections
-                .actionScheduleFragmentToLessonInfoFragment(
-                    titleTransitionNames = views.map { it.transitionName!! }.toTypedArray()
-                ), extras
-        )
+        findNavController().safe {
+            navigate(
+                ScheduleFragmentDirections
+                    .actionScheduleFragmentToLessonInfoFragment(
+                        titleTransitionNames = views.map { it.transitionName!! }.toTypedArray()
+                    ), extras
+            )
+        }
         viewModel.openLessonInfo(lesson, date)
     }
 
@@ -185,40 +187,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         //viewPager.registerOnPageChangeCallback(tabLayoutOnPageChangeCallback)
 
         viewPager.offscreenPageLimit = 2
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
-                viewPagerIdle = state == ViewPager.SCROLL_STATE_IDLE
-                swipeToRefresh.isEnabled = appBarExpanded && viewPagerIdle
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                val dayOffset = if (positionOffset < 0.5) 0L else 1L
-                val date =
-                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position + dayOffset)
-                if (LocalDate.now() == date) {
-                    homeBtn.hide()
-                } else {
-                    homeBtn.show()
-                }
-
-                title.text = date.format(dateFormatterTitle).capitalize()
-                //val lessonCount = viewModel.filteredSchedule.value.getOrNull()?.schedule?.getScheduleCount(date) ?: 0
-                subtitle.text = date.format(dateFormatterSubtitle).capitalize() //+ if (lessonCount == 0) {
-//                    " • нет занятий"
-//                } else {
-//                    " • $lessonCount заняти${getEnding(lessonCount.toLong())}"
-//                }
-            }
-
-            override fun onPageSelected(position: Int) {
-                viewModel.date.value =
-                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
-            }
-        })
+        viewPager.registerOnPageChangeCallback(TabLayoutOnPageChangeCallback())
 
         homeBtn.setOnClickListener { viewModel.goHome() }
     }
@@ -249,16 +218,26 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         ) {
             addBtn.setBackgroundResource(tv.resourceId)
         } else {
-            addBtn.background = ColorDrawable(requireContext().getColor(R.color.scheduleBackgroundColor))
+            addBtn.background = ColorDrawable(requireContext().getColor(R.color.scheduleBackground))
         }
-        val dp8 = TypedValue.applyDimension(
+        val dp24 = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             24f,
             resources.displayMetrics
         ).toInt()
-        addBtn.minimumHeight = dp8
-        addBtn.minimumWidth = dp8
+        addBtn.minimumHeight = dp24
+        addBtn.minimumWidth = dp24
         return addBtn
+    }
+
+    private fun createAddUserText(): TextView {
+        val textView = layoutInflater.inflate(
+            R.layout.textview_schedule_user,
+            scheduleIdsChipGroup,
+            false
+        ) as TextView
+        textView.text = "Добавьте группу или преподавателя"
+        return textView
     }
 
     private fun createChip(pair: Pair<Boolean, String>): Chip {
@@ -289,10 +268,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             menu.add("Удалить").setOnMenuItemClickListener {
                 if (it.title == "Удалить") {
                     scheduleIdsChipGroup.removeView(chip)
-                    viewModel.savedIds.value -= pair
-                    if (viewModel.id.value == pair) {
-                        viewModel.id.value = Pair(true, "")
-                    }
+                    viewModel.removeId(pair)
                     return@setOnMenuItemClickListener true
                 }
                 false
@@ -333,7 +309,14 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             }.collect()
         }
         lifecycleScope.launchWhenResumed {
-            viewModel.savedIds.collect { set ->
+            viewModel.savedIds.collect { s ->
+                val set = s.sortedWith(Comparator { o1, o2 ->
+                    return@Comparator if (o1.first != o2.first) {
+                        if (o1.first) -1 else 1
+                    } else {
+                        o1.second.compareTo(o2.second)
+                    }
+                })
                 var checkedChip: Chip? = null
                 // TODO: Inefficient
                 scheduleIdsChipGroup.removeAllViews()
@@ -360,6 +343,9 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                     if (viewId != null) {
                         scheduleIdsChipGroup.check(viewId)
                     }
+                }
+                if (set.isEmpty()) {
+                    scheduleIdsChipGroup.addView(createAddUserText())
                 }
                 scheduleIdsChipGroup.addView(createAddButton())
                 scheduleIdsChipGroup.post {
@@ -415,11 +401,12 @@ class ScheduleFragment : Fragment(), CoroutineScope {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.schedule_advanced_search -> {
-                findNavController()
-                    .navigate(
+                findNavController().safe {
+                    navigate(
                         ScheduleFragmentDirections
                             .actionScheduleFragmentToAdvancedSearchFragment()
                     )
+                }
             }
             R.id.menu_schedule_filter -> {
                 findNavController().safe {
@@ -453,15 +440,17 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         super.onDestroy()
     }
 
-    private class TabLayoutOnPageChangeCallback(
-        private val tabLayout: TabLayout,
-        private val viewPager: ViewPager2
+    private inner class TabLayoutOnPageChangeCallback(
     ) : OnPageChangeCallback() {
         private var previousScrollState = 0
         private var scrollState = 0
+
         override fun onPageScrollStateChanged(state: Int) {
             previousScrollState = scrollState
             scrollState = state
+
+            viewPagerIdle = state == ViewPager.SCROLL_STATE_IDLE
+            swipeToRefresh.isEnabled = appBarExpanded && viewPagerIdle
         }
 
         override fun onPageScrolled(
@@ -469,33 +458,29 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             positionOffset: Float,
             positionOffsetPixels: Int
         ) {
-            val date =
-                (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
-            val position = date.dayOfWeek.value - 1
             // Only update the text selection if we're not settling, or we are settling after
             // being dragged
-            val updateText =
-                scrollState != ViewPager2.SCROLL_STATE_SETTLING || previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING
-            // Update the indicator if we're not settling after being idle. This is caused
-            // from a setCurrentItem() call and will be handled by an animation from
-            // onPageSelected() instead.
-            val updateIndicator =
-                !(scrollState == ViewPager2.SCROLL_STATE_SETTLING && previousScrollState == ViewPager2.SCROLL_STATE_IDLE)
-            tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator)
+            val updateText = scrollState != ViewPager2.SCROLL_STATE_SETTLING
+                    || previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING
+
+            if (updateText) {
+                val dayOffset = if (positionOffset < 0.5) 0L else 1L
+                val date =
+                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position + dayOffset)
+                if (LocalDate.now() == date) {
+                    homeBtn.hide()
+                } else {
+                    homeBtn.show()
+                }
+
+                title.text = date.format(dateFormatterTitle).capitalize()
+                subtitle.text = date.format(dateFormatterSubtitle).capitalize()
+            }
         }
 
         override fun onPageSelected(position: Int) {
-            val date =
+            viewModel.date.value =
                 (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
-            val position = date.dayOfWeek.value - 1
-            if (tabLayout.selectedTabPosition != position && position < tabLayout.tabCount) {
-                // Select the tab, only updating the indicator if we're not being dragged/settled
-                // (since onPageScrolled will handle that).
-                val updateIndicator = (scrollState == ViewPager2.SCROLL_STATE_IDLE
-                        || (scrollState == ViewPager2.SCROLL_STATE_SETTLING
-                        && previousScrollState == ViewPager2.SCROLL_STATE_IDLE))
-                tabLayout.selectTab(tabLayout.getTabAt(position), updateIndicator)
-            }
         }
 
         fun reset() {

@@ -13,6 +13,7 @@ import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.temporal.ChronoUnit
@@ -55,7 +56,7 @@ class CalendarFragment : DialogFragment() {
         )
         recyclerAdapter.dayClick += { date ->
             viewModel.date.value = date
-            findNavController().navigateUp()
+            findNavController().safe { navigateUp() }
         }
 
         recyclerView.itemAnimator = null

@@ -11,12 +11,13 @@
         android:id="@+id/text_schedule_time_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorLevelOne"
+        android:background="@color/colorLevelTwo"
         android:clickable="false"
         android:fontFamily="sans-serif-medium"
         android:paddingStart="4dp"
-        android:paddingTop="4dp"
+        android:paddingTop="2dp"
         android:paddingEnd="4dp"
+        android:paddingBottom="2dp"
         android:textAlignment="center"
         android:textSize="12sp" />
 

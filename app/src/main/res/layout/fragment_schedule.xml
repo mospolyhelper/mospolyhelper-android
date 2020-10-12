@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorLevelZero"
+    android:background="@color/scheduleBackground"
     android:layout_height="match_parent">
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/schedule_update"
@@ -15,12 +15,6 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="@drawable/shape_schedule_appbar"
-                android:visibility="gone" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewpager"
@@ -41,7 +35,7 @@
         android:paddingTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorLevelZero">
+        android:background="@color/scheduleBackground">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -104,7 +98,7 @@
     </com.google.android.material.appbar.AppBarLayout>
     <HorizontalScrollView
         app:layout_collapseMode="pin"
-        android:background="@color/colorLevelZero"
+        android:background="@color/scheduleBackground"
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">

@@ -5,11 +5,10 @@
     android:id="@+id/bottomAppBar"
     android:layout_width="match_parent"
     android:layout_gravity="bottom"
-    app:elevation="4dp"
+    android:backgroundTint="@color/layerTwo"
+    app:elevation="0dp"
     app:navigationIcon="@drawable/ic_menu_24px"
-    app:backgroundTint="@color/colorLevelThree"
     android:layout_height="?attr/actionBarSize"
-    android:layout_alignParentBottom="true"
     tools:showIn="@layout/fragment_addresses"
     tools:ignore="BottomAppBar">
 </com.google.android.material.bottomappbar.BottomAppBar>

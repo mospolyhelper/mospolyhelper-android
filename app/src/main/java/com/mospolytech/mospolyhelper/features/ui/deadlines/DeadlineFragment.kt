@@ -32,6 +32,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.utils.TAG
+import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.android.synthetic.main.fragment_deadline.*
 import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlinx.coroutines.CoroutineScope
@@ -351,7 +352,9 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         (activity as MainActivity).setSupportActionBar(bottomAppBar)
         (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
         bottomAppBar.setNavigationOnClickListener {
-            findNavController().navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+            findNavController().safe {
+                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+            }
         }
         val inputMethodManager =
             requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

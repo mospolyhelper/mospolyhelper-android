@@ -3,10 +3,9 @@ package com.mospolytech.mospolyhelper.data.addresses.repository
 import com.mospolytech.mospolyhelper.data.addresses.local.AddressesLocalAssetsDataSource
 import com.mospolytech.mospolyhelper.data.addresses.local.AddressesLocalStorageDataSource
 import com.mospolytech.mospolyhelper.data.addresses.remote.AddressesRemoteDataSource
-import com.mospolytech.mospolyhelper.domain.addresses.model.Addresses
+import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.domain.addresses.repository.AddressesRepository
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
 
 class AddressesRepositoryImpl(
     private val remoteDataSource: AddressesRemoteDataSource,
@@ -14,20 +13,20 @@ class AddressesRepositoryImpl(
     private val localAssetsDataSource: AddressesLocalAssetsDataSource
 ): AddressesRepository {
 
-    override fun getAddresses(refresh: Boolean) = flow<Addresses?> {
+    override fun getAddresses(refresh: Boolean) = flow<AddressMap?> {
         emit(get(refresh) ?: get(!refresh))
     }
 
-    private fun get(refresh: Boolean): Addresses? {
-        val addresses: Addresses?
+    private fun get(refresh: Boolean): AddressMap? {
+        val addressMap: AddressMap?
         if (refresh) {
-            addresses = remoteDataSource.get()
-            if (addresses != null) {
-                localStorageDataSource.set(addresses)
+            addressMap = remoteDataSource.get()
+            if (addressMap != null) {
+                localStorageDataSource.set(addressMap)
             }
         } else {
-            addresses = localStorageDataSource.get() ?: localAssetsDataSource.get()
+            addressMap = localStorageDataSource.get() ?: localAssetsDataSource.get()
         }
-        return addresses
+        return addressMap
     }
 }

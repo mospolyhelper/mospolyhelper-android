@@ -8,11 +8,14 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
 import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AdvancedSearchViewModel(
     mediator: Mediator<String, ViewModelMessage>,
@@ -48,11 +51,30 @@ class AdvancedSearchViewModel(
         return scheduleRepository.getAnySchedules(groupList, true, onProgressChanged)
     }
 
-    fun sendSchedule(schedule: Schedule) {
-        send(
-            ScheduleViewModel::class.java.simpleName,
-            ScheduleViewModel.MessageSetAdvancedSearchSchedule,
-            schedule
+    suspend fun sendSchedule() {
+        withContext(Dispatchers.Main) {
+            send(
+                ScheduleViewModel::class.java.simpleName,
+                ScheduleViewModel.MessageSetAdvancedSearchSchedule,
+                null
+            )
+        }
+        val newSchedule = schedules.filter(
+            titles = if (checkedLessonTitles.isEmpty()) lessonTitles.toSet()
+            else checkedLessonTitles.map { lessonTitles[it] }.toSet(),
+            types = if (checkedLessonTypes.isEmpty()) lessonTypes.toSet()
+            else checkedLessonTypes.map { lessonTypes[it] }.toSet(),
+            auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.toSet()
+            else checkedAuditoriums.map { lessonAuditoriums[it] }.toSet(),
+            teachers = if (checkedTeachers.isEmpty()) lessonTeachers.toSet()
+            else checkedTeachers.map { lessonTeachers[it] }.toSet()
         )
+        withContext(Dispatchers.Main) {
+            send(
+                ScheduleViewModel::class.java.simpleName,
+                ScheduleViewModel.MessageSetAdvancedSearchSchedule,
+                newSchedule
+            )
+        }
     }
 }
