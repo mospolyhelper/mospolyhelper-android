@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.App
+import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
@@ -56,7 +57,11 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         val groupTitle = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,
             DefaultSettings.ScheduleGroupTitle)
-        setUpSchedule(groupTitle!!, false)
+        val isStudent = SharedPreferencesDataSource(prefs).getBoolean(
+            PreferenceKeys.ScheduleUserTypePreference,
+            DefaultSettings.ScheduleUserTypePreference
+        )
+        setUpSchedule(groupTitle!!, isStudent)
         return this@DialogFragmentViewModel.schedule.value?.let {
             ScheduleRepositoryImpl.allDataFromSchedule(
                 it
@@ -64,7 +69,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         }
     }
 
-    private fun setUpSchedule(id: String, downloadNew: Boolean) {
+    private fun setUpSchedule(id: String, isStudent: Boolean, downloadNew: Boolean = false) {
         viewModelScope.async {
             if (id.isEmpty()) {
                 withContext(Dispatchers.Main) {
@@ -74,7 +79,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
                 // TODO: Fix isStudentConstant
                 scheduleRepository.getSchedule(
                     id,
-                    true,
+                    isStudent,
                     downloadNew
                 ).collect {
                     withContext(Dispatchers.Main) {
