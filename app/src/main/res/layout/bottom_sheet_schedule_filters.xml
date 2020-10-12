@@ -31,7 +31,7 @@
             android:id="@+id/chip_lesson_dates_ended"
             style="@style/Widget.MaterialComponents.Chip.Filter"
             android:elevation="2dp"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Закончившиеся" />
@@ -40,7 +40,7 @@
             android:id="@+id/chip_lesson_dates_current"
             style="@style/Widget.MaterialComponents.Chip.Filter"
             android:elevation="2dp"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Текущие" />
@@ -49,7 +49,7 @@
             android:id="@+id/chip_lesson_dates_not_started"
             style="@style/Widget.MaterialComponents.Chip.Filter"
             android:elevation="2dp"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Неначавшиеся" />
@@ -85,7 +85,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_labels_important"
             style="@style/Widget.MaterialComponents.Chip.Filter"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:elevation="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_labels_average"
             style="@style/Widget.MaterialComponents.Chip.Filter"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:elevation="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_labels_not_important"
             style="@style/Widget.MaterialComponents.Chip.Filter"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:elevation="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_lesson_labels_not_labeled"
             style="@style/Widget.MaterialComponents.Chip.Filter"
-            app:chipBackgroundColor="@color/chip_color"
+            app:chipBackgroundColor="@color/chip_color_layer_one"
             android:elevation="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
