@@ -344,10 +344,10 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                         scheduleIdsChipGroup.check(viewId)
                     }
                 }
+                scheduleIdsChipGroup.addView(createAddButton())
                 if (set.isEmpty()) {
                     scheduleIdsChipGroup.addView(createAddUserText())
                 }
-                scheduleIdsChipGroup.addView(createAddButton())
                 scheduleIdsChipGroup.post {
                     if (checkedChip != null) {
                         (scheduleIdsChipGroup.parent as HorizontalScrollView)
