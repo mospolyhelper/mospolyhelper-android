@@ -15,6 +15,7 @@
   <color name="colorLevelThree">#303136</color>
   <color name="colorLevelFour">#3c3e44</color>
   <color name="colorLevelFive">#484a51</color>
+  <color name="colorLevelSix">#6c6f7a</color>
 
   <color name="colorLevelZeroText">#000000</color>
   <color name="colorLevelOneText">#111111</color>
@@ -29,8 +30,12 @@
   <color name="layerOne">@color/colorLevelThree</color>
   <color name="layerOneActivated">@color/colorLevelFive</color>
   <color name="layerTwo">@color/colorLevelFive</color>
+  <color name="layerTwoActivated">@color/colorLevelSix</color>
   <color name="iconColor">#BEBEBE</color>
   <color name="dividerLayerZero">@color/colorLevelFour</color>
+
+  <color name="chipLayerTwo">@color/layerTwo</color>
+  <color name="chipLayerTwoChecked">@color/layerTwoActivated</color>
 
 
   <!--  Main Menu  -->
