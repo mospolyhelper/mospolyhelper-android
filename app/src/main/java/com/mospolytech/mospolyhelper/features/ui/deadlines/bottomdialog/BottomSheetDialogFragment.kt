@@ -200,7 +200,10 @@ class AddBottomSheetDialogFragment(ctx: Context)
                 else -> { view.findViewById<Chip>(chipId).isChecked = true }
             }
         }
-        val lessons = viewModel.getLessons()?.toList()
+        var lessons = viewModel.getLessons()?.toList()
+        if (lessons == null) {
+            lessons = emptyList<String>()
+        }
         lessons.let {
             editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
                 R.layout.item_dropdown,
