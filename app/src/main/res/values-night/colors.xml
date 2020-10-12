@@ -1,51 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+  <!--  Core  -->
   <color name="colorPrimary">#202124</color>
-    <color name="colorPrimaryDark">#0C0C0C</color>
+  <color name="colorPrimaryDark">#0C0C0C</color>
   <color name="colorPrimaryLight">#47484c</color>
   <color name="textColorPrimary">#ffffff</color>
   <color name="colorSecondary">#ff5722</color>
   <color name="colorSecondaryLight">#ff8a50</color>
 
-  <color name="colorLevelZero">#202124</color>
-  <color name="colorLevelOne">#303136</color>
-  <color name="colorLevelTwo">#3c3e44</color>
-  <color name="colorLevelThree">#484a51</color>
+  <color name="colorLevelZero">#000000</color>
+  <color name="colorLevelOne">#121212</color>
+  <color name="colorLevelTwo">#202124</color>
+  <color name="colorLevelThree">#303136</color>
+  <color name="colorLevelFour">#3c3e44</color>
+  <color name="colorLevelFive">#484a51</color>
 
-  <color name="chipColor">@color/colorLevelThree</color>
-  
+  <color name="colorLevelZeroText">#000000</color>
+  <color name="colorLevelOneText">#111111</color>
+  <color name="colorLevelTwoText">#222222</color>
+  <color name="colorLevelThreeText">#333333</color>
+  <color name="colorLevelFourText">#444444</color>
+  <color name="colorLevelFiveText">#555555</color>
+
+
+  <!--  Common  -->
+  <color name="layerZero">@color/colorLevelTwo</color>
+  <color name="layerOne">@color/colorLevelThree</color>
+  <color name="layerOneActivated">@color/colorLevelFive</color>
+  <color name="layerTwo">@color/colorLevelFive</color>
   <color name="iconColor">#BEBEBE</color>
+  <color name="dividerLayerZero">@color/colorLevelFour</color>
 
-  <color name="scheduleBackgroundColor">@color/colorLevelZero</color>
-  <color name="lessonBackground">@color/colorLevelOne</color>
-  <color name="lessonBackgroundRipple">#646464</color>
 
-  <color name="textLessonHeadCurrent">#BBBBBB</color>
-  <color name="textLessonHead">#7A858D</color>
-  
-  <color name="textLessonInfo">#CCCCCC</color>
-  
-  <color name="allDividerColor">#292929</color>
-  <color name="drawerColor">#222222</color>
-  
-  <color name="advancedSearchColor">#202020</color>
-  <color name="advancedSearchBorderColor">#303030</color>
-  <color name="advancedSearchHead">#2D2D2D</color>
-  <color name="advancedSearchBody">#1C1C1C</color>
-  <color name="advancedSearchTextHead">#C9C9C9</color>
-  <color name="advancedSearchTextHeadSecondary">#858585</color>
-  
-  <color name="calendarDivider">#1C1C1C</color>
-  <color name="calendarTitle">#787878</color>
-  <color name="calendarCurrentTitle">#00a300</color>
-  <color name="calendarParagraph">#666666</color>
-  <color name="calendarTimeBackground">#282828</color>
+  <!--  Main Menu  -->
+  <color name="mainMenuBackground">@color/layerZero</color>
+
+  <!--  Schedule  -->
+  <color name="scheduleBackground">@color/layerZero</color>
+  <color name="scheduleLessonBackground">@color/layerOne</color>
+  <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
+  <color name="scheduleLessonChip">@color/colorLevelFive</color>
+  <color name="scheduleLessonChipText">#ffffff</color>
+
+  <color name="scheduleChip">@color/layerOne</color>
+  <color name="scheduleChipChecked">@color/layerOneActivated</color>
+
+  <color name="lessonTimeText">#7A858D</color>
 
   <color name="textAccent">#EAEAEA</color>
   <color name="textAccentDisabled">#545454</color>
   <color name="textSecondary">#999999</color>
   <color name="textSecondaryDisabled">#3F3F3F</color>
 
+  <!-- Schedule Lesson Info  -->
+  <color name="lessonInfoBackground">@color/layerZero</color>
+  <color name="lessonInfoChipColor">@color/layerOne</color>
+  <color name="lessonInfoText">#CCCCCC</color>
+
+
+  <!--  Schedule Advanced Search  -->
+  <color name="advancedSearchColor">#202020</color>
+  <color name="advancedSearchBorderColor">#303030</color>
+  <color name="advancedSearchHead">#2D2D2D</color>
+  <color name="advancedSearchBody">#1C1C1C</color>
+  <color name="advancedSearchTextHead">#C9C9C9</color>
+  <color name="advancedSearchTextHeadSecondary">#858585</color>
+
+
+  <!--  Schedule Calendar  -->
+  <color name="calendarDivider">#1C1C1C</color>
+  <color name="calendarTitle">#787878</color>
+  <color name="calendarCurrentTitle">#00a300</color>
+  <color name="calendarParagraph">#666666</color>
+  <color name="calendarTimeBackground">#282828</color>
+
+
+  <!--  Schedule App Widget  -->
+  <color name="widgetBackground">#353E48</color>
+  <color name="widgetDivider">#484a51</color>
+  <color name="widgetTitleText">#B5B5B5</color>
+  <color name="widgetLessonTitleText">#EAEAEA</color>
+  <color name="widgetSecondaryTextColor">#AAAAAA</color>
+
+
+  <!--  Deadlines  -->
   <color name="predmetcolor">#0093CE</color>
   <color name="colorLow">#CC26E910</color>
   <color name="colorMedium">#CCFFCB0F</color>
@@ -59,4 +98,10 @@
   <color name="colorFabIcon">#000000</color>
   <color name="pushPin">#AAAAAA</color>
   <color name="pushUnPin">#606060</color>
+
+  <!--  Addresses  -->
+  <color name="addressesBackground">@color/layerZero</color>
+  <color name="addressesTabLayout">@color/layerTwo</color>
+  <color name="addressesItemBackground">@color/layerOne</color>
+
 </resources>

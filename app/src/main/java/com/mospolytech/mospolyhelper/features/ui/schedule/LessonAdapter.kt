@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.roundToLong
 
 class LessonAdapter(
     var dailySchedule: List<Lesson>,
@@ -38,7 +39,8 @@ class LessonAdapter(
     var showTeachers: Boolean,
     var disabledColor: Int,
     var headColor: Int,
-    var headCurrentColor: Int,
+    var chipTextColor: Int,
+    var chipColor: Int,
     currentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -135,6 +137,7 @@ class LessonAdapter(
 
 
         for (lesson in dailySchedule.withIndex()) {
+            if (date !in lesson.value.dateFrom..lesson.value.dateTo) continue
             if (
                 lesson.value.groupIsEvening == currLesson.isEvening &&
                 (lesson.value.order == currentOrder ||
@@ -421,8 +424,6 @@ class LessonAdapter(
             else
                 adapter.disabledColor
 
-            val color = view.context.getColor(R.color.chipColor)
-
             val sp17 = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 17f,
@@ -449,7 +450,7 @@ class LessonAdapter(
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(color, height = sp17, text = getDuration()),
+                RoundedBackgroundSpan(adapter.chipColor, height = sp17, text = getDuration(), textColor = adapter.chipTextColor),
                 StyleSpan(Typeface.BOLD)
             )
 
@@ -465,15 +466,15 @@ class LessonAdapter(
 
 
             // Current lessons label
-            if (lesson.order == currentOrder) {
+            if (enabled && lesson.order == currentOrder) {
                 val currentLessonText: String
                 val currentLessonColor: Int
                 if (currentLessonIsStarted) {
-                    val time = getTime(lesson.localTime.first.until(LocalTime.now(), ChronoUnit.MINUTES), true)
+                    val time = getTime((lesson.localTime.first.until(LocalTime.now(), ChronoUnit.SECONDS) / 60f).roundToLong(), true)
                     currentLessonColor = 0xff229954.toInt()
                     currentLessonText = "Идёт ${time.toLowerCase()}"
                 } else {
-                    val time = getTime(LocalTime.now().until(lesson.localTime.first, ChronoUnit.MINUTES), false)
+                    val time = getTime((LocalTime.now().until(lesson.localTime.first, ChronoUnit.SECONDS) / 60f).roundToLong(), false)
                     currentLessonColor = 0xffe67e22.toInt()
                     currentLessonText = "${time.toLowerCase()} до начала"
                 }
