@@ -419,10 +419,23 @@ class LessonAdapter(
 
         private fun setLessonTitleAndFeatures(enabled: Boolean) {
             val builder = SpannableStringBuilder()
-            val color2 = if (enabled)
+            val colorType = if (enabled) {
                 (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-            else
+            } else {
                 adapter.disabledColor
+            }
+
+            val chipColor  = if (enabled) {
+                adapter.chipColor
+            } else {
+                adapter.disabledColor
+            }
+
+            val chipTextColor  = if (enabled) {
+                adapter.chipTextColor
+            } else {
+                0xffffffff.toInt()
+            }
 
             val sp17 = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
@@ -440,7 +453,7 @@ class LessonAdapter(
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(color2, height = sp17, text = lesson.type.toLowerCase()),
+                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type.toLowerCase()),
                 StyleSpan(Typeface.BOLD)
             )
 
@@ -450,18 +463,18 @@ class LessonAdapter(
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(adapter.chipColor, height = sp17, text = getDuration(), textColor = adapter.chipTextColor),
+                RoundedBackgroundSpan(chipColor, height = sp17, text = getDuration(), textColor = chipTextColor),
                 StyleSpan(Typeface.BOLD)
             )
 
             val currentOrder: Int
             val currentLessonIsStarted: Boolean
             if (lesson.groupIsEvening) {
-                currentOrder = adapter.currentOrder
-                currentLessonIsStarted = adapter.currentOrderIsStarted
-            } else {
                 currentOrder = adapter.currentOrderEvening
                 currentLessonIsStarted = adapter.currentOrderIsStartedEvening
+            } else {
+                currentOrder = adapter.currentOrder
+                currentLessonIsStarted = adapter.currentOrderIsStarted
             }
 
 

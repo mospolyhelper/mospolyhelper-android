@@ -12,4 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-/app/build.gradle
+keystore.properties

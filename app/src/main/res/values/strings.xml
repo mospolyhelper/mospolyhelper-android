@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">testmospolyhelper</string>
+    <string name="app_name">mospolyhelper</string>
   <string name="nav_schedule">Расписание занятий</string>
   <string name="nav_addresses">Адреса</string>
   <string name="nav_settings">Настройки</string>
