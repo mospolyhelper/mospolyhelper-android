@@ -8,7 +8,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 // keystore.properties file, in the rootProject folder.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 
-// Initialize a new Properties() object called keystoreProperties.
+// Initialize a new Properties() object called keystoreProperties
 def keystoreProperties = new Properties()
 
 // Load your keystore.properties file into the keystoreProperties object
