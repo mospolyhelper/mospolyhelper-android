@@ -5,6 +5,6 @@
     android:gravity="center_vertical"
     android:fontFamily="@font/open_sans"
     android:layout_width="wrap_content"
-    android:layout_marginEnd="7dp"
+    android:layout_marginStart="7dp"
     android:minHeight="41dp"
     android:layout_height="wrap_content"/>
