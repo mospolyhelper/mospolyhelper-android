@@ -4,14 +4,19 @@ import android.Manifest
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
@@ -32,6 +37,7 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
     }
     private val navController by lazy { navHostFragment.navController }
+    private lateinit var navigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -129,6 +135,25 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
             navController.navigateUp()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // TODO: check event subscription
+        navigationView = findViewById(R.id.nav_view)
+        if (viewModel.currentFragmentNavId.value != -1) {
+            navigationView.selectedItemId = viewModel.currentFragmentNavId.value
+        }
+        navigationView.setOnNavigationItemSelectedListener {
+            val action = navController.graph.getAction(it.itemId)
+            val currentDestination = navController.currentBackStackEntry?.destination
+            if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
+                viewModel.currentFragmentNavId.value = it.itemId
+                navController.navigate(it.itemId)
+            }
+            true
+        }
     }
 
     override fun onDestroy() {

@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.calendar
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.*
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +14,19 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 // TODO: Return filter
-class CalendarAdapter(
+class CalendarOneAdapter(
     val schedule: Schedule?,
     var showGroup: Boolean,
     val colorParagraph: Int,
     val colorTimeBackground: Int,
     val colorTitle: Int,
     val colorCurrentTitle: Int
-) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<CalendarOneAdapter.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
             0xffeb4141.toInt(),   // Exam, Credit,..
@@ -72,7 +70,7 @@ class CalendarAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.item_schedule_calendar, parent, false)
+            .inflate(R.layout.item_schedule_calendar_one, parent, false)
         return ViewHolder(view)
     }
 
@@ -99,63 +97,6 @@ class CalendarAdapter(
             val dailySchedule = schedule.getSchedule(date)
             setLessons(dailySchedule, date)
             setHead(date)
-            setPadding(date)
-        }
-
-        private fun setPadding(date: LocalDate) {
-            val dp4 = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                8f,
-                itemView.resources.displayMetrics
-            ).toInt()
-
-            var paddingStart = dp4
-            var paddingTop = dp4
-            var paddingEnd = dp4
-            var paddingBottom = dp4
-
-            when (date.dayOfWeek) {
-                DayOfWeek.MONDAY -> {
-                    //if (adapterPosition % 3 == 0) paddingStart = 0
-                    paddingStart = 0
-                    paddingEnd = 0
-                    paddingBottom = 0
-                }
-                DayOfWeek.TUESDAY -> {
-                    paddingStart = 0
-                    paddingEnd = 0
-                    paddingBottom = 0
-                }
-                DayOfWeek.WEDNESDAY -> {
-                    paddingStart = 0
-                    paddingEnd = 0
-                    paddingBottom = 0
-                }
-                DayOfWeek.THURSDAY -> {
-                    paddingStart = 0
-                    paddingTop = 0
-                    paddingEnd = 0
-                    paddingBottom = 0
-                }
-                DayOfWeek.FRIDAY -> {
-                    paddingStart = 0
-                    paddingTop = 0
-                    paddingEnd = 0
-                }
-                DayOfWeek.SATURDAY -> {
-                    paddingStart = 0
-                    paddingTop = 0
-                    paddingEnd = 0
-                }
-                DayOfWeek.SUNDAY -> {
-                    paddingStart = 0
-                    if (adapterPosition % 3 == 2) paddingEnd = 0
-                    paddingTop = 0
-                }
-                null -> {
-                }
-            }
-            lessonPlace.setPaddingRelative(paddingStart, 0, paddingEnd, paddingBottom)
         }
 
         private fun setHead(date: LocalDate) {
@@ -173,9 +114,6 @@ class CalendarAdapter(
 
             if (dailySchedule.isNotEmpty()) {
                 var title: String
-                if (dailySchedule[0].order == -1) {
-                    val q = 1
-                }
                 var time = dailySchedule[0].time
                 spansAppend(
                     res,
@@ -214,15 +152,12 @@ class CalendarAdapter(
                         TypefaceSpan("sans-serif-medium"));
                 }
 
-                title = dailySchedule[0].title;
+                title = dailySchedule[0].title
                 res.append("\n" + title);
 
 
                 for (i in 1 until dailySchedule.size) {
                     if (!dailySchedule[i].equalsTime(dailySchedule[i - 1])) {
-                        if (dailySchedule[i].order == -1) {
-                            val q = 1
-                        }
                         time = dailySchedule[i].time
                         spansAppend(
                             res, "\n" + (dailySchedule[i].order + 1) + ") " + time.first + "-" + time.second,
@@ -261,7 +196,7 @@ class CalendarAdapter(
                             TypefaceSpan("sans-serif-medium")
                         )
                     }
-                    title = dailySchedule[i].title;
+                    title = dailySchedule[i].title
                     res.append("\n" + title)
                 }
             }

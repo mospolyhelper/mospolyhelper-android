@@ -189,6 +189,9 @@ class ScheduleViewModel(
                 }
             }
         }
+        if (savedIds.value.isEmpty() && id.value.second.isNotEmpty()) {
+            id.value = Pair(false, "")
+        }
     }
 
 

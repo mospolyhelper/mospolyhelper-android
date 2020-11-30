@@ -6,9 +6,171 @@
     android:orientation="vertical"
     android:background="@color/scheduleBackground"
     android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:background="@color/scheduleBackground"
+        app:elevation="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:paddingEnd="10dp"
+                android:background="@color/scheduleBackground"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+                <Button
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+                    android:id="@+id/btn_user"
+                    android:letterSpacing="0"
+                    android:ellipsize="end"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/secondary_text_color"
+                    android:fontFamily="@font/open_sans"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.appcompat.widget.Toolbar>
+            <HorizontalScrollView
+                android:visibility="gone"
+                android:id="@+id/scroll_ids"
+                app:layout_collapseMode="pin"
+                android:background="@color/scheduleBackground"
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipgroup_ids"
+                    app:singleLine="true"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:clipToPadding="false"
+                    android:animateLayoutChanges="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <FrameLayout
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/background_tab_indicator_schedule_type_outer"
+                android:backgroundTint="@color/colorLevelOne"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tablayout_schedule_type"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    style="@style/TabLayoutScheduleType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    app:tabMode="scrollable">
+                    <com.google.android.material.tabs.TabItem
+                        android:text="Все"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="Обычное"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="Сессия"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.tabs.TabLayout>
+            </FrameLayout>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="29.5dp"
+                android:layout_marginEnd="30dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Вторник"
+                android:textAppearance="@style/ScheduleToolbarText" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.google.android.material.tabs.TabLayout
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:id="@+id/tablayout_schedule"
+                    style="@style/TabLayoutSchedule"
+                    android:layout_width="match_parent"
+                    app:tabTextColor="#00000000"
+                    android:layout_height="50dp"
+                    app:tabMode="fixed">
+                    <com.google.android.material.tabs.TabItem
+                        android:text="30\nПН"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="1\nВТ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="2\nСР"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="3\nЧТ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="4\nПТ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="5\nСБ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:text="6\nВС"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.tabs.TabLayout>
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewpager_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"/>
+            </FrameLayout>
+            <TextView
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                android:text="7 июля"
+                android:textColor="#999999"
+                android:textAppearance="@style/ScheduleToolbarSubtitleText" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/schedule_update"
-        android:layout_marginBottom="?attr/actionBarSize"
         android:layout_width="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="match_parent">
@@ -22,6 +184,7 @@
                 android:layout_height="match_parent" />
 
             <View
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
                 android:background="@drawable/top_list_gradient" />
@@ -29,131 +192,17 @@
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        app:elevation="0dp"
-        android:paddingTop="?attr/actionBarSize"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/scheduleBackground">
+        app:backgroundTint="@color/layerTwo"
+        android:id="@+id/button_home"
+        android:visibility="invisible"
+        android:src="@drawable/schedule_home"
+        app:tint="@color/iconColor"
+        app:fabSize="normal"
+        app:layout_anchorGravity="bottom|center_horizontal"
+        app:layout_anchor="@id/schedule_update"
+        android:layout_marginBottom="10dp"/>
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="1">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp">
-
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="31dp"
-                        android:text="Вторник"
-                        android:textAppearance="@style/ScheduleToolbarText" />
-
-                    <ImageButton
-                        android:id="@+id/button_calendar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|center"
-                        android:layout_marginTop="2dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="3dp"
-                        android:src="@drawable/ic_baseline_calendar" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="7 июля"
-                    android:textAppearance="@style/ScheduleToolbarSubtitleText" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_gravity="bottom"
-                android:background="@drawable/appbar_gradient"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-    <HorizontalScrollView
-        app:layout_collapseMode="pin"
-        android:background="@color/scheduleBackground"
-        android:scrollbars="none"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipgroup_ids"
-            app:singleLine="true"
-            app:singleSelection="true"
-            app:selectionRequired="true"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:layout_gravity="center_vertical"
-            android:clipToPadding="false"
-            android:animateLayoutChanges="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-<!--    <com.google.android.material.tabs.TabLayout-->
-<!--        android:id="@+id/tablayout"-->
-<!--        app:layout_collapseMode="pin"-->
-<!--        style="@style/AppTabLayout"-->
-<!--        android:background="@color/colorLevelZero"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="?attr/actionBarSize"-->
-<!--        android:layout_marginStart="30dp"-->
-<!--        app:tabMode="fixed">-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-
-<!--        <com.google.android.material.tabs.TabItem-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content" />-->
-<!--    </com.google.android.material.tabs.TabLayout>-->
-    <include layout="@layout/bottom_app_bar_schedule" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

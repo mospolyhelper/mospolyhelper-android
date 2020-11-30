@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
+        android:layout_marginStart="@dimen/lesson_margin_start"
+        android:layout_marginTop="@dimen/lesson_margin_top"
+        android:layout_marginEnd="@dimen/lesson_margin_end"
+        android:layout_marginBottom="2dp"
+        android:paddingStart="@dimen/lesson_padding_start"
+        android:paddingEnd="@dimen/lesson_padding_end"
+        android:id="@+id/text_title"
+        style="@style/ScheduleLessonTime"
+        android:drawablePadding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:breakStrategy="simple"
+        android:clickable="false"
+        android:text="Большой перерыв" />
+
+    <TextView
+        android:paddingStart="@dimen/lesson_padding_start"
+        android:paddingEnd="@dimen/lesson_padding_end"
         android:id="@+id/text_info"
         style="@style/ScheduleLessonSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/lesson_margin_start"
-        android:layout_marginTop="@dimen/lesson_margin_top"
         android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="@dimen/lesson_margin_bottom"
+        android:layout_marginBottom="14dp"
         android:breakStrategy="simple"
         android:clickable="false"
-        android:drawableStart="@drawable/ic_round_local_cafe_24"
-        android:drawablePadding="8dp"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
         android:text="окно в 1 час 50 минут" />
 
-</FrameLayout>
+</LinearLayout>

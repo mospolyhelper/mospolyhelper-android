@@ -11,47 +11,47 @@
         app:title="@string/night_mode"
         app:defaultValue="false"/>
   </PreferenceScreen>
-<!--    <PreferenceScreen-->
-<!--        app:title="Расписание"-->
-<!--        app:key="ScheduleScreen"-->
-<!--        app:persistent="false">-->
-<!--        <SwitchPreferenceCompat-->
-<!--            app:key="ShowEmptyLessons"-->
-<!--            app:title="Пустые пары"-->
-<!--            app:summary="Показывать пустые пары"-->
-<!--            app:defaultValue="false"/>-->
-<!--    </PreferenceScreen>-->
+    <PreferenceScreen
+        app:title="Расписание"
+        app:key="ScheduleScreen"
+        app:persistent="false">
+        <SwitchPreferenceCompat
+            app:key="ShowEmptyLessons"
+            app:title="Пустые пары"
+            app:summary="Показывать пустые пары"
+            app:defaultValue="false"/>
+    </PreferenceScreen>
   <PreferenceScreen
       app:title="@string/pref_category_appwidget"
       app:key="ScheduleAppWidgetScreen">
 <com.mospolytech.mospolyhelper.features.ui.settings.schedule_appwidget.ScheduleAppWidgetPreference
     app:key="ScheduleAppWidgetView" />
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowOrder"
         app:title="@string/pref_appwidget_schedule_show_order"
         app:summary="@string/pref_appwidget_schedule_show_order_summary"
         app:defaultValue="false"/>
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowStartTime"
         app:title="@string/pref_appwidget_schedule_show_start_time"
         app:summary="@string/pref_appwidget_schedule_show_start_time_summary"
         app:defaultValue="true"/>
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowEndTime"
         app:title="@string/pref_appwidget_schedule_show_end_time"
         app:summary="@string/pref_appwidget_schedule_show_end_time_summary"
         app:defaultValue="false"/>
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowType"
         app:title="@string/pref_appwidget_schedule_show_type"
         app:summary="@string/pref_appwidget_schedule_show_type_summary"
         app:defaultValue="true"/>
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowAuditoriums"
         app:title="@string/pref_appwidget_schedule_show_auditoriums"
         app:summary="@string/pref_appwidget_schedule_show_auditoriums_summary"
         app:defaultValue="true"/>
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowTeachers"
         app:title="@string/pref_appwidget_schedule_show_teachers"
         app:summary="@string/pref_appwidget_schedule_show_teachers_summary"

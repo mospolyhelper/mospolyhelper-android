@@ -17,8 +17,19 @@ class RoundedBackgroundSpan(
 
     companion object {
         private const val relativeTextSize = 0.7f
-        private const val topGrowthRate = 0.08f
-        private const val bottomGrowthRate = 0.12f
+        private const val topGrowthRate = 0.27f
+        private const val bottomGrowthRate = 0.13f
+        private const val horizontalGrowthRate = 1.8f
+        private const val cornerRadiusPercentage = 0.5f // 0.275f
+        private const val bottomSpacing = 1f
+    }
+
+    private fun convertColorToNight(color: Int): Int {
+        val hsv = FloatArray(3)
+        Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv)
+        hsv[2] = hsv[2] * 0.4f
+        hsv[1] = 1f
+        return Color.HSVToColor(hsv)
     }
 
     override fun draw(
@@ -44,7 +55,7 @@ class RoundedBackgroundSpan(
 
         val textWidth = paint.measureText(this.text.toString(), start, end)
 
-        val horizontalPadding = paint.descent() * 2
+        val horizontalPadding = paint.descent() * 2 * horizontalGrowthRate
 
         var delta =  baseline - textHeight - topOfLine
         delta /= 3f
@@ -62,7 +73,7 @@ class RoundedBackgroundSpan(
             bottomOfLine + bottomAdd
         )
 
-        val cornerRadius = rect.height() * 0.2f
+        val cornerRadius = rect.height() * cornerRadiusPercentage
 
         paint.color = backgroundColor
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
@@ -82,7 +93,8 @@ class RoundedBackgroundSpan(
         paint.textSize = height * relativeTextSize
         val start = 0
         val end = this.text.length
-        return (paint.measureText(this.text, start, end) + paint.descent() * 4).roundToInt()
+        val horizontalPadding = paint.descent() * 2 * horizontalGrowthRate
+        return (paint.measureText(this.text, start, end) + horizontalPadding * 2).roundToInt()
     }
 
     override fun chooseHeight(

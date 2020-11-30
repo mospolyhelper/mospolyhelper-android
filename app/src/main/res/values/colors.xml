@@ -10,9 +10,9 @@
 
   <color name="colorLevelZero">#c9c9cf</color>
   <color name="colorLevelOne">#d6d6db</color>
-  <color name="colorLevelTwo">#e4e4e7</color>
-  <color name="colorLevelThree">#eeeef0</color>
-  <color name="colorLevelFour">#f1f1f3</color>
+  <color name="colorLevelTwo">#e8ecf5</color>
+  <color name="colorLevelThree">#edf0f7</color>
+  <color name="colorLevelFour">#f1f3fa</color>
   <color name="colorLevelFive">#ffffff</color>
   <color name="colorLevelSix">#ffffff</color>
 
@@ -50,7 +50,12 @@
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
-  <color name="lessonTimeText">#868686</color>
+  <color name="lessonTimeText">@color/accent_text_color</color>
+  <color name="lessonTypeImportant">#f0dcf3</color>
+  <color name="lessonTypeImportantText">#7b3688</color>
+  <color name="lessonTypeNotImportant">#cfeafd</color>
+  <color name="lessonTypeNotImportantText">#4a7d9d</color>
+
 
   <color name="textAccent">#222222</color>
   <color name="textAccentDisabled">#CCCCCC</color>

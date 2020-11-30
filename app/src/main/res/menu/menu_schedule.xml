@@ -4,11 +4,16 @@
     <item android:id="@+id/schedule_advanced_search"
         android:icon="@drawable/search_24px"
         android:orderInCategory="99"
-        app:showAsAction="always"
-        android:title="search" />
+        app:showAsAction="never"
+        android:title="Продвинутый поиск" />
     <item android:id="@+id/menu_schedule_filter"
         android:icon="@drawable/ic_filter_24dp"
         android:orderInCategory="100"
-        app:showAsAction="always"
-        android:title="filter" />
+        app:showAsAction="never"
+        android:title="Фильтры" />
+    <item android:id="@+id/menu_schedule_calendar"
+        android:icon="@drawable/ic_baseline_calendar"
+        android:orderInCategory="101"
+        app:showAsAction="never"
+        android:title="Календарь" />
 </menu>
