@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -20,6 +21,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 import com.mospolytech.mospolyhelper.utils.*
+import org.w3c.dom.Text
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalTime
@@ -27,6 +29,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 class LessonAdapter(
@@ -45,10 +48,6 @@ class LessonAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        val lessonTypeColors = listOf(
-            0xffe4503f.toInt(),   // Exam, Credit,..
-            0xff2573a7.toInt()    // Other
-        )
 
         val orderColors = listOf(
             0xffff764d.toInt(), // 1
@@ -277,11 +276,13 @@ class LessonAdapter(
         onLessonClick: (Lesson, LocalDate, List<View>) -> Unit
     ) : RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
+        private val lessonFeatures = view.findViewById<TextView>(R.id.text_schedule_features)
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
         private val lessonTime = view.findViewById<TextView>(R.id.text_lesson_time)!!
         private val lessonTeachers = view.findViewById<TextView>(R.id.text_lesson_teachers)!!
         private val lessonGroups = view.findViewById<TextView>(R.id.text_lesson_groups)!!
         private val lessonAuditoriums = view.findViewById<TextView>(R.id.text_lesson_auditoriums)!!
+        private val lessonDuration = view.findViewById<TextView>(R.id.text_lesson_duration)!!
         private val lessonPlace = view.findViewById<LinearLayout>(R.id.layout_lesson)!!
         private var lesson: Lesson = Lesson.getEmpty(0)
         private val hasTime: Boolean
@@ -311,7 +312,7 @@ class LessonAdapter(
         }
 
         private fun setBackground(preViewType: Int) {
-            val lessonPlaceParams = (lessonPlace.layoutParams as FrameLayout.LayoutParams)
+            val lessonPlaceParams = (lessonPlace.layoutParams as LinearLayout.LayoutParams)
             when(preViewType) {
                 VIEW_TYPE_NORMAL_MIDDLE -> {
                     lessonPlaceParams.topMargin = 0
@@ -329,12 +330,12 @@ class LessonAdapter(
                     lessonPlace.setBackgroundResource(R.drawable.shape_lesson_bottom)
                 }
                 VIEW_TYPE_NORMAL_TOP ->  {
-                    val dp8 = TypedValue.applyDimension(
+                    val dpTop = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
-                        8f,
+                        3f,
                         view.resources.displayMetrics
                     ).toInt()
-                    lessonPlaceParams.topMargin = dp8
+                    lessonPlaceParams.topMargin = dpTop
                     lessonPlaceParams.bottomMargin = 0
                     lessonPlace.setBackgroundResource(R.drawable.shape_lesson_top)
                 }
@@ -344,7 +345,12 @@ class LessonAdapter(
                         8f,
                         view.resources.displayMetrics
                     ).toInt()
-                    lessonPlaceParams.topMargin = dp8
+                    val dpTop = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        3f,
+                        view.resources.displayMetrics
+                    ).toInt()
+                    lessonPlaceParams.topMargin = dpTop
                     lessonPlaceParams.bottomMargin = dp8
                     lessonPlace.setBackgroundResource(R.drawable.shape_lesson)
                 }
@@ -381,7 +387,7 @@ class LessonAdapter(
                         tv.data,
                         lessonPlace.context.resources.displayMetrics
                     )
-                    paddingBottom = (actionBarHeight * 0.6).toInt()
+                    paddingBottom = (actionBarHeight * 0.8).toInt()
                 }
             }
             val dp8 = TypedValue.applyDimension(
@@ -393,17 +399,33 @@ class LessonAdapter(
         }
 
         private fun setTime() {
-            val (timeStart, timeEnd) = lesson.time
-            lessonTime.text = "$timeStart - $timeEnd, ${lesson.order + 1}-е занятие"
-        }
 
+            val currentOrder: Int
+            val currentLessonIsStarted: Boolean
+            if (lesson.groupIsEvening) {
+                currentOrder = adapter.currentOrderEvening
+                currentLessonIsStarted = adapter.currentOrderIsStartedEvening
+            } else {
+                currentOrder = adapter.currentOrder
+                currentLessonIsStarted = adapter.currentOrderIsStarted
+            }
 
-        private fun SpannableStringBuilder.appendAny(text: String, flags: Int, vararg spans: Any) {
-            val start = length
-            append(text)
-            val length = length
-            for (span in spans) {
-                setSpan(span, start, length, flags)
+            // Current lessons label
+            if (lesson.order == currentOrder) {
+                val currentLessonText: String
+                if (currentLessonIsStarted) {
+                    val time = getTime((lesson.localTime.first.until(LocalTime.now(), ChronoUnit.SECONDS) / 60f).roundToLong(), true)
+                    currentLessonText = "Идёт ${time.toLowerCase()}"
+                } else {
+                    val time = getTime((LocalTime.now().until(lesson.localTime.first, ChronoUnit.SECONDS) / 60f).roundToLong(), false)
+                    currentLessonText = "${time.toLowerCase()} до начала"
+                }
+
+                lessonTime.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_current_lesson, 0, 0, 0)
+                lessonTime.text = currentLessonText
+                lessonTime.visibility = View.VISIBLE
+            } else {
+                lessonTime.visibility = View.GONE
             }
         }
 
@@ -420,9 +442,20 @@ class LessonAdapter(
         private fun setLessonTitleAndFeatures(enabled: Boolean) {
             val builder = SpannableStringBuilder()
             val colorType = if (enabled) {
-                (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
+                (if (lesson.isImportant)
+                    view.context.getColor(R.color.lessonTypeImportant)
+                else
+                    view.context.getColor(R.color.lessonTypeNotImportant))
             } else {
                 adapter.disabledColor
+            }
+            val colorTextType = if (enabled) {
+                (if (lesson.isImportant)
+                    view.context.getColor(R.color.lessonTypeImportantText)
+                else
+                    view.context.getColor(R.color.lessonTypeNotImportantText))
+            } else {
+                0xffffffff.toInt()
             }
 
             val chipColor  = if (enabled) {
@@ -439,70 +472,40 @@ class LessonAdapter(
 
             val sp17 = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
-                17f,
+                19f,
                 view.resources.displayMetrics
             ).toInt()
 
-
-            // Lesson title
-            builder.append(lesson.title)
-
+            if (hasTime) {
+                val (timeStart, timeEnd) = lesson.time
+                builder.appendAny(
+                    "\u00A0",
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    RoundedBackgroundSpan(chipColor, height = sp17, text = "$timeStart - $timeEnd", textColor = chipTextColor),
+                    StyleSpan(Typeface.BOLD)
+                )
+            }
 
             // Lesson type label
-            builder.append("  ")
+            if (hasTime) {
+                builder.append("  ")
+            }
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type.toLowerCase()),
+                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type, textColor = colorTextType),
                 StyleSpan(Typeface.BOLD)
             )
 
 
             // Duration label
-            builder.append("  ")
-            builder.appendAny(
-                "\u00A0",
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(chipColor, height = sp17, text = getDuration(), textColor = chipTextColor),
-                StyleSpan(Typeface.BOLD)
-            )
+            lessonDuration.text = getDuration()
 
-            val currentOrder: Int
-            val currentLessonIsStarted: Boolean
-            if (lesson.groupIsEvening) {
-                currentOrder = adapter.currentOrderEvening
-                currentLessonIsStarted = adapter.currentOrderIsStartedEvening
-            } else {
-                currentOrder = adapter.currentOrder
-                currentLessonIsStarted = adapter.currentOrderIsStarted
-            }
+            lessonFeatures.text = builder
+            lessonFeatures.isEnabled = enabled
 
-
-            // Current lessons label
-            if (enabled && lesson.order == currentOrder) {
-                val currentLessonText: String
-                val currentLessonColor: Int
-                if (currentLessonIsStarted) {
-                    val time = getTime((lesson.localTime.first.until(LocalTime.now(), ChronoUnit.SECONDS) / 60f).roundToLong(), true)
-                    currentLessonColor = 0xff229954.toInt()
-                    currentLessonText = "Идёт ${time.toLowerCase()}"
-                } else {
-                    val time = getTime((LocalTime.now().until(lesson.localTime.first, ChronoUnit.SECONDS) / 60f).roundToLong(), false)
-                    currentLessonColor = 0xffe67e22.toInt()
-                    currentLessonText = "${time.toLowerCase()} до начала"
-                }
-
-                builder.append("  ")
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(currentLessonColor, height = sp17, text = currentLessonText),
-                    StyleSpan(Typeface.BOLD)
-                )
-            }
-
-            lessonTitle.text = builder
-            lessonTitle.isEnabled = enabled
+            // Lesson title
+            lessonTitle.text = lesson.title
         }
 
         private fun getDuration(): String {
@@ -540,6 +543,8 @@ class LessonAdapter(
                 } else {
                     "$dayDuration ${getEnding(dayDuration)}"
                 }
+            } else if (monthDurationRounded < 1f) {
+                (dayDuration / 7f).roundToInt().toString() + " нед."
             } else {
                 "%.${decimalPlaces}f мес.".format(monthDurationRounded)
             }
@@ -632,9 +637,10 @@ class LessonAdapter(
         }
     }
 
-    class ViewHolderInfo(view: View): RecyclerView.ViewHolder(view) {
+    class ViewHolderInfo(val view: View): RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
         private val lessonInfo: TextView = view.findViewById(R.id.text_info)
+        private val lessonTitle: TextView = view.findViewById(R.id.text_title)
 
         fun bind(adapter: LessonAdapter) {
             this.adapter = adapter
@@ -642,15 +648,22 @@ class LessonAdapter(
         }
 
         private fun setInfo() {
-            var info: String
             val prevLesson = adapter.dailySchedule[adapterPosition - 1]
             val nextLesson = adapter.dailySchedule[adapterPosition + 1]
+
+            val builderTitle = SpannableStringBuilder()
+            var info: String
+            val iconId: Int
+
             if (prevLesson.order == 2) {
-                info = "большой перерыв на 40 минут"
-                lessonInfo.text = info
-                lessonInfo.setCompoundDrawablesWithIntrinsicBounds(
-                    R.drawable.ic_round_local_cafe_24, 0, 0, 0
-                )
+                builderTitle.append("Большой перерыв")
+//                builderTitle.appendAny(", ${prevLesson.time.second} - ${nextLesson.time.first}",
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                    RelativeSizeSpan(0.8f),
+//                    ForegroundColorSpan(view.context.getColor(R.color.textSecondary)))
+
+                info = "У тебя будет 40 минут, чтобы перекусить или отдохнуть"
+                iconId = R.drawable.ic_round_local_cafe_24
             } else {
                 val totalMinutes = prevLesson.localTime.second.until(
                     nextLesson.localTime.first, ChronoUnit.MINUTES
@@ -665,7 +678,12 @@ class LessonAdapter(
                     lastNumberOfHours in 2L..4L -> "а"
                     else -> "ов"
                 }
-                info = "окно в $windowTimeHours час$endingHours"
+                builderTitle.append("Окно между занятиями")
+//                builderTitle.appendAny(", ${prevLesson.time.second} - ${nextLesson.time.first}",
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                    RelativeSizeSpan(0.8f),
+//                    ForegroundColorSpan(view.context.getColor(R.color.textSecondary)))
+                info = "У тебя будет $windowTimeHours час$endingHours"
                 if (windowTimeMinutes != 0L) {
                     // *1 минута .. *2, *3, *4 минуты .. *5, *6, *7, *8, *9, *0 минут .. искл. - 11 - 14
                     val lastNumberOfMinutes = windowTimeMinutes % 10
@@ -677,16 +695,18 @@ class LessonAdapter(
                     }
                     info += " $windowTimeMinutes минут$endingMinutes"
                 }
-                lessonInfo.text = info
-                val id = when {
+                info += ", чтобы перекусить или отдохнуть"
+                iconId = when {
                     totalMinutes < 180 -> R.drawable.ic_baseline_fastfood_24
                     totalMinutes < 270 -> R.drawable.ic_round_sports_esports_24
                     else -> R.drawable.ic_round_sports_volleyball_24
                 }
-                lessonInfo.setCompoundDrawablesWithIntrinsicBounds(
-                        id, 0, 0, 0
-                )
             }
+            lessonTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0, 0, iconId, 0
+            )
+            lessonTitle.text = builderTitle
+            lessonInfo.text = info
         }
     }
 }
@@ -726,4 +746,13 @@ fun getTime(totalMinutes: Long, isGenitive: Boolean): String {
     }
 
     return timeLeft.toString()
+}
+
+private fun SpannableStringBuilder.appendAny(text: String, flags: Int, vararg spans: Any) {
+    val start = length
+    append(text)
+    val length = length
+    for (span in spans) {
+        setSpan(span, start, length, flags)
+    }
 }

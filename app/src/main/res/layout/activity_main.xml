@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.fragment.app.FragmentContainerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_host_fragment"
-    android:name="androidx.navigation.fragment.NavHostFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:defaultNavHost="true"
-    app:navGraph="@navigation/nav_graph" />
+    android:layout_height="match_parent">
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:defaultNavHost="true"
+        android:layout_marginBottom="45dp"
+        app:navGraph="@navigation/nav_graph" />
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/activity_main_drawer"
+            app:itemTextColor="@color/main_menu_text"
+            app:itemIconTint="@color/main_menu_text"
+            android:layout_gravity="bottom"
+            app:backgroundTint="@color/layerTwo"/>
+</FrameLayout>

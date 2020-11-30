@@ -51,7 +51,11 @@
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
-  <color name="lessonTimeText">#7A858D</color>
+  <color name="lessonTimeText">@color/accent_text_color</color>
+  <color name="lessonTypeImportant">#f0dcf3</color>
+  <color name="lessonTypeImportantText">#7b3688</color>
+  <color name="lessonTypeNotImportant">#cfeafd</color>
+  <color name="lessonTypeNotImportantText">#4a7d9d</color>
 
   <color name="textAccent">#EAEAEA</color>
   <color name="textAccentDisabled">#545454</color>

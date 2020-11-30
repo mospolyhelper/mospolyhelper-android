@@ -11,7 +11,7 @@ fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
 
     val resList = schedule1.dailySchedules
         .zip(schedule2.dailySchedules) { day1, day2 ->
-            (day1 + day2).sorted()
+            (day1 + day2).toSortedSet().toList()
         }
     val dateFrom = if (schedule1.dateFrom < schedule2.dateFrom) schedule1.dateFrom else schedule2.dateFrom
     val dateTo = if (schedule1.dateTo < schedule2.dateTo) schedule1.dateTo else schedule2.dateTo

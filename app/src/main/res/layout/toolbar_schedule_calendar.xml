@@ -8,9 +8,37 @@
 <androidx.appcompat.widget.Toolbar 
     android:id="@+id/toolbar" 
     app:layout_scrollFlags="scroll|enterAlways"
-    android:layout_width="match_parent" 
+    android:layout_width="match_parent"
     android:background="@drawable/bottom_stroke_calendar"
     android:layout_height="?attr/actionBarSize"
     tools:showIn="@layout/fragment_schedule_calendar" >
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/btngroup_schedule_calendar"
+        android:layout_gravity="end"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:checkedButton="@id/btn_schedule_calendar_three"
+        android:theme="@style/ButtonGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btn_schedule_calendar_one"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_round_view_day_24"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"/>
+        <Button
+            android:id="@+id/btn_schedule_calendar_three"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_round_view_module_24"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"/>
+        <Button
+            android:id="@+id/btn_schedule_calendar_seven"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_round_view_comfy_24"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.appcompat.widget.Toolbar>
 </com.google.android.material.appbar.AppBarLayout>

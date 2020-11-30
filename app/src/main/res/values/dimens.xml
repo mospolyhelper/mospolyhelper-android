@@ -11,21 +11,22 @@
     <dimen name="lesson_info_margin_vertical">10dp</dimen>
     <dimen name="lesson_info_drawable_padding">8dp</dimen>
 
-    <dimen name="lesson_corner_radius">17dp</dimen>
+    <dimen name="lesson_corner_radius">30dp</dimen>
 
     <dimen name="dropdown_padding_left_right">15dp</dimen>
     <dimen name="dropdown_padding_up_down">10dp</dimen>
 
     <dimen name="lesson_icon_size">16dp</dimen>
+    <dimen name="lesson_info_icon_size">16dp</dimen>
 
-    <dimen name="lesson_padding_top">9dp</dimen>
-    <dimen name="lesson_padding_end">17dp</dimen>
-    <dimen name="lesson_padding_bottom">16dp</dimen>
-    <dimen name="lesson_padding_start">17dp</dimen>
+    <dimen name="lesson_padding_top">12dp</dimen>
+    <dimen name="lesson_padding_end">20dp</dimen>
+    <dimen name="lesson_padding_bottom">17.5dp</dimen>
+    <dimen name="lesson_padding_start">20dp</dimen>
 
-    <dimen name="lesson_margin_start">20dp</dimen>
+    <dimen name="lesson_margin_start">12dp</dimen>
     <dimen name="lesson_margin_top">7dp</dimen>
-    <dimen name="lesson_margin_end">20dp</dimen>
+    <dimen name="lesson_margin_end">12dp</dimen>
     <dimen name="lesson_margin_bottom">8dp</dimen>
 
     <dimen name="addresses_tab_height">32sp</dimen>
