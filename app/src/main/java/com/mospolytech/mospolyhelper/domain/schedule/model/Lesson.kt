@@ -280,12 +280,15 @@ data class Lesson(
     fun equalsTime(lesson: Lesson) =
         order == lesson.order && groupIsEvening == lesson.groupIsEvening
 
-    override fun compareTo(other: Lesson): Int = when {
-        order != other.order -> order.compareTo(other.order)
-        groupIsEvening != other.groupIsEvening -> if (groupIsEvening) 1 else -1
-        dateFrom != other.dateFrom -> dateFrom.compareTo(other.dateFrom)
-        dateTo != other.dateTo -> dateTo.compareTo(other.dateTo)
-        else -> groups.joinToString().compareTo(other.groups.joinToString())
+    override fun compareTo(other: Lesson): Int {
+        if (order != other.order) return order.compareTo(other.order)
+        if (groupIsEvening != other.groupIsEvening) return if (groupIsEvening) 1 else -1
+        val g1 = groups.joinToString()
+        val g2 = other.groups.joinToString()
+        val groupComparing = g1.compareTo(g2)
+        if (groupComparing != 0) return groupComparing
+        if (dateFrom != other.dateFrom) return dateFrom.compareTo(other.dateFrom)
+        return dateTo.compareTo(other.dateTo)
     }
 
     data class CurrentLesson(

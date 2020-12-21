@@ -67,8 +67,8 @@ class LessonInfoFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-        sharedElementReturnTransition = sharedElementEnterTransition
+//        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+//        sharedElementReturnTransition = sharedElementEnterTransition
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

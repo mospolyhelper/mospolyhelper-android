@@ -55,14 +55,14 @@ class AddressesFragment : Fragment() {
 
         swipeRefreshLayout.setOnRefreshListener { viewModel.refresh() }
 
-        val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
-        (activity as MainActivity).setSupportActionBar(bottomAppBar)
-        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
-        bottomAppBar.setNavigationOnClickListener {
-            findNavController().safe {
-                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
-            }
-        }
+//        val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
+//        (activity as MainActivity).setSupportActionBar(bottomAppBar)
+//        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+//        bottomAppBar.setNavigationOnClickListener {
+//            findNavController().safe {
+//                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
+//            }
+//        }
 
         addressesViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {

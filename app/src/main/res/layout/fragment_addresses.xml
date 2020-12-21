@@ -21,20 +21,21 @@
         android:id="@+id/frame_layout"
         android:layout_alignParentBottom="true"
         android:elevation="4dp"
-        android:background="@color/layerTwo"
+        android:background="@drawable/background_tab_indicator_schedule_type"
+        android:backgroundTint="@color/colorLevelOne"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.tabs.TabLayout
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:clipToPadding="false"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:clipToPadding="true"
             android:id="@+id/tablayout_addresses"
             style="@style/TabLayoutAddresses"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="?attr/actionBarSize"
+            android:layout_height="32dp"
             app:tabMode="scrollable"/>
-        <include layout="@layout/bottom_app_bar_addresses" />
     </FrameLayout>
 </RelativeLayout>
 
