@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
@@ -16,14 +15,13 @@ import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.KoinComponent
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.LocalTime
 
 
 class ScheduleViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val scheduleUseCase: ScheduleUseCase
+    private val useCase: ScheduleUseCase
 ) : ViewModelBase(mediator, ScheduleViewModel::class.java.simpleName), KoinComponent {
 
     companion object {
@@ -71,36 +69,36 @@ class ScheduleViewModel(
             )
         )
 
-        showEndedLessons = MutableStateFlow(scheduleUseCase.getShowEndedLessons())
-        showCurrentLessons = MutableStateFlow(scheduleUseCase.getShowCurrentLessons())
-        showNotStartedLessons = MutableStateFlow(scheduleUseCase.getShowNotStartedLessons())
-        filterTypes = MutableStateFlow(scheduleUseCase.getFilterTypes())
-        showImportantLessons = MutableStateFlow(scheduleUseCase.getShowImportantLessons())
-        showAverageLessons = MutableStateFlow(scheduleUseCase.getShowAverageLessons())
-        showNotImportantLessons = MutableStateFlow(scheduleUseCase.getShowNotImportantLessons())
-        showNotLabeledLessons = MutableStateFlow(scheduleUseCase.getShowNotLabeledLessons())
+        showEndedLessons = MutableStateFlow(useCase.getShowEndedLessons())
+        showCurrentLessons = MutableStateFlow(useCase.getShowCurrentLessons())
+        showNotStartedLessons = MutableStateFlow(useCase.getShowNotStartedLessons())
+        filterTypes = MutableStateFlow(useCase.getFilterTypes())
+        showImportantLessons = MutableStateFlow(useCase.getShowImportantLessons())
+        showAverageLessons = MutableStateFlow(useCase.getShowAverageLessons())
+        showNotImportantLessons = MutableStateFlow(useCase.getShowNotImportantLessons())
+        showNotLabeledLessons = MutableStateFlow(useCase.getShowNotLabeledLessons())
 
         viewModelScope.async {
             showEndedLessons.collect {
-                scheduleUseCase.setShowEndedLessons(it)
+                useCase.setShowEndedLessons(it)
             }
         }
 
         viewModelScope.async {
             showCurrentLessons.collect {
-                scheduleUseCase.setShowCurrentLessons(it)
+                useCase.setShowCurrentLessons(it)
             }
         }
 
         viewModelScope.async {
             showNotStartedLessons.collect {
-                scheduleUseCase.setShowNotStartedLessons(it)
+                useCase.setShowNotStartedLessons(it)
             }
         }
 
         viewModelScope.async {
             filterTypes.collect { filters ->
-                scheduleUseCase.setFilterTypes(filters)
+                useCase.setFilterTypes(filters)
                 originalSchedule.value.onSuccess {
                     filteredSchedule.value = Result.success(it.copy(schedule = it.schedule?.filter(types = filters)))
                 }
@@ -109,53 +107,53 @@ class ScheduleViewModel(
 
         viewModelScope.async {
             showImportantLessons.collect {
-                scheduleUseCase.setShowImportantLessons(it)
+                useCase.setShowImportantLessons(it)
             }
         }
 
         viewModelScope.async {
             showAverageLessons.collect {
-                scheduleUseCase.setShowAverageLessons(it)
+                useCase.setShowAverageLessons(it)
             }
         }
 
         viewModelScope.async {
             showNotImportantLessons.collect {
-                scheduleUseCase.setShowNotImportantLessons(it)
+                useCase.setShowNotImportantLessons(it)
             }
         }
 
         viewModelScope.async {
             showNotLabeledLessons.collect {
-                scheduleUseCase.setShowNotLabeledLessons(it)
+                useCase.setShowNotLabeledLessons(it)
             }
         }
 
         savedIds = MutableStateFlow(
-            scheduleUseCase.getSavedIds()
+            useCase.getSavedIds()
         )
 
         viewModelScope.async {
             savedIds.collect {
-                scheduleUseCase.setSavedIds(it)
+                useCase.setSavedIds(it)
             }
         }
 
 
         id = MutableStateFlow(
             Pair(
-            scheduleUseCase.getIsStudent(),
-            scheduleUseCase.getSelectedSavedId()
+            useCase.getIsStudent(),
+            useCase.getSelectedSavedId()
             )
         )
 
-        showEmptyLessons = MutableStateFlow(scheduleUseCase.getShowEmptyLessons())
+        showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
 
         viewModelScope.async {
             id.collect {
                 isAdvancedSearch = false
-                scheduleUseCase.setIsStudent(it.first)
-                scheduleUseCase.setSelectedSavedId(it.second)
+                useCase.setIsStudent(it.first)
+                useCase.setSelectedSavedId(it.second)
                 setUpSchedule(it.first, it.second, !firstLoading)
                 firstLoading = false
             }
@@ -163,12 +161,12 @@ class ScheduleViewModel(
 
         viewModelScope.async {
             showEmptyLessons.collect {
-                scheduleUseCase.setShowEmptyLessons(it)
+                useCase.setShowEmptyLessons(it)
             }
         }
 
         viewModelScope.async {
-            savedIds.value = scheduleUseCase.getSavedIds()
+            savedIds.value = useCase.getSavedIds()
         }
         viewModelScope.async {
             originalSchedule.collect { result ->
@@ -252,7 +250,7 @@ class ScheduleViewModel(
     private fun setUpSchedule(isStudent: Boolean, id: String, refresh: Boolean) {
         viewModelScope.async {
             this@ScheduleViewModel.originalSchedule.value = Result.loading()
-            scheduleUseCase.getScheduleWithFeatures(
+            useCase.getScheduleWithFeatures(
                 id,
                 isStudent,
                 refresh

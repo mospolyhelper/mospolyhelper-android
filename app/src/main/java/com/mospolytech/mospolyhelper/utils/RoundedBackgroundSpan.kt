@@ -17,10 +17,10 @@ class RoundedBackgroundSpan(
 
     companion object {
         private const val relativeTextSize = 0.7f
-        private const val topGrowthRate = 0.27f
-        private const val bottomGrowthRate = 0.13f
-        private const val horizontalGrowthRate = 1.8f
-        private const val cornerRadiusPercentage = 0.5f // 0.275f
+        private const val topGrowthRate = 0.21f//0.27f
+        private const val bottomGrowthRate = 0.14f
+        private const val horizontalGrowthRate = 1.4f
+        private const val cornerRadiusPercentage = 0.275f // 0.275f
         private const val bottomSpacing = 1f
     }
 

@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.utils.Action1
+import com.mospolytech.mospolyhelper.utils.Event1
 import java.text.DateFormatSymbols
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -23,6 +25,12 @@ class DateAdapter(
     val firstDate = dateFrom.minusDays((dateFrom.dayOfWeek.value - DayOfWeek.MONDAY.value).toLong())
     val lastDate = dateTo.plusDays((DayOfWeek.SUNDAY.value - dateTo.dayOfWeek.value).toLong())
     private val count = ((firstDate.until(lastDate, ChronoUnit.DAYS) + 1) / 7).toInt()
+
+    val dateChanged: Event1<LocalDate> = Action1<LocalDate>()
+
+    fun updateDate(date: LocalDate) {
+        (dateChanged as Action1).invoke(date)
+    }
 
     override fun getItemCount() = count
 
@@ -49,6 +57,10 @@ class DateAdapter(
             for (i in 0..6) {
                 tabLayout.getTabAt(i)?.text =
                     firstDateOfWeek.plusDays(i.toLong()).format(dateFormatter).toUpperCase()
+            }
+            tabLayout.getTabAt(LocalDate.now().dayOfWeek.value - 1)?.select()
+            dateChanged += {
+                tabLayout.getTabAt(it.dayOfWeek.value - 1)?.select()
             }
         }
     }

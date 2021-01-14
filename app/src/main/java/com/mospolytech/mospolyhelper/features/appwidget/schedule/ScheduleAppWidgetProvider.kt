@@ -6,12 +6,11 @@ import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -80,11 +79,11 @@ class ScheduleAppWidgetProvider : AppWidgetProvider() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
             var idFull = prefs.getString(
                 PreferenceKeys.ScheduleGroupTitle,
-                DefaultSettings.ScheduleGroupTitle
+                PreferenceDefaults.ScheduleGroupTitle
             )!!
             val isStudent = prefs.getBoolean(
                 PreferenceKeys.ScheduleUserTypePreference,
-                DefaultSettings.ScheduleUserTypePreference
+                PreferenceDefaults.ScheduleUserTypePreference
             )
             if (!isStudent) {
                 idFull = "преп. ID" + idFull

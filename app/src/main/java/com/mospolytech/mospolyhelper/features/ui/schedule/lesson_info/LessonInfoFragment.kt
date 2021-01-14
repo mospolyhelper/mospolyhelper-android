@@ -278,9 +278,9 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setDeadlines() {
-        lessonDeadlinesTextView.setOnClickListener {
-            findNavController().safe { navigate(NavGraphDirections.navDeadlines()) }
-        }
+//        lessonDeadlinesTextView.setOnClickListener {
+//            findNavController().safe { navigate(NavGraphDirections.navDeadlines()) }
+//        }
 //        viewModel.deadlinesRepository.foundData.observe(viewLifecycleOwner, Observer { deadlines ->
 //            textView.text = deadlines?.joinToString(separator = "\n") { "${it.name} ${it.description}" } ?: "Дедлайнов нет"
 //        })

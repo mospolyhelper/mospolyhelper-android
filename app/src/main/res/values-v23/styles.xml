@@ -138,7 +138,7 @@
   </style>
 
   <style name="ScheduleLessonTitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">17.5sp</item>
+    <item name="android:textSize">21sp</item>
     <item name="android:fontFamily">@font/open_sans</item>
     <item name="android:textColor">@color/accent_text_color</item>
     <item name="android:breakStrategy">simple</item>

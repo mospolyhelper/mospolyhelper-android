@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_auth"
+        android:icon="@drawable/ic_baseline_account_circle_24"
+        android:title="Auth" />
+    <item
+        android:id="@+id/nav_info"
+        android:icon="@drawable/ic_round_info_24"
+        android:title="Info" />
+    <item
+        android:id="@+id/nav_applications"
+        android:icon="@drawable/ic_round_article_24"
+        android:title="Applications" />
+    <item
+        android:id="@+id/nav_marks"
+        android:icon="@drawable/ic_baseline_looks_5_24"
+        android:title="Marks" />
+    <item
+        android:id="@+id/nav_payments"
+        android:icon="@drawable/ic_baseline_payments_24"
+        android:title="Payments" />
+    <item
+        android:id="@+id/nav_students"
+        android:icon="@drawable/ic_id_group"
+        android:title="Students" />
+    <item
+        android:id="@+id/nav_teachers"
+        android:icon="@drawable/ic_id_teacher"
+        android:title="Teachers" />
+</menu>

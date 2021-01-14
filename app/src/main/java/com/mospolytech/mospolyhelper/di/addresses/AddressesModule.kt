@@ -6,7 +6,7 @@ import com.mospolytech.mospolyhelper.data.addresses.remote.AddressesRemoteDataSo
 import com.mospolytech.mospolyhelper.data.addresses.repository.AddressesRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.addresses.repository.AddressesRepository
 import com.mospolytech.mospolyhelper.domain.addresses.usecase.AddressesUseCase
-import com.mospolytech.mospolyhelper.features.ui.addresses.AddressesViewModel
+import com.mospolytech.mospolyhelper.features.ui.utilities.addresses.AddressesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

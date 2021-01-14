@@ -62,10 +62,10 @@ android {
 }
 
 dependencies {
-    def nav_version = '2.3.1'
+    def nav_version = '2.3.2'
     def koin_version= "2.2.0-beta-1"
     def ktor_version= "1.4.0"
-    def room_version = "2.2.5"
+    def room_version = '2.2.6'
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -115,11 +115,12 @@ dependencies {
 
     // Network
     implementation "io.ktor:ktor-client-android:$ktor_version"
+    implementation "io.ktor:ktor-client-serialization:$ktor_version"
 
     // Json
     implementation 'com.beust:klaxon:5.4'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"

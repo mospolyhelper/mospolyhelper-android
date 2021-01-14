@@ -24,7 +24,7 @@
   <PreferenceScreen
       app:title="@string/pref_category_appwidget"
       app:key="ScheduleAppWidgetScreen">
-<com.mospolytech.mospolyhelper.features.ui.settings.schedule_appwidget.ScheduleAppWidgetPreference
+<com.mospolytech.mospolyhelper.features.ui.utilities.settings.schedule_appwidget.ScheduleAppWidgetPreference
     app:key="ScheduleAppWidgetView" />
     <CheckBoxPreference
         app:key="ScheduleAppwidgetShowOrder"

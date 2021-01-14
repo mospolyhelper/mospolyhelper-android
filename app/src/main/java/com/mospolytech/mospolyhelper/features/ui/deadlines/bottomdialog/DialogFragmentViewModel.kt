@@ -13,7 +13,7 @@ import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Action1
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.Event1
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.*
@@ -56,10 +56,10 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         val prefs = PreferenceManager.getDefaultSharedPreferences(App.context)
         val groupTitle = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,
-            DefaultSettings.ScheduleGroupTitle)
+            PreferenceDefaults.ScheduleGroupTitle)
         val isStudent = SharedPreferencesDataSource(prefs).getBoolean(
             PreferenceKeys.ScheduleUserTypePreference,
-            DefaultSettings.ScheduleUserTypePreference
+            PreferenceDefaults.ScheduleUserTypePreference
         )
         setUpSchedule(groupTitle!!, isStudent)
         return this@DialogFragmentViewModel.schedule.value?.let {
