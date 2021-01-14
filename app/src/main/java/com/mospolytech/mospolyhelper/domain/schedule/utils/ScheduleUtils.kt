@@ -11,12 +11,34 @@ fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
 
     val resList = schedule1.dailySchedules
         .zip(schedule2.dailySchedules) { day1, day2 ->
-            (day1 + day2).toSortedSet().toList()
+            (day1 + day2).toSortedSet().toMutableList()
         }
-    val dateFrom = if (schedule1.dateFrom < schedule2.dateFrom) schedule1.dateFrom else schedule2.dateFrom
-    val dateTo = if (schedule1.dateTo < schedule2.dateTo) schedule1.dateTo else schedule2.dateTo
 
-    return Schedule(resList, dateFrom, dateTo)
+    resList.forEach { it.sort() }
+
+    val tempListNew: List<MutableList<Lesson>> = listOf(
+        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
+        mutableListOf(), mutableListOf(), mutableListOf()
+    )
+
+    for (day in resList.withIndex()) {
+        val dayNew = tempListNew[day.index]
+        for (lesson in day.value) {
+            val indexGroup = dayNew.indexOfFirst { it.canMergeByGroup(lesson) }
+            if (indexGroup == -1) {
+                val indexDate = dayNew.indexOfFirst { it.canMergeByDate(lesson) }
+                if (indexDate == -1) {
+                    dayNew += lesson
+                } else {
+                    dayNew[indexDate] = dayNew[indexDate].mergeByDate(lesson)
+                }
+            } else {
+                dayNew[indexGroup] = dayNew[indexGroup].mergeByGroup(lesson)
+            }
+        }
+    }
+
+    return Schedule.from(tempListNew)
 }
 
 fun Schedule.getAllTypes(): Set<String> {
@@ -108,12 +130,16 @@ fun Iterable<Schedule?>.filter(
     for (day in tempList.withIndex()) {
         val dayNew = tempListNew[day.index]
         for (lesson in day.value) {
-            val index = dayNew.indexOfFirst { isEqualForGroups(lesson, it) }
-            if (index == -1) {
-                dayNew += lesson
+            val indexGroup = dayNew.indexOfFirst { it.canMergeByGroup(lesson) }
+            if (indexGroup == -1) {
+                val indexDate = dayNew.indexOfFirst { it.canMergeByDate(lesson) }
+                if (indexDate == -1) {
+                    dayNew += lesson
+                } else {
+                    dayNew[indexDate] = dayNew[indexDate].mergeByDate(lesson)
+                }
             } else {
-                val lessonEqualForGroups = dayNew[index]
-                dayNew[index] = lesson.copy(groups = lessonEqualForGroups.groups + lesson.groups)
+                dayNew[indexGroup] = dayNew[indexGroup].mergeByGroup(lesson)
             }
         }
     }
@@ -179,13 +205,4 @@ private fun checkFilter(filterList: Iterable<String>, values: Iterable<String>):
     else {
         return true
     }
-}
-
-private fun isEqualForGroups(l1: Lesson, l2: Lesson): Boolean {
-    return l1.order == l2.order &&
-            l1.title == l2.title &&
-            l1.auditoriums == l2.auditoriums &&
-            l1.teachers == l2.teachers &&
-            l1.dateFrom == l2.dateFrom &&
-            l1.dateTo == l2.dateTo
 }

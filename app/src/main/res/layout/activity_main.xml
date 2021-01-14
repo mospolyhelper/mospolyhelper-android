@@ -10,16 +10,18 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:defaultNavHost="true"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="?attr/actionBarSize"
         app:navGraph="@navigation/nav_graph" />
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
+            app:itemIconSize="27dp"
+            app:elevation="0dp"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="?attr/actionBarSize"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/activity_main_drawer"
             app:itemTextColor="@color/main_menu_text"
             app:itemIconTint="@color/main_menu_text"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/layerTwo"/>
+            app:backgroundTint="@color/layerZero"/>
 </FrameLayout>

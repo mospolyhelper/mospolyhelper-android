@@ -5,21 +5,21 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_relevant"
+            android:icon="@drawable/ic_current_lesson"
+            android:title="Relevant" />
+        <item
             android:id="@+id/nav_schedule"
-            android:icon="@drawable/ic_menu_schedule"
+            android:icon="@drawable/ic_baseline_calendar"
             android:title="@string/nav_schedule" />
         <item
-            android:id="@+id/nav_deadlines"
-            android:icon="@drawable/nav_deadlines"
-            android:title="@string/nav_deadlines" />
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_round_person_24"
+            android:title="Account"/>
         <item
-            android:id="@+id/nav_addresses"
-            android:icon="@drawable/ic_lesson_location"
-            android:title="@string/nav_addresses" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/nav_settings_24px"
-            android:title="@string/nav_settings"/>
+            android:id="@+id/nav_utilities"
+            android:icon="@drawable/ic_round_widgets_24"
+            android:title="Utilities"/>
     </group>
 
 </menu>

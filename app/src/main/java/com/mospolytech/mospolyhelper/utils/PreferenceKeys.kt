@@ -21,9 +21,16 @@ class PreferenceKeys {
         const val ShowCurrentLessons = "ShowCurrentLessons"
         const val ShowNotStartedLessons = "ShowNotStartedLessons"
         const val FilterTypes = "FilterTypes"
-        const val ShowImportantLessons = "ShowEndedLessons"
-        const val ShowAverageLessons = "ShowEndedLessons"
-        const val ShowNotImportantLessons = "ShowEndedLessons"
-        const val ShowNotLabeledLessons = "ShowEndedLessons"
+        const val ShowImportantLessons = "ShowImportantLessons"
+        const val ShowAverageLessons = "ShowAverageLessons"
+        const val ShowNotImportantLessons = "ShowNotImportantLessons"
+        const val ShowNotLabeledLessons = "ShowNotLabeledLessons"
+
+        // Account
+        const val Login = "Login"
+        const val Password = "Password"
+        const val SessionId = "SessionId"
+        const val SaveLogin = "SaveLogin"
+        const val SavePassword = "SavePassword"
     }
 }

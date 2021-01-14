@@ -6,11 +6,14 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.res.AssetManager
 import android.os.Build
+import com.mospolytech.mospolyhelper.di.account.authModule
+import com.mospolytech.mospolyhelper.di.account.infoModule
 import com.mospolytech.mospolyhelper.di.addresses.addressesModule
 import com.mospolytech.mospolyhelper.di.appModule
 import com.mospolytech.mospolyhelper.di.core.coreModule
 import com.mospolytech.mospolyhelper.di.deadline.deadlineModule
 import com.mospolytech.mospolyhelper.di.main.mainModule
+import com.mospolytech.mospolyhelper.di.relevant.relevantModule
 import com.mospolytech.mospolyhelper.di.schedule.scheduleModule
 import com.mospolytech.mospolyhelper.utils.NotificationChannelIds
 import org.koin.android.ext.koin.androidContext
@@ -42,6 +45,11 @@ class App : Application() {
             coreModule,
             mainModule,
 
+            // Account
+            authModule,
+            infoModule,
+
+            relevantModule,
             addressesModule,
             deadlineModule,
             scheduleModule

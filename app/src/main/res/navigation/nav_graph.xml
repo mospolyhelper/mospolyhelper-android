@@ -31,12 +31,12 @@
     <fragment
         android:id="@+id/addressesFragment"
         tools:layout="@layout/fragment_addresses"
-        android:name="com.mospolytech.mospolyhelper.features.ui.addresses.AddressesFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.addresses.AddressesFragment"
         android:label="AddressesFragment" />
     <fragment
         android:id="@+id/settingsFragment"
         tools:layout="@layout/fragment_settings"
-        android:name="com.mospolytech.mospolyhelper.features.ui.settings.SettingsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.settings.SettingsFragment"
         android:label="SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_self"
@@ -85,31 +85,24 @@
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
     <action
-        android:id="@+id/nav_addresses"
-        app:destination="@id/addressesFragment"
+        android:id="@+id/nav_relevant"
+        app:destination="@id/relevantFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/nav_account"
+        app:destination="@id/accountMenuFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
     <action
-        android:id="@+id/nav_deadlines"
-        app:destination="@id/deadlineFragment"
+        android:id="@+id/nav_utilities"
+        app:destination="@id/utilitiesMenuFragment"
         app:popUpTo="@id/nav_graph"
         app:popUpToInclusive="true" />
-    <action
-        android:id="@+id/nav_settings"
-        app:destination="@id/settingsFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true" />
-    <dialog
-        android:id="@+id/mainMenuFragment"
-        tools:layout="@layout/bottom_sheet_main_menu"
-        android:name="com.mospolytech.mospolyhelper.features.ui.main.MainMenuFragment"
-        android:label="MainMenuFragment" />
-    <action
-        android:id="@+id/action_global_mainMenuFragment"
-        app:destination="@id/mainMenuFragment" />
     <fragment
         android:id="@+id/scheduleAppWidgetPreferences"
-        android:name="com.mospolytech.mospolyhelper.features.ui.settings.schedule_appwidget.ScheduleAppWidgetPreferences"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.settings.schedule_appwidget.ScheduleAppWidgetPreferences"
         android:label="ScheduleAppWidgetPreferences" />
     <dialog
         android:id="@+id/scheduleIdsFragment"
@@ -121,5 +114,54 @@
         tools:layout="@layout/bottom_sheet_schedule_filters"
         android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFiltersFragment"
         android:label="ScheduleFiltersFragment" />
+    <fragment
+        tools:layout="@layout/fragment_account_students"
+        android:id="@+id/studentsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.students.StudentsFragment"
+        android:label="StudentsFragment" />
+    <fragment
+        tools:layout="@layout/fragment_relevant"
+        android:id="@+id/relevantFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.relevant.RelevantFragment"
+        android:label="RelevantFragment" />
+    <fragment
+        tools:layout="@layout/fragment_menu_utilities"
+        android:id="@+id/utilitiesMenuFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.menu.UtilitiesMenuFragment"
+        android:label="UtilitiesMenuFragment" >
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_addressesFragment"
+            app:destination="@id/addressesFragment" />
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_deadlineFragment"
+            app:destination="@id/deadlineFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_menu_account"
+        android:id="@+id/accountMenuFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.menu.AccountMenuFragment"
+        android:label="AccountMenuFragment" >
+        <action
+            android:id="@+id/action_accountMenuFragment_to_studentsFragment"
+            app:destination="@id/studentsFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_infoFragment"
+            app:destination="@id/infoFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_account_auth"
+        android:id="@+id/authFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.auth.AuthFragment"
+        android:label="AuthFragment" />
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.info.InfoFragment"
+        android:label="InfoFragment" />
 
 </navigation>

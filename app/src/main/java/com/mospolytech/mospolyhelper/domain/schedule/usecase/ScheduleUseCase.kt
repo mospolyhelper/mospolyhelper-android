@@ -4,18 +4,16 @@ import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.data.schedule.repository.LessonLabelRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.SavedIdsRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.TeacherListRepository
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 data class ScheduleLabelDeadline(
@@ -87,7 +85,7 @@ class ScheduleUseCase(
     fun getSelectedSavedId(): String {
         return sharedPreferencesDataSource.getString(
             PreferenceKeys.ScheduleGroupTitle,
-            DefaultSettings.ScheduleGroupTitle
+            PreferenceDefaults.ScheduleGroupTitle
         )
     }
 
@@ -101,7 +99,7 @@ class ScheduleUseCase(
     fun getIsStudent(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ScheduleUserTypePreference,
-            DefaultSettings.ScheduleUserTypePreference
+            PreferenceDefaults.ScheduleUserTypePreference
         )
     }
 
@@ -115,7 +113,7 @@ class ScheduleUseCase(
     fun getShowEmptyLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ScheduleShowEmptyLessons,
-            DefaultSettings.ScheduleShowEmptyLessons
+            PreferenceDefaults.ScheduleShowEmptyLessons
         )
     }
 
@@ -129,7 +127,7 @@ class ScheduleUseCase(
     fun getShowEndedLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowEndedLessons,
-            DefaultSettings.ShowEndedLessons
+            PreferenceDefaults.ShowEndedLessons
         )
     }
 
@@ -143,7 +141,7 @@ class ScheduleUseCase(
     fun getShowCurrentLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowCurrentLessons,
-            DefaultSettings.ShowCurrentLessons
+            PreferenceDefaults.ShowCurrentLessons
         )
     }
 
@@ -157,7 +155,7 @@ class ScheduleUseCase(
     fun getShowNotStartedLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowNotStartedLessons,
-            DefaultSettings.ShowNotStartedLessons
+            PreferenceDefaults.ShowNotStartedLessons
         )
     }
 
@@ -171,7 +169,7 @@ class ScheduleUseCase(
     fun getFilterTypes(): Set<String> {
         return sharedPreferencesDataSource.getStringSet(
             PreferenceKeys.FilterTypes,
-            DefaultSettings.FilterTypes
+            PreferenceDefaults.FilterTypes
         )
     }
 
@@ -185,7 +183,7 @@ class ScheduleUseCase(
     fun getShowImportantLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowImportantLessons,
-            DefaultSettings.ShowImportantLessons
+            PreferenceDefaults.ShowImportantLessons
         )
     }
 
@@ -199,7 +197,7 @@ class ScheduleUseCase(
     fun getShowAverageLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowAverageLessons,
-            DefaultSettings.ShowAverageLessons
+            PreferenceDefaults.ShowAverageLessons
         )
     }
 
@@ -213,7 +211,7 @@ class ScheduleUseCase(
     fun getShowNotImportantLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowNotImportantLessons,
-            DefaultSettings.ShowNotImportantLessons
+            PreferenceDefaults.ShowNotImportantLessons
         )
     }
 
@@ -227,7 +225,7 @@ class ScheduleUseCase(
     fun getShowNotLabeledLessons(): Boolean {
         return sharedPreferencesDataSource.getBoolean(
             PreferenceKeys.ShowNotLabeledLessons,
-            DefaultSettings.ShowNotLabeledLessons
+            PreferenceDefaults.ShowNotLabeledLessons
         )
     }
 

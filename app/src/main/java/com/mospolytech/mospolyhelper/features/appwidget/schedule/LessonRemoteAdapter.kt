@@ -16,7 +16,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import java.time.LocalDate
 
@@ -128,11 +128,11 @@ class LessonRemoteAdapter(
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val id = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,
-            DefaultSettings.ScheduleGroupTitle
+            PreferenceDefaults.ScheduleGroupTitle
         )!!
         val isStudent = prefs.getBoolean(
             PreferenceKeys.ScheduleUserTypePreference,
-            DefaultSettings.ScheduleUserTypePreference
+            PreferenceDefaults.ScheduleUserTypePreference
         )
         val schedule = localDataSource.get(id, isStudent)
         if (schedule == null) {

@@ -351,11 +351,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         val bottomAppBar = bottomAppBar
         (activity as MainActivity).setSupportActionBar(bottomAppBar)
         (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
-        bottomAppBar.setNavigationOnClickListener {
-            findNavController().safe {
-                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
-            }
-        }
         val inputMethodManager =
             requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         button_search_deadline.setOnClickListener {

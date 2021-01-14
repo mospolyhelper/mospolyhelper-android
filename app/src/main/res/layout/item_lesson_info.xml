@@ -30,7 +30,7 @@
         android:layout_marginStart="@dimen/lesson_margin_start"
         android:layout_marginEnd="@dimen/lesson_margin_end"
         android:layout_marginBottom="14dp"
-        android:breakStrategy="simple"
+        android:breakStrategy="balanced"
         android:clickable="false"
         android:text="окно в 1 час 50 минут" />
 

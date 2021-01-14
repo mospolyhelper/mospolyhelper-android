@@ -13,20 +13,14 @@ import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
-import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-import com.mospolytech.mospolyhelper.utils.DefaultSettings
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.NotificationChannelIds
 import com.mospolytech.mospolyhelper.utils.NotificationIds
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -85,7 +79,7 @@ class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val groupTitle = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,
-            DefaultSettings.ScheduleGroupTitle
+            PreferenceDefaults.ScheduleGroupTitle
         )!!
         var isSession = true
         var schedule = dataSource.get(groupTitle, isSession)

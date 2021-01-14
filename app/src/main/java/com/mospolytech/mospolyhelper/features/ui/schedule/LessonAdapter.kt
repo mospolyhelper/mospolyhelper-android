@@ -423,9 +423,9 @@ class LessonAdapter(
 
                 lessonTime.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_current_lesson, 0, 0, 0)
                 lessonTime.text = currentLessonText
-                lessonTime.visibility = View.VISIBLE
+                //lessonTime.visibility = View.VISIBLE
             } else {
-                lessonTime.visibility = View.GONE
+                //lessonTime.visibility = View.GONE
             }
         }
 
@@ -478,34 +478,40 @@ class LessonAdapter(
 
             if (hasTime) {
                 val (timeStart, timeEnd) = lesson.time
-                builder.appendAny(
-                    "\u00A0",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    RoundedBackgroundSpan(chipColor, height = sp17, text = "$timeStart - $timeEnd", textColor = chipTextColor),
-                    StyleSpan(Typeface.BOLD)
-                )
+                lessonTime.text = "$timeStart - $timeEnd"
+//                builder.appendAny(
+//                    "\u00A0",
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                    RoundedBackgroundSpan(chipColor, height = sp17, text = "$timeStart - $timeEnd", textColor = chipTextColor),
+//                    StyleSpan(Typeface.BOLD)
+//                )
             }
 
             // Lesson type label
             if (hasTime) {
-                builder.append("  ")
+                //builder.append("  ")
             }
+            builder.append(
+                lesson.title + "  ",
+                RelativeSizeSpan(0.87f),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             builder.appendAny(
                 "\u00A0",
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                 RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type, textColor = colorTextType),
                 StyleSpan(Typeface.BOLD)
             )
-
+            //builder.append(lesson.type, ForegroundColorSpan(colorType), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             // Duration label
             lessonDuration.text = getDuration()
 
-            lessonFeatures.text = builder
+            //lessonFeatures.text = builder
             lessonFeatures.isEnabled = enabled
-
+            lessonFeatures.visibility = View.GONE
             // Lesson title
-            lessonTitle.text = lesson.title
+            lessonTitle.text =  builder//lesson.title
         }
 
         private fun getDuration(): String {

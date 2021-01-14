@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
+import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+
 private const val minCriticalTitleLength = 10
 private const val minCriticalWordLength = 5
 
@@ -50,4 +52,34 @@ fun abbreviationFrom(title: String): String {
 
 fun getShortType(type: String): String {
     return type.split(' ').filter { it.isNotEmpty() }.joinToString(" ") { cutWord(it) }
+}
+
+fun Lesson.canMergeByDate(other: Lesson): Boolean {
+    return order == other.order &&
+            title == other.title &&
+            type == other.type &&
+            teachers == other.teachers &&
+            auditoriums == other.auditoriums &&
+            groups == other.groups &&
+            (other.dateFrom in dateFrom..dateTo ||
+            dateFrom in other.dateFrom..other.dateTo)
+}
+
+fun Lesson.mergeByDate(other: Lesson): Lesson {
+    val minDate = if (dateFrom < other.dateFrom) dateFrom else other.dateFrom
+    val maxDate = if (dateTo > other.dateTo) dateTo else other.dateTo
+    return copy(dateFrom = minDate, dateTo = maxDate)
+}
+
+fun Lesson.canMergeByGroup(other: Lesson): Boolean {
+    return order == other.order &&
+            title == other.title &&
+            auditoriums == other.auditoriums &&
+            teachers == other.teachers &&
+            dateFrom == other.dateFrom &&
+            dateTo == other.dateTo
+}
+
+fun Lesson.mergeByGroup(other: Lesson): Lesson {
+    return copy(groups = (groups + other.groups).sortedBy { it.title })
 }

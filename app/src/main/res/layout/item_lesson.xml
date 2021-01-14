@@ -7,12 +7,13 @@
     android:clickable="false">
 
     <TextView
-        android:layout_marginStart="@dimen/lesson_margin_start"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="@dimen/lesson_margin_end"
         android:layout_marginBottom="2dp"
         android:layout_marginTop="3dp"
         android:paddingStart="@dimen/lesson_padding_start"
         android:paddingEnd="@dimen/lesson_padding_end"
+        android:textSize="18sp"
         android:drawablePadding="8dp"
         android:id="@+id/text_lesson_time"
         style="@style/ScheduleLessonSubtitle"
@@ -22,7 +23,8 @@
         android:breakStrategy="simple"
         android:clickable="false"
         android:text="16:10"
-        app:drawableTint="#ff5722" />
+        app:drawableTint="#ccc"
+        app:drawableStartCompat="@drawable/ic_baseline_looks_3_24" />
 
         <LinearLayout
             android:id="@+id/layout_lesson"
@@ -41,35 +43,35 @@
             android:paddingEnd="@dimen/lesson_padding_end"
             android:paddingBottom="@dimen/lesson_padding_bottom">
 
-            <TextView
-                android:id="@+id/text_schedule_features"
-                style="@style/ScheduleLessonTitle"
-                android:textSize="23sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:hyphenationFrequency="full"
-                android:text="Лекция" />
+
 
             <TextView
                 android:id="@+id/text_schedule_title"
                 style="@style/ScheduleLessonTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
                 android:clickable="false"
                 android:ellipsize="end"
                 android:hyphenationFrequency="full"
                 android:text="Объектно-ориентированное программирование" />
-
+            <TextView
+                android:id="@+id/text_schedule_features"
+                style="@style/ScheduleLessonTitle"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:hyphenationFrequency="full"
+                android:text="Лекция" />
             <TextView
                 android:id="@+id/text_lesson_teachers"
                 style="@style/ScheduleLessonSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="3dp"
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_teacher"
@@ -83,7 +85,7 @@
                 style="@style/ScheduleLessonSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="3dp"
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_group"

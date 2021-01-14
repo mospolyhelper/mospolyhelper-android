@@ -189,6 +189,8 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         (activity as MainActivity).setSupportActionBar(toolbar)
         (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
 
+        viewPagerDate.isUserInputEnabled = false
+
         idBtn.setOnClickListener {
             if (idsScroll.visibility == View.VISIBLE) {
                 idsScroll.visibility = View.GONE
@@ -598,6 +600,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 val dif = abs(dateNextPos - viewPagerDate.currentItem)
                 viewPagerDate.setCurrentItem(dateNextPos, dif == 1)
             }
+            (viewPagerDate.adapter as? DateAdapter)?.updateDate(viewModel.date.value)
 
 
             if (tabLayout != null && tabLayout.selectedTabPosition != position && position < tabLayout.tabCount) {
