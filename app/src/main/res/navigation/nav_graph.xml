@@ -78,7 +78,11 @@
         android:id="@+id/deadlineFragment"
         tools:layout="@layout/fragment_deadline"
         android:name="com.mospolytech.mospolyhelper.features.ui.deadlines.DeadlineFragment"
-        android:label="DeadlineFragment" />
+        android:label="DeadlineFragment" >
+        <action
+            android:id="@+id/action_deadlineFragment_to_addBottomSheetDialogFragment"
+            app:destination="@id/addBottomSheetDialogFragment" />
+    </fragment>
     <action
         android:id="@+id/nav_schedule"
         app:destination="@id/scheduleFragment"
@@ -121,5 +125,15 @@
         tools:layout="@layout/bottom_sheet_schedule_filters"
         android:name="com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFiltersFragment"
         android:label="ScheduleFiltersFragment" />
+    <dialog
+        android:id="@+id/addBottomSheetDialogFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment"
+        android:label="AddBottomSheetDialogFragment" >
+        <argument
+            android:name="deadline"
+            app:argType="com.mospolytech.mospolyhelper.domain.deadline.model.Deadline"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
 
 </navigation>

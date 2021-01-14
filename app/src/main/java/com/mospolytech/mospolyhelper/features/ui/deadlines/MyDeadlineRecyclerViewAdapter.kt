@@ -38,6 +38,8 @@ class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
         var color: Int = R.color.defaultCardColor
         if (items[position].pinned) {
             color = R.color.colorCompleted
+        } else {
+            color = R.color.defaultCardColor
         }
         if (items[position].completed) {
             color = R.color.colorPinned

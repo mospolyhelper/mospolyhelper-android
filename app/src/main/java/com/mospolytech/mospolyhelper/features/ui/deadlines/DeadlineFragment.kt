@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -85,29 +86,15 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
-        bot = AddBottomSheetDialogFragment.newInstance(requireContext())
-        fm = (activity as MainActivity).supportFragmentManager
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
         setToolbar()
         fab.setOnClickListener(this)
     }
 
-    // простите меня за это
-    private fun temporaryFix() {
-        bot.show(fm,
-            AddBottomSheetDialogFragment.TAG
-        )
-        bot.dismiss()
-        bot.show(fm,
-            AddBottomSheetDialogFragment.TAG
-        )
-        bot.dismiss()
-    }
 
     override fun onResume() {
         super.onResume()
-        temporaryFix()
         defaultData()
         editDeadline()
         deleteDeadline()
@@ -120,15 +107,15 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         viewModel.edit.removeObservers(viewLifecycleOwner)
         viewModel.foundData.removeObservers(viewLifecycleOwner)
         viewModel.delete.removeObservers(viewLifecycleOwner)
-        bot.dismiss()
+        //bot.dismiss()
     }
 
     private fun receiveName() {
         viewModel.nameReceiver.observe(viewLifecycleOwner, Observer<String> {
-            bot.setName(it)
-            bot.show(fm,
-                AddBottomSheetDialogFragment.TAG
-            )
+//            bot.setName(it)
+//            bot.show(fm,
+//                AddBottomSheetDialogFragment.TAG
+//            )
         })
     }
 
@@ -136,10 +123,8 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         viewModel.edit.observe(viewLifecycleOwner, Observer<Deadline> {
             if (!viewModel.isUpdated(it))
             {
-                bot.setEdit(it)
-                bot.show(fm,
-                    AddBottomSheetDialogFragment.TAG
-                )
+                val data = bundleOf("deadline" to it)
+                findNavController().navigate(R.id.action_deadlineFragment_to_addBottomSheetDialogFragment, data)
             }
         })
     }
@@ -334,9 +319,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     override fun onClick(v: View?) {
-        bot.show(fm,
-            AddBottomSheetDialogFragment.TAG
-        )
+        findNavController().navigate(R.id.action_deadlineFragment_to_addBottomSheetDialogFragment)
     }
 
     private fun unObserve() {

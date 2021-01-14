@@ -28,14 +28,17 @@ class DeadlinesViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         predmet.text = deadline.name.toUpperCase(Locale.ROOT)
         zadanie.text = deadline.description
         completed.isChecked = deadline.completed
-        if (deadline.pinned){
+        if (deadline.pinned) {
             pinned.visibility = View.VISIBLE
-        }
-        else  { pinned.visibility = View.INVISIBLE }
-        if (deadline.date == "") {
-             datetime.text = if (deadline.time == "") "" else deadline.time
-        } else {
-             datetime.text = if (deadline.time == "") deadline.date else "${deadline.date}, ${deadline.time}"
+        } else { pinned.visibility = View.INVISIBLE }
+        datetime.text = when {
+            deadline.date == "" -> {
+                deadline.time
+            }
+            deadline.time == "" -> {
+                deadline.date
+            }
+            else -> "${deadline.date}, ${deadline.time}"
         }
         when (deadline.importance) {
             R.color.colorLow -> {

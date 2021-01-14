@@ -30,9 +30,6 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
     val schedule: MutableStateFlow<Schedule?> = MutableStateFlow(null)
     val onMessage: Event1<String> = Action1()
 
-    fun newRepository() {
-        deadlinesRepository.newJob()
-    }
 
     fun saveInformation(deadline: Deadline) {
         deadlinesRepository.insertDeadline(deadline)
@@ -43,8 +40,6 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         deadlinesRepository.updateDeadline(deadline)
 
     }
-
-
 
 
     override fun onCleared() {

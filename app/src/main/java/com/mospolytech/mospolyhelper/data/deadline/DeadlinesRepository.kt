@@ -18,10 +18,6 @@ class DeadlinesRepository(appDatabase: AppDatabase): CoroutineScope {
 
     private var deadlineDAO = appDatabase.getDeadlinesDAO()
 
-    fun newJob() {
-        job = Job()
-    }
-
     fun getDeadlines(): LiveData<List<Deadline>> {
         return deadlineDAO.getAllLive()
     }
