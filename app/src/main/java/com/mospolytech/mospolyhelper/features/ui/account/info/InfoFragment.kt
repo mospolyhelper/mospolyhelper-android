@@ -19,12 +19,8 @@ import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuCli
 import com.mospolytech.mospolyhelper.data.account.students.remote.StudentsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.teachers.api.TeachersHerokuClient
 import com.mospolytech.mospolyhelper.data.account.teachers.remote.TeachersRemoteDataSource
-import com.mospolytech.mospolyhelper.utils.onFailure
-import com.mospolytech.mospolyhelper.utils.onLoading
-import com.mospolytech.mospolyhelper.utils.onSuccess
-import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.android.synthetic.main.fragment_account_info.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,11 +47,13 @@ class InfoFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             viewModel.info.collect { result ->
                 result.onSuccess {
+                    progress_loading.gone()
                     infoText.text = it.toString()
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                    progress_loading.gone()
                 }.onLoading {
-                    Toast.makeText(context, "Loading", Toast.LENGTH_LONG).show()
+                    progress_loading.show()
                 }
             }
         }

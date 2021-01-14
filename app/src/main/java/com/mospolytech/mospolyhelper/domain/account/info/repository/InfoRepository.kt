@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface InfoRepository {
     suspend fun getInfo(): Flow<Result<Info>>
+    suspend fun getLocalInfo(): Flow<Result<Info>>
+    suspend fun setLocalInfo(info: Info)
 }

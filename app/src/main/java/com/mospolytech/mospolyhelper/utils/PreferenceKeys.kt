@@ -32,5 +32,6 @@ class PreferenceKeys {
         const val SessionId = "SessionId"
         const val SaveLogin = "SaveLogin"
         const val SavePassword = "SavePassword"
+        const val Info = "Info"
     }
 }
