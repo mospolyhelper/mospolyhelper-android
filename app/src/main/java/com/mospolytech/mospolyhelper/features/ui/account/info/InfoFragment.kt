@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.account.applications.api.ApplicationsHerokuClient
 import com.mospolytech.mospolyhelper.data.account.applications.remote.ApplicationsRemoteDataSource
@@ -19,10 +20,12 @@ import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuCli
 import com.mospolytech.mospolyhelper.data.account.students.remote.StudentsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.teachers.api.TeachersHerokuClient
 import com.mospolytech.mospolyhelper.data.account.teachers.remote.TeachersRemoteDataSource
+import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.android.synthetic.main.fragment_account_info.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InfoFragment : Fragment() {
@@ -60,6 +63,6 @@ class InfoFragment : Fragment() {
 
         lifecycleScope.async {
             viewModel.getInfo()
-        }
+            }
     }
 }

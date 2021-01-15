@@ -20,7 +20,4 @@ class InfoUseCase(
             emit(Result.loading())
         }
 
-    suspend fun setLocalInfo(info: Info) {
-        repository.setLocalInfo(info)
-    }
 }
