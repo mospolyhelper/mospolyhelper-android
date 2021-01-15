@@ -35,7 +35,7 @@ class InfoRepositoryImpl(
     override suspend fun getLocalInfo(): Flow<Result<Info>>{
         val info = localDataSource.getJson()
         return flow {
-                if (info != "") emit(localDataSource.get(info))
+                if (info.isNotEmpty()) emit(localDataSource.get(info))
             }.flowOn(ioDispatcher)
 
     }

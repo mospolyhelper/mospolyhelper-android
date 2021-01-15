@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.info
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +52,7 @@ class InfoFragment : Fragment() {
             viewModel.info.collect { result ->
                 result.onSuccess {
                     progress_loading.gone()
-                    infoText.text = it.toString()
+                   filldata(it)
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     progress_loading.gone()
@@ -64,5 +65,16 @@ class InfoFragment : Fragment() {
         lifecycleScope.async {
             viewModel.getInfo()
             }
+    }
+    fun filldata(info: Info) {
+        textview_fio.text = info.name
+        var information = String.format(resources.getString(R.string.account_info),
+        info.status, info.sex, info.birthDate, info.studentCode, info.faculty,
+        info.course, info.group, info.direction, info.specialization, info.educationPeriod,
+        info.educationForm, info.financingType, info.educationLevel, info.admissionYear)
+        for(order in info.orders) {
+            information += "${order}\n"
+        }
+        infoText.text = information
     }
 }
