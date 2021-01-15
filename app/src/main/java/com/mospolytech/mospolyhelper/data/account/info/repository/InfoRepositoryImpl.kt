@@ -27,7 +27,9 @@ class InfoRepositoryImpl(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )
-        emit(dataSource.get(sessionId))
+        val res = dataSource.get(sessionId)
+        localDataSource.set(res.value as Info)
+        emit(res)
     }.flowOn(ioDispatcher)
 
     override suspend fun getLocalInfo(): Flow<Result<Info>>{

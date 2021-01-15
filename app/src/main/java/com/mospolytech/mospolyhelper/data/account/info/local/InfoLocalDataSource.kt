@@ -19,7 +19,9 @@ class InfoLocalDataSource(private val prefDataSource: SharedPreferencesDataSourc
     }
 
     fun set(info: Info) {
-        prefDataSource.setString(PreferenceKeys.Info, Klaxon().toJsonString(info))
+        val currentInfo = Klaxon().toJsonString(info)
+        if (getJson() != currentInfo)
+            prefDataSource.setString(PreferenceKeys.Info, currentInfo)
     }
 
     fun getJson(): String {
