@@ -153,12 +153,19 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_infoFragment"
             app:destination="@id/infoFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_marksFragment"
+            app:destination="@id/marksFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
         android:id="@+id/authFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.auth.AuthFragment"
         android:label="AuthFragment" />
+    <fragment
+        android:id="@+id/marksFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.marks.MarksFragment"
+        android:label="MarksFragment" />
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.info.InfoFragment"

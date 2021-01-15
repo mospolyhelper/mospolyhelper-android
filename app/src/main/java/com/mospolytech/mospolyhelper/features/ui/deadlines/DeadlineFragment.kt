@@ -177,7 +177,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                 recycler.adapter =
                     MyDeadlineRecyclerViewAdapter(
                         it,
-                        requireContext(),
                         viewModel
                     )
             } else {
@@ -199,7 +198,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                         recycler.adapter =
                             MyDeadlineRecyclerViewAdapter(
                                 it,
-                                requireContext(),
                                 viewModel
                             )
                     }
@@ -214,7 +212,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
                         recycler.adapter =
                             MyDeadlineRecyclerViewAdapter(
                                 it,
-                                requireContext(),
                                 viewModel
                             )
                     }

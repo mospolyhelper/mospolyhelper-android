@@ -1,7 +1,5 @@
 package com.mospolytech.mospolyhelper.utils
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-
 class PreferenceKeys {
     companion object {
         const val ScheduleGroupTitle = "ScheduleGroupTitle"
@@ -33,5 +31,6 @@ class PreferenceKeys {
         const val SaveLogin = "SaveLogin"
         const val SavePassword = "SavePassword"
         const val Info = "Info"
+        const val Marks = "Marks"
     }
 }

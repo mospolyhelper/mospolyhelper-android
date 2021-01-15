@@ -7,7 +7,6 @@ import com.mospolytech.mospolyhelper.data.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.domain.account.info.usecase.InfoUseCase
 import com.mospolytech.mospolyhelper.features.ui.account.info.InfoViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module

@@ -12,11 +12,11 @@ import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 
 
 class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
-                                     private val context : Context,
                                      private val deadlineViewModel : DeadlineViewModel
 ) :
     RecyclerView.Adapter<DeadlinesViewHolder>() {
 
+    lateinit var context: Context
 
     fun updateBookList(newDeadlinesList: List<Deadline>) {
         val diffResult =
@@ -26,6 +26,7 @@ class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeadlinesViewHolder {
+        context = parent.context
         return DeadlinesViewHolder(LayoutInflater.from(context)
             .inflate(R.layout.item_deadline, parent, false))
     }

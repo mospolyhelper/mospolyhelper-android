@@ -59,6 +59,12 @@ class AccountMenuFragment : Fragment() {
                             .actionAccountMenuFragmentToInfoFragment()
                     )
                 }
+                R.id.nav_marks -> findNavController().safe {
+                    navigate(
+                        AccountMenuFragmentDirections
+                            .actionAccountMenuFragmentToMarksFragment()
+                    )
+                }
             }
         }
         menuList.adapter = adapter

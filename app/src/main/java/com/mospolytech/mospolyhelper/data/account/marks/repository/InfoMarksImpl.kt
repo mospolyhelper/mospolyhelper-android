@@ -1,11 +1,10 @@
-package com.mospolytech.mospolyhelper.data.account.info.repository
+package com.mospolytech.mospolyhelper.data.account.marks.repository
 
-import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
+import com.mospolytech.mospolyhelper.data.account.marks.remote.MarksRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
+import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
+import com.mospolytech.mospolyhelper.domain.account.marks.repository.MarksRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
@@ -15,11 +14,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class InfoRepositoryImpl(
-    private val dataSource: InfoRemoteDataSource,
-    private val localDataSource: InfoLocalDataSource,
+class MarksRepositoryImpl(
+    private val dataSource: MarksRemoteDataSource,
+    private val localDataSource: MarksLocalDataSource,
     private val prefDataSource: SharedPreferencesDataSource
-) : InfoRepository {
+) : MarksRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
@@ -29,14 +28,14 @@ class InfoRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        localDataSource.set(res.value as Info)
+        localDataSource.set(res.value as Marks)
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Info>>{
-        val info = localDataSource.getJson()
+    override suspend fun getLocalInfo(): Flow<Result<Marks>>{
+        val marks = localDataSource.getJson()
         return flow {
-                if (info.isNotEmpty()) emit(localDataSource.get(info))
+                if (marks.isNotEmpty()) emit(localDataSource.get(marks))
             }.flowOn(ioDispatcher)
 
     }

@@ -81,5 +81,6 @@
   <string name="account_orders"></string>
   <!--  Notification channels names -->
   <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
+    <string name="marks">Оценки</string>
 
 </resources>
