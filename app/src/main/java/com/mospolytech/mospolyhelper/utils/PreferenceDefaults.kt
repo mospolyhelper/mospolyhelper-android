@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.utils
 
+import com.mospolytech.mospolyhelper.domain.account.info.model.Info
+
 class PreferenceDefaults {
     companion object {
         const val ScheduleGroupTitle = ""

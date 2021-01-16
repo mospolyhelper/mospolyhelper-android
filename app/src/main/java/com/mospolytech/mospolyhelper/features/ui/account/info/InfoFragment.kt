@@ -9,22 +9,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.data.account.applications.api.ApplicationsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.applications.remote.ApplicationsRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.marks.api.MarksHerokuClient
-import com.mospolytech.mospolyhelper.data.account.marks.remote.MarksRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.payments.api.PaymentsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.payments.remote.PaymentsRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.students.remote.StudentsRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.teachers.api.TeachersHerokuClient
-import com.mospolytech.mospolyhelper.data.account.teachers.remote.TeachersRemoteDataSource
-import com.mospolytech.mospolyhelper.utils.onFailure
-import com.mospolytech.mospolyhelper.utils.onLoading
-import com.mospolytech.mospolyhelper.utils.onSuccess
-import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import com.mospolytech.mospolyhelper.domain.account.info.model.Info
+import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.android.synthetic.main.fragment_account_info.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,17 +38,30 @@ class InfoFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             viewModel.info.collect { result ->
                 result.onSuccess {
-                    infoText.text = it.toString()
+                    progress_loading.gone()
+                   filldata(it)
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                    progress_loading.gone()
                 }.onLoading {
-                    Toast.makeText(context, "Loading", Toast.LENGTH_LONG).show()
+                    progress_loading.show()
                 }
             }
         }
 
         lifecycleScope.async {
             viewModel.getInfo()
+            }
+    }
+    fun filldata(info: Info) {
+        textview_fio.text = info.name
+        var information = String.format(resources.getString(R.string.account_info),
+        info.status, info.sex, info.birthDate, info.studentCode, info.faculty,
+        info.course, info.group, info.direction, info.specialization, info.educationPeriod,
+        info.educationForm, info.financingType, info.educationLevel, info.admissionYear)
+        for(order in info.orders) {
+            information += "${order}\n"
         }
+        infoText.text = information
     }
 }

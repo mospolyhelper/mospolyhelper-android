@@ -8,6 +8,8 @@ import android.content.res.AssetManager
 import android.os.Build
 import com.mospolytech.mospolyhelper.di.account.authModule
 import com.mospolytech.mospolyhelper.di.account.infoModule
+import com.mospolytech.mospolyhelper.di.account.marksModule
+import com.mospolytech.mospolyhelper.di.account.studentsModule
 import com.mospolytech.mospolyhelper.di.addresses.addressesModule
 import com.mospolytech.mospolyhelper.di.appModule
 import com.mospolytech.mospolyhelper.di.core.coreModule
@@ -48,6 +50,8 @@ class App : Application() {
             // Account
             authModule,
             infoModule,
+            marksModule,
+            studentsModule,
 
             relevantModule,
             addressesModule,

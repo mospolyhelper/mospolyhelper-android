@@ -12,9 +12,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.utils.onFailure
-import com.mospolytech.mospolyhelper.utils.onLoading
-import com.mospolytech.mospolyhelper.utils.onSuccess
+import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.android.synthetic.main.fragment_account_auth.*
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -69,10 +68,19 @@ class AuthFragment : Fragment() {
             lifecycleScope.launchWhenResumed {
                 viewModel.logIn().collect {
                     it.onSuccess {
+                        logOutButton.show()
+                        progress_auth.hide()
+                        logInButton.show()
                         Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
                     }.onFailure {
+                        progress_auth.hide()
+                        logInButton.show()
+                        logOutButton.hide()
                         Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     }.onLoading {
+                        progress_auth.show()
+                        logInButton.hide()
+                        logOutButton.hide()
                         Toast.makeText(context, "Loading", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -83,4 +91,6 @@ class AuthFragment : Fragment() {
             viewModel.logOut()
         }
     }
+
+
 }
