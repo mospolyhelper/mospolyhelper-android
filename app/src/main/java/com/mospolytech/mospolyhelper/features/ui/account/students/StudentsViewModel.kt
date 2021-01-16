@@ -23,16 +23,10 @@ class StudentsViewModel(
     mediator: Mediator<String, ViewModelMessage>,
     private val useCase: StudentsUseCase
 ) : ViewModelBase(mediator, StudentsViewModel::class.java.simpleName), KoinComponent {
-    val students = MutableStateFlow<Result<List<Student>>>(Result.loading())
 
+    fun invalidate() = useCase.invalidate()
 
-    suspend fun getInfo() {
-        useCase.getState().collect {
-            students.value = it
-        }
-    }
-
-    fun fetchPosts(): Flow<PagingData<Student>> {
-        return useCase.getInfo().cachedIn(viewModelScope)
+    fun fetchStudents(query: String): Flow<PagingData<Student>> {
+        return useCase.getInfo(query).cachedIn(viewModelScope)
     }
 }

@@ -10,6 +10,6 @@ import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.Flow
 
 interface StudentsRepository {
-    fun getInfo(query: String = ""): Flow<PagingData<Student>>
-    fun getState(): Flow<Result<List<Student>>>
+    fun getInfo(query: String): Flow<PagingData<Student>>
+    fun invalidate()
 }

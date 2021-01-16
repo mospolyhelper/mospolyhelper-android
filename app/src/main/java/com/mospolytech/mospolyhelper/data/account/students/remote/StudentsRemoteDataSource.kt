@@ -14,25 +14,20 @@ import kotlinx.coroutines.flow.flow
 import java.lang.Exception
 
 class StudentsRemoteDataSource(
-    private val client: StudentsHerokuClient): PagingSource<Int, Student>() {
+    private val client: StudentsHerokuClient, private val query: String): PagingSource<Int, Student>() {
 
-    var query = ""
-
-    var state = flow<Result<List<Student>>> { }
+    var retry:() -> Unit = {this.invalidate()}
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Student> {
         return try {
-            state = flow{ emit(Result.loading()) }
-            val response = client.getStudents(query, params.key?: 0)
+            val response = client.getStudents(query, params.key?: 1)
             val students = Klaxon().parse<StudentsSearchResult>(response)!!
-            state = flow { emit(Result.success(students.portfolios))}
             LoadResult.Page(
                 students.portfolios,
                 null,
                 if (students.currentPage < students.pageCount) students.currentPage + 1 else null
             )
         } catch (exception: Exception) {
-            state = flow { emit(Result.failure(exception))}
             return LoadResult.Error(exception)
         }
     }

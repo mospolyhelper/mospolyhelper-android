@@ -4,6 +4,7 @@ import androidx.paging.PagedList
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuClient
 import com.mospolytech.mospolyhelper.data.account.students.remote.StudentsRemoteDataSource
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult
@@ -17,7 +18,8 @@ import java.util.concurrent.Executors
 
 
 class StudentsRepositoryImpl(
-    private val dataSource: StudentsRemoteDataSource
+    private val dataSource: StudentsRemoteDataSource,
+    private val client: StudentsHerokuClient
 ) : StudentsRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -26,11 +28,15 @@ class StudentsRepositoryImpl(
         return Pager(
             PagingConfig(pageSize = 100, enablePlaceholders = false)
         ) {
-            dataSource
+            StudentsRemoteDataSource(client, query)
         }.flow
             .flowOn(ioDispatcher)
+
     }
 
-    override fun getState(): Flow<Result<List<Student>>> = dataSource.state
+    override fun invalidate() {
+        dataSource.retry.invoke()
+    }
+
 
 }

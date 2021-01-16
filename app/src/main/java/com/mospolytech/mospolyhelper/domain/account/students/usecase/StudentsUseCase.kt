@@ -19,8 +19,9 @@ class StudentsUseCase(
     private val repository: StudentsRepository
 ) {
 
-    fun getInfo(query: String = ""): Flow<PagingData<Student>> =
-        repository.getInfo()
-    fun getState(): Flow<Result<List<Student>>> = repository.getState()
+    fun getInfo(query: String): Flow<PagingData<Student>> =
+        repository.getInfo(query)
+
+    fun invalidate() = repository.invalidate()
 
 }

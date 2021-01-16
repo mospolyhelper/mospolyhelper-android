@@ -21,8 +21,8 @@ import org.koin.dsl.module
 
 val studentsModule = module {
     single { StudentsHerokuClient(get(named("accountHerokuClient"))) }
-    single { StudentsRemoteDataSource(get()) }
-    single<StudentsRepository> { StudentsRepositoryImpl(get()) }
+    single { StudentsRemoteDataSource(get(), "") }
+    single<StudentsRepository> { StudentsRepositoryImpl(get(), get()) }
     single { StudentsUseCase(get()) }
     viewModel { StudentsViewModel(get(), get()) }
 }
