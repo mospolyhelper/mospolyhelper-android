@@ -82,5 +82,8 @@
   <!--  Notification channels names -->
   <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
     <string name="marks">Оценки</string>
+    <string name="fio_input">Введите ФИО студента</string>
+    <string name="retry">Повторить</string>
+  <string name="loading_error">Ошибка загрузки данных</string>
 
 </resources>
