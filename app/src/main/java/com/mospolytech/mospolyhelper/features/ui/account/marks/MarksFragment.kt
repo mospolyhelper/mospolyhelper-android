@@ -1,6 +1,8 @@
 package com.mospolytech.mospolyhelper.features.ui.account.marks
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,18 +37,20 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        recycler_marks.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
                 result.onSuccess {
                     progress_loading.gone()
                     marks = it
+                    button_search.isEnabled = true
                     filldata()
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     progress_loading.gone()
                 }.onLoading {
                     progress_loading.show()
+                    button_search.isEnabled = false
                 }
             }
         }
@@ -54,13 +58,35 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
         lifecycleScope.async {
             viewModel.getInfo()
             }
+        val editor = object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                recycler_marks.adapter = MarksAdapter(getMarksByName(marks.marks, p0.toString()))
+            }
+            override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { }
+            override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { } }
+        button_search.setOnClickListener {
+            marks_search.show()
+            marks_select.gone()
+            edit_search_marks.addTextChangedListener(editor)
+            recycler_marks.adapter = MarksAdapter(getMarksByName(marks.marks, ""))
+        }
+        button_search_clear.setOnClickListener {
+            marks_search.gone()
+            marks_select.show()
+            edit_search_marks.removeTextChangedListener(editor)
+            edit_search_marks.text.clear()
+            if (semesters_spinner.adapter.count == semesters_spinner.selectedItemPosition + 1) {
+                recycler_marks.adapter = MarksAdapter(getMarksBySemesters(marks.marks, semesters_spinner.adapter.count).toList())
+            } else {
+                semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
+            }
+        }
     }
     private fun filldata() {
-        recycler_marks.layoutManager = LinearLayoutManager(requireContext())
         ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
-            getSemesters(marks.marks)).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            semesters_spinner.adapter = adapter
+            getSemesters(marks.marks)).also { adapterSpinner ->
+            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            semesters_spinner.adapter = adapterSpinner
         }
         semesters_spinner.onItemSelectedListener = this
         semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
@@ -74,6 +100,18 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun getMarksBySemesters(marks: Map<String, Map<String, List<Mark>>>, semester: Int): List<Mark> {
         marks.values.forEach { it -> it.forEach { it -> if (it.key == semester.toString()) return it.value } }
         return emptyList()
+    }
+
+    private fun getMarksByName(marks: Map<String, Map<String, List<Mark>>>, name: String): List<Mark> {
+        val markList: MutableList<Mark> = mutableListOf()
+        marks.values.forEach { it ->
+            it.values.forEach { it ->
+                it.forEach {
+                    if (it.subject.contains(name, true)) markList.add(it)
+                }
+            }
+        }
+        return  markList.toList()
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

@@ -129,4 +129,6 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     implementation 'org.jsoup:jsoup:1.13.1'
+
+    implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
 }

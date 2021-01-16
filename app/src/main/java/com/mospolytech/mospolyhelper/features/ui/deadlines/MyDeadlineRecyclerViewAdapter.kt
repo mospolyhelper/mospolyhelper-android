@@ -20,7 +20,7 @@ class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
 
     fun updateBookList(newDeadlinesList: List<Deadline>) {
         val diffResult =
-            DiffUtil.calculateDiff(DeadlinesDiffCallback(items, newDeadlinesList), true)
+            DiffUtil.calculateDiff(DeadlinesDiffCallback(items, newDeadlinesList), false)
         items = newDeadlinesList
         diffResult.dispatchUpdatesTo(this)
     }
