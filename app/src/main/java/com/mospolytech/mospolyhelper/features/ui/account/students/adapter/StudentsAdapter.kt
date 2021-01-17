@@ -9,17 +9,20 @@ import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.features.ui.common.PagingAdapter
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
+import com.mospolytech.mospolyhelper.utils.show
 import kotlinx.android.synthetic.main.item_error.view.*
 import java.util.*
 
-class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>
-)
-    : PagingDataAdapter<Student, RecyclerView.ViewHolder>(diffCallback) {
+class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>, private val groupClick:(String) -> Unit
+        ) : PagingDataAdapter<Student, RecyclerView.ViewHolder>(diffCallback) {
 
     private lateinit var context: Context
 
@@ -29,7 +32,56 @@ class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        getItem(position)?.let { (holder as ViewHolderStudents).name.text = it.name }
+        getItem(position)?.let {
+            with(holder as ViewHolderStudents) {
+                name.text = it.name
+                group.text = it.group
+                if (it.group.isNotEmpty()) group.show() else group.gone()
+                group.setOnClickListener { groupClick.invoke((it as Chip).text.toString()) }
+                course.text = "${it.course} курс"
+                if (it.course.isNotEmpty()) course.show() else course.gone()
+                educationForm.text = "${it.educationForm} форма"
+                if (it.course.isNotEmpty()) educationForm.show() else educationForm.gone()
+                var spec = ""
+                if (it.direction.isNotEmpty()) spec = "Направление: ${it.direction}"
+                if (it.specialization.isNotEmpty()) spec = "Специализация ${it.specialization}"
+                if (it.direction.isNotEmpty() && it.specialization.isNotEmpty()) spec = "Направление: ${it.direction}\nСпециализация: ${it.specialization}"
+                if (spec.isNotEmpty()) direction_specialization.show() else direction_specialization.gone()
+                direction_specialization.text = spec
+                val educationCode = it.direction
+                var res = ""
+                if (educationCode.contains(".02.", true)) {
+                    res = "СПО"
+                }
+                if (educationCode.contains(".03.", true)) {
+                    res = "Бакалавриат"
+                }
+                if (educationCode.contains(".04.", true)) {
+                    res = "Магистратура"
+                }
+                if (educationCode.contains(".05.", true)) {
+                    res = "Специалитет"
+                }
+                if (educationCode.contains(".06.", true)) {
+                    res = "Аспирантура"
+                }
+                if (res == "") {
+                    if (educationCode.contains("03", true)) {
+                        res = "Бакалавриат"
+                    }
+                    if (educationCode.contains("04", true)) {
+                        res = "Магистратура"
+                    }
+                    if (educationCode.contains("05", true)) {
+                        res = "Специалитет"
+                    }
+                    if (educationCode.contains("06", true)) {
+                        res = "Аспирантура"
+                    }
+                }
+                if (res.isNotEmpty()) education.text = res else education.hide()
+            }
+        }
     }
 
 

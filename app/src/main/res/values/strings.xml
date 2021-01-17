@@ -85,5 +85,7 @@
     <string name="fio_input">Введите ФИО студента</string>
     <string name="retry">Повторить</string>
   <string name="loading_error">Ошибка загрузки данных</string>
+    <string name="fio">ФИО</string>
+    <string name="search_student">Введите фамилию или группу</string>
 
 </resources>
