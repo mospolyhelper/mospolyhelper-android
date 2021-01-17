@@ -58,7 +58,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
         recycler_students.layoutManager = LinearLayoutManager(requireContext())
         val clipboard: ClipboardManager? =
             requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-        val adapter = StudentsAdapter(diffUtil)
+        val adapter = StudentsAdapter(diffUtil) { edit_search_student.setText(it) }
         fab_students.setOnClickListener {
             var i = 1
             val names = adapter.snapshot().items.map { "${i++}. ${it.name}" }
