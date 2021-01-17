@@ -352,7 +352,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 showEmptyLessons,
                 showEndedLessons,
                 showCurrentLessons,
-                showNotStartedLessons -> {}
+                showNotStartedLessons ->
 //                schedule.onSuccess {
 //                    setSchedule(
 //                        it,

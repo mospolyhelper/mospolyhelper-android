@@ -11,12 +11,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
-                android:id="@+id/students_search"
+                android:id="@+id/classmates_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
                 <EditText
-                    android:id="@+id/edit_search_student"
+                    android:id="@+id/edit_search_classmate"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_marginEnd="20dp"
@@ -25,38 +25,26 @@
                     android:background="@drawable/shape_lesson"
                     android:backgroundTint="@color/layerZero"
                     android:drawablePadding="10dp"
-                    android:hint="@string/search_student"
+                    android:hint="@string/search_classmate"
                     android:inputType="text"
                     android:maxLines="1"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:drawableStart="@drawable/ic_search_24"
-                    android:imeOptions="actionSearch"/>
+                    android:layout_weight="0.1"/>
+                <ProgressBar
+                    android:id="@+id/progress_loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    tools:visibility="visible"
+                    android:layout_weight="0.9"/>
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_students"
+            android:id="@+id/recycler_classmates"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_student"/>
-        <ProgressBar
-            android:id="@+id/progress_first_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            tools:visibility="visible"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_students"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:layout_anchor="@id/recycler_students"
-            app:layout_anchorGravity="bottom|end"
-            android:src="@drawable/ic_baseline_content_copy_24"
-            app:backgroundTint="@color/colorSecondary"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            tools:listitem="@layout/item_classmate" />
 </LinearLayout>

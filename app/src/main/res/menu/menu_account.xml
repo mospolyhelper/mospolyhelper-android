@@ -28,4 +28,8 @@
         android:id="@+id/nav_teachers"
         android:icon="@drawable/ic_id_teacher"
         android:title="Teachers" />
+    <item
+        android:id="@+id/nav_classmates"
+        android:icon="@drawable/ic_round_person_24"
+        android:title="Classmates" />
 </menu>

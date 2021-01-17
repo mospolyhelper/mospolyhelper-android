@@ -31,4 +31,5 @@
     <dimen name="addresses_tab_height">32sp</dimen>
     <dimen name="addresses_tab_height_half">16sp</dimen>
     <dimen name="addresses_tab_text_size">14sp</dimen>
+    <dimen name="teacher_card_width">180dp</dimen>
 </resources>

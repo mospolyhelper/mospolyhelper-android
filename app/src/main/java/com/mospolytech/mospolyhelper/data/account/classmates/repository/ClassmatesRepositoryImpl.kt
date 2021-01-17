@@ -1,9 +1,13 @@
-package com.mospolytech.mospolyhelper.data.account.info.repository
+package com.mospolytech.mospolyhelper.data.account.classmates.repository
 
+import com.mospolytech.mospolyhelper.data.account.classmates.local.ClassmatesLocalDataSource
+import com.mospolytech.mospolyhelper.data.account.classmates.remote.ClassmatesRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
+import com.mospolytech.mospolyhelper.domain.account.classmates.repository.ClassmatesRepository
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -15,11 +19,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class InfoRepositoryImpl(
-    private val dataSource: InfoRemoteDataSource,
-    private val localDataSource: InfoLocalDataSource,
+class ClassmatesRepositoryImpl(
+    private val dataSource: ClassmatesRemoteDataSource,
+    private val localDataSource: ClassmatesLocalDataSource,
     private val prefDataSource: SharedPreferencesDataSource
-) : InfoRepository {
+) : ClassmatesRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
@@ -29,11 +33,11 @@ class InfoRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        if (res.isSuccess) localDataSource.set(res.value as Info)
+        if (res.isSuccess) localDataSource.set(res.value as List<Classmate>)
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Info>>{
+    override suspend fun getLocalInfo(): Flow<Result<List<Classmate>>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))
