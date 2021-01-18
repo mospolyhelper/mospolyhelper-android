@@ -51,6 +51,7 @@ class App : Application() {
             studentsModule,
             teachersModule,
             classmatesModule,
+            messagingModule,
 
             relevantModule,
             addressesModule,

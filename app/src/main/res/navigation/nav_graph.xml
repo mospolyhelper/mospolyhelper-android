@@ -179,10 +179,26 @@
     <fragment
         android:id="@+id/teachersFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.teachers.TeachersFragment"
-        android:label="TeachersFragment" />
+        android:label="TeachersFragment" >
+        <action
+            android:id="@+id/action_teachersFragment_to_messagingFragment"
+            app:destination="@id/messagingFragment" />
+    </fragment>
     <fragment
         android:id="@+id/classmatesFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.classmates.ClassmatesFragment"
-        android:label="ClassmatesFragment" />
+        android:label="ClassmatesFragment" >
+        <action
+            android:id="@+id/action_classmatesFragment_to_messagingFragment"
+            app:destination="@id/messagingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messagingFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment"
+        android:label="MessagingFragment" >
+        <argument
+            android:name="DialogID"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

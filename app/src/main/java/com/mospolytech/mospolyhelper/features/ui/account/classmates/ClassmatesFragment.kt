@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
@@ -42,7 +44,11 @@ class ClassmatesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycler_classmates.layoutManager = LinearLayoutManager(requireContext())
-
+        recycler_classmates.adapter = ClassmatesAdapter(classmates) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            val data = bundleOf("DialogID" to it)
+            findNavController().navigate(R.id.action_classmatesFragment_to_messagingFragment, data)
+        }
         val editor = object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 recycler_classmates.adapter?.let { adapter ->
@@ -62,7 +68,9 @@ class ClassmatesFragment : Fragment() {
                 result.onSuccess {
                     progress_loading.gone()
                     classmates = it
-                    filldata(it)
+                    recycler_classmates.adapter?.let { adapter ->
+                        if (adapter is ClassmatesAdapter) adapter.updateList(classmates)
+                    }
                     edit_search_classmate.addTextChangedListener(editor)
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
@@ -83,19 +91,5 @@ class ClassmatesFragment : Fragment() {
             viewModel.getInfo()
             }
 
-    }
-    fun filldata(classmates: List<Classmate>) {
-        recycler_classmates.adapter = ClassmatesAdapter(classmates) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-        }
-//        textview_fio.text = info.name
-//        var information = String.format(resources.getString(R.string.account_info),
-//        info.status, info.sex, info.birthDate, info.studentCode, info.faculty,
-//        info.course, info.group, info.direction, info.specialization, info.educationPeriod,
-//        info.educationForm, info.financingType, info.educationLevel, info.admissionYear)
-//        for(order in info.orders) {
-//            information += "${order}\n"
-//        }
-//        infoText.text = information
     }
 }

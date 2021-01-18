@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
@@ -58,8 +60,11 @@ class TeachersFragment : Fragment(), CoroutineScope {
 //        recycler_teachers.layoutManager = GridLayoutManager(requireContext(),
 //            calculateNoOfColumns(requireContext(), 180f))
         recycler_teachers.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = TeachersAdapter(diffUtil)
-        { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+        val adapter = TeachersAdapter(diffUtil) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            val data = bundleOf("DialogID" to it)
+            findNavController().navigate(R.id.action_teachersFragment_to_messagingFragment, data)
+        }
         recycler_teachers.adapter = adapter.withLoadStateFooter(
             PagingLoadingAdapter { adapter.retry() }
         )
