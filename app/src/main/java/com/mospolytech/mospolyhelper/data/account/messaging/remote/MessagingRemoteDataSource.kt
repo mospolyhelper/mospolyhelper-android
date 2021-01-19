@@ -21,7 +21,7 @@ class MessagingRemoteDataSource(
     suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result<Message> {
         return try {
             val json = Klaxon().toJsonString(MessageSend(dialogKey, message, fileNames))
-            val res = client.sendMessage(sessionId, json)
+            val res = client.sendMessage(sessionId, MessageSend(dialogKey, message, fileNames))
             Result.success(Klaxon().parse(res)!!)
         } catch (e: Exception) {
             Result.failure(e)

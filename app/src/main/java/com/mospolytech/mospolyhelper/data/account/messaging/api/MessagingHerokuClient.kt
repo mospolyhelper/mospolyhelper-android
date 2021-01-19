@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.data.account.messaging.api
 
+import com.mospolytech.mospolyhelper.data.account.auth.api.AuthHerokuClient
+import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -21,14 +23,23 @@ class MessagingHerokuClient(
         }
     }
 
-    suspend fun sendMessage(sessionId: String, message: String): String {
+    suspend fun sendMessage(sessionId: String, message: MessageSend): String {
+//        return client.post(SEND_MESSAGE) {
+//            //header("accept", "application/json")
+//            header("sessionId", sessionId)
+//            //header("Content-Type", "application/json")
+//            contentType(ContentType("application","json"))
+//            body = message
+//        }
+        val params = mutableMapOf(
+            "dialogKey" to message.dialogKey,
+            "message" to message.message,
+            "fileNames" to message.fileNames
+        )
         return client.post(SEND_MESSAGE) {
-            //header("accept", "application/json")
             header("sessionId", sessionId)
-            //header("Content-Type", "application/json")
-            //contentType(ContentType("application","json"))
-            body = message
-
+            contentType(ContentType.Application.Json)
+            body = params
         }
     }
 }

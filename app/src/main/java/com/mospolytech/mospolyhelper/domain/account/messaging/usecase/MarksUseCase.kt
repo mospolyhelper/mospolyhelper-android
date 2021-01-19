@@ -22,7 +22,7 @@ class MessagingUseCase(
         }
     suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>> =
         repository.getLocalDialog(dialogKey).onStart {
-            emit(Result.loading())
+            //emit(Result.loading())
         }
 
     suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>> =

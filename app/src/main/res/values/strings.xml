@@ -78,7 +78,7 @@
   <string name="unpin">unpinned</string>
   <string name="nav_deadlines">Дедлайны</string>
   <string name="account_info"><b>Статус: </b> %1$s\n<b>Пол: </b> %2$s\n"<b>Дата рождения: </b> %3$s\n<b>Код студента: </b> %4$s\n<b>Факультет: </b> %5$s\n<b>Курс: </b> %6$s\n<b>Группа: </b> %7$s\n<b>Направление: </b> %8$s\n<b>Специализация: </b> %9$s\n<b>Срок обучения: </b> %10$s\n<b>Форма обучения: </b> %11$s\n<b>Основа обучения: </b> %12$s\n<b>Уровень обучения: </b> %13$s\n<b>Год набора: </b> %14$s\nПриказы:\n</string>
-  <string name="account_orders"></string>
+  <string name="base_info">%1$s %2$s курс группы %3$s</string>
   <!--  Notification channels names -->
   <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
     <string name="marks">Оценки</string>

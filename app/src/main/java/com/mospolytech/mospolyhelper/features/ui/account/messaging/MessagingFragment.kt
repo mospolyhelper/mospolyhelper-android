@@ -48,9 +48,10 @@ class MessagingFragment : Fragment() {
         dialogId = arguments?.getString("DialogID").orEmpty()
         viewModel.setDialogId(dialogId)
         send_message.setOnClickListener {
-            lifecycleScope.async {
-                viewModel.sendMessage(edit_message.text.toString())
-            }
+//            lifecycleScope.async {
+//                viewModel.sendMessage(edit_message.text.toString())
+//            }
+            Toast.makeText(requireContext(), "Скоро будет", Toast.LENGTH_SHORT).show()
         }
         lifecycleScope.launchWhenResumed {
             viewModel.dialog.collect { result ->
