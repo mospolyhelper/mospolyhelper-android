@@ -61,6 +61,7 @@ android {
     }
 }
 
+
 dependencies {
     def nav_version = '2.3.2'
     def koin_version= "2.2.0-beta-1"
@@ -139,4 +140,5 @@ dependencies {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }
+
 }

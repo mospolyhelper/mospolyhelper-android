@@ -19,7 +19,7 @@ class MarksUseCase(
         }
     suspend fun getLocalInfo(): Flow<Result<Marks>> =
         repository.getLocalInfo().onStart {
-            emit(Result.loading())
+            //emit(Result.loading())
         }
 
 }

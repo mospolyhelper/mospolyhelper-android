@@ -19,7 +19,7 @@ class ClassmatesUseCase(
         }
     suspend fun getLocalInfo(): Flow<Result<List<Classmate>>> =
         repository.getLocalInfo().onStart {
-            emit(Result.loading())
+            //emit(Result.loading())
         }
 
 }

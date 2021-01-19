@@ -22,7 +22,7 @@ class InfoViewModel(
         useCase.getLocalInfo().collect {
             info.value = it
         }
-        info.value = Result.loading()
+        //info.value = Result.loading()
         useCase.getInfo().collect {
             info.value = it
         }
