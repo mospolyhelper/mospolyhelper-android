@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
@@ -348,6 +349,22 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
+//            viewModel.filteredSchedule.collect {
+//                it.onSuccess {
+//                    setSchedule(
+//                        it,
+//                        false,
+//                        false,
+//                        true,
+//                        false,
+//                        viewModel.currentLessonOrder.value
+//                    )
+//                    swipeToRefresh.isRefreshing = false
+//                }
+//                it.onLoading {
+//                    setLoading()
+//                }
+//            }
             combine(
                 viewModel.filteredSchedule,
                 viewModel.showEmptyLessons,
@@ -359,20 +376,20 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 showEndedLessons,
                 showCurrentLessons,
                 showNotStartedLessons ->
-//                schedule.onSuccess {
-//                    setSchedule(
-//                        it,
-//                        showEmptyLessons,
-//                        showEndedLessons,
-//                        showCurrentLessons,
-//                        showNotStartedLessons,
-//                        viewModel.currentLessonOrder.value
-//                    )
-//                    swipeToRefresh.isRefreshing = false
-//                }
-//                schedule.onLoading {
-//                    setLoading()
-//                }
+                schedule.onSuccess {
+                    setSchedule(
+                        it,
+                        showEmptyLessons,
+                        showEndedLessons,
+                        showCurrentLessons,
+                        showNotStartedLessons,
+                        viewModel.currentLessonOrder.value
+                    )
+                    swipeToRefresh.isRefreshing = false
+                }
+                schedule.onLoading {
+                    setLoading()
+                }
 
             }.collect()
         }

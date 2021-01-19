@@ -20,7 +20,7 @@ import kotlin.jvm.JvmName
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
-inline class Result<out T> @PublishedApi internal constructor(
+/*inline*/ class Result<out T> @PublishedApi internal constructor(
     @PublishedApi
     internal val value: Any?
 ) {
@@ -53,7 +53,7 @@ inline class Result<out T> @PublishedApi internal constructor(
      * This function is a shorthand for `getOrElse { null }` (see [getOrElse]) or
      * `fold(onSuccess = { it }, onFailure = { null })` (see [fold]).
      */
-    inline fun getOrNull(): T? =
+    /*inline*/ fun getOrNull(): T? =
         when {
             isFailure || isLoading -> null
             else -> value as T
@@ -95,7 +95,7 @@ inline class Result<out T> @PublishedApi internal constructor(
          */
         @Suppress("INAPPLICABLE_JVM_NAME")
         @JvmName("success")
-        inline fun <T> success(value: T): Result<T> =
+        /*inline*/ fun <T> success(value: T): Result<T> =
             Result(value)
 
         /**
@@ -103,7 +103,7 @@ inline class Result<out T> @PublishedApi internal constructor(
          */
         @Suppress("INAPPLICABLE_JVM_NAME")
         @JvmName("failure")
-        public inline fun <T> failure(exception: Throwable): Result<T> =
+        public /*inline*/ fun <T> failure(exception: Throwable): Result<T> =
             Result(createFailure(exception))
 
         /**
@@ -111,7 +111,7 @@ inline class Result<out T> @PublishedApi internal constructor(
          */
         @Suppress("INAPPLICABLE_JVM_NAME")
         @JvmName("loading")
-        public inline fun <T> loading(): Result<T> =
+        public /*inline*/ fun <T> loading(): Result<T> =
             Result(getLoading())
     }
 
@@ -146,7 +146,7 @@ internal fun getLoading(): Any = Result.Loading
 
 /**
  * Throws exception if the result is failure. This internal function minimizes
- * inlined bytecode for [getOrThrow] and makes sure that in the future we can
+ * /*inline*/d bytecode for [getOrThrow] and makes sure that in the future we can
  * add some exception-augmenting logic here (if needed).
  */
 @PublishedApi
@@ -160,7 +160,7 @@ internal fun Result<*>.throwOnFailure() {
  * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
  */
 @SinceKotlin("1.3")
-public inline fun <R> runCatching(block: () -> R): Result<R> {
+public /*inline*/ fun <R> runCatching(block: () -> R): Result<R> {
     return try {
         Result.success(block())
     } catch (e: Throwable) {
@@ -173,7 +173,7 @@ public inline fun <R> runCatching(block: () -> R): Result<R> {
  * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
  */
 @SinceKotlin("1.3")
-public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
+public /*inline*/ fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
     return try {
         Result.success(block())
     } catch (e: Throwable) {
@@ -190,7 +190,7 @@ public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
  * This function is a shorthand for `getOrElse { throw it }` (see [getOrElse]).
  */
 @SinceKotlin("1.3")
-inline fun <T> Result<T>.getOrThrow(): T {
+/*inline*/ fun <T> Result<T>.getOrThrow(): T {
     throwOnFailure()
     return value as T
 }
@@ -205,7 +205,7 @@ inline fun <T> Result<T>.getOrThrow(): T {
  */
 @ExperimentalContracts
 @SinceKotlin("1.3")
-inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
+/*inline*/ fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
     contract {
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
@@ -222,7 +222,7 @@ inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R
  * This function is a shorthand for `getOrElse { defaultValue }` (see [getOrElse]).
  */
 @SinceKotlin("1.3")
-public inline fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
+public /*inline*/ fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
     if (isFailure || isLoading) return defaultValue
     return value as T
 }
@@ -235,7 +235,7 @@ public inline fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
  */
 @ExperimentalContracts
 @SinceKotlin("1.3")
-inline fun <R, T> Result<T>.fold(
+/*inline*/ fun <R, T> Result<T>.fold(
     onSuccess: (value: T) -> R,
     onFailure: (exception: Throwable) -> R,
     onLoading: () -> R
@@ -265,7 +265,7 @@ inline fun <R, T> Result<T>.fold(
  */
 @ExperimentalContracts
 @SinceKotlin("1.3")
-inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
+/*inline*/ fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -284,7 +284,7 @@ inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
  * See [map] for an alternative that rethrows exceptions from `transform` function.
  */
 @SinceKotlin("1.3")
-public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
+public /*inline*/ fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
     return when {
         isSuccess -> runCatching { transform(value as T) }
         else -> Result(value)
@@ -301,7 +301,7 @@ public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Resu
  */
 @ExperimentalContracts
 @SinceKotlin("1.3")
-inline fun <R, T : R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
+/*inline*/ fun <R, T : R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -320,8 +320,8 @@ inline fun <R, T : R> Result<T>.recover(transform: (exception: Throwable) -> R):
  * See [recover] for an alternative that rethrows exceptions.
  */
 @SinceKotlin("1.3")
-public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
-    val value = value // workaround for inline classes BE bug
+public /*inline*/ fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
+    val value = value // workaround for /*inline*/ classes BE bug
     return when (val exception = exceptionOrNull()) {
         null -> this
         else -> runCatching { transform(exception) }
@@ -336,7 +336,7 @@ public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Th
  */
 @OptIn(ExperimentalContracts::class)
 @SinceKotlin("1.3")
-inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Result<T> {
+/*inline*/ fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
@@ -350,7 +350,7 @@ inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Resu
  */
 @OptIn(ExperimentalContracts::class)
 @SinceKotlin("1.3")
-inline fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
+/*inline*/ fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
@@ -364,7 +364,7 @@ inline fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
  */
 @OptIn(ExperimentalContracts::class)
 @SinceKotlin("1.3")
-inline fun <T> Result<T>.onLoading(action: () -> Unit): Result<T> {
+/*inline*/ fun <T> Result<T>.onLoading(action: () -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
