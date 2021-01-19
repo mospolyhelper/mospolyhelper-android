@@ -156,6 +156,12 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_marksFragment"
             app:destination="@id/marksFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_teachersFragment"
+            app:destination="@id/teachersFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_classmatesFragment"
+            app:destination="@id/classmatesFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -170,5 +176,29 @@
         android:id="@+id/infoFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.info.InfoFragment"
         android:label="InfoFragment" />
+    <fragment
+        android:id="@+id/teachersFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.teachers.TeachersFragment"
+        android:label="TeachersFragment" >
+        <action
+            android:id="@+id/action_teachersFragment_to_messagingFragment"
+            app:destination="@id/messagingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/classmatesFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.classmates.ClassmatesFragment"
+        android:label="ClassmatesFragment" >
+        <action
+            android:id="@+id/action_classmatesFragment_to_messagingFragment"
+            app:destination="@id/messagingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messagingFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment"
+        android:label="MessagingFragment" >
+        <argument
+            android:name="DialogID"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

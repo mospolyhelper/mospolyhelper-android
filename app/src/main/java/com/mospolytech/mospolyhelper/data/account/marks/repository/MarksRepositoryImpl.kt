@@ -28,7 +28,7 @@ class MarksRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        localDataSource.set(res.value as Marks)
+        if (res.isSuccess) localDataSource.set(res.value as Marks)
         emit(res)
     }.flowOn(ioDispatcher)
 

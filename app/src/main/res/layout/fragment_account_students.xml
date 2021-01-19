@@ -30,14 +30,8 @@
                     android:maxLines="1"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:layout_weight="0.1"/>
-                <TextView
-                    android:id="@+id/button_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_search_24"
-                    android:padding="10dp"
-                    android:layout_weight="0.9"/>
+                    android:drawableStart="@drawable/ic_search_24"
+                    android:imeOptions="actionSearch"/>
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     <androidx.coordinatorlayout.widget.CoordinatorLayout

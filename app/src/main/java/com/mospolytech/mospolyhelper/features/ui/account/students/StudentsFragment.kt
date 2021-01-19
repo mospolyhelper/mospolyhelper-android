@@ -2,14 +2,13 @@ package com.mospolytech.mospolyhelper.features.ui.account.students
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.StudentsAdapter
-import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.StudentsLoadingAdapter
+import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.android.synthetic.main.fragment_account_students.*
-import kotlinx.android.synthetic.main.item_address.view.*
+import kotlinx.android.synthetic.main.fragment_account_students.progress_first_loading
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -55,6 +54,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.newCoroutineContext(this@StudentsFragment.coroutineContext)
         recycler_students.layoutManager = LinearLayoutManager(requireContext())
         val clipboard: ClipboardManager? =
             requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
@@ -71,18 +71,14 @@ class StudentsFragment : Fragment(), CoroutineScope {
             ).show()
         }
         recycler_students.adapter = adapter.withLoadStateFooter(
-            StudentsLoadingAdapter { adapter.retry() }
+            PagingLoadingAdapter { adapter.retry() }
         )
 
-        button_search.setOnClickListener {
-            adapter.submitData(lifecycle, PagingData.empty())
-            job.cancel()
-            job = Job()
-            launch {
-                viewModel.fetchStudents(edit_search_student.text.toString()).collectLatest { pagingData ->
-                    adapter.submitData(pagingData)
-                }
-            }
+        edit_search_student.setOnEditorActionListener { _, i, _ ->
+            if (i == EditorInfo.IME_ACTION_SEARCH) {
+                search(adapter)
+                true
+            } else false
         }
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
@@ -104,7 +100,17 @@ class StudentsFragment : Fragment(), CoroutineScope {
                 }
             }
         }
+    }
 
-
+    private fun search(adapter: StudentsAdapter) {
+        adapter.submitData(lifecycle, PagingData.empty())
+        job.cancel()
+        job = Job()
+        lifecycleScope.launch {
+            viewModel.fetchStudents(edit_search_student.text.toString())
+                .collectLatest { pagingData ->
+                    adapter.submitData(pagingData)
+                }
+        }
     }
 }

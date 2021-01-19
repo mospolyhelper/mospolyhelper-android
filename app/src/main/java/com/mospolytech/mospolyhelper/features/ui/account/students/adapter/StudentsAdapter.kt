@@ -65,7 +65,7 @@ class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>, private val 
                 if (educationCode.contains(".06.", true)) {
                     res = "Аспирантура"
                 }
-                if (res == "") {
+                if (res.isEmpty()) {
                     if (educationCode.contains("03", true)) {
                         res = "Бакалавриат"
                     }
@@ -79,7 +79,8 @@ class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>, private val 
                         res = "Аспирантура"
                     }
                 }
-                if (res.isNotEmpty()) education.text = res else education.hide()
+                education.text = res
+                if (res.isNotEmpty()) education.show() else education.hide()
             }
         }
     }

@@ -87,5 +87,8 @@
   <string name="loading_error">Ошибка загрузки данных</string>
     <string name="fio">ФИО</string>
     <string name="search_student">Введите фамилию или группу</string>
+    <string name="search_teacher">Введите фио преподавателя</string>
+    <string name="search_classmate">Введите ФИО</string>
+    <string name="input_message">Введите сообщение</string>
 
 </resources>

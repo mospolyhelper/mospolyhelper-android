@@ -6,7 +6,7 @@ import androidx.paging.LoadStateAdapter
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.utils.inflate
 
-class StudentsLoadingAdapter(private val retry: () -> Unit): LoadStateAdapter<ViewHolderLoadingState>() {
+class PagingLoadingAdapter(private val retry: () -> Unit): LoadStateAdapter<ViewHolderLoadingState>() {
 
     override fun onBindViewHolder(holder: ViewHolderLoadingState, loadState: LoadState) {
         holder.bindState(loadState)

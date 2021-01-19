@@ -352,21 +352,21 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 showEmptyLessons,
                 showEndedLessons,
                 showCurrentLessons,
-                showNotStartedLessons -> {}
-                schedule.onSuccess {
-                    setSchedule(
-                        it,
-                        showEmptyLessons,
-                        showEndedLessons,
-                        showCurrentLessons,
-                        showNotStartedLessons,
-                        viewModel.currentLessonOrder.value
-                    )
-                    swipeToRefresh.isRefreshing = false
-                }
-                schedule.onLoading {
-                    setLoading()
-                }
+                showNotStartedLessons ->
+//                schedule.onSuccess {
+//                    setSchedule(
+//                        it,
+//                        showEmptyLessons,
+//                        showEndedLessons,
+//                        showCurrentLessons,
+//                        showNotStartedLessons,
+//                        viewModel.currentLessonOrder.value
+//                    )
+//                    swipeToRefresh.isRefreshing = false
+//                }
+//                schedule.onLoading {
+//                    setLoading()
+//                }
 
             }.collect()
         }

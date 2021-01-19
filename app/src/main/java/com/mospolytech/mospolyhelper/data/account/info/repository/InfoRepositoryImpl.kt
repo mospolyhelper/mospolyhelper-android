@@ -29,7 +29,7 @@ class InfoRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        localDataSource.set(res.value as Info)
+        if (res.isSuccess) localDataSource.set(res.value as Info)
         emit(res)
     }.flowOn(ioDispatcher)
 
