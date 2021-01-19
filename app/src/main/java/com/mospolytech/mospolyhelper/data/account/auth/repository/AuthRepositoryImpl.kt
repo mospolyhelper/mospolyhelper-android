@@ -23,6 +23,7 @@ class AuthRepositoryImpl(
 
     override fun logOut() {
         prefDataSource.setString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
+        prefDataSource.setString(PreferenceKeys.Info, "")
     }
 
     override fun getLogin(): String {
