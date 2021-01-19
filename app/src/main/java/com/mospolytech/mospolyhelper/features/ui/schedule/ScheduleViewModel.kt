@@ -96,7 +96,7 @@ class ScheduleViewModel(
             }
         }
 
-        viewModelScope.async {
+        viewModelScope.async(Dispatchers.IO) {
             filterTypes.collect { filters ->
                 useCase.setFilterTypes(filters)
                 originalSchedule.value.onSuccess {

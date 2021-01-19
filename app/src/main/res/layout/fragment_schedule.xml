@@ -8,7 +8,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:background="@color/scheduleBackground"
+        android:background="@null"
         app:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,26 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:paddingEnd="10dp"
-                android:background="@color/scheduleBackground"
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-                <Button
-                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
-                    android:id="@+id/btn_user"
-                    android:letterSpacing="0"
-                    android:ellipsize="end"
-                    android:textAlignment="textStart"
-                    android:textAllCaps="false"
-                    android:textColor="@color/secondary_text_color"
-                    android:fontFamily="@font/open_sans"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </androidx.appcompat.widget.Toolbar>
             <HorizontalScrollView
                 android:visibility="gone"
                 android:id="@+id/scroll_ids"
@@ -61,110 +41,154 @@
 
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
-
-            <FrameLayout
-                android:visibility="gone"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/background_tab_indicator_schedule_type_outer"
-                android:backgroundTint="@color/colorLevelOne"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
                 android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:layout_width="wrap_content"
+                android:layout_marginEnd="25dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tablayout_schedule_type"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="3dp"
-                    style="@style/TabLayoutScheduleType"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    app:tabMode="scrollable">
-                    <com.google.android.material.tabs.TabItem
-                        android:text="Все"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="Обычное"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="Сессия"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </com.google.android.material.tabs.TabLayout>
-            </FrameLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="Понедельник"
+                        android:visibility="gone"
 
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="29.5dp"
-                android:layout_marginEnd="30dp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:text="Вторник"
-                android:textAppearance="@style/ScheduleToolbarText" />
-            <FrameLayout
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="33sp"
+                        android:layout_marginEnd="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/text_day_of_week"
+                        android:fontFamily="@font/open_sans"
+                        android:textSize="21sp"
+                        android:layout_marginEnd="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <ImageButton
+                        android:id="@+id/btn_menu"
+                        android:layout_marginTop="1.5dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        android:tint="#bbbbbb"
+                        android:src="@drawable/ic_round_more_vert_24"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"/>
+                </FrameLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:gravity="center_horizontal"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <com.google.android.material.tabs.TabLayout
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:id="@+id/tablayout_schedule"
-                    style="@style/TabLayoutSchedule"
-                    android:layout_width="match_parent"
-                    app:tabTextColor="#00000000"
-                    android:layout_height="50dp"
-                    app:tabMode="fixed">
-                    <com.google.android.material.tabs.TabItem
-                        android:text="30\nПН"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="1\nВТ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="2\nСР"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="3\nЧТ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="4\nПТ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="5\nСБ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <com.google.android.material.tabs.TabItem
-                        android:text="6\nВС"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </com.google.android.material.tabs.TabLayout>
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewpager_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
-            </FrameLayout>
-            <TextView
+                <TextView
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="9dp"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:id="@+id/text_date"
+                    android:textAlignment="center"
+                    android:text="18 января\nДата"
+                    android:textColor="#C0C0C4"
+                    android:drawablePadding="6dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:textSize="12.8sp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/btn_user"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="9dp"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:textAlignment="center"
+                    android:layout_marginStart="8dp"
+                    android:text="4 пары\nСкрыто"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:textColor="#C0C0C4"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:textSize="12.8sp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="9dp"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:textAlignment="center"
+                    android:layout_marginStart="8dp"
+                    android:text="4 пары\nСкрыто"
+                    android:textColor="#C0C0C4"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:textSize="12.3sp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <View
+                android:visibility="gone"
+                android:layout_marginBottom="1dp"
+                android:background="#333333"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <com.google.android.material.tabs.TabLayout
+                android:visibility="gone"
+                android:clipToPadding="false"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:id="@+id/tablayout_schedule"
+                style="@style/TabLayoutSchedule"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/subtitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="10dp"
-                android:text="7 июля"
-                android:textColor="#999999"
-                android:textAppearance="@style/ScheduleToolbarSubtitleText" />
+                app:tabMode="auto">
+                <com.google.android.material.tabs.TabItem
+                    android:text="Понедельник"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Вторник"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Среда"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Четверг"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Пятница"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Суббота"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.tabs.TabItem
+                    android:text="Воскресенье"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.tabs.TabLayout>
+            <View
+                android:background="#18191B"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"/>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

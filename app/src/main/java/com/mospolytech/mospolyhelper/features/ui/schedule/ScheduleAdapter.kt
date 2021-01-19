@@ -69,6 +69,7 @@ class ScheduleAdapter(
 
     override fun getItemCount() = count
 
+
     private fun setCount() {
         if (schedule == null) {
             count = 1

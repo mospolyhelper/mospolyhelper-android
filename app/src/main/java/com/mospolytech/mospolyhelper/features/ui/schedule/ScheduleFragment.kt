@@ -6,13 +6,14 @@ import android.content.ComponentName
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.RelativeSizeSpan
 import android.util.TypedValue
 import android.view.*
-import android.widget.Button
-import android.widget.HorizontalScrollView
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +23,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,16 +36,15 @@ import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.onLoading
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import com.mospolytech.mospolyhelper.utils.safe
+import kotlinx.android.synthetic.main.fragment_schedule.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import java.lang.ref.WeakReference
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.coroutines.CoroutineContext
-import kotlin.math.abs
 
 
 class ScheduleFragment : Fragment(), CoroutineScope {
@@ -58,22 +57,16 @@ class ScheduleFragment : Fragment(), CoroutineScope {
     private val viewModel  by sharedViewModel<ScheduleViewModel>()
 
     private lateinit var viewPager: ViewPager2
-    private lateinit var viewPagerDate: ViewPager2
     private lateinit var swipeToRefresh: SwipeRefreshLayout
     private lateinit var homeBtn: FloatingActionButton
     private lateinit var tabLayout: TabLayout
-    private lateinit var tabLayoutScheduleType: TabLayout
-    private lateinit var subtitle: TextView
-    private lateinit var title: TextView
-    private lateinit var toolbar: Toolbar
-    private lateinit var idBtn: Button
+    private lateinit var idBtn: TextView
     private lateinit var idsScroll: HorizontalScrollView
-    //private lateinit var btnCalendar: ImageButton
-    private lateinit var appbarLayout: AppBarLayout
+    private lateinit var dayOfWeekText: TextView
+    private lateinit var dateText: TextView
+    private lateinit var menuBtn: ImageButton
 
     private lateinit var scheduleIdsChipGroup: ChipGroup
-
-    //private lateinit var tabLayoutOnPageChangeCallback: TabLayoutOnPageChangeCallback
 
     private var appBarExpanded = true
     private var viewPagerIdle = false
@@ -141,17 +134,6 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         newAdapter.lessonClick += ::onLessonClick
         viewPager.adapter?.notifyDataSetChanged()
         viewPager.setCurrentItem(toPosition.toInt(), false)
-        val schedule = scheduleLabelDeadline.schedule
-        val dateFrom = schedule?.dateFrom ?: LocalDate.now()
-        val dateTo = schedule?.dateTo ?: LocalDate.now()
-        viewPagerDate.adapter = DateAdapter(dateFrom, dateTo)
-        viewPagerDate.setCurrentItem(
-            (viewPagerDate.adapter as DateAdapter)
-                .getPositionByDate(
-                    (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(toPosition)
-                ),
-            false
-        )
     }
 
     private fun setLoading() {
@@ -172,24 +154,18 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager = view.findViewById(R.id.viewpager)
-        viewPagerDate = view.findViewById(R.id.viewpager_date)
         swipeToRefresh = view.findViewById(R.id.schedule_update)
         homeBtn = view.findViewById(R.id.button_home)
-        subtitle = view.findViewById(R.id.subtitle)
-        title = view.findViewById(R.id.title)
         idBtn = view.findViewById(R.id.btn_user)
         scheduleIdsChipGroup = view.findViewById(R.id.chipgroup_ids)
         scheduleIdsChipGroup.addView(createAddButton())
-        toolbar = view.findViewById(R.id.toolbar)
         idsScroll = view.findViewById(R.id.scroll_ids)
         tabLayout = view.findViewById(R.id.tablayout_schedule)
-        tabLayoutScheduleType = view.findViewById(R.id.tablayout_schedule_type)
+        dayOfWeekText = view.findViewById(R.id.text_day_of_week)
+        dateText = view.findViewById(R.id.text_date)
+        menuBtn = view.findViewById(R.id.btn_menu)
 
-        (toolbar.menu as MenuBuilder).setOptionalIconsVisible(true)
-        (activity as MainActivity).setSupportActionBar(toolbar)
-        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
 
-        viewPagerDate.isUserInputEnabled = false
 
         idBtn.setOnClickListener {
             if (idsScroll.visibility == View.VISIBLE) {
@@ -214,15 +190,31 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 //        params.behavior = behavior
 //        appbarLayout.layoutParams = params
 
-//        btnCalendar.setOnClickListener {
+        menuBtn.setOnClickListener {
+            val menuBuilder = MenuBuilder(context)
+            val inflater = MenuInflater(context)
+            inflater.inflate(R.menu.menu_schedule, menuBuilder)
+            val optionsMenu = MenuPopupHelper(requireContext(), menuBuilder, menuBtn)
+            optionsMenu.setForceShowIcon(true)
+
+            menuBuilder.setCallback(object : MenuBuilder.Callback {
+                override fun onMenuItemSelected(menu: MenuBuilder, item: MenuItem): Boolean {
+                    return onOptionsItemSelected(item)
+                }
+
+                override fun onMenuModeChange(menu: MenuBuilder) {}
+            })
+            optionsMenu.show();
+
 //            val menu = PopupMenu(requireContext(), it)
 //            menu.inflate(R.menu.menu_schedule)
 //            menu.setOnMenuItemClickListener(::onOptionsItemSelected)
 //            val menuHelper = MenuPopupHelper(requireContext(), menu.menu as MenuBuilder, it)
 //            menuHelper.setForceShowIcon(true)
 //            menuHelper.show()
-//            //menu.show()
-//        }
+            //menu.show()
+        }
+
 
         setScheduleViews()
         bindViewModel()
@@ -246,6 +238,20 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         //viewPager.registerOnPageChangeCallback(tabLayoutOnPageChangeCallback)
 
         viewPager.offscreenPageLimit = 2
+//        val dpTop = TypedValue.applyDimension(
+//            TypedValue.COMPLEX_UNIT_DIP,
+//            20f,
+//            requireContext().resources.displayMetrics
+//        ).toInt()
+//        viewPager.apply {
+//            offscreenPageLimit = 1
+//            val recyclerView = getChildAt(0) as RecyclerView
+//            recyclerView.apply {
+//                val padding = dpTop + dpTop
+//                setPadding(padding, 0, padding, 0)
+//                clipToPadding = false
+//            }
+//        }
         viewPager.registerOnPageChangeCallback(TabLayoutOnPageChangeCallback())
         //viewPager.setPageTransformer(MarginPageTransformer(100))
 
@@ -442,11 +448,15 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 if (it.second.isEmpty()) {
                     idBtn.text = "Выберите пользователя"
                 } else {
-                    if (it.first) {
-                        idBtn.text = "Группа " + it.second
-                    } else {
-                        idBtn.text = it.second
-                    }
+                    val builder = SpannableStringBuilder()
+                    builder.append(it.second)
+                    builder.append("\nГруппа", RelativeSizeSpan(0.9f), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    idBtn.text =  builder
+//                    if (it.first) {
+//                        idBtn.text = it.second
+//                    } else {
+//                        idBtn.text = it.second
+//                    }
                 }
 
             }
@@ -559,57 +569,53 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             val date =
                 (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position + dayOffset)
             if (updateText) {
-
                 if (LocalDate.now() == date) {
-
                     homeBtn.hide()
                 } else {
                     homeBtn.show()
                 }
+            }
+            if (updateText) {
+                val builder = SpannableStringBuilder()
+                builder.append(dateFormatterSubtitle.format(date))
+                builder.append("\nДата", RelativeSizeSpan(0.8f), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                text_date.text =  builder
+                text_day_of_week.text = dateFormatterTitle.format(date).capitalize()
 
-                title.text = date.format(dateFormatterTitle).capitalize()
-                subtitle.text = date.format(dateFormatterSubtitle).capitalize()
-//                if (viewModel.id.value.first) {
-//                    subtitle.text = "Группа " + viewModel.id.value.second
-//                    //subtitle.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_group, 0, 0, 0)
-//                } else {
-//                    subtitle.text = viewModel.id.value.second
-//                    //subtitle.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_teacher, 0, 0, 0)
-//                }
+            }
+            val transition = when {
+                positionOffset <= 0.5f -> (0.5f - positionOffset) * 2
+                else -> (positionOffset - 0.5f) * 2
             }
 
-            if (tabLayout != null) {
-                // Only update the text selection if we're not settling, or we are settling after
-                // being dragged
-                val updateText =
-                    scrollState != ViewPager2.SCROLL_STATE_SETTLING || previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING
-                // Update the indicator if we're not settling after being idle. This is caused
-                // from a setCurrentItem() call and will be handled by an animation from
-                // onPageSelected() instead.
-                val updateIndicator =
-                    !(scrollState == ViewPager2.SCROLL_STATE_SETTLING && previousScrollState == ViewPager2.SCROLL_STATE_IDLE)
-                tabLayout.setScrollPosition(date0.dayOfWeek.value - 1, positionOffset, updateText, updateIndicator)
-            }
+            val updateIndicator = scrollState == ViewPager2.SCROLL_STATE_DRAGGING
+                    || previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING
+                    && scrollState == ViewPager2.SCROLL_STATE_SETTLING
+            val weekPosition = date0.dayOfWeek.value - 1
+            if (weekPosition != 6)
+                tabLayout.setScrollPosition(
+                    weekPosition,
+                    positionOffset,
+                    updateText,
+                    updateIndicator
+                )
         }
 
         override fun onPageSelected(position: Int) {
             viewModel.date.value =
                 (viewPager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
-            val dateNextPos = (viewPagerDate.adapter as? DateAdapter)?.getPositionByDate(viewModel.date.value)
-            if (dateNextPos != null && viewPagerDate.currentItem != dateNextPos) {
-                val dif = abs(dateNextPos - viewPagerDate.currentItem)
-                viewPagerDate.setCurrentItem(dateNextPos, dif == 1)
-            }
-            (viewPagerDate.adapter as? DateAdapter)?.updateDate(viewModel.date.value)
-
-
-            if (tabLayout != null && tabLayout.selectedTabPosition != position && position < tabLayout.tabCount) {
+            val weekPosition = viewModel.date.value.dayOfWeek.value - 1
+            if (tabLayout.selectedTabPosition != weekPosition) {
                 // Select the tab, only updating the indicator if we're not being dragged/settled
                 // (since onPageScrolled will handle that).
-                val updateIndicator = (scrollState == ViewPager2.SCROLL_STATE_IDLE
-                        || (scrollState == ViewPager2.SCROLL_STATE_SETTLING
-                        && previousScrollState == ViewPager2.SCROLL_STATE_IDLE))
-                tabLayout.selectTab(tabLayout.getTabAt(viewModel.date.value.dayOfWeek.value - 1), updateIndicator)
+                val updateIndicator = scrollState == ViewPager2.SCROLL_STATE_IDLE
+                        || scrollState == ViewPager2.SCROLL_STATE_SETTLING
+                tabLayout.selectTab(tabLayout.getTabAt(weekPosition), updateIndicator)
+                val builder = SpannableStringBuilder()
+                builder.append(dateFormatterSubtitle.format(viewModel.date.value))
+                builder.append("\nДата", RelativeSizeSpan(0.9f), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                text_date.text =  builder
+                text_day_of_week.text = dateFormatterTitle.format(viewModel.date.value).capitalize()
             }
         }
 

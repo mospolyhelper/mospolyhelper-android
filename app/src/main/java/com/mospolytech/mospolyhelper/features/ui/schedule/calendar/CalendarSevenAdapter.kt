@@ -116,10 +116,9 @@ class CalendarSevenAdapter(
 
             if (dailySchedule.isNotEmpty()) {
                 var title: String
-                var time = dailySchedule[0].time
                 spansAppend(
                     res,
-                    (dailySchedule[0].order + 1).toString() + ") " + time.first,
+                    (dailySchedule[0].order + 1).toString() + ") ",
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                     //QuoteSpan(colorParagraph),
                     //BackgroundColorSpan(colorTimeBackground),
@@ -128,7 +127,7 @@ class CalendarSevenAdapter(
 
                 spansAppend(
                     res,
-                    "\n" + getShortType(dailySchedule[0].type),
+                    getShortType(dailySchedule[0].type),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                     ForegroundColorSpan(
                         if (dailySchedule[0].isImportant)
@@ -145,9 +144,8 @@ class CalendarSevenAdapter(
 
                 for (i in 1 until dailySchedule.size) {
                     if (!dailySchedule[i].equalsTime(dailySchedule[i - 1])) {
-                        time = dailySchedule[i].time
                         spansAppend(
-                            res, "\n" + (dailySchedule[i].order + 1) + ") " + time.first,
+                            res, "\n" + (dailySchedule[i].order + 1) + ") ",
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                             //QuoteSpan(colorParagraph),
                             //BackgroundColorSpan(colorTimeBackground),
@@ -156,7 +154,7 @@ class CalendarSevenAdapter(
                     }
                     spansAppend(
                         res,
-                        "\n" + getShortType(dailySchedule[i].type),
+                        getShortType(dailySchedule[i].type),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                         ForegroundColorSpan(
                             if (dailySchedule[i].isImportant)
