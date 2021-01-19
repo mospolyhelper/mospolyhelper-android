@@ -19,6 +19,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 import com.mospolytech.mospolyhelper.utils.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.Result
 
 
 class ScheduleAdapter(
@@ -50,6 +51,7 @@ class ScheduleAdapter(
     private val timerTick: Event2<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>, Boolean> = Action2()
 
     init {
+        Result
         setCount()
         setFirstPosDate()
     }
@@ -68,6 +70,7 @@ class ScheduleAdapter(
     }
 
     override fun getItemCount() = count
+
 
     private fun setCount() {
         if (schedule == null) {

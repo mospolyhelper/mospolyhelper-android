@@ -1,16 +1,11 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.content.res.ColorStateList
-import android.graphics.Typeface
-import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.style.*
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
@@ -21,7 +16,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
 import com.mospolytech.mospolyhelper.utils.*
-import org.w3c.dom.Text
 import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.LocalTime
@@ -276,7 +270,10 @@ class LessonAdapter(
         onLessonClick: (Lesson, LocalDate, List<View>) -> Unit
     ) : RecyclerView.ViewHolder(view) {
         private lateinit var adapter: LessonAdapter
-        private val lessonFeatures = view.findViewById<TextView>(R.id.text_schedule_features)
+        private val lessonOrder = view.findViewById<TextView>(R.id.text_lesson_order)
+        private val lessonCurrent = view.findViewById<TextView>(R.id.text_lesson_current)
+        private val lessonDates = view.findViewById<TextView>(R.id.text_schedule_dates)
+        private val lessonType = view.findViewById<TextView>(R.id.text_schedule_features)
         private val lessonTitle = view.findViewById<TextView>(R.id.text_schedule_title)!!
         private val lessonTime = view.findViewById<TextView>(R.id.text_lesson_time)!!
         private val lessonTeachers = view.findViewById<TextView>(R.id.text_lesson_teachers)!!
@@ -392,10 +389,15 @@ class LessonAdapter(
             }
             val dp8 = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
-                8f,
+                12f,
                 view.resources.displayMetrics
             ).toInt()
-            view.setPadding(view.paddingLeft, if (adapterPosition == 0) dp8 else 0,view.paddingRight, paddingBottom)
+            val dp3 = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                3f,
+                view.resources.displayMetrics
+            ).toInt()
+            view.setPadding(view.paddingLeft, if (adapterPosition == 0) dp8 else dp3,view.paddingRight, paddingBottom)
         }
 
         private fun setTime() {
@@ -418,15 +420,16 @@ class LessonAdapter(
                     currentLessonText = "Идёт ${time.toLowerCase()}"
                 } else {
                     val time = getTime((LocalTime.now().until(lesson.localTime.first, ChronoUnit.SECONDS) / 60f).roundToLong(), false)
-                    currentLessonText = "${time.toLowerCase()} до начала"
+                    currentLessonText = "До начала ${time.toLowerCase()}"
                 }
 
-                lessonTime.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_current_lesson, 0, 0, 0)
-                lessonTime.text = currentLessonText
-                //lessonTime.visibility = View.VISIBLE
+                lessonCurrent.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_current_lesson, 0, 0, 0)
+                lessonCurrent.text = currentLessonText
+                lessonCurrent.visibility = View.VISIBLE
             } else {
-                //lessonTime.visibility = View.GONE
+                lessonCurrent.visibility = View.GONE
             }
+            lessonOrder.text = (lesson.order + 1).toString()
         }
 
         private fun getDeadlinesEnd(count: Int): String {
@@ -451,9 +454,11 @@ class LessonAdapter(
             }
             val colorTextType = if (enabled) {
                 (if (lesson.isImportant)
-                    view.context.getColor(R.color.lessonTypeImportantText)
+                    0xffFC3636.toInt()
+                    //view.context.getColor(R.color.lessonTypeImportantText)
                 else
-                    view.context.getColor(R.color.lessonTypeNotImportantText))
+                    0xff2574FF.toInt())
+                    //view.context.getColor(R.color.lessonTypeNotImportantText))
             } else {
                 0xffffffff.toInt()
             }
@@ -492,24 +497,32 @@ class LessonAdapter(
                 //builder.append("  ")
             }
             builder.append(
-                lesson.title + "  ",
-                RelativeSizeSpan(0.87f),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                lesson.title
             )
-            builder.appendAny(
-                "\u00A0",
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type, textColor = colorTextType),
-                StyleSpan(Typeface.BOLD)
-            )
+//            builder.appendAny(
+//                "\u00A0",
+//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type, textColor = colorTextType),
+//                StyleSpan(Typeface.BOLD)
+//            )
             //builder.append(lesson.type, ForegroundColorSpan(colorType), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val dates: String
+            if (lesson.dateFrom == lesson.dateTo) {
+                dates = dateFormatter.format(lesson.dateFrom)
+            } else {
+                dates = dateFormatter.format(lesson.dateFrom) + " - " +
+                        dateFormatter.format(lesson.dateTo)
+            }
 
             // Duration label
             lessonDuration.text = getDuration()
+            lessonType.text = lesson.type
+            lessonDates.text = getDuration()//dates
+            lessonType.setTextColor(colorTextType)
 
             //lessonFeatures.text = builder
-            lessonFeatures.isEnabled = enabled
-            lessonFeatures.visibility = View.GONE
+            lessonType.isEnabled = enabled
+            //lessonFeatures.visibility = View.GONE
             // Lesson title
             lessonTitle.text =  builder//lesson.title
         }
@@ -721,30 +734,14 @@ fun getTime(totalMinutes: Long, isGenitive: Boolean): String {
     val timeLeft = StringBuilder()
     val windowTimeHours = totalMinutes / 60L
     val windowTimeMinutes = totalMinutes % 60
-    // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14
-    val lastNumberOfHours = windowTimeHours % 10
-    val endingHours = when {
-        windowTimeHours in 11L..14L -> "ов"
-        lastNumberOfHours == 1L -> ""
-        lastNumberOfHours in 2L..4L -> "а"
-        else -> "ов"
-    }
     if (windowTimeHours != 0L) {
-        timeLeft.append("$windowTimeHours час$endingHours")
+        timeLeft.append("$windowTimeHours ч.")
     }
     if (windowTimeMinutes != 0L) {
         if (windowTimeHours != 0L) {
             timeLeft.append(" ")
         }
-        // *1 минута .. *2, *3, *4 минуты .. *5, *6, *7, *8, *9, *0 минут .. искл. - 11 - 14
-        val lastNumberOfMinutes = windowTimeMinutes % 10
-        val endingMinutes = when {
-            windowTimeMinutes in 11L..14L -> ""
-            lastNumberOfMinutes == 1L -> if (isGenitive) "у" else "а"
-            lastNumberOfMinutes in 2L..4L -> "ы"
-            else -> ""
-        }
-        timeLeft.append("$windowTimeMinutes минут$endingMinutes")
+        timeLeft.append("$windowTimeMinutes мин.")
     }
 
     if (windowTimeHours == 0L && windowTimeMinutes == 0L) {
