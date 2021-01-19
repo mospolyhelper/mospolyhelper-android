@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
+import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
 import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.utils.*
@@ -103,13 +104,26 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun getMarksByName(marks: Map<String, Map<String, List<Mark>>>, name: String): List<Mark> {
-        val markList: MutableList<Mark> = mutableListOf()
-        marks.values.forEach { it ->
-            it.values.forEach { it ->
-                it.forEach {
-                    if (it.subject.contains(name, true)) markList.add(it)
+        val markList: MutableList<MarkInfo> = mutableListOf()
+        var id = 1
+        var course = 1
+        var semester = 1
+        marks.values.forEach {
+            it.values.forEach { list ->
+                list.forEach {mark ->
+                    if (mark.subject.contains(name, true))
+                        markList.add(MarkInfo(
+                                mark.subject,
+                                mark.loadType,
+                                mark.mark,
+                                id++,
+                                semester.toString(),
+                                course.toString()
+                            ))
                 }
+                semester++
             }
+        course++
         }
         return  markList.toList()
     }

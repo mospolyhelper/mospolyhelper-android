@@ -17,7 +17,7 @@ class InfoUseCase(
         }
     suspend fun getLocalInfo(): Flow<Result<Info>> =
         repository.getLocalInfo().onStart {
-            emit(Result.loading())
+            //emit(Result.loading())
         }
 
 }

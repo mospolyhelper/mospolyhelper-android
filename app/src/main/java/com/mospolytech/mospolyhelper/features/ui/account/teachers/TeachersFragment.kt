@@ -95,15 +95,26 @@ class TeachersFragment : Fragment(), CoroutineScope {
                         ).show()
                     }
                     is LoadState.NotLoading -> {
-                        progress_first_loading.hide()
+                        if (!job.isCancelled) progress_first_loading.hide()
                     }
-                    else -> progress_first_loading.hide()
+                    else -> if (!job.isCancelled) progress_first_loading.hide()
                 }
             }
         }
 
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (job.isCancelled) job = Job()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (job.isActive) job.cancel()
+    }
+
     fun calculateNoOfColumns(
         context: Context,
         columnWidthDp: Float

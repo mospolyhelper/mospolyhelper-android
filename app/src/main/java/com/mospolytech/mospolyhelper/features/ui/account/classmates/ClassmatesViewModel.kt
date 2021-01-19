@@ -24,7 +24,7 @@ class ClassmatesViewModel(
         useCase.getLocalInfo().collect {
             classmates.value = it
         }
-        classmates.value = Result.loading()
+        //classmates.value = Result.loading()
         useCase.getInfo().collect {
             classmates.value = it
         }

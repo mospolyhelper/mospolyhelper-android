@@ -37,7 +37,7 @@ class MessagingViewModel(
         useCase.getLocalDialog(dialogId).collect {
             dialog.value = it
         }
-        dialog.value = Result.loading()
+        //dialog.value = Result.loading()
         useCase.getDialog(dialogId).collect {
             dialog.value = it
 
