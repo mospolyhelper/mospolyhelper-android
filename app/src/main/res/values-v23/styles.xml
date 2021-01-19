@@ -100,24 +100,21 @@
   </style>
 
   <style name="TabLayoutSchedule" parent="Widget.Design.TabLayout">
-    <item name="tabIndicatorHeight">50dp</item>
-    <item name="tabIndicatorGravity">center</item>
-    <item name="tabBackground">@null</item>
+<!--    <item name="tabIndicatorGravity">center</item>-->
+<!--    <item name="tabIndicatorHeight">@dimen/schedule_tab_indicator_height</item>-->
+<!--    <item name="tabBackground">@drawable/background_tab_schedule</item>-->
     <item name="tabRippleColor">#00000000</item>
-    <item name="tabIndicatorColor">@color/colorLevelThree</item>
-    <item name="tabIndicator">@drawable/background_tab_indicator_addresses</item>
-    <item name="tabPaddingStart">0dp</item>
-    <item name="tabPaddingEnd">0dp</item>
+    <item name="tabIndicatorColor">@color/colorSecondary</item>
+<!--    <item name="tabIndicator">@drawable/background_tab_indicator_schedule</item>-->
+<!--    <item name="tabPaddingStart">0dp</item>-->
+<!--    <item name="tabPaddingEnd">0dp</item>-->
     <item name="tabTextAppearance">@style/TabLayoutScheduleTextAppearance</item>
   </style>
-
   <style name="TabLayoutScheduleTextAppearance" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">10dp</item>
+    <item name="android:textSize">13dp</item>
     <item name="fontFamily">@font/open_sans_semibold</item>
     <item name="android:textAllCaps">false</item>
-    <item name="android:textColor">@color/addresses_tab_selector</item>
   </style>
-
   <style name="TabLayoutScheduleType" parent="Widget.Design.TabLayout">
     <item name="tabIndicatorHeight">32dp</item>
     <item name="tabIndicatorGravity">center</item>
@@ -138,15 +135,15 @@
   </style>
 
   <style name="ScheduleLessonTitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">21sp</item>
+    <item name="android:textSize">18sp</item>
     <item name="android:fontFamily">@font/open_sans</item>
     <item name="android:textColor">@color/accent_text_color</item>
     <item name="android:breakStrategy">simple</item>
   </style>
 
   <style name="ScheduleLessonSubtitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">14.8sp</item>
-    <item name="android:fontFamily">@font/open_sans</item>
+    <item name="android:textSize">12.9sp</item>
+    <item name="android:fontFamily">@font/open_sans_semibold</item>
     <item name="android:textColor">@color/secondary_text_color</item>
     <item name="android:drawableTint">@color/secondary_text_color</item>
   </style>

@@ -1,31 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="15dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:clickable="false">
-
-    <TextView
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="3dp"
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
-        android:textSize="18sp"
-        android:drawablePadding="8dp"
-        android:id="@+id/text_lesson_time"
-        style="@style/ScheduleLessonSubtitle"
-        android:textColor="@color/textSecondary"
-        android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:breakStrategy="simple"
-        android:clickable="false"
-        android:text="16:10"
-        app:drawableTint="#ccc"
-        app:drawableStartCompat="@drawable/ic_baseline_looks_3_24" />
+        android:orientation="vertical"
+        android:clickable="false">
+        <LinearLayout
+            android:gravity="end"
+            android:layout_marginStart="@dimen/lesson_margin_start"
+            android:layout_marginEnd="@dimen/lesson_margin_end"
+            android:paddingStart="@dimen/lesson_padding_start"
+            android:paddingEnd="@dimen/lesson_padding_end"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:id="@+id/text_lesson_time"
+                style="@style/ScheduleLessonSubtitle"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/open_sans"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:breakStrategy="simple"
+                android:clickable="false"
+                android:text="10:40 - 12:10" />
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/text_lesson_order"
+                android:layout_marginEnd="5dp"
+                android:text="3"
+                android:textSize="14dp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textColor="#aaaaaa"
+                android:fontFamily="@font/open_sans_semibold"
+                android:paddingBottom="1dp"
+                android:background="@drawable/circleqq"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_marginStart="5dp"
+                android:id="@+id/text_lesson_current"
+                android:layout_gravity="end"
+                android:ellipsize="end"
+                android:textAlignment="textEnd"
+                android:textSize="14sp"
+                android:fontFamily="@font/open_sans"
+                android:maxLines="1"
+                android:textColor="#FF7200"
+                android:drawablePadding="6dp"
+                android:text="До начала 3 ч. 30 мин."
+                android:layout_weight="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/layout_lesson"
             android:layout_width="match_parent"
@@ -43,39 +81,59 @@
             android:paddingEnd="@dimen/lesson_padding_end"
             android:paddingBottom="@dimen/lesson_padding_bottom">
 
-
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/text_schedule_features"
+                    android:textSize="13.8sp"
+                    android:textColor="#2574FF"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginEnd="80sp"
+                    android:clickable="false"
+                    android:ellipsize="end"
+                    android:text="Лекция" />
+                <TextView
+                    android:id="@+id/text_schedule_dates"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:textSize="13.8sp"
+                    android:textColor="@color/textSecondary"
+                    android:maxLines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:textAlignment="textEnd"
+                    android:clickable="false"
+                    android:ellipsize="end"
+                    android:text="22 нояб." />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/text_schedule_title"
                 style="@style/ScheduleLessonTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
                 android:clickable="false"
                 android:ellipsize="end"
                 android:hyphenationFrequency="full"
                 android:text="Объектно-ориентированное программирование" />
-            <TextView
-                android:id="@+id/text_schedule_features"
-                style="@style/ScheduleLessonTitle"
-                android:textSize="20sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:hyphenationFrequency="full"
-                android:text="Лекция" />
+
             <TextView
                 android:id="@+id/text_lesson_teachers"
                 style="@style/ScheduleLessonSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
+                android:layout_marginTop="8dp"
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_teacher"
-                android:drawablePadding="8dp"
+                android:drawablePadding="@dimen/lesson_drawable_padding"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Арсентьев Дмитрий Андреевич" />
@@ -85,11 +143,11 @@
                 style="@style/ScheduleLessonSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
+                android:layout_marginTop="4dp"
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_group"
-                android:drawablePadding="8dp"
+                android:drawablePadding="@dimen/lesson_drawable_padding"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="181-721, 181-722, 181-723. 181-724, 181-725" />
@@ -97,12 +155,13 @@
             <TextView
                 android:id="@+id/text_lesson_auditoriums"
                 style="@style/ScheduleLessonSubtitle"
+                android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_location"
-                android:drawablePadding="8dp"
+                android:drawablePadding="@dimen/lesson_drawable_padding"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="пр2303, пр2306" />
@@ -117,10 +176,47 @@
                 android:breakStrategy="simple"
                 android:clickable="false"
                 android:drawableStart="@drawable/ic_lesson_date_range"
-                android:drawablePadding="8dp"
+                android:drawablePadding="7dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="2 мес." />
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="13dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginTop="4dp"
+                    android:text="Сделано"
+                    style="@style/ScheduleLessonSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="@dimen/lesson_drawable_padding"
+                    app:drawableStartCompat="@drawable/circle"
+                    app:drawableTint="#2BCD13" />
+                <TextView
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Важное"
+                    style="@style/ScheduleLessonSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="@dimen/lesson_drawable_padding"
+                    app:drawableStartCompat="@drawable/circle"
+                    app:drawableTint="#F46409" />
+                <TextView
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Можно не ходить"
+                    style="@style/ScheduleLessonSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="@dimen/lesson_drawable_padding"
+                    app:drawableStartCompat="@drawable/circle"
+                    app:drawableTint="#239EFC" />
+            </LinearLayout>
+
         </LinearLayout>
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>
