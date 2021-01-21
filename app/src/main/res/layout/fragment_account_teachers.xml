@@ -32,31 +32,28 @@
                     android:paddingEnd="20dp"
                     android:drawableStart="@drawable/ic_search_24"
                     android:imeOptions="actionSearch"/>
-<!--                <TextView-->
-<!--                    android:id="@+id/button_search"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:drawableEnd="@drawable/ic_search_24"-->
-<!--                    android:padding="10dp"-->
-<!--                    android:layout_weight="0.9"/>-->
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_teachers"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_teachers"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_teacher" />
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_teachers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_teacher" />
 
-        <ProgressBar
-            android:id="@+id/progress_first_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            tools:visibility="visible"/>
-    </FrameLayout>
+            <ProgressBar
+                android:id="@+id/progress_first_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -42,9 +42,14 @@
                     android:layout_weight="0.9"/>
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_classmates"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_classmates"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_classmate" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

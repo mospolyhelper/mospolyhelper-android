@@ -21,7 +21,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InfoFragment : Fragment() {
 
-    private lateinit var infoText: TextView
 
     private val viewModel by viewModel<InfoViewModel>()
 
@@ -36,17 +35,25 @@ class InfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orders.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        info_swipe.setOnRefreshListener {
+            lifecycleScope.async {
+                viewModel.downloadInfo()
+            }
+        }
         lifecycleScope.launchWhenResumed {
             viewModel.info.collect { result ->
                 result.onSuccess {
                     progress_loading.gone()
-                    appbar.show()
+                    info_layout.show()
                     filldata(it)
+                    info_swipe.isRefreshing = false
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     progress_loading.gone()
+                    info_swipe.isRefreshing = false
                 }.onLoading {
-                    progress_loading.show()
+                    if (!info_swipe.isRefreshing)
+                        progress_loading.show()
                 }
             }
         }

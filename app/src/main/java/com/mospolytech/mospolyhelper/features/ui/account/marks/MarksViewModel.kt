@@ -17,6 +17,11 @@ class MarksViewModel(
 
     val marks = MutableStateFlow<Result<Marks>>(Result.loading())
 
+    suspend fun downloadInfo() {
+        useCase.getInfo().collect {
+            marks.value = it
+        }
+    }
 
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {

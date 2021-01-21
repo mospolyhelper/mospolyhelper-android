@@ -39,18 +39,26 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycler_marks.layoutManager = LinearLayoutManager(requireContext())
+        swipe_marks.setOnRefreshListener {
+            lifecycleScope.async {
+                viewModel.downloadInfo()
+            }
+        }
         lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
                 result.onSuccess {
+                    swipe_marks.isRefreshing = false
                     progress_loading.gone()
                     marks = it
                     button_search.isEnabled = true
                     filldata()
                 }.onFailure {
+                    swipe_marks.isRefreshing = false
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     progress_loading.gone()
                 }.onLoading {
-                    progress_loading.show()
+                    if (!swipe_marks.isRefreshing)
+                        progress_loading.show()
                     button_search.isEnabled = false
                 }
             }
@@ -70,8 +78,10 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
             marks_select.gone()
             edit_search_marks.addTextChangedListener(editor)
             recycler_marks.adapter = MarksAdapter(getMarksByName(marks.marks, ""))
+            swipe_marks.isEnabled = false
         }
         button_search_clear.setOnClickListener {
+            swipe_marks.isEnabled = true
             marks_search.gone()
             marks_select.show()
             edit_search_marks.removeTextChangedListener(editor)
