@@ -45,6 +45,7 @@
                 android:id="@+id/recycler_students"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollMode="never"
                 tools:listitem="@layout/item_student"/>
             <ProgressBar
                 android:id="@+id/progress_first_loading"

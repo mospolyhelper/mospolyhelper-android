@@ -94,5 +94,8 @@
   <string name="course">%1$s курс</string>
   <string name="semester">%1$s семестр</string>
   <string name="exam">Экзамен</string>
+  <string name="reg_application">Регистрационный номер: %1$s</string>
+  <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
+  <string name="prim">Примечание: %1$s</string>
 
 </resources>

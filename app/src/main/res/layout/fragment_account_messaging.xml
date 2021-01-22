@@ -11,6 +11,7 @@
             android:id="@+id/recycler_messaging"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:overScrollMode="never"
             tools:listitem="@layout/item_classmate"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

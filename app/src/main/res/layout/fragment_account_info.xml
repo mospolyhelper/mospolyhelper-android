@@ -161,7 +161,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:overScrollMode="never"/>
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_order"/>
         </LinearLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

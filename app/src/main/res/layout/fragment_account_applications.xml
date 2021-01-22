@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/applications_swipe"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@+id/applications_swipe"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/scheduleBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/applications"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_application"/>
+
                 <ProgressBar
                     android:id="@+id/progress_loading"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/applications"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:overScrollMode="never"/>
         </FrameLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
