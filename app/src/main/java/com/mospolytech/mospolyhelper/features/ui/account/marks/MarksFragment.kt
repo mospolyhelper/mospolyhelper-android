@@ -26,7 +26,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private val viewModel by viewModel<MarksViewModel>()
-    private lateinit var marks: Marks
+    private lateinit var marksList: MutableList<MarkInfo>
+    private lateinit var semesters: MutableList<String>
+    private var currentSemester: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,17 +41,20 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycler_marks.layoutManager = LinearLayoutManager(requireContext())
+        recycler_marks.adapter = MarksAdapter(emptyList())
         swipe_marks.setOnRefreshListener {
             lifecycleScope.async {
                 viewModel.downloadInfo()
             }
         }
+
         lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
                 result.onSuccess {
                     swipe_marks.isRefreshing = false
                     progress_loading.gone()
-                    marks = it
+                    setMarks(it.marks)
+                    setSemesters(it.marks)
                     button_search.isEnabled = true
                     filldata()
                 }.onFailure {
@@ -67,19 +72,24 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
         lifecycleScope.async {
             viewModel.getInfo()
             }
+
         val editor = object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                recycler_marks.adapter = MarksAdapter(getMarksByName(marks.marks, p0.toString()))
+                if (recycler_marks.adapter is MarksAdapter)
+                    (recycler_marks.adapter as MarksAdapter).updateList(getMarksByName(marksList, p0.toString()))
             }
             override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { }
             override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { } }
+
         button_search.setOnClickListener {
             marks_search.show()
             marks_select.gone()
             edit_search_marks.addTextChangedListener(editor)
-            recycler_marks.adapter = MarksAdapter(getMarksByName(marks.marks, ""))
+            (recycler_marks.adapter as MarksAdapter).updateList(emptyList())
+            (recycler_marks.adapter as MarksAdapter).updateList(getMarksByName(marksList, ""))
             swipe_marks.isEnabled = false
         }
+
         button_search_clear.setOnClickListener {
             swipe_marks.isEnabled = true
             marks_search.gone()
@@ -87,7 +97,8 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
             edit_search_marks.removeTextChangedListener(editor)
             edit_search_marks.text.clear()
             if (semesters_spinner.adapter.count == semesters_spinner.selectedItemPosition + 1) {
-                recycler_marks.adapter = MarksAdapter(getMarksBySemesters(marks.marks, semesters_spinner.adapter.count).toList())
+                (recycler_marks.adapter as MarksAdapter).
+                updateList(getMarksBySemesters(marksList, semesters_spinner.adapter.count))
             } else {
                 semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
             }
@@ -95,54 +106,66 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
     private fun filldata() {
         ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
-            getSemesters(marks.marks)).also { adapterSpinner ->
+            semesters.map { "$it семестр" }).also { adapterSpinner ->
             adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             semesters_spinner.adapter = adapterSpinner
         }
         semesters_spinner.onItemSelectedListener = this
-        semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
+        if (currentSemester == -1)
+            semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
+        else semesters_spinner.setSelection(currentSemester)
     }
 
-    private fun getSemesters(marks: Map<String, Map<String, List<Mark>>>): MutableList<String> {
-        val semesters: MutableList<String> = mutableListOf()
-        marks.values.forEach { it -> it.keys.toTypedArray().forEach { it -> semesters.add("$it семестр") } }
-        return semesters
-    }
-    private fun getMarksBySemesters(marks: Map<String, Map<String, List<Mark>>>, semester: Int): List<Mark> {
-        marks.values.forEach { it -> it.forEach { it -> if (it.key == semester.toString()) return it.value } }
-        return emptyList()
+    private fun setSemesters(marks: Map<String, Map<String, List<Mark>>>) {
+        semesters = mutableListOf()
+        marks.values.forEach { it -> it.keys.toTypedArray().forEach { semesters.add(it) } }
     }
 
-    private fun getMarksByName(marks: Map<String, Map<String, List<Mark>>>, name: String): List<Mark> {
-        val markList: MutableList<MarkInfo> = mutableListOf()
+    private fun getMarksBySemesters(marks: MutableList<MarkInfo>, semester: Int): List<MarkInfo> {
+        val semesterMarks = mutableListOf<MarkInfo>()
+        marks.forEach { if (it.semester == semester.toString()) semesterMarks.add(it) }
+        return semesterMarks
+    }
+
+    private fun setMarks(marks: Map<String, Map<String, List<Mark>>>) {
+        marksList = mutableListOf()
         var id = 1
         var course = 1
         var semester = 1
         marks.values.forEach {
             it.values.forEach { list ->
                 list.forEach {mark ->
-                    if (mark.subject.contains(name, true))
-                        markList.add(MarkInfo(
-                                mark.subject,
-                                mark.loadType,
-                                mark.mark,
-                                id++,
-                                semester.toString(),
-                                course.toString()
-                            ))
+                    marksList.add(
+                        MarkInfo(
+                            mark.subject,
+                            mark.loadType,
+                            mark.mark,
+                            id++,
+                            semester.toString(),
+                            course.toString()
+                        )
+                    )
                 }
                 semester++
             }
-        course++
+            course++
         }
-        return  markList.toList()
+    }
+
+    private fun getMarksByName(marks: MutableList<MarkInfo>, name: String): List<MarkInfo> {
+        val marksList = mutableListOf<MarkInfo>()
+        marksList.addAll(marks)
+        return marksList.filter { it.subject.contains(name, true) }
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        recycler_marks.adapter = MarksAdapter(getMarksBySemesters(marks.marks, p2 + 1).toList())
+        if (recycler_marks.adapter is MarksAdapter)
+            (recycler_marks.adapter as MarksAdapter).updateList(getMarksBySemesters(marksList, p2 + 1).toList())
+        currentSemester = p2
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        recycler_marks.adapter = null
+        if (recycler_marks.adapter is MarksAdapter)
+            (recycler_marks.adapter as MarksAdapter).updateList(mutableListOf())
     }
 }
