@@ -162,6 +162,9 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_classmatesFragment"
             app:destination="@id/classmatesFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_applicationsFragment"
+            app:destination="@id/applicationsFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -200,5 +203,9 @@
             android:name="DialogID"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/applicationsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.applications.ApplicationsFragment"
+        android:label="ApplicationsFragment" />
 
 </navigation>

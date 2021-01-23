@@ -73,7 +73,20 @@ class StudentsFragment : Fragment(), CoroutineScope {
         recycler_students.adapter = adapter.withLoadStateFooter(
             PagingLoadingAdapter { adapter.retry() }
         )
-
+        swipe_students.setOnRefreshListener {
+            if (adapter.itemCount != 0)
+                adapter.refresh()
+            else {
+                job.cancel()
+                job = Job()
+                lifecycleScope.launch {
+                    viewModel.fetchStudents(edit_search_student.text.toString())
+                        .collectLatest { pagingData ->
+                            adapter.submitData(pagingData)
+                        }
+                }
+            }
+        }
         edit_search_student.setOnEditorActionListener { _, i, _ ->
             if (i == EditorInfo.IME_ACTION_SEARCH) {
                 search(adapter)
@@ -83,9 +96,14 @@ class StudentsFragment : Fragment(), CoroutineScope {
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
                 when(loadStates.refresh) {
-                    is LoadState.Loading -> if (adapter.itemCount == 0) progress_first_loading.show()
+                    is LoadState.Loading -> {
+                        if (adapter.itemCount == 0)
+                            if (!swipe_students.isRefreshing)
+                                progress_first_loading.show()
+                    }
                     is LoadState.Error -> {
                         progress_first_loading.hide()
+                        swipe_students.isRefreshing = false
                         Toast.makeText(
                             requireContext(),
                             (loadStates.refresh as LoadState.Error).error.localizedMessage,
@@ -95,6 +113,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
                     is LoadState.NotLoading -> {
                         fab_students.isVisible = adapter.itemCount != 0
                         progress_first_loading.hide()
+                        swipe_students.isRefreshing = false
                     }
                     else -> progress_first_loading.hide()
                 }
@@ -104,6 +123,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
 
     private fun search(adapter: StudentsAdapter) {
         adapter.submitData(lifecycle, PagingData.empty())
+        fab_students.isVisible = false
         job.cancel()
         job = Job()
         lifecycleScope.launch {

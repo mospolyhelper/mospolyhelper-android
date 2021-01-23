@@ -68,6 +68,20 @@ class TeachersFragment : Fragment(), CoroutineScope {
         recycler_teachers.adapter = adapter.withLoadStateFooter(
             PagingLoadingAdapter { adapter.retry() }
         )
+        swipe_teachers.setOnRefreshListener {
+            if (adapter.itemCount != 0)
+                adapter.refresh()
+            else {
+                job.cancel()
+                job = Job()
+                lifecycleScope.launch {
+                    viewModel.fetchTeachers(edit_search_teacher.text.toString())
+                        .collectLatest { pagingData ->
+                            adapter.submitData(pagingData)
+                        }
+                }
+            }
+        }
         edit_search_teacher.setOnEditorActionListener { _, i, _ ->
             if (i == EditorInfo.IME_ACTION_SEARCH) {
                 adapter.submitData(lifecycle, PagingData.empty())
@@ -85,9 +99,14 @@ class TeachersFragment : Fragment(), CoroutineScope {
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
                 when(loadStates.refresh) {
-                    is LoadState.Loading -> if (adapter.itemCount == 0) progress_first_loading.show()
+                    is LoadState.Loading -> {
+                        if (adapter.itemCount == 0)
+                            if (!swipe_teachers.isRefreshing)
+                                progress_first_loading.show()
+                    }
                     is LoadState.Error -> {
                         progress_first_loading.hide()
+                        swipe_teachers.isRefreshing = false
                         Toast.makeText(
                             requireContext(),
                             (loadStates.refresh as LoadState.Error).error.localizedMessage,
@@ -95,9 +114,11 @@ class TeachersFragment : Fragment(), CoroutineScope {
                         ).show()
                     }
                     is LoadState.NotLoading -> {
-                        if (!job.isCancelled) progress_first_loading.hide()
+                        if (!job.isCancelled) {
+                            progress_first_loading.hide()
+                            swipe_teachers.isRefreshing = false
+                        }
                     }
-                    else -> if (!job.isCancelled) progress_first_loading.hide()
                 }
             }
         }

@@ -31,23 +31,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/mark_layout"/>
 
-        <TextView
-            android:id="@+id/type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/marginCard"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="@dimen/marginCard"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="5"
-            android:text="@string/marks"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/mark_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_predmet" />
             <FrameLayout
                 android:id="@+id/mark_layout"
                 android:layout_width="80dp"
@@ -81,5 +64,28 @@
                     android:text="ЗАЧ"
                     android:layout_gravity="center"/>
             </FrameLayout>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exam"
+            app:chipIcon="@drawable/ic_teacher_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_predmet" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/course"
+            app:layout_constraintStart_toEndOf="@id/chip_type"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_semester"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/semester"
+            app:layout_constraintStart_toEndOf="@id/chip_course"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

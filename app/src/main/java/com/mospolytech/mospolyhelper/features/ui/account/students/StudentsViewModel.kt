@@ -27,6 +27,6 @@ class StudentsViewModel(
     fun invalidate() = useCase.invalidate()
 
     fun fetchStudents(query: String): Flow<PagingData<Student>> {
-        return useCase.getInfo(query).cachedIn(viewModelScope)
+        return useCase.getInfo(query)
     }
 }

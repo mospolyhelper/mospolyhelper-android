@@ -1,8 +1,13 @@
-package com.mospolytech.mospolyhelper.data.account.info.repository
+package com.mospolytech.mospolyhelper.data.account.applications.repository
 
+import com.mospolytech.mospolyhelper.data.account.applications.local.ApplicationsLocalDataSource
+import com.mospolytech.mospolyhelper.data.account.applications.remote.ApplicationsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
+import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
+import com.mospolytech.mospolyhelper.domain.account.applications.repository.ApplicationsRepository
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -14,25 +19,26 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class InfoRepositoryImpl(
-    private val dataSource: InfoRemoteDataSource,
-    private val localDataSource: InfoLocalDataSource,
+class ApplicationsRepositoryImpl(
+    private val dataSource: ApplicationsRemoteDataSource,
+    private val localDataSource: ApplicationsLocalDataSource,
     private val prefDataSource: SharedPreferencesDataSource
-) : InfoRepository {
+) : ApplicationsRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    override suspend fun getInfo() = flow {
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun getApplications() = flow {
         val sessionId = prefDataSource.getString(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        if (res.isSuccess) localDataSource.set(res.value as Info)
+        if (res.isSuccess) localDataSource.set(res.value as List<Application>)
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Info>>{
+    override suspend fun getLocalInfo(): Flow<Result<List<Application>>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))

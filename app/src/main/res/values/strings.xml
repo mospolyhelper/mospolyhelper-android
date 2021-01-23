@@ -81,14 +81,21 @@
   <string name="base_info">%1$s %2$s курс группы %3$s</string>
   <!--  Notification channels names -->
   <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
-    <string name="marks">Оценки</string>
-    <string name="fio_input">Введите ФИО студента</string>
-    <string name="retry">Повторить</string>
+
+  <string name="marks">Оценки</string>
+  <string name="fio_input">Введите ФИО студента</string>
+  <string name="retry">Повторить</string>
   <string name="loading_error">Ошибка загрузки данных</string>
-    <string name="fio">ФИО</string>
-    <string name="search_student">Введите фамилию или группу</string>
-    <string name="search_teacher">Введите фио преподавателя</string>
-    <string name="search_classmate">Введите ФИО</string>
-    <string name="input_message">Введите сообщение</string>
+  <string name="fio">ФИО</string>
+  <string name="search_student">Введите фамилию или группу</string>
+  <string name="search_teacher">Введите фио преподавателя</string>
+  <string name="search_classmate">Введите ФИО</string>
+  <string name="input_message">Введите сообщение</string>
+  <string name="course">%1$s курс</string>
+  <string name="semester">%1$s семестр</string>
+  <string name="exam">Экзамен</string>
+  <string name="reg_application">Регистрационный номер: %1$s</string>
+  <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
+  <string name="prim">Примечание: %1$s</string>
 
 </resources>

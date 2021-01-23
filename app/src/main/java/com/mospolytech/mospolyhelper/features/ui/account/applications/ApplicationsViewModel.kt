@@ -1,7 +1,7 @@
-package com.mospolytech.mospolyhelper.features.ui.account.marks
+package com.mospolytech.mospolyhelper.features.ui.account.applications
 
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
-import com.mospolytech.mospolyhelper.domain.account.marks.usecase.MarksUseCase
+import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
+import com.mospolytech.mospolyhelper.domain.account.applications.usecase.ApplicationsUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
@@ -10,26 +10,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.KoinComponent
 
-class MarksViewModel(
+class ApplicationsViewModel (
     mediator: Mediator<String, ViewModelMessage>,
-    private val useCase: MarksUseCase
-) : ViewModelBase(mediator, MarksViewModel::class.java.simpleName), KoinComponent {
+    private val useCase: ApplicationsUseCase
+) : ViewModelBase(mediator, ApplicationsViewModel::class.java.simpleName), KoinComponent {
 
-    val marks = MutableStateFlow<Result<Marks>>(Result.loading())
+    val applications = MutableStateFlow<Result<List<Application>>>(Result.loading())
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {
-            marks.value = it
+            applications.value = it
         }
     }
 
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {
-            marks.value = it
+            applications.value = it
         }
-        //marks.value = Result.loading()
         useCase.getInfo().collect {
-            marks.value = it
+            applications.value = it
         }
     }
 

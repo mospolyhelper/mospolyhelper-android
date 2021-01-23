@@ -6,10 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card"
     android:orientation="vertical"
-    android:layout_marginBottom="1dp"
+    android:layout_marginBottom="3dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
     app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="@color/colorPrimary"
-    android:elevation="3dp">
+    app:cardBackgroundColor="@color/colorPrimary">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,7 +44,6 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:text="@string/marks"
-            android:textColor="@color/textColorPrimary"
             android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/title_order"
             app:layout_constraintStart_toStartOf="parent" />
@@ -53,12 +53,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/marginCard"
-            android:layout_marginBottom="@dimen/marginCard"
             android:ellipsize="end"
             android:textSize="16sp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/marks"
-            android:textColor="@color/textColorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/title_order"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
