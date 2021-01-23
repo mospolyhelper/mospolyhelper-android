@@ -53,6 +53,7 @@ class App : Application() {
             classmatesModule,
             messagingModule,
             applicationsModule,
+            paymentsModule,
 
             relevantModule,
             addressesModule,

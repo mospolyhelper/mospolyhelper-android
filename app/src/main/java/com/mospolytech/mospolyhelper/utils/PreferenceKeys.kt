@@ -34,5 +34,6 @@ class PreferenceKeys {
         const val Marks = "Marks"
         const val Classmates = "Classmates"
         const val Applications = "Applications"
+        const val Payments = "Payments"
     }
 }
