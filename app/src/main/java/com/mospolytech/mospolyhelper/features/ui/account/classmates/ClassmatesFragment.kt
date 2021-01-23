@@ -62,24 +62,42 @@ class ClassmatesFragment : Fragment() {
             }
             override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { }
             override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { } }
-
+        swipe_classmates.setOnRefreshListener {
+            lifecycleScope.async {
+                viewModel.downloadInfo()
+            }
+        }
         lifecycleScope.launchWhenResumed {
             viewModel.classmates.collect { result ->
                 result.onSuccess {
+                    swipe_classmates.isRefreshing = false
                     progress_loading.gone()
                     classmates = it
-                    recycler_classmates.adapter?.let { adapter ->
-                        if (adapter is ClassmatesAdapter) adapter.updateList(classmates)
+                    if (edit_search_classmate.text.isNotEmpty()) {
+                        recycler_classmates.adapter?.let { adapter ->
+                            if (adapter is ClassmatesAdapter) {
+                                val classmatesMutable: MutableList<Classmate> = classmates.toMutableList()
+                                adapter.updateList(classmatesMutable.filter { predicate ->
+                                    predicate.name.contains(edit_search_classmate.text.toString(), true)
+                                })
+                            }
+                        }
+                    } else {
+                        recycler_classmates.adapter?.let { adapter ->
+                            if (adapter is ClassmatesAdapter) adapter.updateList(classmates)
+                        }
                     }
                     edit_search_classmate.addTextChangedListener(editor)
                 }.onFailure {
+                    swipe_classmates.isRefreshing = false
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     progress_loading.gone()
                     if (recycler_classmates.adapter?.itemCount == 0) {
                         edit_search_classmate.removeTextChangedListener(editor)
                     }
                 }.onLoading {
-                    progress_loading.show()
+                    if (!swipe_classmates.isRefreshing)
+                        progress_loading.show()
                     if (recycler_classmates.adapter?.itemCount == 0) {
                         edit_search_classmate.removeTextChangedListener(editor)
                     }

@@ -17,6 +17,12 @@ class InfoViewModel(
 
     val info = MutableStateFlow<Result<Info>>(Result.loading())
 
+    suspend fun downloadInfo() {
+        useCase.getInfo().collect {
+            info.value = it
+        }
+    }
+
 
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {

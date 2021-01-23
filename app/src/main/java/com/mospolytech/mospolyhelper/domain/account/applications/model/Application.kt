@@ -7,5 +7,6 @@ data class Application(
     val status: String,
     val department: String,
     val note: String,
-    val info: String
+    val info: String,
+    var isShown: Boolean = false
 )

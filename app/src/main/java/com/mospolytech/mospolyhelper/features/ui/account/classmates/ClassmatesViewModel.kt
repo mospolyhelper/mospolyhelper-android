@@ -20,6 +20,12 @@ class ClassmatesViewModel(
     val classmates = MutableStateFlow<Result<List<Classmate>>>(Result.loading())
 
 
+    suspend fun downloadInfo() {
+        useCase.getInfo().collect {
+            classmates.value = it
+        }
+    }
+
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {
             classmates.value = it
