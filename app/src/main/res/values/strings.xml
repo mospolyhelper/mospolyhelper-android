@@ -97,5 +97,9 @@
   <string name="reg_application">Регистрационный номер: %1$s</string>
   <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
   <string name="prim">Примечание: %1$s</string>
+  <string name="payment_left">Осталось заплатить %1$s из %2$s руб.</string>
+  <string name="payment_credit">Задолженность %1$s руб. на %2$s</string>
+  <string name="payment_debet">Переплата %1$s руб. на %2$s</string>
+  <string name="payment_no_credit">Задолженности на %1$s нет</string>
 
 </resources>
