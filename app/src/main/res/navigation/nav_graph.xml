@@ -165,6 +165,9 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_applicationsFragment"
             app:destination="@id/applicationsFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_paymentsFragment"
+            app:destination="@id/paymentsFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -207,5 +210,9 @@
         android:id="@+id/applicationsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.applications.ApplicationsFragment"
         android:label="ApplicationsFragment" />
+    <fragment
+        android:id="@+id/paymentsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.payments.PaymentsFragment"
+        android:label="PaymentsFragment" />
 
 </navigation>
