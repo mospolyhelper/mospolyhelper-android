@@ -168,6 +168,9 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_paymentsFragment"
             app:destination="@id/paymentsFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_statementsFragment"
+            app:destination="@id/statementsFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -181,7 +184,11 @@
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.info.InfoFragment"
-        android:label="InfoFragment" />
+        android:label="InfoFragment" >
+        <action
+            android:id="@+id/action_infoFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+    </fragment>
     <fragment
         android:id="@+id/teachersFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.teachers.TeachersFragment"
@@ -214,5 +221,9 @@
         android:id="@+id/paymentsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.payments.PaymentsFragment"
         android:label="PaymentsFragment" />
+    <fragment
+        android:id="@+id/statementsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.statements.StatementsFragment"
+        android:label="StatementsFragment" />
 
 </navigation>

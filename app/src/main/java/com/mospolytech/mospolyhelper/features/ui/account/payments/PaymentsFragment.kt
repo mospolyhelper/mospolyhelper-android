@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
@@ -32,11 +33,20 @@ class PaymentsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         payments_swipe.setOnRefreshListener {
             lifecycleScope.async {
                 viewModel.downloadInfo()
             }
         }
+
+        payment_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                payment_pager.isEnabled = state == ViewPager2.SCROLL_STATE_IDLE
+            }
+        })
+
         lifecycleScope.launchWhenResumed {
             viewModel.payments.collect { result ->
                 result.onSuccess {
@@ -65,7 +75,12 @@ class PaymentsFragment: Fragment() {
         payment_pager.adapter = PagerAdapter(payments.contracts.values.toList())
         val titles = payments.contracts.keys.toTypedArray()
         TabLayoutMediator(payment_tabs, payment_pager) { tab, position ->
-            tab.text = titles[position]
+            tab.text =
+                when {
+                    titles[position] == "dormitory" -> "Общежитие"
+                    titles[position] == "tuition" -> "Обучение"
+                    else -> titles[position]
+                }
         }.attach()
     }
 }
