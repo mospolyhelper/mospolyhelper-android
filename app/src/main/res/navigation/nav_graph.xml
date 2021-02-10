@@ -168,6 +168,9 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_paymentsFragment"
             app:destination="@id/paymentsFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_deadlinesFragment"
+            app:destination="@id/deadlinesFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -214,5 +217,22 @@
         android:id="@+id/paymentsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.payments.PaymentsFragment"
         android:label="PaymentsFragment" />
+    <fragment
+        android:id="@+id/deadlinesFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.deadlines.DeadlinesFragment"
+        android:label="DeadlinesFragment" >
+        <action
+            android:id="@+id/action_deadlinesFragment_to_deadlinesBottomSheetFragment"
+            app:destination="@id/deadlinesBottomSheetFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deadlinesBottomSheetFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.deadlines.DeadlinesBottomSheetFragment"
+        android:label="DeadlinesBottomSheetFragment" >
+        <argument
+            android:name="Deadline"
+            app:argType="com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline"
+            app:nullable="true" />
+    </dialog>
 
 </navigation>

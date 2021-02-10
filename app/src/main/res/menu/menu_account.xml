@@ -32,4 +32,8 @@
         android:id="@+id/nav_classmates"
         android:icon="@drawable/ic_round_person_24"
         android:title="Classmates" />
+    <item
+        android:id="@+id/nav_deadlines"
+        android:icon="@drawable/ic_lesson_deadlines"
+        android:title="Deadlines" />
 </menu>

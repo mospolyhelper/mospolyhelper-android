@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
@@ -18,6 +19,7 @@ import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.android.synthetic.main.fragment_account_deadline.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DeadlinesFragment: Fragment() {
@@ -41,7 +43,8 @@ class DeadlinesFragment: Fragment() {
                 viewModel.downloadInfo()
             }
         }
-        lifecycleScope.launchWhenResumed {
+
+        lifecycleScope.launch {
             viewModel.deadlines.collect { result ->
                 result.onSuccess {
                     loading_spinner.gone()
@@ -58,8 +61,16 @@ class DeadlinesFragment: Fragment() {
             }
         }
 
+        lifecycleScope.launchWhenResumed {
+
+        }
+
         lifecycleScope.async {
             viewModel.getInfo()
+        }
+
+        fab.setOnClickListener {
+            findNavController().navigate(R.id.action_deadlinesFragment_to_deadlinesBottomSheetFragment)
         }
     }
     fun filldata(deadlines: List<Deadline>) {
