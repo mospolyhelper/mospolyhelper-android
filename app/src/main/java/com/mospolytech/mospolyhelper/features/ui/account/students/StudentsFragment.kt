@@ -73,13 +73,6 @@ class StudentsFragment : Fragment(), CoroutineScope {
             search(adapter)
         }
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<FilterEntity>("Filter")?.observe(
-            viewLifecycleOwner) { result ->
-            if (filters != result) {
-                filters = result
-            }
-        }
-
         button_filter.setOnClickListener {
             val data = bundleOf("Filter" to filters)
             findNavController().navigate(R.id.action_studentsFragment_to_bottomDialogFilter, data)
@@ -106,7 +99,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
                 job.cancel()
                 job = Job()
                 lifecycleScope.launch {
-                    viewModel.fetchStudents(edit_search_student.text.toString())
+                    viewModel.fetchStudents(edit_search_student.text.toString(), filters)
                         .collectLatest { pagingData ->
                             adapter.submitData(pagingData)
                         }
@@ -145,6 +138,13 @@ class StudentsFragment : Fragment(), CoroutineScope {
                 }
             }
         }
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<FilterEntity>("Filter")?.observe(
+            viewLifecycleOwner) { result ->
+            if (filters != result) {
+                filters = result
+                search(adapter)
+            }
+        }
     }
 
     private fun search(adapter: StudentsAdapter) {
@@ -153,7 +153,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
         job.cancel()
         job = Job()
         lifecycleScope.launch {
-            viewModel.fetchStudents(edit_search_student.text.toString())
+            viewModel.fetchStudents(edit_search_student.text.toString(), filters)
                 .collectLatest { pagingData ->
                     adapter.submitData(pagingData)
                 }

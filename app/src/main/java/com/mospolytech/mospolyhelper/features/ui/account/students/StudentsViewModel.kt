@@ -10,6 +10,7 @@ import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult
 import com.mospolytech.mospolyhelper.domain.account.students.usecase.StudentsUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
+import com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
@@ -26,10 +27,17 @@ class StudentsViewModel(
     private val useCase: StudentsUseCase
 ) : ViewModelBase(mediator, StudentsViewModel::class.java.simpleName), KoinComponent {
 
-    fun fetchStudents(query: String): Flow<PagingData<Student>> {
+    fun fetchStudents(query: String, filters: FilterEntity): Flow<PagingData<Student>> {
         return useCase.getInfo(query).map { pagingData ->
             pagingData.filter { student ->
-                true
+                var result = true
+                if (filters.courses.isNotEmpty()) {
+                    if (!filters.courses.contains(student.course)) {
+                        result = false
+                    }
+                }
+//                if (student.)
+                result
             }
         }.cachedIn(viewModelScope)
     }

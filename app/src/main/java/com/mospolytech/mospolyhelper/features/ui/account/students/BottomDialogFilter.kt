@@ -34,7 +34,15 @@ class BottomDialogFilter():BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val filters = arguments?.get("Filter") as FilterEntity
-
+        check_1_course.isChecked = filters.courses.contains("1")
+        check_2_course.isChecked = filters.courses.contains("2")
+        check_3_course.isChecked = filters.courses.contains("3")
+        check_4_course.isChecked = filters.courses.contains("4")
+        check_5_course.isChecked = filters.courses.contains("5")
+        check_6_course.isChecked = filters.courses.contains("6")
+        radio_och.isChecked = filters.form.contains("Очная")
+        radio_zaoch.isChecked = filters.form.contains("Очно-заочная")
+        radio_spec.isChecked = filters.form.contains("Заочная")
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -50,7 +58,7 @@ class BottomDialogFilter():BottomSheetDialogFragment() {
         if (check_6_course.isChecked) courses.add("6")
         if (radio_och.isChecked) form = "Очная"
         if (radio_half_och.isChecked) form ="Очно-заочная"
-        if (radio_zaoch.isChecked) form ="Очная"
+        if (radio_zaoch.isChecked) form ="Заочная"
         if (radio_bak.isChecked) type =".03."
         if (radio_spec.isChecked) type =".05."
         //if (radio_mag.isChecked) form =".04."
