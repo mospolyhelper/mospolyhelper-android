@@ -43,7 +43,7 @@ class ClassmatesAdapter(var items : List<Classmate>,
                 }
             }
             card.setOnClickListener { classmateClick.invoke(items[position].dialogKey) }
-            Glide.with(context).load("https://e.mospolytech.ru/${items[position].avatarUrl}").into(avatar);
+            Glide.with(context).load("https://e.mospolytech.ru/${items[position].avatarUrl}").into(avatar)
         }
     }
 

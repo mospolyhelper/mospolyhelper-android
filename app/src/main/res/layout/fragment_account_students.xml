@@ -19,7 +19,7 @@
                     android:id="@+id/edit_search_student"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginEnd="0dp"
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="3dp"
                     android:background="@drawable/shape_lesson"
@@ -31,7 +31,15 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:drawableStart="@drawable/ic_search_24"
-                    android:imeOptions="actionSearch"/>
+                    android:imeOptions="actionSearch"
+                    android:layout_weight="0.1"/>
+                <ImageButton
+                    android:id="@+id/button_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_baseline_filter_alt_24"
+                    android:layout_weight="0.9"/>
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -47,6 +55,7 @@
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
                 tools:listitem="@layout/item_student"/>
+
             <ProgressBar
                 android:id="@+id/progress_first_loading"
                 android:layout_width="wrap_content"
@@ -54,6 +63,7 @@
                 android:layout_gravity="center"
                 android:visibility="invisible"
                 tools:visibility="visible"/>
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_students"
                 android:layout_width="wrap_content"

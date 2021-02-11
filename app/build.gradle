@@ -68,7 +68,7 @@ dependencies {
     def koin_version= "2.2.0-beta-1"
     def ktor_version= "1.4.0"
     def room_version = '2.2.6'
-
+    def logback_version = "1.2.3"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -117,6 +117,9 @@ dependencies {
     // Network
     implementation "io.ktor:ktor-client-android:$ktor_version"
     implementation "io.ktor:ktor-client-serialization:$ktor_version"
+    implementation "io.ktor:ktor-client-logging:$ktor_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
+
 
     // Json
     implementation 'com.beust:klaxon:5.4'

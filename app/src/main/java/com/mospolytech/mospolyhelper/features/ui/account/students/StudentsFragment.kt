@@ -9,18 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.StudentsAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
+import com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity
 import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.android.synthetic.main.account_bottom_sheet_filter.*
 import kotlinx.android.synthetic.main.fragment_account_students.*
 import kotlinx.android.synthetic.main.fragment_account_students.progress_first_loading
 import kotlinx.coroutines.*
@@ -36,13 +41,18 @@ class StudentsFragment : Fragment(), CoroutineScope {
 
     private var job : Job = Job()
 
+    private val viewModel by viewModel<StudentsViewModel>()
 
-    private val viewModel  by viewModel<StudentsViewModel>()
-
+    private var filters: FilterEntity = FilterEntity(mutableListOf(),"", "")
 
     private val diffUtil = object : DiffUtil.ItemCallback<Student>() {
         override fun areItemsTheSame(oldItem: Student, newItem: Student) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Student, newItem: Student) = oldItem == newItem
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.newCoroutineContext(this@StudentsFragment.coroutineContext)
     }
 
     override fun onCreateView(
@@ -54,11 +64,27 @@ class StudentsFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.newCoroutineContext(this@StudentsFragment.coroutineContext)
         recycler_students.layoutManager = LinearLayoutManager(requireContext())
         val clipboard: ClipboardManager? =
             requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-        val adapter = StudentsAdapter(diffUtil) { edit_search_student.setText(it) }
+        val adapter = StudentsAdapter(diffUtil)
+        adapter.groupClick = {
+            edit_search_student.setText(it)
+            search(adapter)
+        }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<FilterEntity>("Filter")?.observe(
+            viewLifecycleOwner) { result ->
+            if (filters != result) {
+                filters = result
+            }
+        }
+
+        button_filter.setOnClickListener {
+            val data = bundleOf("Filter" to filters)
+            findNavController().navigate(R.id.action_studentsFragment_to_bottomDialogFilter, data)
+        }
+
         fab_students.setOnClickListener {
             var i = 1
             val names = adapter.snapshot().items.map { "${i++}. ${it.name}" }

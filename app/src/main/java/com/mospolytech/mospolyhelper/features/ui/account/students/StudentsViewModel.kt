@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult
@@ -17,6 +18,7 @@ import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import org.koin.core.KoinComponent
 
 class StudentsViewModel(
@@ -25,6 +27,10 @@ class StudentsViewModel(
 ) : ViewModelBase(mediator, StudentsViewModel::class.java.simpleName), KoinComponent {
 
     fun fetchStudents(query: String): Flow<PagingData<Student>> {
-        return useCase.getInfo(query)
+        return useCase.getInfo(query).map { pagingData ->
+            pagingData.filter { student ->
+                true
+            }
+        }.cachedIn(viewModelScope)
     }
 }

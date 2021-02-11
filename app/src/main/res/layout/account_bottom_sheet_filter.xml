@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:padding="10dp"
+    android:theme="@style/Theme.MaterialComponents.DayNight"
+    android:background="@drawable/shape_bottom_sheet">
+    <CheckBox
+        android:id="@+id/check_1_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1 курс"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <CheckBox
+        android:id="@+id/check_2_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="2 курс"
+        app:layout_constraintTop_toBottomOf="@id/check_1_course"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <CheckBox
+        android:id="@+id/check_3_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="3 курс"
+        app:layout_constraintTop_toBottomOf="@id/check_2_course"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <CheckBox
+        android:id="@+id/check_4_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="4 курс"
+        app:layout_constraintTop_toBottomOf="@id/check_3_course"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <CheckBox
+        android:id="@+id/check_5_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="5 курс"
+        app:layout_constraintTop_toBottomOf="@id/check_4_course"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <CheckBox
+        android:id="@+id/check_6_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="6 курс"
+        app:layout_constraintTop_toBottomOf="@id/check_5_course"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <RadioGroup
+        android:id="@+id/radio_group_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <RadioButton
+            android:id="@+id/radio_och"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Очная форма"/>
+        <RadioButton
+            android:id="@+id/radio_half_och"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Очно-заочная форма"/>
+        <RadioButton
+            android:id="@+id/radio_zaoch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Заочная форма"/>
+    </RadioGroup>
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/radio_group_type"
+        app:layout_constraintStart_toStartOf="@id/radio_group_type">
+        <RadioButton
+            android:id="@+id/radio_bak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Бакалавриат"/>
+        <RadioButton
+            android:id="@+id/radio_spec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Специалитет"/>
+        <RadioButton
+            android:id="@+id/radio_asp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Аспирантура"/>
+        <RadioButton
+            android:id="@+id/radio_spo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="СПО"/>
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,7 @@
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="5dp"
-                android:drawableStart="@drawable/ic_round_info_24"
+                android:drawableStart="@drawable/ic_baseline_payments_24"
                 android:drawablePadding="10dp"
                 android:text="@string/payment_left"/>
             <TextView
@@ -41,11 +41,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="5dp"
-                android:drawableStart="@drawable/ic_baseline_payments_24"
+                android:layout_margin="5dp"
+                android:drawableStart="@drawable/ic_round_info_24"
                 android:drawablePadding="10dp"
                 tools:text="Переплата -650"/>
+            <ImageView
+                android:id="@+id/image_sber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:src="@drawable/ic_launcher_background"/>
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_dormitory"

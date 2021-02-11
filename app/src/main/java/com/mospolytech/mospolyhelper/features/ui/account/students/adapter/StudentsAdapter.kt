@@ -21,13 +21,12 @@ import com.mospolytech.mospolyhelper.utils.show
 import kotlinx.android.synthetic.main.item_error.view.*
 import java.util.*
 
-class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>, private val groupClick:(String) -> Unit
+class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>
         ) : PagingDataAdapter<Student, RecyclerView.ViewHolder>(diffCallback) {
 
-    private lateinit var context: Context
+    lateinit var groupClick:(String) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        context = parent.context
         return  ViewHolderStudents(parent.inflate(R.layout.item_student))
     }
 
