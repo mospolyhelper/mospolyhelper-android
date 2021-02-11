@@ -22,6 +22,4 @@ class StudentsUseCase(
     fun getInfo(query: String): Flow<PagingData<Student>> =
         repository.getInfo(query)
 
-    fun invalidate() = repository.invalidate()
-
 }

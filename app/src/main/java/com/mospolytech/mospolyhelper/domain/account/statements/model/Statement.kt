@@ -2,9 +2,11 @@ package com.mospolytech.mospolyhelper.domain.account.statements.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class Statement(
+    val id: String,
     val number: String,
     val subject: String,
     val sheetType: String,
@@ -12,7 +14,7 @@ data class Statement(
     val appraisalsDate: String,
     val grade: String,
     val courseAndSemester: String
-): Parcelable {
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

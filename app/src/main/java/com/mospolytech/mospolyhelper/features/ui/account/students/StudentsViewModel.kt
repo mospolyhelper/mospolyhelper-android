@@ -24,8 +24,6 @@ class StudentsViewModel(
     private val useCase: StudentsUseCase
 ) : ViewModelBase(mediator, StudentsViewModel::class.java.simpleName), KoinComponent {
 
-    fun invalidate() = useCase.invalidate()
-
     fun fetchStudents(query: String): Flow<PagingData<Student>> {
         return useCase.getInfo(query)
     }
