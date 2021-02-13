@@ -1,5 +1,8 @@
 package com.mospolytech.mospolyhelper.domain.account.payments.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Contract(
     val name: String,
     val paidAmount: Int,

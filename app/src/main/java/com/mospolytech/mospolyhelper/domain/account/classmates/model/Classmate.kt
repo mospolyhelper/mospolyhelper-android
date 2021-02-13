@@ -2,15 +2,16 @@ package com.mospolytech.mospolyhelper.domain.account.classmates.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class Classmate (
     val id: Int,
     val name: String,
     val avatarUrl: String,
     val status: String,
     val dialogKey: String
-        ): Parcelable {
+        ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

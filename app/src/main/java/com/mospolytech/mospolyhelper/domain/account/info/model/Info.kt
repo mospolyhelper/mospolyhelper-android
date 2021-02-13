@@ -2,8 +2,9 @@ package com.mospolytech.mospolyhelper.domain.account.info.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class Info(
     val name: String,
     val status: String,
@@ -21,4 +22,4 @@ data class Info(
     val educationLevel: String,
     val admissionYear: String,
     val orders: List<String>,
-) : Parcelable
+)
