@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.data.account.auth.remote
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
+
 import com.mospolytech.mospolyhelper.data.account.auth.api.AuthHerokuClient
 import com.mospolytech.mospolyhelper.utils.Result
 
