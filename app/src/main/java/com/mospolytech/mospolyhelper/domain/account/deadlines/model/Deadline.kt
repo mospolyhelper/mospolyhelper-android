@@ -1,5 +1,9 @@
 package com.mospolytech.mospolyhelper.domain.account.deadlines.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Deadline(
     val id: Int,
     val name: String,
@@ -8,4 +12,4 @@ data class Deadline(
     val date: String,
     val completed: Boolean,
     val importance: Int
-)
+): Parcelable

@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.deadlines
 
+import androidx.lifecycle.MutableLiveData
 import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
 import com.mospolytech.mospolyhelper.domain.account.applications.usecase.ApplicationsUseCase
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
@@ -19,6 +20,10 @@ class DeadlinesViewModel(
 ) : ViewModelBase(mediator, DeadlinesViewModel::class.java.simpleName), KoinComponent {
 
     val deadlines = MutableStateFlow<Result<List<Deadline>>>(Result.loading())
+
+    val deadline: MutableLiveData<Deadline> by lazy {
+        MutableLiveData()
+    }
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {
