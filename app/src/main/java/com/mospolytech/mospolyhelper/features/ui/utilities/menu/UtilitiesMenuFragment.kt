@@ -60,6 +60,18 @@ class UtilitiesMenuFragment : Fragment() {
                             .actionUtilitiesMenuFragmentToDeadlineFragment()
                     )
                 }
+                R.id.nav_university_pass -> findNavController().safe {
+                    navigate(
+                        UtilitiesMenuFragmentDirections
+                            .actionUtilitiesMenuFragmentToUniversityPassFragment()
+                    )
+                }
+                R.id.nav_about_app -> findNavController().safe {
+                    navigate(
+                        UtilitiesMenuFragmentDirections
+                            .actionUtilitiesMenuFragmentToAboutAppFragment()
+                    )
+                }
             }
         }
         menuList.adapter = adapter

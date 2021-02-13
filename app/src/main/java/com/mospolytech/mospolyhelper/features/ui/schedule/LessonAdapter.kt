@@ -10,11 +10,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
+import com.mospolytech.mospolyhelper.features.widget.NoTouchRecyclerView
 import com.mospolytech.mospolyhelper.utils.*
 import java.lang.StringBuilder
 import java.time.LocalDate
@@ -29,7 +32,7 @@ import kotlin.math.roundToLong
 class LessonAdapter(
     var dailySchedule: List<Lesson>,
     var map: List<Boolean>,
-    val labels: Map<LessonLabelKey, Set<String>>,
+    val tags: Map<LessonTagKey, List<Tag>>,
     val deadlines: Map<String, List<Deadline>>,
     var date: LocalDate,
     var showGroups: Boolean,
@@ -253,7 +256,9 @@ class LessonAdapter(
             VIEW_TYPE_NORMAL_TOP,
             VIEW_TYPE_NORMAL_BOTTOM,
             VIEW_TYPE_NORMAL_MIDDLE -> {
-                (viewHolder as ViewHolder).bind(this)
+                val lesson = dailySchedule[position]
+                val tags = tags[LessonTagKey.fromLesson(lesson)] ?: emptyList()
+                (viewHolder as ViewHolder).bind(this, lesson, tags)
             }
             VIEW_TYPE_EMPTY -> {
                 (viewHolder as ViewHolderEmpty).bind(this)
@@ -282,16 +287,17 @@ class LessonAdapter(
         private val lessonDuration = view.findViewById<TextView>(R.id.text_lesson_duration)!!
         private val lessonPlace = view.findViewById<LinearLayout>(R.id.layout_lesson)!!
         private var lesson: Lesson = Lesson.getEmpty(0)
+        private var tags: List<Tag> = emptyList()
+        private val lessonTags = view.findViewById<NoTouchRecyclerView>(R.id.tags)!!
         private val hasTime: Boolean
         //private var hasLeftTimeLabel: Boolean = false
         //private var isCurrent: Boolean = false
 
         init {
+            lessonTags.layoutManager = FlexboxLayoutManager(view.context).apply {
+                recycleChildrenOnDetach = true
+            }
             lessonPlace.setSafeOnClickListener {
-                lessonPlace.transitionName = lesson.hashCode().toString()
-                lessonTitle.transitionName = lessonPlace.transitionName + "Title"
-                lessonTeachers.transitionName = lessonPlace.transitionName + "Teachers"
-                lessonAuditoriums.transitionName = lessonPlace.transitionName + "Auditoriums"
                 onLessonClick(lesson, adapter.date, listOf(lessonPlace, lessonTitle, lessonTeachers, lessonAuditoriums))
             }
             setBackground(preViewType)
@@ -302,8 +308,10 @@ class LessonAdapter(
             val hasTime = preViewType != VIEW_TYPE_NORMAL_BOTTOM && preViewType != VIEW_TYPE_NORMAL_MIDDLE
             if (hasTime) {
                 lessonTime.visibility = View.VISIBLE
+                lessonCurrent.visibility = View.VISIBLE
             } else {
                 lessonTime.visibility = View.GONE
+                lessonCurrent.visibility = View.GONE
             }
             return hasTime
         }
@@ -314,7 +322,6 @@ class LessonAdapter(
                 VIEW_TYPE_NORMAL_MIDDLE -> {
                     lessonPlaceParams.topMargin = 0
                     lessonPlaceParams.bottomMargin = 0
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_middle)
                 }
                 VIEW_TYPE_NORMAL_BOTTOM ->  {
                     val dp8 = TypedValue.applyDimension(
@@ -324,7 +331,6 @@ class LessonAdapter(
                     ).toInt()
                     lessonPlaceParams.topMargin = 0
                     lessonPlaceParams.bottomMargin = dp8
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_bottom)
                 }
                 VIEW_TYPE_NORMAL_TOP ->  {
                     val dpTop = TypedValue.applyDimension(
@@ -334,7 +340,6 @@ class LessonAdapter(
                     ).toInt()
                     lessonPlaceParams.topMargin = dpTop
                     lessonPlaceParams.bottomMargin = 0
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson_top)
                 }
                 else ->  {
                     val dp8 = TypedValue.applyDimension(
@@ -349,17 +354,16 @@ class LessonAdapter(
                     ).toInt()
                     lessonPlaceParams.topMargin = dpTop
                     lessonPlaceParams.bottomMargin = dp8
-                    lessonPlace.setBackgroundResource(R.drawable.shape_lesson)
                 }
             }
             lessonPlace.layoutParams = lessonPlaceParams
         }
 
         // ViewHolder class is not inner because recycler views have common pool
-        fun bind(adapter: LessonAdapter) {
+        fun bind(adapter: LessonAdapter, lesson: Lesson, tags: List<Tag>) {
             this.adapter = adapter
-            lesson = adapter.dailySchedule[adapterPosition]
-
+            this.lesson = lesson
+            this.tags = tags
             val enabled = adapter.date in lesson.dateFrom..lesson.dateTo
 
             setBottomPadding()
@@ -368,6 +372,7 @@ class LessonAdapter(
             setAuditoriums(enabled)
             setTeachers(enabled)
             setGroups(enabled)
+            setTags()
         }
 
         private fun setBottomPadding() {
@@ -430,6 +435,10 @@ class LessonAdapter(
                 lessonCurrent.visibility = View.GONE
             }
             lessonOrder.text = (lesson.order + 1).toString()
+        }
+
+        private fun setTags() {
+            lessonTags.adapter = TagAdapter().apply { tags = this@ViewHolder.tags }
         }
 
         private fun getDeadlinesEnd(count: Int): String {
@@ -593,18 +602,16 @@ class LessonAdapter(
         }
 
         private fun parseAuditoriumTitle(title: String): String {
-            val str = SpannableString(
+            return SpannableString(
                 HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY)
             ).toString()
-            //val index = str.indexOfFirst { it.isLetterOrDigit() }
-            return str//if (index == -1) str else str.substring(index)
         }
 
 
 
         private fun setTeachers(enabled: Boolean) {
             val teachers = if (lesson.teachers.size == 1)
-                lesson.teachers.first().getFullName()
+                lesson.teachers.first().name
             else
                 lesson.teachers.joinToString(", ") { it.getShortName() }
 

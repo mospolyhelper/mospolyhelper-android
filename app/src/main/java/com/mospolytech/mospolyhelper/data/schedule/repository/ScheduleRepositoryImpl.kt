@@ -30,7 +30,7 @@ class ScheduleRepositoryImpl(
                 for (lesson in dailySchedule) {
                     lessonTitles.add(lesson.title)
                     for (teacher in lesson.teachers) {
-                        lessonTeachers.add(teacher.getFullName())
+                        lessonTeachers.add(teacher.name)
                     }
                     if (lesson.auditoriums.isNotEmpty()) {
                         for (auditorium in lesson.auditoriums) {
@@ -130,7 +130,7 @@ class ScheduleRepositoryImpl(
                 for (lesson in dailySchedule) {
                     packList.lessonTitles.add(lesson.title)
                     for (teacher in lesson.teachers) {
-                        packList.lessonTeachers.add(teacher.getFullName())
+                        packList.lessonTeachers.add(teacher.name)
                     }
                     for (auditorium in lesson.auditoriums) {
                         packList.lessonAuditoriums.add(auditorium.title)

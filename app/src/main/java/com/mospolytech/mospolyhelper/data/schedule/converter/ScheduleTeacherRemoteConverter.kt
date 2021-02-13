@@ -4,7 +4,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.MonthDay
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
@@ -39,17 +38,22 @@ class ScheduleTeacherRemoteConverter {
         private val regex1 = Regex("""(\p{L}|\))\(""")
         private val regex2 = Regex("""\)(\p{L}|\()""")
         private val regex3 = Regex("""(\p{L})-(\p{L})""")
+        private val regex4 = Regex(""" -\S""")
+        private val regex5 = Regex("""\S- """)
     }
 
     fun parse(scheduleString: String): Schedule? {
         if (scheduleString.isEmpty()) return null
         val parser = Jsoup.parse(scheduleString)
 
-        val teacher = Teacher.fromFullName(
+        val teacher = Teacher(
             parser
                 .getElementsByClass("teacher-info__name")
                 .first()
                 .text()
+                .replace(regex4, " - ")
+                .replace(regex5, " - ")
+                .replace("  ", " ")
         )
         val tableBody = parser.getElementsByTag("tbody").first()
 
@@ -77,15 +81,42 @@ class ScheduleTeacherRemoteConverter {
             .select(">b")
             .map { Auditorium.parseEmoji(it.text()) }
 
-
-
         val auditoriums = element
             .getElementsByClass("lesson__auditory")
             .mapIndexed { index, element ->
                 val em = if (index >= emoji.size) emoji.lastOrNull() ?: "" else emoji[index]
-                Auditorium(em + element.text(), "")
+                Auditorium(em + " " + element.text(), "")
             }
 
+        val (dateFrom, dateTo) = parseDates(element)
+
+
+        var lessonTitle = element.getElementsByClass("lesson__subject").firstOrNull()?.text() ?: ""
+        val match = regex0.findAll(lessonTitle).lastOrNull()
+        var lessonType = match?.groups?.get(1)?.value ?: "Другое"
+        if (match != null) {
+            lessonTitle = lessonTitle.replace("($lessonType)", "")
+        }
+        lessonTitle = processTitle(lessonTitle)
+        lessonType = Lesson.fixTeacherType(lessonType, lessonTitle)
+
+
+        val groups = element.getElementsByClass("lesson__group").map { it.text()!! }
+
+
+        return Lesson(
+            order,
+            lessonTitle,
+            listOf(teacher),
+            dateFrom,
+            dateTo,
+            auditoriums,
+            lessonType,
+            groups.map { Group.fromTitle(it) }
+        )
+    }
+
+    private fun parseDates(element: Element): Pair<LocalDate, LocalDate> {
         val dates = element
             .getElementsByClass("lesson__date")
             .firstOrNull()
@@ -157,34 +188,7 @@ class ScheduleTeacherRemoteConverter {
                 }
             }
         }
-
-
-
-        var lessonTitle = element.getElementsByClass("lesson__subject").firstOrNull()?.text() ?: ""
-        val match = regex0.findAll(lessonTitle).lastOrNull()
-        var lessonType = match?.groups?.get(1)?.value ?: "Другое"
-        if (match != null) {
-            lessonTitle = lessonTitle.replace("($lessonType)", "")
-        }
-        lessonTitle = processTitle(lessonTitle)
-        lessonType = Lesson.fixTeacherType(lessonType, lessonTitle)
-
-
-        val groups = element.getElementsByClass("lesson__group").map { it.text()!! }
-
-
-        val lesson = Lesson(
-            order,
-            lessonTitle,
-            listOf(teacher),
-            dateFrom,
-            dateTo,
-            auditoriums,
-            lessonType,
-            groups.map { Group.fromTitle(it) }
-        )
-
-        return lesson
+        return Pair(dateFrom, dateTo)
     }
 
     private fun processTitle(rawTitle: String): String {

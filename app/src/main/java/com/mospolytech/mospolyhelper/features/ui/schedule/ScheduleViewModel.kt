@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.schedule
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleLabelDeadline
+import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
@@ -50,9 +50,9 @@ class ScheduleViewModel(
 
 
 
-    val filteredSchedule = MutableStateFlow<Result<ScheduleLabelDeadline>>(Result.loading())
+    val filteredSchedule = MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
 
-    val originalSchedule =  MutableStateFlow<Result<ScheduleLabelDeadline>>(Result.loading())
+    val originalSchedule =  MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
     val id: MutableStateFlow<Pair<Boolean, String>>
     val showEmptyLessons: MutableStateFlow<Boolean>
 
@@ -204,7 +204,7 @@ class ScheduleViewModel(
                 if (sch == null) {
                     originalSchedule.value = Result.loading()
                 } else {
-                    originalSchedule.value = Result.success(ScheduleLabelDeadline(sch as Schedule, emptyMap(), emptyMap()))
+                    originalSchedule.value = Result.success(ScheduleTagsDeadline(sch as Schedule, emptyMap(), emptyMap()))
                 }
             }
             MessageAddScheduleId -> {

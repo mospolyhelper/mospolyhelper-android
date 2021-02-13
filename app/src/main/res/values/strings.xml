@@ -1,106 +1,133 @@
 <resources>
     <string name="app_name">mospolyhelper</string>
-  <string name="nav_schedule">Расписание</string>
-  <string name="nav_addresses">Адреса</string>
-  <string name="nav_settings">Настройки</string>
+    <string name="nav_schedule">Расписание</string>
+    <string name="nav_addresses">Адреса</string>
+    <string name="nav_settings">Настройки</string>
 
-  <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
-  <string name="null_schedule">Расписание не найдено</string>
+    <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
+    <string name="null_schedule">Расписание не найдено</string>
 
-  <string name="appearance">Внешний вид</string>
-  <string name="night_mode">Тёмная тема</string>
-  
-  <!--Schedule Preferences-->
+    <string name="appearance">Внешний вид</string>
+    <string name="night_mode">Тёмная тема</string>
 
-  <!--Schedule Filter-->
+    <!--Schedule Preferences-->
 
-  <!--Other-->
-  <string name="click_back_again">Нажмите НАЗАД ещё раз, чтобы выйти</string>
+    <!--Schedule Filter-->
 
-  <!--ModelMsgs-->
-  <string name="schedule_not_found">Не удалось скачать расписание</string>
-  <string name="offline_schedule_not_found">Не удалось найти сохранённое расписание</string>
-  <string name="offline_schedule_found">Сохранённое расписание найдено</string>
-  <string name="group_list_not_found">Не удалось скачать список групп</string>
-  <string name="offline_group_list_not_found">Не удалось найти сохранённый список групп</string>
-  <string name="offline_group_list_found">Сохранённый список групп найден</string>
+    <!--Other-->
+    <string name="click_back_again">Нажмите НАЗАД ещё раз, чтобы выйти</string>
 
-  <!--Preferences-->
+    <!--ModelMsgs-->
+    <string name="schedule_not_found">Не удалось скачать расписание</string>
+    <string name="offline_schedule_not_found">Не удалось найти сохранённое расписание</string>
+    <string name="offline_schedule_found">Сохранённое расписание найдено</string>
+    <string name="group_list_not_found">Не удалось скачать список групп</string>
+    <string name="offline_group_list_not_found">Не удалось найти сохранённый список групп</string>
+    <string name="offline_group_list_found">Сохранённый список групп найден</string>
 
-  <string name="pref_category_appwidget">Виджет</string>
-  <string name="pref_appwidget_schedule_show_order">Номер занятия</string>
-  <string name="pref_appwidget_schedule_show_order_summary">Показывать номер занятия</string>
-  <string name="pref_appwidget_schedule_show_start_time">Время начала занятия</string>
-  <string name="pref_appwidget_schedule_show_start_time_summary">Показывать время начала занятия</string>
-  <string name="pref_appwidget_schedule_show_end_time">Время конца занятия</string>
-  <string name="pref_appwidget_schedule_show_end_time_summary">Показывать время конца занятия</string>
-  <string name="pref_appwidget_schedule_show_type">Тип занятия</string>
-  <string name="pref_appwidget_schedule_show_type_summary">Показывать тип занятия</string>
-  <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
-  <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
-  <string name="pref_appwidget_schedule_show_teachers">Преподаватели</string>
-  <string name="pref_appwidget_schedule_show_teachers_summary">Показывать преподавателей</string>
+    <!--Preferences-->
 
-  <string name="all_groups">Все группы</string>
-  <string name="all_subjects">Все предметы</string>
-  <string name="all_lesson_types">Все типы занятий</string>
-  <string name="all_auditoriums">Все аудитории</string>
-  <string name="all_teachers">Все преподаватели</string>
-  <string name="download_schedules">Загрузить расписания</string>
-  <string name="apply">Применить</string>
-  <string name="cancel">Отмена</string>
-  <string name="select_all">Выбрать все</string>
-  <string name="unselect_all">Снять все</string>
-  <string name="advanced_search">Расширенный поиск</string>
-  <string name="advanced_search_hint">Загрузите нужные расписания для применения к ним фильтров</string>
+    <string name="pref_category_appwidget">Виджет</string>
+    <string name="pref_appwidget_schedule_show_order">Номер занятия</string>
+    <string name="pref_appwidget_schedule_show_order_summary">Показывать номер занятия</string>
+    <string name="pref_appwidget_schedule_show_start_time">Время начала занятия</string>
+    <string name="pref_appwidget_schedule_show_start_time_summary">Показывать время начала занятия</string>
+    <string name="pref_appwidget_schedule_show_end_time">Время конца занятия</string>
+    <string name="pref_appwidget_schedule_show_end_time_summary">Показывать время конца занятия</string>
+    <string name="pref_appwidget_schedule_show_type">Тип занятия</string>
+    <string name="pref_appwidget_schedule_show_type_summary">Показывать тип занятия</string>
+    <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
+    <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
+    <string name="pref_appwidget_schedule_show_teachers">Преподаватели</string>
+    <string name="pref_appwidget_schedule_show_teachers_summary">Показывать преподавателей</string>
 
-  <string name="settings_title">Настройки</string>
+    <string name="all_groups">Все группы</string>
+    <string name="all_subjects">Все предметы</string>
+    <string name="all_lesson_types">Все типы занятий</string>
+    <string name="all_auditoriums">Все аудитории</string>
+    <string name="all_teachers">Все преподаватели</string>
+    <string name="download_schedules">Загрузить расписания</string>
+    <string name="apply">Применить</string>
+    <string name="cancel">Отмена</string>
+    <string name="select_all">Выбрать все</string>
+    <string name="unselect_all">Снять все</string>
+    <string name="advanced_search">Расширенный поиск</string>
+    <string name="advanced_search_hint">Загрузите нужные расписания для применения к ним фильтров</string>
 
-  <!--Deadlines part-->
-  <string name="predmet_title">Какой предмет?</string>
-  <string name="deadline_descr">Что нужно сделать?</string>
-  <string name="importanceLow">Неважно</string>
-  <string name="importanceMedium">Средне</string>
-  <string name="importanceHigh">Важно</string>
-  <string name="deadline_time">До какого времени?</string>
-  <string name="deadline_date">До какого числа?</string>
-  <string name="add">Добавить</string>
-  <string name="updateButton">Обновить</string>
-  <string name="emptyList">Дедлайнов нет :(</string>
-  <string name="predmetError">Заполните описание!</string>
-  <string name="deleteDeadline">Дедлайн удален</string>
-  <string name="pinnedImage">Иконка закрепления</string>
-  <string name="clockImage">Иконка часов</string>
-  <string name="predmetSample">ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ</string>
-  <string name="zadSample">Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание</string>
-  <string name="dataSample">Пн, 01.01.2020, 00:00</string>
-  <string name="pin">pinned</string>
-  <string name="unpin">unpinned</string>
-  <string name="nav_deadlines">Дедлайны</string>
-   <string name="base_info">%1$s %2$s курс группы %3$s</string>
-  <!--  Notification channels names -->
-  <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
+    <string name="settings_title">Настройки</string>
 
-  <string name="marks">Оценки</string>
-  <string name="fio_input">Введите ФИО студента</string>
-  <string name="retry">Повторить</string>
-  <string name="loading_error">Ошибка загрузки данных</string>
-  <string name="fio">ФИО</string>
-  <string name="search_student">Введите фамилию или группу</string>
-  <string name="search_teacher">Введите фио преподавателя</string>
-  <string name="search_classmate">Введите ФИО</string>
-  <string name="input_message">Введите сообщение</string>
-  <string name="course">%1$s курс</string>
-  <string name="semester">%1$s семестр</string>
-  <string name="exam">Экзамен</string>
-  <string name="reg_application">Регистрационный номер: %1$s</string>
-  <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
-  <string name="prim">Примечание: %1$s</string>
-  <string name="payment_left">Осталось заплатить %1$s из %2$s руб.</string>
-  <string name="payment_credit">Задолженность %1$s руб. на %2$s</string>
-  <string name="payment_debet">Переплата %1$s руб. на %2$s</string>
-  <string name="payment_no_credit">Задолженности на %1$s нет</string>
+    <!--Deadlines part-->
+    <string name="predmet_title">Какой предмет?</string>
+    <string name="deadline_descr">Что нужно сделать?</string>
+    <string name="importanceLow">Неважно</string>
+    <string name="importanceMedium">Средне</string>
+    <string name="importanceHigh">Важно</string>
+    <string name="deadline_time">До какого времени?</string>
+    <string name="deadline_date">До какого числа?</string>
+    <string name="add">Добавить</string>
+    <string name="updateButton">Обновить</string>
+    <string name="emptyList">Дедлайнов нет :(</string>
+    <string name="predmetError">Заполните описание!</string>
+    <string name="deleteDeadline">Дедлайн удален</string>
+    <string name="pinnedImage">Иконка закрепления</string>
+    <string name="clockImage">Иконка часов</string>
+    <string name="predmetSample">ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ ПРЕДМЕТ</string>
+    <string name="zadSample">Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание Задание</string>
+    <string name="dataSample">Пн, 01.01.2020, 00:00</string>
+    <string name="pin">pinned</string>
+    <string name="unpin">unpinned</string>
+    <string name="nav_deadlines">Дедлайны</string>
+    <string name="base_info">%1$s %2$s курс группы %3$s</string>
+    <!--  Notification channels names -->
+    <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
+
+    <string name="marks">Оценки</string>
+    <string name="fio_input">Введите ФИО студента</string>
+    <string name="retry">Повторить</string>
+    <string name="loading_error">Ошибка загрузки данных</string>
+    <string name="fio">ФИО</string>
+    <string name="search_student">Введите фамилию или группу</string>
+    <string name="search_teacher">Введите фио преподавателя</string>
+    <string name="search_classmate">Введите ФИО</string>
+    <string name="input_message">Введите сообщение</string>
+    <string name="course">%1$s курс</string>
+    <string name="semester">%1$s семестр</string>
+    <string name="exam">Экзамен</string>
+    <string name="reg_application">Регистрационный номер: %1$s</string>
+    <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
+    <string name="prim">Примечание: %1$s</string>
+    <string name="payment_left">Осталось заплатить %1$s из %2$s руб.</string>
+    <string name="payment_credit">Задолженность %1$s руб. на %2$s</string>
+    <string name="payment_debet">Переплата %1$s руб. на %2$s</string>
+    <string name="payment_no_credit">Задолженности на %1$s нет</string>
     <string name="unauthorized">Необходима авторизация</string>
-  <string name="authorize">Войти</string>
+    <string name="authorize">Войти</string>
+
+
+    <!-- University pass service -->
+    <string name="university_pass_service_description">Служба NFC пропуска Московского Политеха</string>
+    <string name="university_pass_aid_description">Relvest</string>
+
+    <string name="hce_not_supported_title">Эмуляция карт не поддерживается</string>
+    <string name="hce_not_supported_message">Работа приложения будет завершена.</string>
+    <string name="hce_not_supported_ok_button">OK</string>
+
+    <string name="activate_hce_service">Активировать</string>
+    <string name="deactivate_hce_service">Деактивировать</string>
+    <string name="user_id">Идентификатор пользователя:\10%1$s</string>
+    <string name="service_active">Служба активна.</string>
+    <string name="service_inactive">Служба неактивна.</string>
+
+    <!-- About app -->
+    <string name="about_app">Неофициальное приложение - помощник
+для студентов и преподавателей Московского Политеха.\n\n
+Разработчики:\n\n
+Андрей Богомолов\n
+VK: https://vk.com/tipapro\n
+Github: https://github.com/tipapro\n\n
+Александр Дындин\n
+VK: https://vk.com/alexandr_dyndin\n
+Github: https://github.com/IIOPHYIIIE4KA
+    </string>
 
 </resources>

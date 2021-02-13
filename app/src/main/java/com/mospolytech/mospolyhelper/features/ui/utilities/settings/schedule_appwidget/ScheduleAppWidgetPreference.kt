@@ -148,9 +148,9 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
     inner class Adapter(context: Context): BaseAdapter() {
         private val inflater = LayoutInflater.from(context)
 
-        private val teacher1 = Teacher(listOf("Арсентьев", "Дмитрий", "Андреевич"))
-        private val teacher2 = Teacher(listOf("Норин", "Владимир", "Павлович"))
-        private val teacher3 = Teacher(listOf("Петров", "Денис", "Альбертович"))
+        private val teacher1 = Teacher("Арсентьев Дмитрий Андреевич")
+        private val teacher2 = Teacher("Норин Владимир Павлович")
+        private val teacher3 = Teacher("Петров Денис Альбертович")
 
         private val auditorium1 = Auditorium("Пр ВЦ 3 (2555)", "")
         private val auditorium2 = Auditorium("Пк214", "")

@@ -1,7 +1,9 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+@Serializable
 data class Group(
     val title: String,
     val isEvening: Boolean

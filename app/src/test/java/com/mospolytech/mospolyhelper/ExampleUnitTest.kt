@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper
 
 import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
-import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.TeacherListRemoteDataSource

@@ -1,5 +1,8 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Auditorium(val title: String, val color: String) {
     companion object {
         fun parseEmoji(raw: String): String {
