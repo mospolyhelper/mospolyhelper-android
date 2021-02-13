@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -50,7 +49,7 @@ class TeachersAdapter(diffCallback: DiffUtil.ItemCallback<Teacher>, private val 
                     }
                 }
                 card.setOnClickListener { _ -> teacherClick.invoke(it.dialogKey) }
-                Glide.with(context).load("https://e.mospolytech.ru/${it.avatarUrl}").into(avatar);
+                Glide.with(context).load("https://e.mospolytech.ru/${it.avatarUrl}").into(avatar)
             }
         }
     }

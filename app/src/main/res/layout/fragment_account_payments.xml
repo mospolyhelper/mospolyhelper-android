@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/payments_swipe"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@color/layerOne"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,7 +17,22 @@
             android:layout_height="wrap_content"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorHeight="2dp"
-            app:tabPaddingBottom="6dp">
+            app:tabPaddingBottom="6dp"
+            app:tabTextColor="@color/textAccentDisabled"
+            app:tabSelectedTextColor="@color/textAccent"
+            app:tabIndicatorColor="@color/colorSecondary">
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Общежитие"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Обучение"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
         </com.google.android.material.tabs.TabLayout>
 
         <FrameLayout

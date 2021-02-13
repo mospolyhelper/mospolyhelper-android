@@ -3,67 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
     android:layout_margin="1dp"
     app:cardCornerRadius="25dp"
     app:cardBackgroundColor="@color/layerOne"
     android:elevation="3dp">
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:paddingBottom="8dp"-->
-<!--        android:background="?android:selectableItemBackgroundBorderless">-->
-<!--        <ImageView-->
-<!--            android:id="@+id/avatar_teacher"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="@dimen/teacher_card_width"-->
-<!--            android:src="@drawable/ic_launcher_background"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"/>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/title_teacher"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/fio"-->
-<!--            android:textColor="@color/predmetcolor"-->
-<!--            android:textStyle="bold"-->
-<!--            android:fontFamily="sans-serif-medium"-->
-<!--            android:textSize="20sp"-->
-<!--            android:layout_marginStart="@dimen/marginCard"-->
-<!--            android:ellipsize="end"-->
-<!--            android:layout_marginBottom="@dimen/marginCard"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/avatar_teacher"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/avatar_teacher"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/avatar_teacher"/>-->
-<!--        <TextView-->
-<!--            android:id="@+id/info_teacher"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="@dimen/marginCard"-->
-<!--            android:text="Инфо"-->
-<!--            android:layout_marginBottom="@dimen/marginCard"-->
-<!--            android:ellipsize="end"-->
-<!--            android:fontFamily="sans-serif-medium"-->
-<!--            android:textColor="@color/textColorPrimary"-->
-<!--            android:textSize="15sp"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/avatar_teacher"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/title_teacher"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/avatar_teacher"/>-->
-<!--        <FrameLayout-->
-<!--            android:id="@+id/status_teacher"-->
-<!--            android:layout_width="15dp"-->
-<!--            android:layout_height="15dp"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/avatar_teacher"-->
-<!--            android:background="@drawable/round_online"-->
-<!--            app:layout_constraintBottom_toTopOf="@id/title_teacher"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:elevation="3dp"-->
-<!--            />-->
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -84,8 +30,8 @@
                 android:id="@+id/avatar_teacher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="100dp"
-                android:minHeight="100dp"
+                android:minWidth="75dp"
+                android:minHeight="75dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_background" />
         </androidx.cardview.widget.CardView>
@@ -109,7 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Инфо"
+            tools:text="Инфо"
             android:layout_marginBottom="@dimen/marginCard"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"

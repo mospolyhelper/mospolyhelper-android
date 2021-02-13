@@ -9,6 +9,7 @@ import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
 import io.ktor.features.*
 import io.ktor.http.*
 import org.koin.core.context.GlobalContext.register
@@ -42,6 +43,10 @@ val coreModule = module {
         HttpClient {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
+            }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
             }
         }
     }

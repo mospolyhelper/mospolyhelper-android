@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.data.account.messaging.remote
 
-import com.beust.klaxon.Klaxon
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.account.messaging.api.MessagingHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
@@ -12,7 +13,7 @@ class MessagingRemoteDataSource(
     suspend fun getMessages(sessionId: String, dialogKey: String): Result<List<Message>> {
         return try {
             val res = client.getMessages(sessionId, dialogKey)
-            Result.success(Klaxon().parseArray(res)!!)
+            Result.success(Json.decodeFromString(res))
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -20,9 +21,9 @@ class MessagingRemoteDataSource(
 
     suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result<Message> {
         return try {
-            val json = Klaxon().toJsonString(MessageSend(dialogKey, message, fileNames))
+            //val json = Json.encodeToString(MessageSend(dialogKey, message, fileNames))
             val res = client.sendMessage(sessionId, MessageSend(dialogKey, message, fileNames))
-            Result.success(Klaxon().parse(res)!!)
+            Result.success(Json.decodeFromString(res))
         } catch (e: Exception) {
             Result.failure(e)
         }

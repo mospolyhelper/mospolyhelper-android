@@ -34,9 +34,5 @@ class StudentsRepositoryImpl(
 
     }
 
-    override fun invalidate() {
-        dataSource.retry.invoke()
-    }
-
 
 }

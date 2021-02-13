@@ -118,7 +118,11 @@
         tools:layout="@layout/fragment_account_students"
         android:id="@+id/studentsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.students.StudentsFragment"
-        android:label="StudentsFragment" />
+        android:label="StudentsFragment" >
+        <action
+            android:id="@+id/action_studentsFragment_to_bottomDialogFilter"
+            app:destination="@id/bottomDialogFilter" />
+    </fragment>
     <fragment
         tools:layout="@layout/fragment_relevant"
         android:id="@+id/relevantFragment"
@@ -231,6 +235,14 @@
         android:id="@+id/statementsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.statements.StatementsFragment"
         android:label="StatementsFragment" />
+    <dialog
+        android:id="@+id/bottomDialogFilter"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.students.BottomDialogFilter"
+        android:label="BottomDialogFilter" >
+        <argument
+            android:name="Filter"
+            app:argType="com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity" />
+    </dialog>
     <fragment
         android:id="@+id/universityPassFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.utilities.university_pass.UniversityPassFragment"

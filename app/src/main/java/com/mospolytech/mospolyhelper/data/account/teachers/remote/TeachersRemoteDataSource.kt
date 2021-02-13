@@ -1,31 +1,30 @@
 package com.mospolytech.mospolyhelper.data.account.teachers.remote
 
 import androidx.paging.PagingSource
-import com.beust.klaxon.Klaxon
+import androidx.paging.PagingState
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.account.teachers.api.TeachersHerokuClient
-import com.mospolytech.mospolyhelper.domain.account.students.model.Student
-import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult
 import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
 import com.mospolytech.mospolyhelper.domain.account.teachers.model.TeachersSearchResult
-import com.mospolytech.mospolyhelper.utils.Result
 import java.lang.Exception
 
 class TeachersRemoteDataSource(
     private val client: TeachersHerokuClient, private val sessionId: String, private val query: String): PagingSource<Int, Teacher>() {
 
-    var retry:() -> Unit = {this.invalidate()}
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Teacher> {
         return try {
             val response = client.getTeachers(query, params.key?: 1, sessionId)
-            val teachers = Klaxon().parse<TeachersSearchResult>(response)!!
+            val teachers = Json.decodeFromString<TeachersSearchResult>(response)
             LoadResult.Page(
                 teachers.teachers,
-                null,
+                if (teachers.currentPage <= 1) null else teachers.currentPage - 1,
                 if (teachers.currentPage < teachers.pageCount) teachers.currentPage + 1 else null
             )
         } catch (exception: Exception) {
             return LoadResult.Error(exception)
         }
     }
+
+    override fun getRefreshKey(state: PagingState<Int, Teacher>): Int? = null
 }

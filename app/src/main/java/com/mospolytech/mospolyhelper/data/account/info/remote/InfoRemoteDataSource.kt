@@ -1,11 +1,10 @@
 package com.mospolytech.mospolyhelper.data.account.info.remote
 
-import com.beust.klaxon.JsonReader
-import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.data.account.info.api.InfoHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.utils.Result
-import java.io.StringReader
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 class InfoRemoteDataSource(
     private val client: InfoHerokuClient
@@ -13,7 +12,7 @@ class InfoRemoteDataSource(
     suspend fun get(sessionId: String): Result<Info> {
         return try {
             val res = client.getInfo(sessionId)
-            Result.success(Klaxon().parse(res)!!)
+            Result.success(Json.decodeFromString(res))
         } catch (e: Exception) {
             Result.failure(e)
         }

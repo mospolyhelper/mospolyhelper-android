@@ -1,5 +1,8 @@
 package com.mospolytech.mospolyhelper.domain.account.applications.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Application(
     val registrationNumber: String,
     val name: String,
