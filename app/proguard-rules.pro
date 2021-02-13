@@ -21,15 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 
-## Klaxon
-#-keep public class kotlin.reflect.jvm.internal.impl.* { public *; }
-#-keep class com.beust.klaxon.** { *; }
-#-keep interface com.beust.klaxon.** { *; }
-#-keep class kotlin.Metadata { *; }
-#
-#-keep class com.mospolytech.mospolyhelper.data.** { *;}
-#-keep class com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter { *; }
-
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep class * extends com.bumptech.glide.module.AppGlideModule {
  <init>(...);
@@ -40,6 +31,26 @@
 }
 -keep class com.bumptech.glide.load.data.ParcelFileDescriptorRewinder$InternalRewinder {
   *** rewind();
+}
+
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+# kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Change here com.yourcompany.yourpackage
+-keep,includedescriptorclasses class com.mospolytech.mospolyhelper.**$$serializer { *; } # <-- change package name to your app's
+-keepclassmembers class com.mospolytech.mospolyhelper.** { # <-- change package name to your app's
+    *** Companion;
+}
+-keepclasseswithmembers class com.mospolytech.mospolyhelper.** { # <-- change package name to your app's
+    kotlinx.serialization.KSerializer serializer(...);
 }
 
 

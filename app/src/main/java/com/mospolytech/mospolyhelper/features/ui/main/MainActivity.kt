@@ -142,9 +142,6 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
 
         // TODO: check event subscription
         navigationView = findViewById(R.id.nav_view)
-        if (viewModel.currentFragmentNavId.value != -1) {
-            navigationView.selectedItemId = viewModel.currentFragmentNavId.value
-        }
         navigationView.setOnNavigationItemSelectedListener {
             val action = navController.graph.getAction(it.itemId)
             val currentDestination = navController.currentBackStackEntry?.destination

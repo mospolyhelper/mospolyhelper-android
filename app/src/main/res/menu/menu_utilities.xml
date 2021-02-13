@@ -12,4 +12,12 @@
         android:id="@+id/nav_deadlines"
         android:icon="@drawable/nav_deadlines"
         android:title="@string/nav_deadlines" />
+    <item
+        android:id="@+id/nav_university_pass"
+        android:icon="@drawable/ic_round_contactless_24"
+        android:title="Pass" />
+    <item
+        android:id="@+id/nav_about_app"
+        android:icon="@drawable/ic_round_info_24"
+        android:title="About app" />
 </menu>

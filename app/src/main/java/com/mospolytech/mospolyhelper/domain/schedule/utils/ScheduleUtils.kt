@@ -74,7 +74,7 @@ fun Schedule.filter(
         tempList[i].addAll(dailySchedules[i].asSequence().filter { lesson ->
             (filterTitles || checkFilter(titles!!, lesson.title)) &&
                     (filterTypes || checkFilter(types!!, lesson.type)) &&
-                    (filterTeachers || checkFilter(teachers!!, lesson.teachers.map { it.getFullName() })) &&
+                    (filterTeachers || checkFilter(teachers!!, lesson.teachers.map { it.name })) &&
                     (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
                     (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
 
@@ -111,7 +111,7 @@ fun Iterable<Schedule?>.filter(
                         (filterTypes || checkFilter(types!!, lesson.type)) &&
                         (filterTeachers || checkFilter(
                             teachers!!,
-                            lesson.teachers.map { it.getFullName() })) &&
+                            lesson.teachers.map { it.name })) &&
                         (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
                         (filterAuditoriums || checkFilter(
                             auditoriums!!,

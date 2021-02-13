@@ -9,13 +9,11 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -31,9 +29,8 @@ import com.google.android.material.tabs.TabLayout
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Teacher
-import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleLabelDeadline
+import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.onLoading
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import com.mospolytech.mospolyhelper.utils.safe
@@ -84,7 +81,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             navigate(
                 ScheduleFragmentDirections
                     .actionScheduleFragmentToLessonInfoFragment(
-                        titleTransitionNames = views.map { it.transitionName!! }.toTypedArray()
+                        titleTransitionNames = emptyArray()
                     ), extras
             )
         }
@@ -92,15 +89,15 @@ class ScheduleFragment : Fragment(), CoroutineScope {
     }
 
     private fun setSchedule(
-        scheduleLabelDeadline: ScheduleLabelDeadline,
+        scheduleTagsDeadline: ScheduleTagsDeadline,
         showEmptyLessons: Boolean,
         showEndedLessons: Boolean,
         showCurrentLessons: Boolean,
         showNotStartedLessons: Boolean,
         currentLesson: Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>
     ) {
-        if (context != null && scheduleLabelDeadline.schedule != null) {
-            val group = scheduleLabelDeadline.schedule.dailySchedules
+        if (context != null && scheduleTagsDeadline.schedule != null) {
+            val group = scheduleTagsDeadline.schedule.dailySchedules
                 .firstOrNull { it.isNotEmpty() }
                 ?.firstOrNull()?.groups
                 ?.firstOrNull()
@@ -114,9 +111,9 @@ class ScheduleFragment : Fragment(), CoroutineScope {
         }
         val oldAdapter = viewPager.adapter
         val newAdapter = ScheduleAdapter(
-            scheduleLabelDeadline.schedule,
-            scheduleLabelDeadline.labels,
-            scheduleLabelDeadline.deadlines,
+            scheduleTagsDeadline.schedule,
+            scheduleTagsDeadline.tags,
+            scheduleTagsDeadline.deadlines,
             showEndedLessons,
             showCurrentLessons,
             showNotStartedLessons,
@@ -173,6 +170,12 @@ class ScheduleFragment : Fragment(), CoroutineScope {
                 idsScroll.visibility = View.GONE
             } else {
                 idsScroll.visibility = View.VISIBLE
+            }
+        }
+
+        dateText.setOnClickListener {
+            findNavController().safe {
+                navigate(ScheduleFragmentDirections.actionScheduleFragmentToCalendarFragment())
             }
         }
 
@@ -322,7 +325,7 @@ class ScheduleFragment : Fragment(), CoroutineScope {
             )
             val t = if (i == -1) " " else pair.second.substring(0, i)
             title = try {
-                Teacher.fromFullName(t).getShortName()
+                Teacher(t).getShortName()
             } catch (e: Exception) {
                 t
             }
@@ -349,22 +352,6 @@ class ScheduleFragment : Fragment(), CoroutineScope {
 
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
-//            viewModel.filteredSchedule.collect {
-//                it.onSuccess {
-//                    setSchedule(
-//                        it,
-//                        false,
-//                        false,
-//                        true,
-//                        false,
-//                        viewModel.currentLessonOrder.value
-//                    )
-//                    swipeToRefresh.isRefreshing = false
-//                }
-//                it.onLoading {
-//                    setLoading()
-//                }
-//            }
             combine(
                 viewModel.filteredSchedule,
                 viewModel.showEmptyLessons,

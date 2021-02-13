@@ -1,10 +1,12 @@
 package com.mospolytech.mospolyhelper.data.addresses.local
 
 import android.util.Log
-import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class AddressesLocalStorageDataSource {
     companion object {
@@ -18,7 +20,7 @@ class AddressesLocalStorageDataSource {
             return null
         }
         return try {
-            Klaxon().parse<AddressMap>(file.readText())
+            Json.decodeFromString<AddressMap>(file.readText())
         } catch (e: Exception) {
             Log.e(TAG, "Addresses reading from the local storage and parsing exception", e)
             null
@@ -38,7 +40,7 @@ class AddressesLocalStorageDataSource {
 
         try {
             file.createNewFile()
-            file.writeText(Klaxon().toJsonString(addressMap))
+            file.writeText(Json.encodeToString(addressMap))
         } catch (e: Exception) {
             Log.e(TAG, "Addresses parsing and writing exception", e)
         }

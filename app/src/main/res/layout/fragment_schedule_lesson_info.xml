@@ -15,20 +15,6 @@
         <include layout="@layout/toolbar_lesson_info" />
 
         <TextView
-            android:id="@+id/text_schedule_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:fontFamily="sans-serif-medium"
-            android:paddingTop="5dp"
-            android:paddingEnd="6dp"
-            android:text="Лекционное занятие"
-            android:textIsSelectable="true"
-            android:textSize="16.5sp" />
-
-        <TextView
             android:id="@+id/text_schedule_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,48 +23,51 @@
             android:layout_marginBottom="16dp"
             android:breakStrategy="balanced"
             android:ellipsize="end"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/open_sans"
             android:hyphenationFrequency="none"
             android:text="Объектно-ориентированное программирование"
             android:textColor="@color/textColorPrimary"
             android:textIsSelectable="true"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:transitionName="lessonInfoTitle" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/access_time_24px"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
-            android:fontFamily="@font/open_sans_semibold"
-            android:gravity="center_vertical"
-            android:text="Время"
-            android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/text_lesson_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
+            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
+            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
+            android:fontFamily="@font/open_sans_semibold"
+            android:text="Вт, 7 июля, 09:00 - 10:30, 1-е занятие"
+            android:textColor="@color/lessonInfoText"
+            android:textIsSelectable="true"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/text_schedule_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
+            android:fontFamily="@font/open_sans_semibold"
+            android:text="Лекционное занятие"
+            android:textIsSelectable="true"
+            android:textSize="13sp" />
+        <TextView
+            android:id="@+id/text_lesson_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-            android:fontFamily="sans-serif"
-            android:text="Вторник, 7 июля, с 09:00 до 10:30, 1-е занятие"
+            android:fontFamily="@font/open_sans_semibold"
+            android:text="С 10 февраля до 10 июня"
             android:textColor="@color/lessonInfoText"
             android:textIsSelectable="true"
-            android:textSize="17sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/text_lesson_auditoriums"
@@ -87,11 +76,9 @@
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
             android:layout_marginTop="@dimen/lesson_info_margin_vertical"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/ic_lesson_location"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
             android:fontFamily="@font/open_sans_semibold"
             android:gravity="center_vertical"
-            android:text="Аудитории"
+            android:text="АУДИТОРИИ"
             android:textColor="@color/lessonInfoText"
             android:textIsSelectable="true"
             android:textSize="13sp" />
@@ -106,12 +93,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
 
         <TextView
             android:id="@+id/text_lesson_teachers"
@@ -120,11 +101,9 @@
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
             android:layout_marginTop="@dimen/lesson_info_margin_vertical"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/ic_lesson_teacher"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
             android:fontFamily="@font/open_sans_semibold"
             android:gravity="center_vertical"
-            android:text="Преподаватели"
+            android:text="ПРЕПОДАВАТЕЛИ"
             android:textColor="@color/lessonInfoText"
             android:textIsSelectable="true"
             android:textSize="13sp" />
@@ -139,12 +118,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
 
         <TextView
             android:layout_width="match_parent"
@@ -152,11 +125,9 @@
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
             android:layout_marginTop="@dimen/lesson_info_margin_vertical"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/ic_lesson_group"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
             android:fontFamily="@font/open_sans_semibold"
             android:gravity="center_vertical"
-            android:text="Группы"
+            android:text="ГРУППЫ"
             android:textColor="@color/lessonInfoText"
             android:textSize="13sp" />
 
@@ -170,47 +141,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/ic_lesson_date_range"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
-            android:fontFamily="@font/open_sans_semibold"
-            android:gravity="center_vertical"
-            android:text="Даты"
-            android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/text_lesson_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-            android:fontFamily="sans-serif"
-            android:text="С 10 февраля до 10 июня"
-            android:textColor="@color/lessonInfoText"
-            android:textIsSelectable="true"
-            android:textSize="17sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
 
         <TextView
             android:layout_width="match_parent"
@@ -249,12 +179,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lesson_info_divider_height"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:background="@color/dividerLayerZero" />
 
         <TextView
             android:layout_width="match_parent"

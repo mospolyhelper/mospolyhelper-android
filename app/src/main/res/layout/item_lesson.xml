@@ -22,7 +22,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:maxLines="1"
                 android:id="@+id/text_lesson_time"
                 style="@style/ScheduleLessonSubtitle"
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:id="@+id/text_schedule_features"
-                    android:textSize="13.8sp"
+                    android:textSize="14.0sp"
                     android:textColor="#2574FF"
                     android:maxLines="1"
                     android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                     android:id="@+id/text_schedule_dates"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
-                    android:textSize="13.8sp"
+                    android:textSize="14.0sp"
                     android:textColor="@color/textSecondary"
                     android:maxLines="1"
                     android:layout_width="wrap_content"
@@ -181,41 +181,11 @@
                 android:maxLines="1"
                 android:text="2 мес." />
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <com.mospolytech.mospolyhelper.features.widget.NoTouchRecyclerView
+                android:id="@+id/tags"
                 android:layout_marginTop="13dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_marginTop="4dp"
-                    android:text="Сделано"
-                    style="@style/ScheduleLessonSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="@dimen/lesson_drawable_padding"
-                    app:drawableStartCompat="@drawable/circle"
-                    app:drawableTint="#2BCD13" />
-                <TextView
-                    android:layout_marginStart="11dp"
-                    android:layout_marginTop="4dp"
-                    android:text="Важное"
-                    style="@style/ScheduleLessonSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="@dimen/lesson_drawable_padding"
-                    app:drawableStartCompat="@drawable/circle"
-                    app:drawableTint="#F46409" />
-                <TextView
-                    android:layout_marginStart="11dp"
-                    android:layout_marginTop="4dp"
-                    android:text="Можно не ходить"
-                    style="@style/ScheduleLessonSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:drawablePadding="@dimen/lesson_drawable_padding"
-                    app:drawableStartCompat="@drawable/circle"
-                    app:drawableTint="#239EFC" />
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
     </LinearLayout>

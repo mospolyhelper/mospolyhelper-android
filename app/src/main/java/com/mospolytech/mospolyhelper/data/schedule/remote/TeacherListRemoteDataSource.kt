@@ -1,12 +1,11 @@
 package com.mospolytech.mospolyhelper.data.schedule.remote
 
 import android.util.Log
-import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.lang.Exception
 import java.net.URL
 
@@ -22,7 +21,7 @@ class TeacherListRemoteDataSource {
         withContext(Dispatchers.IO) {
             res = try {
                 val q = URL(TEACHER_LIST_URL).readText()
-                Klaxon().parse<Map<String, String>>(q)
+                Json.decodeFromString<Map<String, String>>(q)
             } catch(e: Exception) {
                 Log.e(TAG, "Teacher list downloading and parsing exception", e)
                 null

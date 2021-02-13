@@ -2,10 +2,12 @@ package com.mospolytech.mospolyhelper.domain.schedule.usecase
 
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.LessonLabelRepository
+import com.mospolytech.mospolyhelper.data.schedule.repository.TagRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
 import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.SavedIdsRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
@@ -16,9 +18,9 @@ import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
 import kotlinx.coroutines.flow.*
 
-data class ScheduleLabelDeadline(
+data class ScheduleTagsDeadline(
     val schedule: Schedule?,
-    val labels: Map<LessonLabelKey, Set<String>>,
+    val tags: Map<LessonTagKey, List<Tag>>,
     val deadlines: Map<String, List<Deadline>>
 )
 
@@ -27,7 +29,7 @@ class ScheduleUseCase(
     private val groupListRepository: GroupListRepository,
     private val teacherListRepository: TeacherListRepository,
     private val savedIdsRepository: SavedIdsRepository,
-    private val lessonLabelRepository: LessonLabelRepository,
+    private val tagRepository: TagRepository,
     private val deadlineRepository: DeadlinesRepository,
     // TODO: Fix this (Replace By Rep)
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
@@ -42,14 +44,22 @@ class ScheduleUseCase(
         group: String,
         isStudent: Boolean,
         refresh: Boolean
-    ): Flow<ScheduleLabelDeadline> {
+    ): Flow<ScheduleTagsDeadline> {
         return combine(
             scheduleRepository.getSchedule(group, isStudent, refresh),
-            lessonLabelRepository.getAll(),
+            tagRepository.getAll(),
             flowOf(mapOf<String, List<Deadline>>())
-        ) { schedule, labels, deadlines ->
-            ScheduleLabelDeadline(schedule, labels, deadlines)
+        ) { schedule, tags, deadlines ->
+            ScheduleTagsDeadline(schedule, tags, deadlines)
         }
+    }
+
+    suspend fun addTag(lesson: Lesson, tag: Tag) {
+        tagRepository.add(lesson, tag)
+    }
+
+    suspend fun removeTag(lesson: Lesson, tag: Tag) {
+        tagRepository.remove(lesson, tag)
     }
 
     suspend fun getIdSet(

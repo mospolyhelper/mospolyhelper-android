@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.di.schedule
 import com.mospolytech.mospolyhelper.data.schedule.api.GroupListClient
 import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
 import com.mospolytech.mospolyhelper.data.schedule.converter.GroupListRemoteConverter
-import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.*
@@ -31,7 +30,6 @@ val scheduleModule = module {
     single { GroupListClient() }
 
     // Converters
-    single { ScheduleLocalConverter() }
     single { ScheduleRemoteConverter() }
     single { ScheduleTeacherRemoteConverter() }
     single { GroupListRemoteConverter() }
@@ -39,20 +37,20 @@ val scheduleModule = module {
     // DataSources
     single { ScheduleRemoteDataSource(get(), get()) }
     single { ScheduleRemoteTeacherDataSource(get(), get()) }
-    single { ScheduleLocalDataSource(get()) }
+    single { ScheduleLocalDataSource() }
     single { GroupListLocalDataSource() }
     single { GroupListRemoteDataSource(get(), get()) }
     single { TeacherListLocalDataSource() }
     single { TeacherListRemoteDataSource() }
-    single { LessonLabelLocalDataSource() }
+    single { TagLocalDataSource(get()) }
     single { SavedIdsLocalDataSource(get()) }
 
     // Repositories
     single<ScheduleRepository> {
         ScheduleRepositoryImpl(get(), get(), get())
     }
-    single<LessonLabelRepository> {
-        LessonLabelRepository(get())
+    single<TagRepository> {
+        TagRepository(get())
     }
     single<GroupListRepository> {
         GroupListRepositoryImpl(get(), get())

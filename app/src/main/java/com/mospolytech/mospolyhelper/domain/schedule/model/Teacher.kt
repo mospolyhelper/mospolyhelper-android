@@ -1,33 +1,11 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
-data class Teacher(val names: List<String>) {
-    companion object {
-        fun fromFullName(name: String) =
-            Teacher(
-                StringBuilder(name).apply {
-                    var idx = indexOf(" - ")
-                    while (idx != -1) {
-                        replace(idx, idx + 4, "-")
-                        idx = indexOf(" - ")
-                    }
-                    idx = indexOf(" -")
-                    while (idx != -1) {
-                        replace(idx, idx + 3, "-")
-                        idx = indexOf(" -")
-                    }
-                    idx = indexOf("- ")
-                    while (idx != -1) {
-                        replace(idx, idx + 3, "-")
-                        idx = indexOf(" -")
-                    }
-                }.split(' ', '.')
-                    .filter { it.isNotEmpty() || it.isNotBlank() }
-            )
-    }
+import kotlinx.serialization.Serializable
 
-    fun getFullName() = names.joinToString(" ")
-
+@Serializable
+data class Teacher(val name: String) {
     fun getShortName(): String {
+        val names = getNames(name)
         if (names.isEmpty())
             return ""
 
@@ -44,5 +22,26 @@ data class Teacher(val names: List<String>) {
             }
             shortName.toString()
         }
+    }
+
+    private fun getNames(name: String): List<String> {
+        return StringBuilder(name).apply {
+            var idx = indexOf(" - ")
+            while (idx != -1) {
+                replace(idx, idx + 4, "-")
+                idx = indexOf(" - ")
+            }
+            idx = indexOf(" -")
+            while (idx != -1) {
+                replace(idx, idx + 3, "-")
+                idx = indexOf(" -")
+            }
+            idx = indexOf("- ")
+            while (idx != -1) {
+                replace(idx, idx + 3, "-")
+                idx = indexOf(" -")
+            }
+        }.split(' ', '.')
+            .filter { it.isNotEmpty() || it.isNotBlank() }
     }
 }

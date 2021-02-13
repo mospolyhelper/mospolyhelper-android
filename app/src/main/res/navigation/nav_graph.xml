@@ -142,6 +142,12 @@
         <action
             android:id="@+id/action_utilitiesMenuFragment_to_deadlineFragment"
             app:destination="@id/deadlineFragment" />
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_universityPassFragment"
+            app:destination="@id/universityPassFragment" />
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_aboutAppFragment"
+            app:destination="@id/aboutAppFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_menu_account"
@@ -256,5 +262,13 @@
             android:name="Filter"
             app:argType="com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity" />
     </dialog>
+    <fragment
+        android:id="@+id/universityPassFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.university_pass.UniversityPassFragment"
+        android:label="UniversityPassFragment" />
+    <fragment
+        android:id="@+id/aboutAppFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.about_app.AboutAppFragment"
+        android:label="AboutAppFragment" />
 
 </navigation>
