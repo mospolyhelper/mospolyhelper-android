@@ -117,20 +117,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical">
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_och"
+            android:id="@+id/chip_och"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:text="Очная форма"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_half_och"
+            android:id="@+id/chip_half_och"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:layout_marginTop="5dp"
             android:text="Очно-заочная форма"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_zaoch"
+            android:id="@+id/chip_zaoch"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
@@ -147,34 +147,34 @@
         app:layout_constraintStart_toStartOf="parent"
         android:orientation="vertical">
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_bak"
+            android:id="@+id/chip_bak"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:text="Бакалавр"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_spec"
+            android:id="@+id/chip_spec"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:layout_marginTop="5dp"
             android:text="Специалист"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_mag"
+            android:id="@+id/chip_mag"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:layout_marginTop="5dp"
             android:text="Магистр"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_asp"
+            android:id="@+id/chip_asp"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"
             android:layout_marginTop="5dp"
             android:text="Аспирант"/>
         <com.google.android.material.chip.Chip
-            android:id="@+id/radio_spo"
+            android:id="@+id/chip_spo"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             style="@style/MyChip"

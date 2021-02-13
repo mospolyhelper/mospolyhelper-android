@@ -48,7 +48,7 @@ class StatementsFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         swipe_marks.setOnRefreshListener {
             lifecycleScope.async {
-                viewModel.downloadInfo()
+                viewModel.downloadInfo(semesters[semesters_spinner.selectedItemPosition])
             }
         }
 

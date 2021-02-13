@@ -24,14 +24,12 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Общежитие"
-                android:visibility="invisible"
-                tools:visibility="visible"/>
+                android:text="Общежитие"/>
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Обучение"
-                android:visibility="invisible"
+                android:visibility="gone"
                 tools:visibility="visible"/>
         </com.google.android.material.tabs.TabLayout>
 
