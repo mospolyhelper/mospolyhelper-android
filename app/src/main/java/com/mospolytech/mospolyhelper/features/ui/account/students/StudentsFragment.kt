@@ -43,7 +43,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
 
     private val viewModel by viewModel<StudentsViewModel>()
 
-    private var filters: FilterEntity = FilterEntity(mutableListOf(),"", "")
+    private var filters: FilterEntity = FilterEntity(mutableListOf(),mutableListOf(), mutableListOf())
 
     private val diffUtil = object : DiffUtil.ItemCallback<Student>() {
         override fun areItemsTheSame(oldItem: Student, newItem: Student) = oldItem.id == newItem.id
@@ -119,6 +119,7 @@ class StudentsFragment : Fragment(), CoroutineScope {
                         if (adapter.itemCount == 0)
                             if (!swipe_students.isRefreshing)
                                 progress_first_loading.show()
+                        text_empty.hide()
                     }
                     is LoadState.Error -> {
                         progress_first_loading.hide()
@@ -128,11 +129,18 @@ class StudentsFragment : Fragment(), CoroutineScope {
                             (loadStates.refresh as LoadState.Error).error.localizedMessage,
                             Toast.LENGTH_SHORT
                         ).show()
+                        text_empty.hide()
                     }
                     is LoadState.NotLoading -> {
                         fab_students.isVisible = adapter.itemCount != 0
                         progress_first_loading.hide()
                         swipe_students.isRefreshing = false
+                        if (adapter.itemCount == 0 &&
+                                    (edit_search_student.text.isNotEmpty() ||
+                                    filters.form.isNotEmpty() || filters.courses.isNotEmpty() ||
+                                    filters.type.isNotEmpty())) {
+                            text_empty.show()
+                        }
                     }
                     else -> progress_first_loading.hide()
                 }

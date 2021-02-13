@@ -30,14 +30,32 @@ class StudentsViewModel(
     fun fetchStudents(query: String, filters: FilterEntity): Flow<PagingData<Student>> {
         return useCase.getInfo(query).map { pagingData ->
             pagingData.filter { student ->
-                var result = true
+                var course = true
+                var form = true
+                var type = true
                 if (filters.courses.isNotEmpty()) {
                     if (!filters.courses.contains(student.course)) {
-                        result = false
+                        course = false
                     }
                 }
-//                if (student.)
-                result
+                if (filters.form.isNotEmpty()) {
+                    if (!filters.form.contains(student.educationForm)) {
+                        form = false
+                    }
+                }
+                if (filters.type.isNotEmpty()) {
+                    type = false
+                    filters.type.forEach {
+                        if (student.direction.contains(it, true)) type = true
+                    }
+                    if (!type) {
+                        filters.type.forEach {
+                            if (student.direction.contains(it.replace(".", ""), true) && it != ".02.")
+                                type = true
+                        }
+                    }
+                }
+                course && form && type
             }
         }.cachedIn(viewModelScope)
     }
