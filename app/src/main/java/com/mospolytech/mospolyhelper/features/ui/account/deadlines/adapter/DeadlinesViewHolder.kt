@@ -11,8 +11,8 @@ import kotlinx.android.synthetic.main.item_deadlines.view.*
 
 class DeadlinesViewHolder(view: View): RecyclerView.ViewHolder(view) {
     lateinit var deadline: Deadline
-    val name: TextView = view.tvPred
-    val description: TextView = view.tvZad
+    val name: TextView = view.deadline_name
+    val description: TextView = view.deadline_description
     val completed: RadioButton = view.deadline_completed
     val pinned: TextView = view.deadline_pinned
     val date: TextView = view.deadline_date

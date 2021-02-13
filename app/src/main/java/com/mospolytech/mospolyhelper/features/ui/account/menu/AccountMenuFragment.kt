@@ -89,6 +89,11 @@ class AccountMenuFragment : Fragment() {
                             .actionAccountMenuFragmentToPaymentsFragment()
                     )
                 }
+                R.id.nav_deadlines -> findNavController().safe {
+                    navigate(
+                        AccountMenuFragmentDirections
+                            .actionAccountMenuFragmentToDeadlinesFragment())
+                }
                 R.id.nav_statements -> findNavController().safe {
                     navigate(
                         AccountMenuFragmentDirections

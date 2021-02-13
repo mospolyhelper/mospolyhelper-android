@@ -40,32 +40,45 @@ class BottomDialogFilter():BottomSheetDialogFragment() {
         check_4_course.isChecked = filters.courses.contains("4")
         check_5_course.isChecked = filters.courses.contains("5")
         check_6_course.isChecked = filters.courses.contains("6")
-        radio_och.isChecked = filters.form.contains("Очная")
-        radio_zaoch.isChecked = filters.form.contains("Очно-заочная")
-        radio_spec.isChecked = filters.form.contains("Заочная")
-    }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        val courses: MutableList<String> = mutableListOf()
-        var form = ""
-        var type = ""
-        if (check_1_course.isChecked) courses.add("1")
-        if (check_2_course.isChecked) courses.add("2")
-        if (check_3_course.isChecked) courses.add("3")
-        if (check_4_course.isChecked) courses.add("4")
-        if (check_5_course.isChecked) courses.add("5")
-        if (check_6_course.isChecked) courses.add("6")
-        if (radio_och.isChecked) form = "Очная"
-        if (radio_half_och.isChecked) form ="Очно-заочная"
-        if (radio_zaoch.isChecked) form ="Заочная"
-        if (radio_bak.isChecked) type =".03."
-        if (radio_spec.isChecked) type =".05."
-        //if (radio_mag.isChecked) form =".04."
-        if (radio_asp.isChecked) type =".06."
-        if (radio_spo.isChecked) type =".02."
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("Filter",
-            FilterEntity(courses, form, type))
+        chip_och.isChecked = filters.form.contains("Очная")
+        chip_half_och.isChecked = filters.form.contains("Очно-заочная")
+        chip_zaoch.isChecked = filters.form.contains("Заочная")
+
+        chip_bak.isChecked = filters.type.contains(".03.")
+        chip_spec.isChecked = filters.type.contains(".05.")
+        chip_mag.isChecked = filters.type.contains(".04.")
+        chip_asp.isChecked = filters.type.contains(".06.")
+        chip_spo.isChecked = filters.type.contains(".02.")
+
+        button_apply.setOnClickListener {
+            val courses: MutableList<String> = mutableListOf()
+            val form: MutableList<String> = mutableListOf()
+            val type: MutableList<String> = mutableListOf()
+            if (check_1_course.isChecked) courses.add("1")
+            if (check_2_course.isChecked) courses.add("2")
+            if (check_3_course.isChecked) courses.add("3")
+            if (check_4_course.isChecked) courses.add("4")
+            if (check_5_course.isChecked) courses.add("5")
+            if (check_6_course.isChecked) courses.add("6")
+            if (chip_och.isChecked) form.add("Очная")
+            if (chip_half_och.isChecked) form.add("Очно-заочная")
+            if (chip_zaoch.isChecked) form.add("Заочная")
+            if (chip_bak.isChecked) type.add(".03.")
+            if (chip_mag.isChecked) form.add(".04.")
+            if (chip_spec.isChecked) type.add(".05.")
+            if (chip_asp.isChecked) type.add(".06.")
+            if (chip_spo.isChecked) type.add(".02.")
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("Filter",
+                FilterEntity(courses, form, type))
+            dismiss()
+        }
+
+        text_cancel.setOnClickListener {
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("Filter",
+                FilterEntity(emptyList(), emptyList(), emptyList()))
+            dismiss()
+        }
     }
 
 }

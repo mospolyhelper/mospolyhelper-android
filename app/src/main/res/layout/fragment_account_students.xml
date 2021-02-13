@@ -64,6 +64,14 @@
                 android:visibility="invisible"
                 tools:visibility="visible"/>
 
+            <TextView
+                android:id="@+id/text_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Ничего не найдено"
+                android:visibility="invisible"/>
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_students"
                 android:layout_width="wrap_content"

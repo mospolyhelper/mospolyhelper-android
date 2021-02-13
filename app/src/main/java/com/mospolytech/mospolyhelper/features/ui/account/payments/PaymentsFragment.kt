@@ -42,8 +42,8 @@ class PaymentsFragment: Fragment() {
 
         payment_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
+                payments_swipe.isEnabled = state == ViewPager2.SCROLL_STATE_IDLE
                 super.onPageScrollStateChanged(state)
-                payment_pager.isEnabled = state == ViewPager2.SCROLL_STATE_IDLE
             }
         })
 

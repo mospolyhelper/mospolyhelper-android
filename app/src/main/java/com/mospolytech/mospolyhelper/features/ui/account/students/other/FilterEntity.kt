@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class FilterEntity(val courses: List<String>, val form: String, val type: String): Parcelable {
+data class FilterEntity(val courses: List<String>, val form: List<String>, val type: List<String>): Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
