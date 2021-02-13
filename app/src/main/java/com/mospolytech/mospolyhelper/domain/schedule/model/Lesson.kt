@@ -1,16 +1,20 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
 import android.util.Log
-import com.beust.klaxon.Json
+import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalTime
 
+@Serializable
 data class Lesson(
     val order: Int,
     val title: String,
     val teachers: List<Teacher>,
+    @Serializable(with = LocalDateSerializer::class)
     val dateFrom: LocalDate,
+    @Serializable(with = LocalDateSerializer::class)
     val dateTo: LocalDate,
     val auditoriums: List<Auditorium>,
     val type: String,
@@ -230,12 +234,12 @@ data class Lesson(
         }
     }
 
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val isEmpty = title.isEmpty() && type.isEmpty()
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val isNotEmpty = title.isNotEmpty() || type.isNotEmpty()
 
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val isImportant =
         type.contains(EXAM, true) ||
                 type.contains(CREDIT, true) ||
@@ -254,7 +258,7 @@ data class Lesson(
                 CREDIT_WITH_MARK.contains(type, true) ||
                 EXAMINATION_SHOW.contains(type, true)
 
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val time: Pair<String, String>
     get() {
         return getTime(
@@ -263,7 +267,7 @@ data class Lesson(
         )
     }
 
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val localTime: Pair<LocalTime, LocalTime>
         get() {
             return getLocalTime(
@@ -272,7 +276,7 @@ data class Lesson(
             )
         }
 
-    @Json(ignored = true)
+    @kotlinx.serialization.Transient
     val groupIsEvening: Boolean
         get() = groups.firstOrNull()?.isEvening ?: false
 

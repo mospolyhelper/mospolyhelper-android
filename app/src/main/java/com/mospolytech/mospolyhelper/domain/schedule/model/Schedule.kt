@@ -1,12 +1,16 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filterByDate
+import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
-
+@Serializable
 data class Schedule(
     val dailySchedules: List<List<Lesson>>,
+    @Serializable(with = LocalDateSerializer::class)
     val dateFrom: LocalDate,
+    @Serializable(with = LocalDateSerializer::class)
     val dateTo: LocalDate
 ) {
     companion object {

@@ -2,14 +2,13 @@ package com.mospolytech.mospolyhelper.data.schedule.local
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.utils.TAG
-import java.time.format.DateTimeFormatter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-class ScheduleLocalDataSource(
-    private val localConverter: ScheduleLocalConverter
-) {
+class ScheduleLocalDataSource {
 
     companion object {
         const val SCHEDULE_FOLDER = "cached_schedules"
@@ -27,7 +26,7 @@ class ScheduleLocalDataSource(
             return null
         }
         return try {
-            localConverter.deserializeSchedule(file.readText())
+            Json.decodeFromString<Schedule>(file.readText())
         } catch (e: Exception) {
             Log.e(TAG, "Schedule reading and converting exception", e)
             null
@@ -46,7 +45,7 @@ class ScheduleLocalDataSource(
         }
         try {
             file.createNewFile()
-            file.writeText(localConverter.serializeSchedule(schedule))
+            file.writeText(Json.encodeToString(schedule))
         } catch (e: Exception) {
             Log.e(TAG, "Schedule converting and writing exception", e)
         }

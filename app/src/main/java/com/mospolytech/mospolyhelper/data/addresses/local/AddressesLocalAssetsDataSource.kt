@@ -1,17 +1,18 @@
 package com.mospolytech.mospolyhelper.data.addresses.local
 
 import android.util.Log
-import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.lang.Exception
 
 class AddressesLocalAssetsDataSource {
 
     fun get(): AddressMap? {
         return try {
-            Klaxon().parse<AddressMap>(App.getAsset("addresses.json")!!)
+            Json.decodeFromString<AddressMap>(App.getAsset("addresses.json")!!.bufferedReader().use { it.readText() })
         } catch (e: Exception) {
             Log.d(TAG, "Addresses reading from assets and parsing exception", e)
             null

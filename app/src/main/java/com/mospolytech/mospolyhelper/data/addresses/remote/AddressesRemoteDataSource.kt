@@ -1,9 +1,10 @@
 package com.mospolytech.mospolyhelper.data.addresses.remote
 
 import android.util.Log
-import com.beust.klaxon.Klaxon
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.lang.Exception
 import java.net.URL
 
@@ -15,7 +16,7 @@ class AddressesRemoteDataSource {
 
     fun get(): AddressMap? {
         return try {
-            Klaxon().parse<AddressMap>(URL(ADDRESSES_URL).readText())
+            Json.decodeFromString<AddressMap>(URL(ADDRESSES_URL).readText())
         } catch(e: Exception) {
             Log.e(TAG, "Addresses downloading and parsing exception", e)
             null

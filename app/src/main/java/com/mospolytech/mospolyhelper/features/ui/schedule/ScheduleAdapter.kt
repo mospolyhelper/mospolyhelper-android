@@ -15,16 +15,16 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleEmptyPairsDecorator
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleWindowsDecorator
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonLabelKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
 import com.mospolytech.mospolyhelper.utils.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import kotlin.Result
 
 
 class ScheduleAdapter(
     val schedule: Schedule?,
-    private val labels: Map<LessonLabelKey, Set<String>>,
+    private val tags: Map<LessonTagKey, List<Tag>>,
     private val deadlines: Map<String, List<Deadline>>,
     private val showEndedLessons: Boolean,
     private val showCurrentLessons: Boolean,
@@ -51,7 +51,6 @@ class ScheduleAdapter(
     private val timerTick: Event2<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>, Boolean> = Action2()
 
     init {
-        Result
         setCount()
         setFirstPosDate()
     }
@@ -166,7 +165,9 @@ class ScheduleAdapter(
         init {
             // TODO check pool performance
             listSchedule.setRecycledViewPool(commonPool)
-            listSchedule.layoutManager = LinearLayoutManager(view.context)
+            listSchedule.layoutManager = LinearLayoutManager(view.context).apply {
+                recycleChildrenOnDetach = true
+            }
                 .apply { recycleChildrenOnDetach = true }
             val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
             val scrollLength = dp8 * 3f
@@ -221,7 +222,7 @@ class ScheduleAdapter(
                 listAdapter = LessonAdapter(
                     if (showEmptyLessons) ScheduleEmptyPairsDecorator(dailySchedule) else dailySchedule,
                     map,
-                    labels,
+                    tags,
                     deadlines,
                     date,
                     showGroups,

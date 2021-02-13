@@ -13,7 +13,6 @@ import android.widget.RemoteViewsService
 import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -122,9 +121,7 @@ class LessonRemoteAdapter(
 
     override fun onDataSetChanged() {
         val localDataSource =
-            ScheduleLocalDataSource(
-                ScheduleLocalConverter()
-            )
+            ScheduleLocalDataSource()
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val id = prefs.getString(
             PreferenceKeys.ScheduleGroupTitle,

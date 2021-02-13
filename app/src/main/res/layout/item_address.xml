@@ -9,4 +9,4 @@
     android:paddingVertical="17.7dp"
     android:textColor="@color/textColorPrimary"
     android:textIsSelectable="true"
-    android:textSize="14sp"></TextView>
+    android:textSize="14sp" />

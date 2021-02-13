@@ -11,7 +11,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleLocalConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
@@ -27,7 +26,7 @@ import java.time.ZoneId
 
 class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
 
-    private val dataSource = ScheduleLocalDataSource(ScheduleLocalConverter())
+    private val dataSource = ScheduleLocalDataSource()
 
     override fun onReceive(context: Context, intent: Intent) {
         val notificationManager = context

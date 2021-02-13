@@ -45,8 +45,8 @@ class LessonInfoFragment : DialogFragment() {
         )
     }
     private val lessonLabelOneDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM")
-    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM,")
-    private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
+    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EE, d MMM,")
+    private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMM")
     private val viewModel by viewModel<LessonInfoViewModel>()
 
     private val args: LessonInfoFragmentArgs by navArgs()
@@ -108,11 +108,6 @@ class LessonInfoFragment : DialogFragment() {
         lessonLabelsChipGroup = view.findViewById(R.id.chipgroup_lesson_labels)
         lessonLabelOneDateTextView = view.findViewById(R.id.text_label_one_date)
 
-        lesson_layout.transitionName = args.titleTransitionNames[0]
-        lessonTitleTextView.transitionName = args.titleTransitionNames[1]
-        teacherChips.transitionName = args.titleTransitionNames[2]
-        lessonAuditoriumsChips.transitionName = args.titleTransitionNames[3]
-
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
         (activity as MainActivity).setSupportActionBar(toolbar)
@@ -139,7 +134,7 @@ class LessonInfoFragment : DialogFragment() {
 
     private fun setType() {
         lessonTypeTextView.setTextColor(if (viewModel.lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-        lessonTypeTextView.text = viewModel.lesson.type
+        lessonTypeTextView.text = viewModel.lesson.type + ", ${viewModel.lesson.order + 1}-е занятие"
     }
 
     private fun setTitle() {
@@ -149,7 +144,7 @@ class LessonInfoFragment : DialogFragment() {
     private fun setTime() {
         val (startTime, endTime) = viewModel.lesson.time
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
-        lessonTimeTextView.text = "$dateStr с $startTime до $endTime, ${viewModel.lesson.order + 1}-е занятие"
+        lessonTimeTextView.text = "$dateStr $startTime - $endTime"
     }
 
     private fun setAuditoriums() {
@@ -233,13 +228,13 @@ class LessonInfoFragment : DialogFragment() {
     private fun setTeachers() {
         for (teacher in viewModel.lesson.teachers) {
             val text = if (viewModel.lesson.teachers.size < 3) {
-                teacher.getFullName()
+                teacher.name
             } else {
                 teacher.getShortName()
             }
             teacherChips.addView(
                 createChip(text, teacherChips) {
-                    Toast.makeText(context, teacher.getFullName(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, teacher.name, Toast.LENGTH_SHORT).show()
                 }
             )
         }

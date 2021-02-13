@@ -1,11 +1,12 @@
 package com.mospolytech.mospolyhelper.data.schedule.converter
 
 import android.util.Log
-import com.beust.klaxon.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
 import java.lang.Exception
-import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -52,56 +53,58 @@ class ScheduleRemoteConverter {
         private val regex1 = Regex("""(\p{L}|\))\(""")
         private val regex2 = Regex("""\)(\p{L}|\()""")
         private val regex3 = Regex("""(\p{L})-(\p{L})""")
+        private val regex4 = Regex(""" -\S""")
+        private val regex5 = Regex("""\S- """)
     }
 
     fun parse(scheduleString: String): Schedule {
-        val parser: Parser = Parser.default()
-        val json = parser.parse(StringBuilder(scheduleString)) as JsonObject
-        val status = json.string(STATUS_KEY)
+        val json = Json.parseToJsonElement(scheduleString)
+        val status = json.jsonObject[STATUS_KEY]?.jsonPrimitive?.content
         if (status == STATUS_ERROR) {
-            val message = json.string(MESSAGE_KEY)
-            throw JsonParsingException(
+            val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
+            throw SerializationException(
                 "Schedule was returned with error status. " +
                         "Message: \"${message ?: ""}\""
             )
         } else if (status != STATUS_OK) {
-            val message = json.string(MESSAGE_KEY)
+            val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
             Log.w(
                 TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
                         "Message: \"${message ?: ""}\""
             )
         }
         val isByDate =
-            json.boolean(IS_SESSION) ?: throw JsonParsingException("Key \"$IS_SESSION\" not found")
+            json.jsonObject[IS_SESSION]?.jsonPrimitive?.boolean
+                ?: throw SerializationException("Key \"$IS_SESSION\" not found")
 
-        val groupInfo = parseGroup(json.obj(GROUP_KEY))
-        val dailySchedules = parseDailySchedules(json.obj(SCHEDULE_GRID_KEY), groupInfo.group, isByDate)
+        val groupInfo = parseGroup(json.jsonObject[GROUP_KEY])
+        val dailySchedules = parseDailySchedules(json.jsonObject[SCHEDULE_GRID_KEY], groupInfo.group, isByDate)
 
         return Schedule.from(dailySchedules)
     }
 
-    private fun parseGroup(json: JsonObject?): GroupInfo {
+    private fun parseGroup(json: JsonElement?): GroupInfo {
         if (json == null) {
             Log.w(TAG, "GROUP_KEY \"$GROUP_KEY\" not found")
             return GroupInfo.empty
         }
 
-        val title = json.string(GROUP_TITLE_KEY) ?: "".apply {
+        val title = json.jsonObject[GROUP_TITLE_KEY]?.jsonPrimitive?.content ?: "".apply {
             Log.w(TAG, "GROUP_TITLE_KEY \"$GROUP_TITLE_KEY\" not found")
         }
 
-        val course = json.int(GROUP_COURSE_KEY) ?: 0.apply {
+        val course = json.jsonObject[GROUP_COURSE_KEY]?.jsonPrimitive?.int ?: 0.apply {
             Log.w(TAG, "GROUP_COURSE_KEY \"$GROUP_COURSE_KEY\" not found")
         }
 
-        val dateFrom = parseGroupDateFrom(json.string(GROUP_DATE_FROM_KEY))
-        val dateTo = parseGroupDateTo(json.string(GROUP_DATE_TO_KEY))
+        val dateFrom = parseGroupDateFrom(json.jsonObject[GROUP_DATE_FROM_KEY]?.jsonPrimitive?.content)
+        val dateTo = parseGroupDateTo(json.jsonObject[GROUP_DATE_TO_KEY]?.jsonPrimitive?.content)
 
-        val isEvening = json.int(GROUP_EVENING_KEY) ?: 0.apply {
+        val isEvening = json.jsonObject[GROUP_EVENING_KEY]?.jsonPrimitive?.int ?: 0.apply {
             Log.w(TAG, "GROUP_EVENING_KEY \"$GROUP_EVENING_KEY\" not found")
         }
 
-        val comment = json.string(GROUP_COMMENT_KEY) ?: "".apply {
+        val comment = json.jsonObject[GROUP_COMMENT_KEY]?.jsonPrimitive?.content ?: "".apply {
             Log.w(TAG, "GROUP_COMMENT_KEY \"$GROUP_COMMENT_KEY\" not found")
         }
 
@@ -143,18 +146,18 @@ class ScheduleRemoteConverter {
     }
 
     private fun parseDailySchedules(
-        json: JsonObject?,
+        json: JsonElement?,
         group: Group,
         isByDate: Boolean
     ): List<List<Lesson>> {
         if (json == null) {
-            throw JsonParsingException("SCHEDULE_GRID_KEY \"$SCHEDULE_GRID_KEY\" not found")
+            throw SerializationException("SCHEDULE_GRID_KEY \"$SCHEDULE_GRID_KEY\" not found")
         }
         val tempList: List<MutableList<Lesson>> = listOf(
             mutableListOf(), mutableListOf(), mutableListOf(),
             mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf()
         )
-        for ((day, dailySchedule) in json) {
+        for ((day, dailySchedule) in json.jsonObject) {
             // TODO: Is empty not suitable
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
@@ -177,7 +180,7 @@ class ScheduleRemoteConverter {
             parsedDay %= 7
 
             for ((index, lessonPlace) in dailySchedule) {
-                if (lessonPlace !is JsonArray<*> || lessonPlace.isEmpty()) continue
+                if (lessonPlace !is JsonArray || lessonPlace.isEmpty()) continue
                 val parsedOrder = index.toInt() - 1
                 for (lesson in lessonPlace) {
                     if (lesson !is JsonObject) continue
@@ -191,17 +194,17 @@ class ScheduleRemoteConverter {
     }
 
     private fun parseLesson(
-        json: JsonObject, order: Int,
+        json: JsonElement, order: Int,
         group: Group, isByDate: Boolean,
         date: LocalDate
     ): Lesson {
-        val title = processTitle(json.string(LESSON_TITLE_KEY)
+        val title = processTitle(json.jsonObject[LESSON_TITLE_KEY]?.jsonPrimitive?.content
             ?: "Не найден ключ названия занятия. Возможно, структура расписания была обновлена: $json")
 
-        val teachers = parseTeachers(json.string(LESSON_TEACHER_KEY))
+        val teachers = parseTeachers(json.jsonObject[LESSON_TEACHER_KEY]?.jsonPrimitive?.content)
 
-        var dateFrom = if (isByDate) date else parseDateFrom(json.string(LESSON_DATE_FROM_KEY))
-        var dateTo = if (isByDate) date else parseDateTo(json.string(LESSON_DATE_TO_KEY))
+        var dateFrom = if (isByDate) date else parseDateFrom(json.jsonObject[LESSON_DATE_FROM_KEY]?.jsonPrimitive?.content)
+        var dateTo = if (isByDate) date else parseDateTo(json.jsonObject[LESSON_DATE_TO_KEY]?.jsonPrimitive?.content)
 
         if (dateTo < dateFrom) {
             val buf = dateTo
@@ -209,9 +212,9 @@ class ScheduleRemoteConverter {
             dateFrom = buf
         }
 
-        val auditoriums = parseAuditoriums(json.array(LESSON_AUDITORIUMS_KEY))
+        val auditoriums = parseAuditoriums(json.jsonObject[LESSON_AUDITORIUMS_KEY]?.jsonArray)
 
-        val type = json.string(LESSON_TYPE_KEY) ?: "".apply {
+        val type = json.jsonObject[LESSON_TYPE_KEY]?.jsonPrimitive?.content ?: "".apply {
             Log.w(TAG, "LESSON_TYPE_KEY \"$LESSON_TYPE_KEY\" not found")
         }
 
@@ -272,19 +275,25 @@ class ScheduleRemoteConverter {
             .capitalize()
             .split(',')
             .filter { it.isNotEmpty() }
-            .map { Teacher.fromFullName(it) }
+            .map {
+                Teacher(
+                    it.replace(regex4, " - ")
+                        .replace(regex5, " - ")
+                        .replace("  ", " ")
+                )
+            }
     } ?: emptyList()
 
 
-    private fun parseAuditoriums(json: JsonArray<JsonObject>?): List<Auditorium> {
+    private fun parseAuditoriums(json: JsonArray?): List<Auditorium> {
         if (json == null || json.isEmpty()) return listOf()
 
         val tempList = mutableListOf<Auditorium>()
         for (auditorium in json) {
-            var name = auditorium.string(AUDITORIUM_TITLE_KEY)?.trim()?.capitalize() ?: continue
+            var name = auditorium.jsonObject[AUDITORIUM_TITLE_KEY]?.jsonPrimitive?.content?.trim()?.capitalize() ?: continue
             name = Auditorium.parseEmoji(name)
 
-            val color = auditorium.string(AUDITORIUM_COLOR_KEY) ?: ""
+            val color = auditorium.jsonObject[AUDITORIUM_COLOR_KEY]?.jsonPrimitive?.content ?: ""
             tempList.add((Auditorium(
                 name,
                 color
