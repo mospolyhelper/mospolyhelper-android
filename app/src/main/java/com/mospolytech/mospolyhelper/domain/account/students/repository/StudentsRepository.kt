@@ -11,5 +11,4 @@ import kotlinx.coroutines.flow.Flow
 
 interface StudentsRepository {
     fun getInfo(query: String): Flow<PagingData<Student>>
-    fun invalidate()
 }

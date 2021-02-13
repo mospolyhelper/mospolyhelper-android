@@ -118,7 +118,11 @@
         tools:layout="@layout/fragment_account_students"
         android:id="@+id/studentsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.students.StudentsFragment"
-        android:label="StudentsFragment" />
+        android:label="StudentsFragment" >
+        <action
+            android:id="@+id/action_studentsFragment_to_bottomDialogFilter"
+            app:destination="@id/bottomDialogFilter" />
+    </fragment>
     <fragment
         tools:layout="@layout/fragment_relevant"
         android:id="@+id/relevantFragment"
@@ -171,6 +175,9 @@
         <action
             android:id="@+id/action_accountMenuFragment_to_deadlinesFragment"
             app:destination="@id/deadlinesFragment" />
+        <action
+            android:id="@+id/action_accountMenuFragment_to_statementsFragment"
+            app:destination="@id/statementsFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_account_auth"
@@ -184,7 +191,11 @@
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.info.InfoFragment"
-        android:label="InfoFragment" />
+        android:label="InfoFragment" >
+        <action
+            android:id="@+id/action_infoFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+    </fragment>
     <fragment
         android:id="@+id/teachersFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.teachers.TeachersFragment"
@@ -233,6 +244,17 @@
             android:name="Deadline"
             app:argType="com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline"
             app:nullable="true" />
+    <fragment
+        android:id="@+id/statementsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.statements.StatementsFragment"
+        android:label="StatementsFragment" />
+    <dialog
+        android:id="@+id/bottomDialogFilter"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.students.BottomDialogFilter"
+        android:label="BottomDialogFilter" >
+        <argument
+            android:name="Filter"
+            app:argType="com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity" />
     </dialog>
 
 </navigation>

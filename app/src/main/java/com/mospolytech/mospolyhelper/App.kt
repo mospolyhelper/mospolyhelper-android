@@ -55,6 +55,7 @@ class App : Application() {
             applicationsModule,
             paymentsModule,
             deadlinesModule,
+            statementsModule,
 
             relevantModule,
             addressesModule,

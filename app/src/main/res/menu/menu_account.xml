@@ -36,4 +36,8 @@
         android:id="@+id/nav_deadlines"
         android:icon="@drawable/ic_lesson_deadlines"
         android:title="Deadlines" />
+    <item
+        android:id="@+id/nav_statements"
+        android:icon="@drawable/ic_baseline_assignment_24"
+        android:title="Statements" />
 </menu>
