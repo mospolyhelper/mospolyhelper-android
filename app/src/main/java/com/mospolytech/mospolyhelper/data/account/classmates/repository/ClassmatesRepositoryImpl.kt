@@ -27,6 +27,7 @@ class ClassmatesRepositoryImpl(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun getInfo() = flow {
         val sessionId = prefDataSource.getString(
             PreferenceKeys.SessionId,

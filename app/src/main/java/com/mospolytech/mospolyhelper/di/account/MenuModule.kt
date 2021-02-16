@@ -9,11 +9,12 @@ import com.mospolytech.mospolyhelper.data.account.auth.repository.AuthRepository
 import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
 import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.features.ui.account.auth.AuthViewModel
+import com.mospolytech.mospolyhelper.features.ui.account.menu.MenuViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val authModule = module {
+val menuModule = module {
     single { AuthHerokuClient(get(named("accountHerokuClient"))) }
     single { AuthJwtHerokuClient(get(named("accountHerokuClient"))) }
     single { AuthJwtRemoteDataSource(get()) }
@@ -21,5 +22,5 @@ val authModule = module {
     single { AuthRemoteDataSource(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
     single { AuthUseCase(get()) }
-    viewModel { AuthViewModel(get(), get()) }
+    viewModel { MenuViewModel(get(), get()) }
 }

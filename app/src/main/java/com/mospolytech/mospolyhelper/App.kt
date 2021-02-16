@@ -45,6 +45,7 @@ class App : Application() {
             mainModule,
 
             // Account
+            //menuModule,
             authModule,
             infoModule,
             marksModule,

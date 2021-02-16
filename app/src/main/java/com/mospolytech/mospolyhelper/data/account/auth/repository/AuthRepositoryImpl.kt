@@ -1,24 +1,48 @@
 package com.mospolytech.mospolyhelper.data.account.auth.repository
 
+import com.auth0.android.jwt.JWT
+import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSource
+import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthJwtRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.domain.account.auth.model.JwtModel
 import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
-import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.onSuccess
+import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.contracts.ExperimentalContracts
 
 class AuthRepositoryImpl(
-    private val dataSource: AuthRemoteDataSource,
+    private val dataSourceJWT: AuthJwtRemoteDataSource,
+    private val authJwtLocalDataSource: AuthJwtLocalDataSource,
     private val prefDataSource: SharedPreferencesDataSource
 ) : AuthRepository {
+
+    @ExperimentalContracts
     override suspend fun logIn(login: String, password: String) = flow {
-        val oldSessionId = prefDataSource.getString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
-        val newSessionId = dataSource.auth(login, password, oldSessionId)
-        newSessionId.onSuccess {
-            prefDataSource.setString(PreferenceKeys.SessionId, it)
+        val token = dataSourceJWT.authJwt(login, password)
+        emit(token.map {
+            authJwtLocalDataSource.set(it.accessToken)
+            val sessionId = authJwtLocalDataSource.getSessionId()!!
+            prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+            prefDataSource.setString(PreferenceKeys.RefreshToken, it.refreshToken)
+            return@map sessionId
+        })
+    }
+
+    @ExperimentalContracts
+    override suspend fun refresh(): Flow<Result<String>> = flow {
+        if (authJwtLocalDataSource.isExpired()) {
+            val oldToken = prefDataSource.getString(PreferenceKeys.AccessToken, "")
+            val refresh = prefDataSource.getString(PreferenceKeys.RefreshToken, "")
+            val newToken = dataSourceJWT.refresh(oldToken, refresh)
+            emit(newToken.map {
+                authJwtLocalDataSource.set(it)
+                val sessionId = authJwtLocalDataSource.getSessionId()!!
+                prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+                return@map sessionId
+            })
         }
-        emit(newSessionId)
     }
 
     override fun logOut() {

@@ -37,5 +37,8 @@ class PreferenceKeys {
         const val Payments = "Payments"
         const val Deadlines = "Deadlines"
         const val Statements = "Statements"
+        const val JWT = "JWT"
+        const val AccessToken = "AccessToken"
+        const val RefreshToken = "RefreshToken"
     }
 }
