@@ -12,6 +12,8 @@ class AuthUseCase(
             emit(Result.loading())
         }
 
+    suspend fun refresh() = repository.refresh().onStart { emit(Result.loading()) }
+
     fun logOut() {
         repository.logOut()
     }

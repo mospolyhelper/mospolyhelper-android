@@ -7,15 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.utils.safe
+import kotlinx.coroutines.async
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountMenuFragment : Fragment() {
 
     private lateinit var menuList: RecyclerView
+
+    //private val viewModel by viewModel<MenuViewModel>()
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        lifecycleScope.async { viewModel.refresh() }
+//        super.onCreate(savedInstanceState)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

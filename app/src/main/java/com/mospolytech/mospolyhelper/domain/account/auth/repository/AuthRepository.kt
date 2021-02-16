@@ -5,6 +5,7 @@ import com.mospolytech.mospolyhelper.utils.Result
 
 interface AuthRepository {
     suspend fun logIn(login: String, password: String): Flow<Result<String>>
+    suspend fun refresh(): Flow<Result<String>>
     fun logOut()
 
     fun getLogin(): String
