@@ -1,10 +1,10 @@
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/lessonInfoBackground"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/lessonInfoBackground">
 
     <LinearLayout
         android:id="@+id/lesson_layout"
@@ -25,12 +25,11 @@
             android:ellipsize="end"
             android:fontFamily="@font/open_sans"
             android:hyphenationFrequency="none"
-            android:text="Объектно-ориентированное программирование"
             android:textColor="@color/textColorPrimary"
             android:textIsSelectable="true"
             android:textSize="22sp"
-            android:transitionName="lessonInfoTitle" />
-
+            android:transitionName="lessonInfoTitle"
+            tools:text="Объектно-ориентированное программирование" />
 
         <TextView
             android:id="@+id/text_lesson_time"
@@ -40,10 +39,11 @@
             android:layout_marginTop="@dimen/lesson_info_margin_vertical"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:fontFamily="@font/open_sans_semibold"
-            android:text="Вт, 7 июля, 09:00 - 10:30, 1-е занятие"
             android:textColor="@color/lessonInfoText"
             android:textIsSelectable="true"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            tools:text="Вт, 7 июля, 09:00 - 10:30, 1-е занятие" />
+
         <TextView
             android:id="@+id/text_schedule_type"
             android:layout_width="wrap_content"
@@ -52,9 +52,10 @@
             android:layout_marginTop="6dp"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:fontFamily="@font/open_sans_semibold"
-            android:text="Лекционное занятие"
             android:textIsSelectable="true"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            tools:text="Лекционное занятие" />
+
         <TextView
             android:id="@+id/text_lesson_date"
             android:layout_width="match_parent"
@@ -64,10 +65,10 @@
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
             android:fontFamily="@font/open_sans_semibold"
-            android:text="С 10 февраля до 10 июня"
             android:textColor="@color/lessonInfoText"
             android:textIsSelectable="true"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            tools:text="С 10 февраля до 10 июня" />
 
         <TextView
             android:id="@+id/text_lesson_auditoriums"
@@ -87,12 +88,10 @@
             android:id="@+id/chipgroup_lesson_auditoriums"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginBottom="@dimen/lesson_info_margin_vertical">
-
-        </com.google.android.material.chip.ChipGroup>
-
+            android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/lesson_info_margin_horizontal"
+            android:paddingEnd="@dimen/lesson_info_margin_horizontal" />
 
         <TextView
             android:id="@+id/text_lesson_teachers"
@@ -112,12 +111,10 @@
             android:id="@+id/chipgroup_lesson_teachers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginBottom="@dimen/lesson_info_margin_vertical">
-
-        </com.google.android.material.chip.ChipGroup>
-
+            android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/lesson_info_margin_horizontal"
+            android:paddingEnd="@dimen/lesson_info_margin_horizontal" />
 
         <TextView
             android:layout_width="match_parent"
@@ -135,12 +132,10 @@
             android:id="@+id/chipgroup_lesson_groups"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginBottom="@dimen/lesson_info_margin_vertical">
-
-        </com.google.android.material.chip.ChipGroup>
-
+            android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/lesson_info_margin_horizontal"
+            android:paddingEnd="@dimen/lesson_info_margin_horizontal" />
 
         <TextView
             android:layout_width="match_parent"
@@ -154,17 +149,19 @@
             android:gravity="center_vertical"
             android:text="Метки (Скоро)"
             android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            app:drawableTint="@color/iconColor" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipgroup_lesson_labels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/text_label_one_date"
@@ -179,7 +176,6 @@
 
         </com.google.android.material.chip.ChipGroup>
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -188,15 +184,14 @@
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             android:drawableStart="@drawable/ic_lesson_deadlines"
             android:drawablePadding="@dimen/lesson_info_drawable_padding"
-            android:drawableTint="@color/iconColor"
             android:fontFamily="@font/open_sans_semibold"
             android:gravity="center_vertical"
             android:text="Дедлайны (Скоро)"
             android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            app:drawableTint="@color/iconColor" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/text_schedule_deadlines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -210,8 +205,12 @@
             android:drawablePadding="@dimen/lesson_info_drawable_padding"
             android:focusable="true"
             android:fontFamily="sans-serif"
-            android:text="Всего 4 дедлайна:\n• 2 выполнено\n• до конца 1 менее недели\n• до конца 1 менее 3 дней"
             android:textColor="@color/lessonInfoText"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:visibility="gone"
+            tools:text="Всего 4 дедлайна:\n• 2 выполнено\n• до конца 1 менее недели\n• до конца 1 менее 3 дней"
+            tools:visibility="visible" />
+
     </LinearLayout>
-    </ScrollView>
+
+</ScrollView>
