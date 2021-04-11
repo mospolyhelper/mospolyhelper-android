@@ -3,6 +3,8 @@ package com.mospolytech.mospolyhelper.features.ui.schedule
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
@@ -37,7 +39,7 @@ class ScheduleViewModel(
     val currentLessonOrder: MutableStateFlow<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>>
 
 
-    val savedIds: MutableStateFlow<Set<Pair<Boolean, String>>>
+    val savedIds: MutableStateFlow<Set<UserSchedule>>
 
     val showEndedLessons: MutableStateFlow<Boolean>
     val showCurrentLessons: MutableStateFlow<Boolean>
@@ -53,7 +55,7 @@ class ScheduleViewModel(
     val filteredSchedule = MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
 
     val originalSchedule =  MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
-    val id: MutableStateFlow<Pair<Boolean, String>>
+    val id: MutableStateFlow<UserSchedule?>
     val showEmptyLessons: MutableStateFlow<Boolean>
 
     val onMessage: Event1<String> = Action1()
@@ -141,10 +143,7 @@ class ScheduleViewModel(
 
 
         id = MutableStateFlow(
-            Pair(
-            useCase.getIsStudent(),
             useCase.getSelectedSavedId()
-            )
         )
 
         showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
@@ -152,9 +151,8 @@ class ScheduleViewModel(
         viewModelScope.async {
             id.collect {
                 isAdvancedSearch = false
-                useCase.setIsStudent(it.first)
-                useCase.setSelectedSavedId(it.second)
-                setUpSchedule(it.first, it.second, !firstLoading)
+                useCase.setSelectedSavedId(it)
+                setUpSchedule(it, !firstLoading)
                 firstLoading = false
             }
         }
@@ -187,8 +185,8 @@ class ScheduleViewModel(
                 }
             }
         }
-        if (savedIds.value.isEmpty() && id.value.second.isNotEmpty()) {
-            id.value = Pair(false, "")
+        if (savedIds.value.isEmpty() && id.value != null) {
+            id.value = null
         }
     }
 
@@ -208,7 +206,7 @@ class ScheduleViewModel(
                 }
             }
             MessageAddScheduleId -> {
-                val pair = message.content[0] as Pair<Boolean, String>
+                val pair = message.content[0] as UserSchedule
                 savedIds.value += pair
             }
         }
@@ -217,18 +215,18 @@ class ScheduleViewModel(
     fun updateSchedule() {
         isAdvancedSearch = false
         setUpSchedule(
-            id.value.first,
-            id.value.second,
+            id.value,
             true
         )
     }
 
-    fun removeId(pair: Pair<Boolean, String>) {
-        savedIds.value -= pair
-        if (id.value.first == pair.first
-            && pair.second.contains(id.value.second)
+    fun removeId(user: UserSchedule) {
+        savedIds.value -= user
+        val currUser = id.value
+        if (currUser is StudentSchedule && user is StudentSchedule
+            && user.title.contains(currUser.title)
         ) {
-            id.value = Pair(true, "")
+            id.value = null
         }
     }
 
@@ -247,12 +245,11 @@ class ScheduleViewModel(
     }
 
 
-    private fun setUpSchedule(isStudent: Boolean, id: String, refresh: Boolean) {
+    private fun setUpSchedule(user: UserSchedule?, refresh: Boolean) {
         viewModelScope.async {
             this@ScheduleViewModel.originalSchedule.value = Result.loading()
             useCase.getScheduleWithFeatures(
-                id,
-                isStudent,
+                user,
                 refresh
             ).collect {
                 this@ScheduleViewModel.originalSchedule.value = Result.success(it)

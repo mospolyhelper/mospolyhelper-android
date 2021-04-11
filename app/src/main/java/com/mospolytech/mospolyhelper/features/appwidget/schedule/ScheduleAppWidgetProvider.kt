@@ -78,8 +78,8 @@ class ScheduleAppWidgetProvider : AppWidgetProvider() {
 
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
             var idFull = prefs.getString(
-                PreferenceKeys.ScheduleGroupTitle,
-                PreferenceDefaults.ScheduleGroupTitle
+                PreferenceKeys.ScheduleUser,
+                PreferenceDefaults.ScheduleUser
             )!!
             val isStudent = prefs.getBoolean(
                 PreferenceKeys.ScheduleUserTypePreference,

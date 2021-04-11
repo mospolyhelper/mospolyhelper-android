@@ -4,8 +4,7 @@ import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.data.schedule.repository.TagRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
 import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
@@ -17,6 +16,9 @@ import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
 import kotlinx.coroutines.flow.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 data class ScheduleTagsDeadline(
     val schedule: Schedule?,
@@ -35,18 +37,16 @@ class ScheduleUseCase(
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
     fun getSchedule(
-        group: String,
-        isStudent: Boolean,
+        user: UserSchedule?,
         refresh: Boolean
-    ) = scheduleRepository.getSchedule(group, isStudent, refresh)
+    ) = scheduleRepository.getSchedule(user, refresh)
 
     fun getScheduleWithFeatures(
-        group: String,
-        isStudent: Boolean,
+        user: UserSchedule?,
         refresh: Boolean
     ): Flow<ScheduleTagsDeadline> {
         return combine(
-            scheduleRepository.getSchedule(group, isStudent, refresh),
+            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user, refresh),
             tagRepository.getAll(),
             flowOf(mapOf<String, List<Deadline>>())
         ) { schedule, tags, deadlines ->
@@ -64,52 +64,50 @@ class ScheduleUseCase(
 
     suspend fun getIdSet(
         messageBlock: (String) -> Unit = { }
-    ): Set<Pair<Boolean, String>> {
-        val groupList = groupListRepository.getGroupList().map { Pair(true, it)} +
-                teacherListRepository.getTeacherList().map { "${it.value} (id${it.key})" }.sorted().map { Pair(false, it)}
+    ): Set<UserSchedule> {
+        val groupList = groupListRepository.getGroupList().map { StudentSchedule(it, it) } +
+                teacherListRepository.getTeacherList().map { TeacherSchedule(it.key, it.value) }.sortedBy { it.title + it.id }
         if (groupList.isEmpty()) {
             messageBlock(StringProvider.getString(StringId.GroupListWasntFounded))
         }
         return groupList.toSet()
     }
 
-    fun getSavedIds(): Set<Pair<Boolean, String>> {
+    fun getSavedIds(): Set<UserSchedule> {
         return savedIdsRepository.getSavedIds()
             .toSortedSet(
                 comparator
             )
     }
 
-    private val comparator = Comparator<Pair<Boolean, String>> { o1, o2 ->
-        return@Comparator if (o1.first != o2.first) {
-            if (o1.first) -1 else 1
+    private val comparator = Comparator<UserSchedule> { o1, o2 ->
+        return@Comparator if (o1.title != o2.title) {
+            o1.title.compareTo(o2.title)
         } else {
-            o1.second.compareTo(o2.second)
+            o1.id.compareTo(o2.id)
         }
     }
 
-    fun setSavedIds(savedIds: Set<Pair<Boolean, String>>) {
+    fun setSavedIds(savedIds: Set<UserSchedule>) {
         savedIdsRepository.setSavedIds(savedIds)
     }
 
-    fun getSelectedSavedId(): String {
-        return sharedPreferencesDataSource.getString(
-            PreferenceKeys.ScheduleGroupTitle,
-            PreferenceDefaults.ScheduleGroupTitle
-        )
+    fun getSelectedSavedId(): UserSchedule? {
+        return try {
+            val j = sharedPreferencesDataSource.getString(
+                PreferenceKeys.ScheduleUser,
+                PreferenceDefaults.ScheduleUser
+            )
+            Json.decodeFromString<UserSchedule>(j)
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    fun setSelectedSavedId(savedId: String) {
+    fun setSelectedSavedId(savedId: UserSchedule?) {
         sharedPreferencesDataSource.setString(
-            PreferenceKeys.ScheduleGroupTitle,
-            savedId
-        )
-    }
-
-    fun getIsStudent(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
-            PreferenceKeys.ScheduleUserTypePreference,
-            PreferenceDefaults.ScheduleUserTypePreference
+            PreferenceKeys.ScheduleUser,
+            if (savedId == null) "" else Json.encodeToString(savedId)
         )
     }
 

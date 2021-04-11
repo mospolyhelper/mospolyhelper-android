@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.relevant
 
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -13,6 +14,6 @@ class RelevantViewModel(
     private val useCase: ScheduleUseCase
 ) : ViewModelBase(mediator, RelevantViewModel::class.java.simpleName), KoinComponent {
     fun getSchedule(): Flow<Schedule?> {
-        return useCase.getSchedule("181-721", true, false)
+        return useCase.getSchedule(StudentSchedule("181-721", "181-721"), false)
     }
 }

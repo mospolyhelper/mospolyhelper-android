@@ -47,10 +47,6 @@ class RelevantFragment : Fragment() {
 
     private fun setLessonList() {
         var listAdapter: LessonAdapter? = null
-        val disabledColor = requireContext().getColor(R.color.textSecondaryDisabled)
-        val headColor = requireContext().getColor(R.color.lessonTimeText)
-        val chipTextColor = requireContext().getColor(R.color.scheduleLessonChipText)
-        val chipColor = requireContext().getColor(R.color.scheduleLessonChip)
 
         lessonList.layoutManager = LinearLayoutManager(context)
             .apply { recycleChildrenOnDetach = true }
@@ -73,7 +69,7 @@ class RelevantFragment : Fragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.getSchedule().collect {
-                val date = LocalDate.of(2021, 1, 1)
+                val date = LocalDate.now()
                 val dailySchedule = ScheduleWindowsDecorator(
                     it!!.getSchedule(
                         date
@@ -90,10 +86,6 @@ class RelevantFragment : Fragment() {
                         date,
                         false,
                         true,
-                        disabledColor,
-                        headColor,
-                        chipTextColor,
-                        chipColor,
                         Pair(
                             Lesson.CurrentLesson(0, false, false),
                             Lesson.CurrentLesson(0, false, false)

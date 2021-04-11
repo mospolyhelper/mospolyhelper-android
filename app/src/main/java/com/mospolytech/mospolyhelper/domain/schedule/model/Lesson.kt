@@ -258,7 +258,6 @@ data class Lesson(
                 CREDIT_WITH_MARK.contains(type, true) ||
                 EXAMINATION_SHOW.contains(type, true)
 
-    @kotlinx.serialization.Transient
     val time: Pair<String, String>
     get() {
         return getTime(
@@ -267,7 +266,6 @@ data class Lesson(
         )
     }
 
-    @kotlinx.serialization.Transient
     val localTime: Pair<LocalTime, LocalTime>
         get() {
             return getLocalTime(
@@ -276,7 +274,6 @@ data class Lesson(
             )
         }
 
-    @kotlinx.serialization.Transient
     val groupIsEvening: Boolean
         get() = groups.firstOrNull()?.isEvening ?: false
 

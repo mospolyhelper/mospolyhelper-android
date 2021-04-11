@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -15,8 +16,12 @@ import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 
 
@@ -123,15 +128,16 @@ class LessonRemoteAdapter(
         val localDataSource =
             ScheduleLocalDataSource()
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val id = prefs.getString(
-            PreferenceKeys.ScheduleGroupTitle,
-            PreferenceDefaults.ScheduleGroupTitle
-        )!!
-        val isStudent = prefs.getBoolean(
-            PreferenceKeys.ScheduleUserTypePreference,
-            PreferenceDefaults.ScheduleUserTypePreference
-        )
-        val schedule = localDataSource.get(id, isStudent)
+        val user = try {
+            Json.decodeFromString<UserSchedule>(prefs.getString(
+                PreferenceKeys.ScheduleUser,
+                PreferenceDefaults.ScheduleUser
+            )!!)
+        } catch (e: Exception) {
+            dailySchedule = null
+            return
+        }
+        val schedule = localDataSource.get(user)
         if (schedule == null) {
             dailySchedule = null
             return
@@ -147,7 +153,7 @@ class LessonRemoteAdapter(
 
     override fun hasStableIds() = true
 
-    override fun getViewAt(position: Int): RemoteViews {
+    override fun getViewAt(position: Int): RemoteViews? {
         val remoteView = RemoteViews(context.packageName, R.layout.item_schedule_appwidget)
         val dailySchedule = dailySchedule
         if (dailySchedule == null) {
@@ -165,14 +171,25 @@ class LessonRemoteAdapter(
             return remoteView
         }
 
-        val lesson = dailySchedule[position]
+        try {
+            if (position in dailySchedule.indices)
+            {
+                val lesson = dailySchedule[position]
 
-        setTime(remoteView, lesson)
-        setTitle(remoteView, lesson)
-        setTeachers(remoteView, lesson)
-        setAuditoriums(remoteView, lesson)
+                setTime(remoteView, lesson)
+                setTitle(remoteView, lesson)
+                setTeachers(remoteView, lesson)
+                setAuditoriums(remoteView, lesson)
 
-        return remoteView
+                return remoteView
+            } else {
+                Log.d(TAG, "RemoteViewsFactory Index out of bounds: dailySchedule.size=${dailySchedule.size}, position=$position")
+                return loadingView
+            }
+        } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
+            return loadingView
+        }
     }
 
     private fun setTime(view: RemoteViews, lesson: Lesson) {

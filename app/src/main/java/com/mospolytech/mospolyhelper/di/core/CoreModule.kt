@@ -50,4 +50,8 @@ val coreModule = module {
             }
         }
     }
+
+    single(named("schedule")) {
+        HttpClient()
+    }
 }

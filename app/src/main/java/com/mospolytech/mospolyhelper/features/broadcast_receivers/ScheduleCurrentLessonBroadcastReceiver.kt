@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.NotificationChannelIds
@@ -77,14 +78,14 @@ class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
     private suspend fun getCurrentLessons(context: Context): Pair<List<Lesson>, Boolean> {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val groupTitle = prefs.getString(
-            PreferenceKeys.ScheduleGroupTitle,
-            PreferenceDefaults.ScheduleGroupTitle
+            PreferenceKeys.ScheduleUser,
+            PreferenceDefaults.ScheduleUser
         )!!
         var isSession = true
-        var schedule = dataSource.get(groupTitle, isSession)
+        var schedule = dataSource.get(StudentSchedule(groupTitle, groupTitle))
         if (schedule == null) {
             isSession = false
-            schedule = dataSource.get(groupTitle, isSession)
+            schedule = dataSource.get(StudentSchedule(groupTitle, groupTitle))
             if (schedule == null) {
                 return Pair(listOf(), false)
             }
@@ -93,7 +94,7 @@ class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
         val date = LocalDate.now(ZoneId.of("Europe/Moscow"))
         var dailySchedule = schedule.getSchedule(date)
         if (dailySchedule.isEmpty() && isSession) {
-            schedule = dataSource.get(groupTitle, isSession)
+            schedule = dataSource.get(StudentSchedule(groupTitle, groupTitle))
             if (schedule == null) {
                 return Pair(listOf(), false)
             }

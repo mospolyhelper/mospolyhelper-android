@@ -3,9 +3,8 @@ package com.mospolytech.mospolyhelper.data.schedule.repository
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleIterable
-import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
 import kotlinx.coroutines.*
@@ -53,32 +52,98 @@ class ScheduleRepositoryImpl(
     private val scheduleCounter = AtomicInteger(0)
 
     override fun getSchedule(
-        id: String,
-        isStudent: Boolean,
+        user: UserSchedule?,
         refresh: Boolean
     ) = flow {
-        val schedule = if (refresh) {
-            refresh(id, isStudent) ?: localDataSource.get(id, isStudent)
+        if (user == null) {
+            emit(null)
         } else {
-            localDataSource.get(id, isStudent) ?: refresh(id, isStudent)
+            val schedule = if (refresh) {
+                refresh(user) ?: localDataSource.get(user)
+            } else {
+                localDataSource.get(user) ?: refresh(user)
+            }
+            emit(schedule)
         }
-        emit(schedule)
     }
 
-    private suspend fun refresh(id: String, isStudent: Boolean): Schedule? {
-        val schedule = if (isStudent) {
-            combine(
-                remoteDataSource.get(id, false),
-                remoteDataSource.get(id, true)
+    private suspend fun refresh(user: UserSchedule): Schedule? {
+        val schedule = when (user) {
+            is StudentSchedule -> combine(
+                remoteDataSource.get(user.id, false),
+                remoteDataSource.get(user.id, true)
             )
-        } else {
-            remoteTeacherDataSource.get(id)
+            is TeacherSchedule -> remoteTeacherDataSource.get(user.id)
+            is AuditoriumSchedule -> null
         }
         if (schedule != null) {
-            localDataSource.set(schedule, id, isStudent)
+            localDataSource.set(schedule, user)
         }
         return schedule
     }
+
+//    override suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
+//        if (ids.isEmpty()) {
+//            return@coroutineScope SchedulePackList(
+//                emptyList(),
+//                mutableSetOf(),
+//                mutableSetOf(),
+//                mutableSetOf(),
+//                mutableSetOf()
+//            )
+//        }
+//
+//        scheduleCounter.set(0)
+//        val maxProgress = ids.size * 2
+//
+//        val chunkSize = ids.size / (Runtime.getRuntime().availableProcessors() * 3)
+//        val chunks = if (chunkSize > 3) ids.chunked(chunkSize) else listOf(ids)
+//
+//        val channel = Channel<Schedule?>()
+//        val deferredList = chunks.map { chunk ->
+//            async(context = Dispatchers.IO) {
+//                for (groupTitle in chunk) {
+//                    channel.send(refresh(groupTitle, isStudent))
+//                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+//                }
+//            }
+//        }
+//
+//        launch {
+//            deferredList.awaitAll()
+//            channel.close()
+//        }
+//
+//        val packList =
+//            SchedulePackList(
+//                ScheduleIterable(
+//                    ids
+//                ),
+//                sortedSetOf(),
+//                sortedSetOf(),
+//                sortedSetOf(),
+//                sortedSetOf()
+//            )
+//        channel.receiveAsFlow().collect {
+//            if (it == null) {
+//                return@collect
+//            }
+//            for (dailySchedule in it.dailySchedules) {
+//                for (lesson in dailySchedule) {
+//                    packList.lessonTitles.add(lesson.title)
+//                    for (teacher in lesson.teachers) {
+//                        packList.lessonTeachers.add(teacher.name)
+//                    }
+//                    for (auditorium in lesson.auditoriums) {
+//                        packList.lessonAuditoriums.add(auditorium.title)
+//                    }
+//                    packList.lessonTypes.add(lesson.type)
+//                }
+//            }
+//            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+//        }
+//        return@coroutineScope packList
+//    }
 
     override suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
         if (ids.isEmpty()) {
@@ -92,25 +157,7 @@ class ScheduleRepositoryImpl(
         }
 
         scheduleCounter.set(0)
-        val maxProgress = ids.size * 2
-
-        val chunkSize = ids.size / (Runtime.getRuntime().availableProcessors() * 3)
-        val chunks = if (chunkSize > 3) ids.chunked(chunkSize) else listOf(ids)
-
-        val channel = Channel<Schedule?>()
-        val deferredList = chunks.map { chunk ->
-            async(context = Dispatchers.IO) {
-                for (groupTitle in chunk) {
-                    channel.send(refresh(groupTitle, isStudent))
-                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
-                }
-            }
-        }
-
-        launch {
-            deferredList.awaitAll()
-            channel.close()
-        }
+        val maxProgress = 2
 
         val packList =
             SchedulePackList(
@@ -122,11 +169,11 @@ class ScheduleRepositoryImpl(
                 sortedSetOf(),
                 sortedSetOf()
             )
-        channel.receiveAsFlow().collect {
-            if (it == null) {
-                return@collect
-            }
-            for (dailySchedule in it.dailySchedules) {
+        val schedules = remoteDataSource.getAll(false) { c, t -> onProgressChanged(c.toFloat() / t)} +
+                remoteDataSource.getAll(true) { c, t -> onProgressChanged(c.toFloat() / t)}
+
+        for (schedule in schedules) {
+            for (dailySchedule in schedule.dailySchedules) {
                 for (lesson in dailySchedule) {
                     packList.lessonTitles.add(lesson.title)
                     for (teacher in lesson.teachers) {
@@ -138,10 +185,13 @@ class ScheduleRepositoryImpl(
                     packList.lessonTypes.add(lesson.type)
                 }
             }
-            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+
         }
+        onProgressChanged(1f)
         return@coroutineScope packList
     }
+
+
 
 
 

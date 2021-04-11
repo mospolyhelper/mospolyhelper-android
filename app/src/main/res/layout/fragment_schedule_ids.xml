@@ -29,7 +29,7 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/shape_lesson"
             android:backgroundTint="@color/layerZero"
-            android:drawableRight="@drawable/ic_search_24"
+            android:drawableStart="@drawable/ic_search_24"
             android:drawablePadding="10dp"
             android:hint="Введите группу, ФИО или ID"
             android:inputType="text"

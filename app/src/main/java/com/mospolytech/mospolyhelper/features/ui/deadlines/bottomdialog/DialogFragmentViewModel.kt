@@ -8,6 +8,7 @@ import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -19,6 +20,8 @@ import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 
 class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
@@ -54,14 +57,14 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
 
     fun getLessons(): Set<String>? {
         val prefs = PreferenceManager.getDefaultSharedPreferences(App.context)
-        val groupTitle = prefs.getString(
-            PreferenceKeys.ScheduleGroupTitle,
-            PreferenceDefaults.ScheduleGroupTitle)
-        val isStudent = SharedPreferencesDataSource(prefs).getBoolean(
-            PreferenceKeys.ScheduleUserTypePreference,
-            PreferenceDefaults.ScheduleUserTypePreference
-        )
-        setUpSchedule(groupTitle!!, isStudent)
+        val user = try {
+            Json.decodeFromString<UserSchedule>(prefs.getString(
+                PreferenceKeys.ScheduleUser,
+                PreferenceDefaults.ScheduleUser)!!)
+        } catch (e: Exception) {
+            null
+        }
+        setUpSchedule(user)
         return this@DialogFragmentViewModel.schedule.value?.let {
             ScheduleRepositoryImpl.allDataFromSchedule(
                 it
@@ -69,17 +72,16 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         }
     }
 
-    private fun setUpSchedule(id: String, isStudent: Boolean, downloadNew: Boolean = false) {
+    private fun setUpSchedule(user: UserSchedule?, downloadNew: Boolean = false) {
         viewModelScope.async {
-            if (id.isEmpty()) {
+            if (user == null) {
                 withContext(Dispatchers.Main) {
                     this@DialogFragmentViewModel.schedule.value = null
                 }
             } else {
                 // TODO: Fix isStudentConstant
                 scheduleRepository.getSchedule(
-                    id,
-                    isStudent,
+                    user,
                     downloadNew
                 ).collect {
                     withContext(Dispatchers.Main) {

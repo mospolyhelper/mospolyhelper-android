@@ -56,6 +56,20 @@
   <color name="lessonTypeNotImportant">#cfeafd</color>
   <color name="lessonTypeNotImportantText">#4a7d9d</color>
 
+  <color name="lessonOrder1">#e8cfc8</color>
+  <color name="lessonOrder1Text">#bb725d</color>
+  <color name="lessonOrder2">#f2ceae</color>
+  <color name="lessonOrder2Text">#db7924</color>
+  <color name="lessonOrder3">#f2e1ad</color>
+  <color name="lessonOrder3Text">#C99F20</color>
+  <color name="lessonOrder4">#94DAF4</color>
+  <color name="lessonOrder4Text">#149FBB</color>
+  <color name="lessonOrder5">#88adb3</color>
+  <color name="lessonOrder5Text">#496A70</color>
+  <color name="lessonOrder6">#668ba8</color>
+  <color name="lessonOrder6Text">#415D71</color>
+  <color name="lessonOrder7">#66648c</color>
+  <color name="lessonOrder7Text">#413f5a</color>
 
   <color name="textAccent">#222222</color>
   <color name="textAccentDisabled">#CCCCCC</color>
@@ -64,7 +78,7 @@
 
 
   <!-- Schedule Lesson Info  -->
-  <color name="lessonInfoBackground">@color/layerZero</color>
+  <color name="lessonInfoBackground">@color/layerOne</color>
   <color name="lessonInfoChipColor">@color/layerOne</color>
   <color name="lessonInfoText">#333333</color>
 

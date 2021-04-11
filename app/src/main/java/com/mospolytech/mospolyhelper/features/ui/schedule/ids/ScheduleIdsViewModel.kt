@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.ids
 
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -13,7 +14,7 @@ class ScheduleIdsViewModel(
     mediator: Mediator<String, ViewModelMessage>,
     private val scheduleUseCase: ScheduleUseCase
 ): ViewModelBase(mediator, ScheduleIdsViewModel::class.java.simpleName) {
-    val idSet = MutableStateFlow(emptySet<Pair<Boolean, String>>())
+    val idSet = MutableStateFlow(emptySet<UserSchedule>())
     val searchQuery = MutableStateFlow("")
     val filterMode = MutableStateFlow(FilterModes.All)
 
@@ -21,7 +22,7 @@ class ScheduleIdsViewModel(
         getIdSet()
     }
 
-    fun sendSelectedItem(item: Pair<Boolean, String>) {
+    fun sendSelectedItem(item: UserSchedule) {
         send(ScheduleViewModel::class.java.simpleName, ScheduleViewModel.MessageAddScheduleId, item)
     }
 

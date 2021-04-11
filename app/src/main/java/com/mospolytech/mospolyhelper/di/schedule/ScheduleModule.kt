@@ -1,15 +1,11 @@
 package com.mospolytech.mospolyhelper.di.schedule
 
-import com.mospolytech.mospolyhelper.data.schedule.api.GroupListClient
-import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
+import com.mospolytech.mospolyhelper.data.schedule.api.*
 import com.mospolytech.mospolyhelper.data.schedule.converter.GroupListRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.*
-import com.mospolytech.mospolyhelper.data.schedule.remote.GroupListRemoteDataSource
-import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
-import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
-import com.mospolytech.mospolyhelper.data.schedule.remote.TeacherListRemoteDataSource
+import com.mospolytech.mospolyhelper.data.schedule.remote.*
 import com.mospolytech.mospolyhelper.data.schedule.repository.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.SavedIdsRepository
@@ -21,13 +17,17 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.Advanc
 import com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val scheduleModule = module {
 
     // Apis
-    single { ScheduleClient() }
-    single { GroupListClient() }
+    single { ScheduleClient(get(named("schedule"))) }
+    single { GroupListClient(get(named("schedule"))) }
+    single { GroupInfoApi(get(named("schedule"))) }
+    single { TeacherInfoApi(get(named("schedule"))) }
+    single { AuditoriumInfoApi(get(named("schedule"))) }
 
     // Converters
     single { ScheduleRemoteConverter() }
@@ -44,6 +44,9 @@ val scheduleModule = module {
     single { TeacherListRemoteDataSource() }
     single { TagLocalDataSource(get()) }
     single { SavedIdsLocalDataSource(get()) }
+    single { GroupInfoRemoteDataSource(get()) }
+    single { TeacherInfoRemoteDataSource(get()) }
+    single { AuditoriumInfoRemoteDataSource(get()) }
 
     // Repositories
     single<ScheduleRepository> {

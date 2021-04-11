@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@color/scheduleBackground"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:background="@null"
+        android:background="#4e7d96"
         app:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,7 +23,6 @@
                 android:visibility="gone"
                 android:id="@+id/scroll_ids"
                 app:layout_collapseMode="pin"
-                android:background="@color/scheduleBackground"
                 android:scrollbars="none"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize">
@@ -60,13 +60,23 @@
                         android:layout_marginEnd="50dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
+
                     <TextView
                         android:id="@+id/text_day_of_week"
-                        android:fontFamily="@font/open_sans"
-                        android:textSize="21sp"
-                        android:layout_marginEnd="50dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="40dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        tools:text="Группа 181-721"
+                        android:textColor="#dddddd"
+                        android:textSize="19dp"
+                        android:visibility="visible"
+                        app:autoSizeMaxTextSize="20dp"
+                        app:autoSizeMinTextSize="15dp"
+                        app:autoSizeTextType="uniform" />
                     <ImageButton
                         android:id="@+id/btn_menu"
                         android:layout_marginTop="1.5dp"
@@ -80,115 +90,209 @@
                 </FrameLayout>
 
             </LinearLayout>
+
             <LinearLayout
-                android:gravity="center_horizontal"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginEnd="14dp"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="9dp"
-                    android:background="@drawable/shape_schedule_feature"
-                    android:id="@+id/text_date"
-                    android:textAlignment="center"
-                    android:text="18 января\nДата"
-                    android:textColor="#C0C0C4"
-                    android:drawablePadding="6dp"
-                    android:fontFamily="@font/open_sans_semibold"
-                    android:textSize="12.8sp"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/btn_user"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="9dp"
-                    android:background="@drawable/shape_schedule_feature"
-                    android:textAlignment="center"
-                    android:layout_marginStart="8dp"
-                    android:text="4 пары\nСкрыто"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:textColor="#C0C0C4"
-                    android:fontFamily="@font/open_sans_semibold"
-                    android:textSize="12.8sp"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="9dp"
-                    android:background="@drawable/shape_schedule_feature"
-                    android:textAlignment="center"
-                    android:layout_marginStart="8dp"
-                    android:text="4 пары\nСкрыто"
-                    android:textColor="#C0C0C4"
-                    android:fontFamily="@font/open_sans_semibold"
-                    android:textSize="12.3sp"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <View
-                android:visibility="gone"
-                android:layout_marginBottom="1dp"
-                android:background="#333333"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"/>
-            <com.google.android.material.tabs.TabLayout
-                android:visibility="gone"
-                android:clipToPadding="false"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
-                android:id="@+id/tablayout_schedule"
-                style="@style/TabLayoutSchedule"
-                android:layout_gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="auto">
-                <com.google.android.material.tabs.TabItem
-                    android:text="Понедельник"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Вторник"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Среда"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Четверг"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Пятница"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Суббота"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <com.google.android.material.tabs.TabItem
-                    android:text="Воскресенье"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.tabs.TabLayout>
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_date1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:drawablePadding="6dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:paddingStart="15dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="18 января\nДата"
+                    android:textAlignment="center"
+                    android:textColor="#C0C0C4"
+                    android:textSize="12.8sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/btn_user"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:paddingStart="15dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="4 пары\nСкрыто"
+                    android:textAlignment="center"
+                    android:textColor="#C0C0C4"
+                    android:textSize="12.8sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_schedule_feature"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:paddingStart="15dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="4 пары\nСкрыто"
+                    android:textAlignment="center"
+                    android:textColor="#C0C0C4"
+                    android:textSize="12.3sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
             <View
-                android:background="#18191B"
                 android:layout_width="match_parent"
-                android:layout_height="8dp"/>
+                android:layout_height="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="#333333"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Пн" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Вт" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Ср" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Чт" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Пт" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Сб" />
+
+                <TextView
+                    style="@style/TabLayoutWeekText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Вс" />
+            </LinearLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tablayout_schedule"
+                style="@style/TabLayoutSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="9dp"
+                android:clipToPadding="false"
+                android:visibility="visible"
+                app:tabMode="fixed">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="14" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="16" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="17" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="18" />
+            </com.google.android.material.tabs.TabLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:background="@drawable/shape_rounded_top"
+                    android:backgroundTint="@color/layerZero" />
+
+                <TextView
+                    android:id="@+id/text_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="2.7dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:text="18 января"
+                    android:textColor="@color/colorLevelFive"
+                    android:textSize="14.3dp" />
+            </FrameLayout>
+
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -206,9 +310,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+
             <View
                 android:layout_width="match_parent"
-                android:layout_height="12dp"
+                android:layout_height="4dp"
                 android:background="@drawable/top_list_gradient" />
 
         </FrameLayout>

@@ -73,6 +73,9 @@
         <argument
             android:name="titleTransitionNames"
             app:argType="string[]" />
+        <action
+            android:id="@+id/action_lessonInfoFragment_to_groupInfoFragment"
+            app:destination="@id/groupInfoFragment" />
     </dialog>
     <fragment
         android:id="@+id/deadlineFragment"
@@ -267,5 +270,13 @@
         android:id="@+id/aboutAppFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.utilities.about_app.AboutAppFragment"
         android:label="AboutAppFragment" />
+    <fragment
+        android:id="@+id/groupInfoFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.group_info.GroupInfoFragment"
+        android:label="GroupInfoFragment" >
+        <argument
+            android:name="group"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

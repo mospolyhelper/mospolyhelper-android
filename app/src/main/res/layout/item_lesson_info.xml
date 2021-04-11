@@ -1,18 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingStart="@dimen/lesson_padding_start"
+    android:paddingEnd="@dimen/lesson_padding_end"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <TextView
+    <FrameLayout
         android:layout_marginStart="@dimen/lesson_margin_start"
         android:layout_marginTop="@dimen/lesson_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:paddingTop="4sp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:tintMode="multiply"
+            app:srcCompat="@drawable/ic_squircle_2"
+            app:tint="#292A2F" />
+
+        <ImageView
+            android:id="@+id/imageview_info"
+            android:layout_gravity="center"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop" />
+    </FrameLayout>
+    <LinearLayout
+        android:layout_marginTop="@dimen/lesson_margin_top"
+        android:layout_marginBottom="14dp"
         android:layout_marginEnd="@dimen/lesson_margin_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <TextView
         android:layout_marginBottom="2dp"
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
         android:id="@+id/text_title"
-        style="@style/ScheduleLessonTime"
+        style="@style/ScheduleLessonTitle"
         android:drawablePadding="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,17 +51,12 @@
         android:text="Большой перерыв" />
 
     <TextView
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
         android:id="@+id/text_info"
         style="@style/ScheduleLessonSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/lesson_margin_start"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="14dp"
         android:breakStrategy="balanced"
         android:clickable="false"
         android:text="окно в 1 час 50 минут" />
-
+    </LinearLayout>
 </LinearLayout>

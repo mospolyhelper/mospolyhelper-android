@@ -9,16 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleEmptyPairsDecorator
 import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleWindowsDecorator
+import com.mospolytech.mospolyhelper.databinding.ItemLessonBinding
+import com.mospolytech.mospolyhelper.databinding.PageScheduleBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
 import com.mospolytech.mospolyhelper.utils.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 
@@ -41,6 +45,8 @@ class ScheduleAdapter(
         private const val VIEW_TYPE_LOADING = 1
         private const val VIEW_TYPE_NORMAL = 2
         private const val VIEW_TYPE_EMPTY = 3
+        private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
+        private val dateFormatterWeek = DateTimeFormatter.ofPattern("EEEE")
     }
     private var isLoading = false
     var firstPosDate: LocalDate = LocalDate.now()
@@ -153,59 +159,24 @@ class ScheduleAdapter(
     inner class ViewHolder(
         val view: View
     ) : RecyclerView.ViewHolder(view) {
-        private val listSchedule = view as RecyclerView
+        private val viewBinding by viewBinding(PageScheduleBinding::bind)
         private var listAdapter: LessonAdapter? = null
-        private val nightMode = (view.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
-        private val headColor = view.context.getColor(R.color.lessonTimeText)
-        private val chipTextColor = view.context.getColor(R.color.scheduleLessonChipText)
-        private val chipColor = view.context.getColor(R.color.scheduleLessonChip)
         private var accumulator = 0f
 
         init {
-            // TODO check pool performance
-            listSchedule.setRecycledViewPool(commonPool)
-            listSchedule.layoutManager = LinearLayoutManager(view.context).apply {
+            viewBinding.listLessons
+            viewBinding.listLessons.setRecycledViewPool(commonPool)
+            viewBinding.listLessons.layoutManager = LinearLayoutManager(view.context).apply {
                 recycleChildrenOnDetach = true
             }
-                .apply { recycleChildrenOnDetach = true }
-            val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, view.resources.displayMetrics)
-            val scrollLength = dp8 * 3f
-            listSchedule.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                    if (e.action == MotionEvent.ACTION_DOWN &&
-                        rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
-                    ) {
-                        rv.stopScroll()
-                    }
-                    return false
-                }
-
-                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
-
-                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
-            })
-            listSchedule.setOnScrollChangeListener {
-                    v, _, _, _, oldScrollY ->
-                v as RecyclerView
-                if (v.canScrollVertically(-1)) {
-                    accumulator -= oldScrollY
-                    //dayTitle.elevation = if (accumulator > scrollLength) dp8 else accumulator * dp8 / scrollLength
-                    val q = ArgbEvaluator()
-                    //dayTitle.setBackgroundColor(if (accumulator > scrollLength) topColor else
-                        //(q.evaluate(accumulator / scrollLength, bottomColor, topColor)) as Int)
-                } else {
-                    //dayTitle.elevation = 0f
-                    //dayTitle.setBackgroundColor(bottomColor)
-                    accumulator = 0f
-                }
-            }
-            listSchedule.itemAnimator = null
+            viewBinding.listLessons.itemAnimator = null
         }
 
 
         fun bind() {
-            val date = firstPosDate.plusDays(adapterPosition.toLong())
+            val date = firstPosDate.plusDays(bindingAdapterPosition.toLong())
+            viewBinding.textviewDayDate.text = date.format(dateFormatter).capitalize()
+            viewBinding.textviewDayOfWeek.text = date.format(dateFormatterWeek).capitalize()
             val dailySchedule = ScheduleWindowsDecorator(
                 schedule!!.getSchedule(
                     date,
@@ -216,7 +187,7 @@ class ScheduleAdapter(
             )
 
             val map = dailySchedule.map
-            listSchedule.scrollToPosition(0)
+            viewBinding.listLessons.scrollToPosition(0)
             accumulator = 0f
             if (listAdapter == null) {
                 listAdapter = LessonAdapter(
@@ -227,10 +198,6 @@ class ScheduleAdapter(
                     date,
                     showGroups,
                     showTeachers,
-                    disabledColor,
-                    headColor,
-                    chipTextColor,
-                    chipColor,
                     prevCurrentLesson
                 )
                 listAdapter?.let {
@@ -241,7 +208,7 @@ class ScheduleAdapter(
                 listAdapter?.let {
                     timerTick += it::updateTime
                 }
-                listSchedule.adapter = listAdapter
+                viewBinding.listLessons.adapter = listAdapter
             } else {
                 listAdapter!!.update(
                     if (showEmptyLessons) ScheduleEmptyPairsDecorator(dailySchedule) else dailySchedule,

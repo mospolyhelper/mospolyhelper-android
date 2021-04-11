@@ -7,7 +7,7 @@
             android:shape="ring"
             android:thickness="@dimen/schedule_tab_indicator_half_height"
             android:useLevel="false">
-            <solid android:color="#18191B"/>
+<!--            <solid android:color="#18191B"/>-->
         </shape>
     </item>
 </layer-list>

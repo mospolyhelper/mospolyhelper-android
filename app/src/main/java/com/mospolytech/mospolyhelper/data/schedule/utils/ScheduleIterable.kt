@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.data.schedule.utils
 
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
 
 class ScheduleIterable(
     private val groupList: Iterable<String>
@@ -19,18 +20,13 @@ class ScheduleIterable(
         private var groupListIterator: Iterator<String>,
         private var localDataSource: ScheduleLocalDataSource
     ): Iterator<Schedule?> {
-        private var isSessionFlag = false
         private var curGroupTitle = ""
 
-        override fun hasNext() = groupListIterator.hasNext() || isSessionFlag
+        override fun hasNext() = groupListIterator.hasNext()
 
         override fun next(): Schedule? {
-            if (!isSessionFlag) {
-                curGroupTitle = groupListIterator.next()
-            }
-            val result = localDataSource.get(curGroupTitle, isSessionFlag)
-            isSessionFlag = !isSessionFlag
-            return result
+            curGroupTitle = groupListIterator.next()
+            return localDataSource.get(StudentSchedule(curGroupTitle, curGroupTitle))
         }
     }
 }

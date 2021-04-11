@@ -6,9 +6,9 @@ import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
 import kotlinx.serialization.json.Json
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.Exception
 
 class ScheduleRemoteConverter {
     companion object {
@@ -57,6 +57,19 @@ class ScheduleRemoteConverter {
         private val regex5 = Regex("""\S- """)
     }
 
+    fun parseSchedules(schedulesString: String): Sequence<Schedule> {
+        val json = Json.parseToJsonElement(schedulesString)
+        val contents = json.jsonObject["contents"]?.jsonArray ?: return emptySequence()
+        return contents.iterator().asSequence().mapNotNull {
+            try {
+                parse(it.toString())
+            } catch (e: Exception) {
+                Log.e(TAG, "Schedule (Download all) parsing exception", e)
+                null
+            }
+        }
+    }
+
     fun parse(scheduleString: String): Schedule {
         val json = Json.parseToJsonElement(scheduleString)
         val status = json.jsonObject[STATUS_KEY]?.jsonPrimitive?.content
@@ -68,10 +81,10 @@ class ScheduleRemoteConverter {
             )
         } else if (status != STATUS_OK) {
             val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
-            Log.w(
-                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
-                        "Message: \"${message ?: ""}\""
-            )
+//            Log.w(
+//                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
+//                        "Message: \"${message ?: ""}\""
+//            )
         }
         val isByDate =
             json.jsonObject[IS_SESSION]?.jsonPrimitive?.boolean

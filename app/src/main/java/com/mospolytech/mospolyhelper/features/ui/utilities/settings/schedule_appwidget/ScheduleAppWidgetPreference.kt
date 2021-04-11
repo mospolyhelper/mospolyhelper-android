@@ -104,8 +104,8 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         showType = prefs.getBoolean("ScheduleAppwidgetShowType", true)
 
         var idFull = prefs.getString(
-            PreferenceKeys.ScheduleGroupTitle,
-            PreferenceDefaults.ScheduleGroupTitle
+            PreferenceKeys.ScheduleUser,
+            PreferenceDefaults.ScheduleUser
         )!!
         val isStudent = prefs.getBoolean(
             PreferenceKeys.ScheduleUserTypePreference,

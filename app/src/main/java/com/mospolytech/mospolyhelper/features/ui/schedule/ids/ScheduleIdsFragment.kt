@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScheduleIdsFragment: DialogFragment() {
-
     private val viewModel by viewModel<ScheduleIdsViewModel>()
 
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
@@ -124,7 +124,7 @@ class ScheduleIdsFragment: DialogFragment() {
         }
     }
 
-    private fun setAdapter(idList: List<Pair<Boolean, String>>) {
+    private fun setAdapter(idList: List<UserSchedule>) {
         recyclerView.adapter = ScheduleIdsAdapter(
             idList,
             viewModel.searchQuery.value,
