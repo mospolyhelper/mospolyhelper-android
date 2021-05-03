@@ -113,4 +113,7 @@
   <color name="addressesTabLayout">@color/layerTwo</color>
   <color name="addressesItemBackground">@color/layerOne</color>
 
+  <color name="featureBackground">#525669</color>
+  <color name="featureText">#ADB6DD</color>
+
 </resources>

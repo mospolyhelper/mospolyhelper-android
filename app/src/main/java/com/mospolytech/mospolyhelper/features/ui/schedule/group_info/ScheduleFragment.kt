@@ -12,11 +12,8 @@ import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
-import com.mospolytech.mospolyhelper.databinding.FragmentGroupInfoBinding
 import com.mospolytech.mospolyhelper.databinding.FragmentLessonsBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleAdapter
 import io.ktor.client.*
 import kotlinx.coroutines.flow.collect
@@ -37,15 +34,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_lessons) {
                 ).getSchedule(StudentSchedule("181-721", "181-721"), false).collect {
                     viewpagerSchedule.adapter = ScheduleAdapter(
                         it,
-                        emptyMap(),
+                        emptyList(),
                         emptyMap(),
                         false,
                         true,
                         false,
                         false,
                         false,
-                        true,
-                        Pair(Lesson.CurrentLesson(0, false, false), Lesson.CurrentLesson(0, false, false))
+                        true
                     )
                 }
             }

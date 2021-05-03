@@ -11,5 +11,5 @@ interface ScheduleRepository {
         refresh: Boolean
     ): Flow<Schedule?>
 
-    suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList
+    suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList
 }

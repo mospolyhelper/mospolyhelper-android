@@ -1,28 +1,28 @@
 package com.mospolytech.mospolyhelper.domain.schedule.usecase
 
-import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.TagRepository
+import com.mospolytech.mospolyhelper.data.utils.getFromJson
+import com.mospolytech.mospolyhelper.data.utils.setAsJson
+import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
-import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
-import com.mospolytech.mospolyhelper.domain.schedule.repository.SavedIdsRepository
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.repository.TeacherListRepository
+import com.mospolytech.mospolyhelper.domain.schedule.repository.*
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.StringId
 import com.mospolytech.mospolyhelper.utils.StringProvider
-import kotlinx.coroutines.flow.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 
 data class ScheduleTagsDeadline(
     val schedule: Schedule?,
-    val tags: Map<LessonTagKey, List<Tag>>,
+    val tags: List<LessonTag>,
     val deadlines: Map<String, List<Deadline>>
 )
 
@@ -31,10 +31,9 @@ class ScheduleUseCase(
     private val groupListRepository: GroupListRepository,
     private val teacherListRepository: TeacherListRepository,
     private val savedIdsRepository: SavedIdsRepository,
-    private val tagRepository: TagRepository,
+    private val tagRepository: LessonTagsRepository,
     private val deadlineRepository: DeadlinesRepository,
-    // TODO: Fix this (Replace By Rep)
-    private val sharedPreferencesDataSource: SharedPreferencesDataSource
+    val preferences: PreferencesRepository
 ) {
     fun getSchedule(
         user: UserSchedule?,
@@ -54,14 +53,6 @@ class ScheduleUseCase(
         }
     }
 
-    suspend fun addTag(lesson: Lesson, tag: Tag) {
-        tagRepository.add(lesson, tag)
-    }
-
-    suspend fun removeTag(lesson: Lesson, tag: Tag) {
-        tagRepository.remove(lesson, tag)
-    }
-
     suspend fun getIdSet(
         messageBlock: (String) -> Unit = { }
     ): Set<UserSchedule> {
@@ -74,18 +65,7 @@ class ScheduleUseCase(
     }
 
     fun getSavedIds(): Set<UserSchedule> {
-        return savedIdsRepository.getSavedIds()
-            .toSortedSet(
-                comparator
-            )
-    }
-
-    private val comparator = Comparator<UserSchedule> { o1, o2 ->
-        return@Comparator if (o1.title != o2.title) {
-            o1.title.compareTo(o2.title)
-        } else {
-            o1.id.compareTo(o2.id)
-        }
+        return savedIdsRepository.getSavedIds().toSortedSet()
     }
 
     fun setSavedIds(savedIds: Set<UserSchedule>) {
@@ -93,154 +73,97 @@ class ScheduleUseCase(
     }
 
     fun getSelectedSavedId(): UserSchedule? {
-        return try {
-            val j = sharedPreferencesDataSource.getString(
-                PreferenceKeys.ScheduleUser,
-                PreferenceDefaults.ScheduleUser
-            )
-            Json.decodeFromString<UserSchedule>(j)
-        } catch (e: Exception) {
-            null
-        }
+        return preferences.getFromJson(PreferenceKeys.ScheduleUser)
     }
 
     fun setSelectedSavedId(savedId: UserSchedule?) {
-        sharedPreferencesDataSource.setString(
-            PreferenceKeys.ScheduleUser,
-            if (savedId == null) "" else Json.encodeToString(savedId)
-        )
+        preferences.setAsJson(PreferenceKeys.ScheduleUser, savedId)
     }
 
-    fun setIsStudent(isStudent: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
-            PreferenceKeys.ScheduleUserTypePreference,
-            isStudent
-        )
-    }
 
     fun getShowEmptyLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
+        return preferences.get(
             PreferenceKeys.ScheduleShowEmptyLessons,
             PreferenceDefaults.ScheduleShowEmptyLessons
         )
     }
 
     fun setShowEmptyLessons(showEmptyLessons: Boolean) {
-        return sharedPreferencesDataSource.setBoolean(
+        return preferences.set(
             PreferenceKeys.ScheduleShowEmptyLessons,
             showEmptyLessons
         )
     }
 
     fun getShowEndedLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
+        return preferences.get(
             PreferenceKeys.ShowEndedLessons,
             PreferenceDefaults.ShowEndedLessons
         )
     }
 
     fun setShowEndedLessons(showEndedLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
+        preferences.set(
             PreferenceKeys.ShowEndedLessons,
             showEndedLessons
         )
     }
 
     fun getShowCurrentLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
+        return preferences.get(
             PreferenceKeys.ShowCurrentLessons,
             PreferenceDefaults.ShowCurrentLessons
         )
     }
 
     fun setShowCurrentLessons(showCurrentLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
+        preferences.set(
             PreferenceKeys.ShowCurrentLessons,
             showCurrentLessons
         )
     }
 
     fun getShowNotStartedLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
+        return preferences.get(
             PreferenceKeys.ShowNotStartedLessons,
             PreferenceDefaults.ShowNotStartedLessons
         )
     }
 
     fun setShowNotStartedLessons(showNotStartedLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
+        preferences.set(
             PreferenceKeys.ShowNotStartedLessons,
             showNotStartedLessons
         )
     }
 
     fun getFilterTypes(): Set<String> {
-        return sharedPreferencesDataSource.getStringSet(
+        return preferences.get(
             PreferenceKeys.FilterTypes,
             PreferenceDefaults.FilterTypes
         )
     }
 
     fun setFilterTypes(filterTypes: Set<String>) {
-        sharedPreferencesDataSource.setStringSet(
+        preferences.set(
             PreferenceKeys.FilterTypes,
             filterTypes
         )
     }
 
-    fun getShowImportantLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
-            PreferenceKeys.ShowImportantLessons,
-            PreferenceDefaults.ShowImportantLessons
-        )
-    }
 
-    fun setShowImportantLessons(showImportantLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
-            PreferenceKeys.ShowImportantLessons,
-            showImportantLessons
-        )
-    }
+    suspend fun getAllTags() =
+        tagRepository.getAll()
 
-    fun getShowAverageLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
-            PreferenceKeys.ShowAverageLessons,
-            PreferenceDefaults.ShowAverageLessons
-        )
-    }
+    suspend fun addTag(tag: LessonTag) =
+        tagRepository.addTag(tag)
 
-    fun setShowAverageLessons(showAverageLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
-            PreferenceKeys.ShowAverageLessons,
-            showAverageLessons
-        )
-    }
+    suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int) =
+        tagRepository.editTag(tagTitle, newTitle, newColor)
 
-    fun getShowNotImportantLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
-            PreferenceKeys.ShowNotImportantLessons,
-            PreferenceDefaults.ShowNotImportantLessons
-        )
-    }
+    suspend fun removeTag(tagTitle: String) =
+        tagRepository.removeTag(tagTitle)
 
-    fun setShowNotImportantLessons(showNotImportantLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
-            PreferenceKeys.ShowNotImportantLessons,
-            showNotImportantLessons
-        )
-    }
-
-    fun getShowNotLabeledLessons(): Boolean {
-        return sharedPreferencesDataSource.getBoolean(
-            PreferenceKeys.ShowNotLabeledLessons,
-            PreferenceDefaults.ShowNotLabeledLessons
-        )
-    }
-
-    fun setShowNotLabeledLessons(showNotLabeledLessons: Boolean) {
-        sharedPreferencesDataSource.setBoolean(
-            PreferenceKeys.ShowNotLabeledLessons,
-            showNotLabeledLessons
-        )
-    }
+    suspend fun removeTagFromLesson(tagTitle: String, lesson: LessonTagKey) =
+        tagRepository.removeTagFromLesson(tagTitle, lesson)
 }

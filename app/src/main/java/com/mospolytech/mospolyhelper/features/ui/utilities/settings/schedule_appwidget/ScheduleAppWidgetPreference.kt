@@ -18,15 +18,16 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceViewHolder
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.Teacher
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.LessonRemoteAdapter
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
 import com.mospolytech.mospolyhelper.utils.Action0
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.Event0
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -103,20 +104,23 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         showTeachers = prefs.getBoolean("ScheduleAppwidgetShowTeachers", true)
         showType = prefs.getBoolean("ScheduleAppwidgetShowType", true)
 
-        var idFull = prefs.getString(
-            PreferenceKeys.ScheduleUser,
-            PreferenceDefaults.ScheduleUser
-        )!!
-        val isStudent = prefs.getBoolean(
-            PreferenceKeys.ScheduleUserTypePreference,
-            PreferenceDefaults.ScheduleUserTypePreference
-        )
-        if (!isStudent) {
-            idFull = "преп. ID" + idFull
+        val user = try {
+            Json.decodeFromString<UserSchedule>(prefs.getString(
+                PreferenceKeys.ScheduleUser,
+                PreferenceDefaults.ScheduleUser
+            )!!)
+        } catch (e: Exception) {
+            null
+        }
+        val userTitle = when (user) {
+            is StudentSchedule -> user.title
+            is TeacherSchedule -> Teacher(user.title).getShortName()
+            is AuditoriumSchedule -> user.title
+            else -> ""
         }
         val date = LocalDate.now().format(dateFormatter).capitalize()
 
-        appWidgetTitle.text = "$date | $idFull"
+        appWidgetTitle.text = "$date | $userTitle"
         appWidgetList.adapter = Adapter(context)
 
         val intent = Intent(context, ScheduleAppWidgetProvider::class.java)
@@ -157,37 +161,54 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         private val auditorium3 = Auditorium("В165", "")
 
         private val lessons = listOf(
-            Lesson(
+            LessonPlace(
+                listOf(
+                    Lesson(
+                        "Информационные процессы и обработка в принтмедиа",
+                        "Лаб. работа",
+                        listOf(teacher1, teacher3),
+                        listOf(auditorium1),
+                        listOf(),
+                        LocalDate.MIN,
+                        LocalDate.MAX
+                    )
+                ),
                 2,
-                "Информационные процессы и обработка в принтмедиа",
-                listOf(teacher1, teacher3),
-                LocalDate.MIN,
-                LocalDate.MAX,
-                listOf(auditorium1),
-                "Лаб. работа",
-                listOf()
+                false
             ),
-            Lesson(
+            LessonPlace(
+                listOf(
+                    Lesson(
+                        "Математика",
+                        "Курсовой проект",
+                        listOf(teacher2),
+                        listOf(auditorium2, auditorium1),
+                        listOf(),
+                        LocalDate.MIN,
+                        LocalDate.MAX
+                    )
+                ),
                 3,
-                "Математика",
-                listOf(teacher2),
-                LocalDate.MIN,
-                LocalDate.MAX,
-                listOf(auditorium2, auditorium1),
-                "Курсовой проект",
-                listOf()
+                false
             ),
-            Lesson(
+            LessonPlace(
+                listOf(
+                    Lesson(
+                        "Основы алгоритмизации и программирования",
+                        "Лекция",
+                        listOf(teacher1),
+                        listOf(auditorium3),
+                        listOf(),
+                        LocalDate.MIN,
+                        LocalDate.MAX
+                    )
+                ),
                 4,
-                "Основы алгоритмизации и программирования",
-                listOf(teacher1),
-                LocalDate.MIN,
-                LocalDate.MAX,
-                listOf(auditorium3),
-                "Лекция",
-                listOf()
+                false
             )
-        )
+        ).flatMap { lessonPlace ->
+            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
+        }
 
         override fun getCount() = lessons.size
 
@@ -211,10 +232,18 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
 
         //override fun isEnabled(position: Int) = false
 
-        private fun setTime(view: View, lesson: Lesson) {
+        private fun setTime(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
             val timeTextView = view.findViewById<TextView>(R.id.text_lesson_time)
             if (showStartTime || showEndTime || showOrder || showType) {
-                val time = LessonRemoteAdapter.getTime(lesson, showOrder, showStartTime, showEndTime, showType)
+                val time = LessonRemoteAdapter.getTime(
+                    lesson.first,
+                    LessonTimeUtils.getTime(lesson.second.first, lesson.second.second),
+                    lesson.second.first,
+                    showOrder,
+                    showStartTime,
+                    showEndTime,
+                    showType
+                )
                 timeTextView.text = time
                 timeTextView.visibility = View.VISIBLE
             } else {
@@ -222,24 +251,24 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
             }
         }
 
-        private fun setTitle(view: View, lesson: Lesson) {
-            view.findViewById<TextView>(R.id.text_schedule_title).text = LessonRemoteAdapter.getTitle(lesson)
+        private fun setTitle(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+            view.findViewById<TextView>(R.id.text_schedule_title).text = LessonRemoteAdapter.getTitle(lesson.first)
         }
 
-        private fun setTeachers(view: View, lesson: Lesson) {
+        private fun setTeachers(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
             val teachersTextView = view.findViewById<TextView>(R.id.text_lesson_teachers)
             if (showTeachers) {
-                teachersTextView.text = LessonRemoteAdapter.getTeachers(lesson)
+                teachersTextView.text = LessonRemoteAdapter.getTeachers(lesson.first)
                 teachersTextView.visibility = View.VISIBLE
             } else {
                 teachersTextView.visibility = View.GONE
             }
         }
 
-        private fun setAuditoriums(view: View, lesson: Lesson) {
+        private fun setAuditoriums(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
             val auditoriumsTextView = view.findViewById<TextView>(R.id.text_lesson_auditoriums)
             if (showAuditoriums) {
-                auditoriumsTextView.text = LessonRemoteAdapter.getAuditoriums(lesson)
+                auditoriumsTextView.text = LessonRemoteAdapter.getAuditoriums(lesson.first)
                 auditoriumsTextView.visibility = View.VISIBLE
             } else {
                 auditoriumsTextView.visibility = View.GONE

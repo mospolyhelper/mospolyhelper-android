@@ -27,7 +27,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/shape_lesson"
+            android:background="@drawable/shape_button"
             android:backgroundTint="@color/layerZero"
             android:drawableStart="@drawable/ic_search_24"
             android:drawablePadding="10dp"

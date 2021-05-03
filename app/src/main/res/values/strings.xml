@@ -46,7 +46,7 @@
     <string name="all_lesson_types">Все типы занятий</string>
     <string name="all_auditoriums">Все аудитории</string>
     <string name="all_teachers">Все преподаватели</string>
-    <string name="download_schedules">Загрузить расписания</string>
+    <string name="download_schedules">Загрузить расписание</string>
     <string name="apply">Применить</string>
     <string name="cancel">Отмена</string>
     <string name="select_all">Выбрать все</string>

@@ -1,9 +1,12 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
-data class Teacher(val name: String) {
+data class Teacher(val name: String) : Parcelable {
     fun getShortName(): String {
         val names = getNames(name)
         if (names.isEmpty())

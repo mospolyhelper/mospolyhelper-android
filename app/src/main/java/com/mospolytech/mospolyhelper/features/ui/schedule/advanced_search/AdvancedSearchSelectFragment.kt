@@ -7,15 +7,15 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
-
+import com.mospolytech.mospolyhelper.databinding.FragmentScheduleFilterBinding
 
 class AdvancedSearchSelectFragment : DialogFragment() {
 
@@ -29,69 +29,44 @@ class AdvancedSearchSelectFragment : DialogFragment() {
     private var unselectAll: String = ""
 
     private val viewModel by viewModels<AdvancedSearchSelectViewModel>()
+    private val viewBinding by viewBinding(FragmentScheduleFilterBinding::bind)
 
     fun setAdapter(adapter: AdvancedSearchAdapter) {
         this.adapter = adapter
         if (dialog == null) return
-        val recyclerView = requireDialog().findViewById<RecyclerView>(R.id.recycler_advanced_search)
-        if (recyclerView != null) {
-            val searchView = requireDialog().findViewById<SearchView>(R.id.searchView1)
-            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    adapter.updateTemplate(newText ?: "")
-                    return true
-                }
+        viewBinding.searchView1.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.updateTemplate(newText ?: "")
+                return true
+            }
 
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return true
-                }
-            })
-            recyclerView.adapter = adapter
-        }
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+        })
+        viewBinding.recyclerAdvancedSearch.adapter = adapter
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_schedule_filter, container, false)
-
-        selectAll = getString(R.string.select_all)
-        unselectAll = getString(R.string.unselect_all)
-        dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP)
-        val checkAll = view.findViewById<Button>(R.id.button_check_all)
-        checkAll.text = if (checkedAll) unselectAll else selectAll
-        checkAll.setOnClickListener {
-            checkedAll = !checkedAll
-            adapter?.setCheckAll(checkedAll)
-            checkAll.text = if (checkedAll) unselectAll else selectAll
-        }
-        val adapter = this.adapter
-        if (adapter != null) {
-            adapter.allCheckedChanged += {
-                checkedAll = it
-                checkAll.text = if (checkedAll) unselectAll else selectAll
-            }
-        }
-
-        return view
+        return inflater.inflate(R.layout.fragment_schedule_filter, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val recyclerView = requireDialog().findViewById<RecyclerView>(R.id.recycler_advanced_search)!!
-        val layoutManager = LinearLayoutManager(recyclerView.context)
-        val divider = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
-        divider.setDrawable(requireContext().getDrawable(R.drawable.all_divider)!!)
-        recyclerView.addItemDecoration(divider)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = adapter
-        recyclerView.adapter?.notifyDataSetChanged()
+        val layoutManager = LinearLayoutManager(context)
+        val divider = DividerItemDecoration(context, layoutManager.orientation)
+        divider.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.all_divider)!!)
+        viewBinding.recyclerAdvancedSearch.addItemDecoration(divider)
+        viewBinding.recyclerAdvancedSearch.layoutManager = layoutManager
+        viewBinding.recyclerAdvancedSearch.adapter = adapter
+        viewBinding.recyclerAdvancedSearch.adapter?.notifyDataSetChanged()
 
-        requireDialog().findViewById<SearchView>(R.id.searchView1)?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        viewBinding.searchView1.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
                 adapter?.updateTemplate(newText ?: "")
                 return true
@@ -101,5 +76,32 @@ class AdvancedSearchSelectFragment : DialogFragment() {
                 return true
             }
         })
+
+
+        selectAll = getString(R.string.select_all)
+        unselectAll = getString(R.string.unselect_all)
+        viewBinding.buttonCheckAll.text = if (checkedAll) unselectAll else selectAll
+        viewBinding.buttonCheckAll.setOnClickListener {
+            checkedAll = !checkedAll
+            adapter?.setCheckAll(checkedAll)
+            viewBinding.buttonCheckAll.text = if (checkedAll) unselectAll else selectAll
+        }
+        this.adapter?.let {
+            it.allCheckedChanged += {
+                checkedAll = it
+                viewBinding.buttonCheckAll.text = if (checkedAll) unselectAll else selectAll
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP)
     }
 }

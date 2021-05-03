@@ -4,6 +4,7 @@ import android.util.Log
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString
@@ -22,7 +23,7 @@ class ScheduleLocalDataSource {
         val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(if (user is StudentSchedule) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
-            .resolve(user.id)
+            .resolve(if (user is StudentSchedule) user.id else if (user is TeacherSchedule) user.id else "")
 
         if (!file.exists()) {
             return null
@@ -39,7 +40,7 @@ class ScheduleLocalDataSource {
         val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(if (user is StudentSchedule) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
-            .resolve(user.id)
+            .resolve(if (user is StudentSchedule) user.id else if (user is TeacherSchedule) user.id else "")
         if (file.exists()) {
             file.delete()
         } else {

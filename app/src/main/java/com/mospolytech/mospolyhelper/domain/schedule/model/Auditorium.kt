@@ -1,9 +1,12 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
-data class Auditorium(val title: String, val color: String) {
+data class Auditorium(val title: String, val color: String) : Parcelable {
     companion object {
         fun parseEmoji(raw: String): String {
             return when {

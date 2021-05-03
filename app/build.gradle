@@ -42,6 +42,7 @@ android {
 
     buildTypes {
         release {
+            shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -80,23 +81,25 @@ static def getProp(String key){
 }
 
 dependencies {
-    def nav_version = '2.3.4'
+    def nav_version = '2.3.5'
     def koin_version= "2.2.0-beta-1"
     def ktor_version= "1.5.2"
     def room_version = '2.2.6'
     def logback_version = "1.2.3"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
-    implementation "androidx.fragment:fragment-ktx:1.3.1"
+    implementation 'androidx.fragment:fragment-ktx:1.3.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -167,4 +170,8 @@ dependencies {
     }
     implementation 'com.auth0.android:jwtdecode:2.0.0'
     implementation 'com.google.android:flexbox:2.0.1'
+
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.122") {
+        exclude module: 'unspecified'
+    }
 }

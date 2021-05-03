@@ -23,7 +23,7 @@ class InfoRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override suspend fun getInfo() = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

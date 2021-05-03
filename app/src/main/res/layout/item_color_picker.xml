@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.checkbox.MaterialCheckBox xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:background="#FF7300"
-    android:button="@drawable/ic_round_check_24"
-    android:minWidth="0dp"
-    android:minHeight="0dp"
-    android:text="@null">
-
-</com.google.android.material.checkbox.MaterialCheckBox>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="45dp"
+    android:layout_height="45dp"
+    android:layout_margin="6dp"
+    android:foreground="@drawable/ic_round_check_24"
+    android:foregroundTintMode="multiply"
+    android:foregroundTint="#00ffffff"
+    android:src="@drawable/ic_squircle_2"
+    android:tintMode="multiply" />

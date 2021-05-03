@@ -11,35 +11,27 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
-import android.util.TypedValue
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.TransitionInflater
 import by.kirich1409.viewbindingdelegate.viewBinding
-
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.Group
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
-import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFragmentDirections
+import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_schedule_lesson_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info) {
@@ -53,9 +45,12 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     private val lessonLabelOneDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EE, d MMM,")
     private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
-    private val viewModel by viewModel<LessonInfoViewModel>()
+    private val dateFormatter2 = DateTimeFormatter.ofPattern("d MMMM yyyy (EE)")
 
+    private val viewModel by viewModel<LessonInfoViewModel>()
     private val viewBinding by viewBinding(FragmentScheduleLessonInfoBinding::bind)
+    private val args: LessonInfoFragmentArgs by navArgs()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +78,10 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
         (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        if (viewModel.lesson.isEmpty) {
+        viewModel.lessonPlace = args.lesson
+        viewModel.date = args.date
+
+        if (viewModel.lessonPlace.lessons.isEmpty()) {
             //lessonTitleTextView.text = "Нет занятия"
             setTime()
         } else {
@@ -114,10 +112,10 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     }
 
     private fun setTime() {
-        val (startTime, endTime) = viewModel.lesson.time
+        val (startTime, endTime) = viewModel.lessonPlace.time
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
         with(viewBinding) {
-            this.textLessonTime.text = "$dateStr $startTime - $endTime" + ", ${viewModel.lesson.order + 1}-е занятие"
+            this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonPlace.order + 1})"
         }
     }
 
@@ -226,12 +224,13 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     private fun setDate() {
         with(viewBinding) {
-                    if (viewModel.lesson.dateFrom == viewModel.lesson.dateTo) {
-            textLessonDate.text = viewModel.lesson.dateFrom.format(shortDateFormatter)
-        } else {
-            textLessonDate.text = "${viewModel.lesson.dateFrom.format(shortDateFormatter)} " +
-                    "- ${viewModel.lesson.dateTo.format(shortDateFormatter)}"
-        }
+            textLessonDate.text = viewModel.date.format(dateFormatter2)
+            if (viewModel.lesson.dateFrom == viewModel.lesson.dateTo) {
+                textLessonDates.text = viewModel.lesson.dateFrom.format(shortDateFormatter)
+            } else {
+                textLessonDates.text = "${viewModel.lesson.dateFrom.format(shortDateFormatter)} " +
+                        "- ${viewModel.lesson.dateTo.format(shortDateFormatter)}"
+            }
         }
 
     }
@@ -263,6 +262,9 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     }
 
     private fun setLabels() {
+        viewBinding.buttonAddLabel.setOnClickListener {
+            findNavController().safe { navigate(LessonInfoFragmentDirections.actionLessonInfoFragmentToLessonTagFragment(lesson = viewModel.lesson)) }
+        }
         //lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
 
     }

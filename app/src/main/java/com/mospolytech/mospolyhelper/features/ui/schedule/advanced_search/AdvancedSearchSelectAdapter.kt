@@ -6,14 +6,18 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.databinding.ObservableList
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ItemAdvancedSearchBinding
+import com.mospolytech.mospolyhelper.databinding.ItemScheduleDayBinding
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import kotlin.collections.ArrayList
 
 // TODO: add id to viewHolder
-class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
-    : RecyclerView.Adapter<AdvancedSearchAdapter.ViewHolder>() {
+class AdvancedSearchAdapter(
+    var filter: AdvancedSearchFilter
+    ) : RecyclerView.Adapter<AdvancedSearchAdapter.ViewHolder>() {
 
     private var dataSet: List<Int> = filter.getFiltered("")
 
@@ -48,21 +52,26 @@ class AdvancedSearchAdapter(var filter: AdvancedSearchFilter)
         val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_advanced_search, parent, false);
-        return ViewHolder(view, this::checkBoxChanged)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.checkBox.text = filter.getValue(dataSet[position])
-        viewHolder.checkBox.isChecked = filter.isChecked(dataSet[position])
+        viewHolder.bind(
+            filter.getValue(dataSet[position]),
+            filter.isChecked(dataSet[position]),
+            ::checkBoxChanged
+        )
     }
 
-    class ViewHolder(view: View, checkedChanged: (Int, Boolean) -> Unit) : RecyclerView.ViewHolder(view) {
-        val checkBox: CheckBox = view.findViewById(R.id.checkBox)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val viewBinding by viewBinding(ItemAdvancedSearchBinding::bind)
 
-        init {
-            this.checkBox.setOnCheckedChangeListener { _, isChecked ->
-                checkedChanged(adapterPosition, isChecked)
+        fun bind(text: String, isChecked: Boolean, checkedChanged: (Int, Boolean) -> Unit) {
+            viewBinding.checkBox.setOnCheckedChangeListener { _, isChecked ->
+                checkedChanged(bindingAdapterPosition, isChecked)
             }
+            viewBinding.checkBox.text = text
+            viewBinding.checkBox.isChecked = isChecked
         }
     }
 }

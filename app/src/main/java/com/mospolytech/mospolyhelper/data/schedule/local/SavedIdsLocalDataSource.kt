@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.schedule.local
 
-import android.content.SharedPreferences
 import android.util.Log
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
@@ -9,14 +8,13 @@ import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.Exception
 
 class SavedIdsLocalDataSource(
     private val prefDataSource: SharedPreferencesDataSource
 ) {
     fun get(): Set<UserSchedule>? {
         return try {
-            prefDataSource.getStringSet(PreferenceKeys.ScheduleSavedIds, emptySet())
+            prefDataSource.get(PreferenceKeys.ScheduleSavedIds, emptySet())
                 .mapNotNull {
                     try {
                         Json.decodeFromString<UserSchedule>(it)
@@ -32,7 +30,7 @@ class SavedIdsLocalDataSource(
 
     fun set(pair: Set<UserSchedule>) {
         try {
-            prefDataSource.setStringSet(
+            prefDataSource.set(
                 PreferenceKeys.ScheduleSavedIds,
                 pair.map { Json.encodeToString(it) }.toSet()
             )

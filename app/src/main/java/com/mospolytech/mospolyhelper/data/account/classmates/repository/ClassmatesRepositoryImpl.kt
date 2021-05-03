@@ -2,14 +2,9 @@ package com.mospolytech.mospolyhelper.data.account.classmates.repository
 
 import com.mospolytech.mospolyhelper.data.account.classmates.local.ClassmatesLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.classmates.remote.ClassmatesRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.domain.account.classmates.repository.ClassmatesRepository
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
@@ -28,7 +23,7 @@ class ClassmatesRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override suspend fun getInfo() = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

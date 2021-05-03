@@ -1,36 +1,29 @@
 package com.mospolytech.mospolyhelper.utils
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.text.TextPaint
+import android.text.TextUtils
 import android.text.style.LineHeightSpan
 import android.text.style.ReplacementSpan
-import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.R
 import kotlin.math.roundToInt
 
 
 class RoundedBackgroundSpan(
     private val backgroundColor: Int,
     private val textColor: Int? = null,
-    private val height: Int,
-    private val text: String
+    private val text: String,
+    private val relativeTextSize: Float = 0.65f,
+    private val cornerRadiusPercentage: Float = 0.26f // 0.275f
 ) : ReplacementSpan(), LineHeightSpan {
 
     companion object {
-        private const val relativeTextSize = 0.7f
-        private const val topGrowthRate = 0.21f//0.27f
-        private const val bottomGrowthRate = 0.14f
-        private const val horizontalGrowthRate = 1.4f
-        private const val cornerRadiusPercentage = 0.275f // 0.275f
-        private const val bottomSpacing = 1f
+        private const val horizontalGrowthRate = 1.65f
+        private const val additionTextRatio = 0.85f  // To add some space in bottom of feature rect
     }
 
-    private fun convertColorToNight(color: Int): Int {
-        val hsv = FloatArray(3)
-        Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv)
-        hsv[2] = hsv[2] * 0.4f
-        hsv[1] = 1f
-        return Color.HSVToColor(hsv)
-    }
+    private var height: Int = 0
 
     override fun draw(
         canvas: Canvas,
@@ -46,31 +39,59 @@ class RoundedBackgroundSpan(
         val start = 0
         val end = this.text.length
 
+        val descent = paint.descent()
+        val ascent = paint.ascent()
+        val ascentAbs = baseline + ascent
         val paint = Paint(paint)
-        paint.textSize = height * relativeTextSize
-        val totalHeight = bottomOfLine - topOfLine
 
-        val textHeight = -paint.ascent()
-        //textHeight += paint.descent()
 
-        val textWidth = paint.measureText(this.text.toString(), start, end)
+        val totalHeight = descent - ascent
+
+        // For line space
+        val totalHeight0 = -ascent
+        val ratio = totalHeight0 / totalHeight
+        val baselineDelta0 = descent * ratio
+
+        val newBaseline0 = baseline - baselineDelta0
+
+
+        // For text ratio
+        val heightDelta = totalHeight0 - totalHeight0 * relativeTextSize
+        val baselineDelta = (baseline - newBaseline0) * relativeTextSize
+
+        val newTopOfLine = ascentAbs + heightDelta / 2f
+        val newBottomOfLine = baseline - heightDelta / 2f
+        val newBaseLine = newBottomOfLine - baselineDelta
+
+
+        // For addition text ratio
+        val height1 = newBottomOfLine - newTopOfLine
+
+        val pseudoNewBottomOfLine = baseline - height1 * additionTextRatio
+        val baselineDelta1 = (pseudoNewBottomOfLine - newBaseLine) * additionTextRatio
+        val newBaseLine1 = pseudoNewBottomOfLine - baselineDelta1
+
+        paint.textSize *= relativeTextSize * ratio * additionTextRatio
+
+
+        var textWidth = paint.measureText(this.text.toString(), start, end)
 
         val horizontalPadding = paint.descent() * 2 * horizontalGrowthRate
 
-        var delta =  baseline - textHeight - topOfLine
-        delta /= 3f
 
-        val baseline = baseline - delta
-        val bottomOfLine = bottomOfLine - delta
+        val bias = (bottomOfLine - baseline) / 2f
 
-        val topAdd = totalHeight * topGrowthRate / 2f
-        val bottomAdd = totalHeight * bottomGrowthRate / 2f
+        var width = textWidth + horizontalPadding * 2f
+        if (width > canvas.width - x) {
+            width = canvas.width - x
+            textWidth = width - horizontalPadding * 2f
+        }
 
         val rect = RectF(
             x,
-            baseline - textHeight - topAdd,
-            x + textWidth + horizontalPadding * 2f,
-            bottomOfLine + bottomAdd
+            topOfLine.toFloat() + bias,
+            x + width,
+            baseline.toFloat() + bias
         )
 
         val cornerRadius = rect.height() * cornerRadiusPercentage
@@ -79,8 +100,27 @@ class RoundedBackgroundSpan(
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
         paint.color = textColor ?: 0xffffffff.toInt()
 
-        canvas.drawText(this.text, start, end, x + horizontalPadding, baseline, paint)
+
+
+        val ellipsised = TextUtils.ellipsize(
+            this.text.substring(start, end),
+            TextPaint(paint),
+            textWidth,
+            TextUtils.TruncateAt.END
+        ).toString()
+
+
+
+        canvas.drawText(
+            ellipsised,
+            0,
+            ellipsised.length,
+            x + horizontalPadding,
+            newBaseLine1.toFloat() + bias,
+            paint
+        )
     }
+
 
     override fun getSize(
         paint: Paint,
@@ -89,8 +129,21 @@ class RoundedBackgroundSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
+        //val paint = Paint(paint)
+        fm?.let {
+            height = it.descent - it.ascent
+        }
+        val descent = paint.descent()
+        val ascent = paint.ascent()
         val paint = Paint(paint)
-        paint.textSize = height * relativeTextSize
+
+
+        val totalHeight = descent - ascent
+        val totalHeight0 = -ascent
+        val ratio = totalHeight0 / totalHeight
+
+        paint.textSize *= relativeTextSize * ratio * additionTextRatio
+
         val start = 0
         val end = this.text.length
         val horizontalPadding = paint.descent() * 2 * horizontalGrowthRate
@@ -105,6 +158,10 @@ class RoundedBackgroundSpan(
         lineHeight: Int,
         fm: Paint.FontMetricsInt?
     ) {
+        fm?.let {
+            height = it.descent - it.ascent
+        }
+
 //        if (fm == null) return
 //        val paint = Paint()
 //        paint.textSize = height.toFloat()

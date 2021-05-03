@@ -1,8 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.university_pass
 
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -56,11 +54,11 @@ class UniversityPassFragment : Fragment() {
 
         dataSource = SharedPreferencesDataSource(PreferenceManager.getDefaultSharedPreferences(context))
 
-        logTextView.text = dataSource.getString("UniversityPassLog", "")
+        logTextView.text = dataSource.get("UniversityPassLog", "")
         lifecycleScope.launchWhenResumed {
             while (true) {
                 delay(5000)
-                logTextView.text = dataSource.getString("UniversityPassLog", "")
+                logTextView.text = dataSource.get("UniversityPassLog", "")
             }
         }
     }

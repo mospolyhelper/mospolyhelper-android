@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="@dimen/lesson_icon_size"
+        android:height="@dimen/lesson_icon_size">
+        <shape>
+            <solid android:color="#00000000"/>
+        </shape>
+    </item>
+    <item android:top="5.0dp"
+        android:bottom="4.0dp"
+        android:left="4.5dp"
+        android:right="4.5dp">
+        <shape
+            android:shape="oval"
+            android:useLevel="false">
+            <solid android:color="#ffffff"/>
+        </shape>
+
+    </item>
+</layer-list>

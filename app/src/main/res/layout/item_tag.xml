@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/ScheduleLessonSubtitle"
     android:layout_width="wrap_content"
@@ -8,9 +7,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
     android:drawablePadding="2.3dp"
-    android:fontFamily="@font/open_sans"
+    android:fontFamily="@font/ubuntu"
     android:maxLines="1"
-    android:textSize="14dp"
-    app:drawableStartCompat="@drawable/circle"
-    app:drawableTint="#2BCD13"
+    android:textSize="29dp"
     tools:text="Сделано" />

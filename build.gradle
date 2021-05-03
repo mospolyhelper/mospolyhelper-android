@@ -2,8 +2,10 @@
 buildscript {
     ext.kotlin_version = '1.4.30'
     repositories {
+        mavenCentral()
         google()
         jcenter()
+
         //maven { url 'https://jitpack.io' }
     }
     dependencies {
@@ -29,6 +31,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
     }

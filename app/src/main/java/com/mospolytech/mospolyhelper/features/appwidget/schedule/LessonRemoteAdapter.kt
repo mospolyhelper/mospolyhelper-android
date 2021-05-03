@@ -17,6 +17,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.TAG
@@ -46,6 +47,8 @@ class LessonRemoteAdapter(
 
         fun getTime(
             lesson: Lesson,
+            time: Pair<String, String>,
+            order: Int,
             showOrder: Boolean,
             showStartTime: Boolean,
             showEndTime: Boolean,
@@ -54,10 +57,10 @@ class LessonRemoteAdapter(
             val builder = SpannableStringBuilder()
             val color2 =  (if (lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
 
-            val (timeStart, timeEnd) = lesson.time
+            val (timeStart, timeEnd) = time
             val res = StringBuilder()
             if (showOrder) {
-                res.append("${lesson.order + 1}) ")
+                res.append("${order + 1}) ")
             }
             if (showStartTime) {
                 res.append(timeStart)
@@ -106,7 +109,7 @@ class LessonRemoteAdapter(
         }
     }
 
-    private var dailySchedule: List<Lesson>? = null
+    private var dailySchedule: List<Pair<Lesson, Pair<Int, Boolean>>>? = null
 
     private var showStartTime = true
     private var showEndTime = false
@@ -142,7 +145,9 @@ class LessonRemoteAdapter(
             dailySchedule = null
             return
         }
-        dailySchedule = schedule.getSchedule(LocalDate.now())
+        dailySchedule = schedule.getLessons(LocalDate.now()).flatMap { lessonPlace ->
+            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
+        }
         showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", true)
         showStartTime = prefs.getBoolean("ScheduleAppwidgetShowStartTime", true)
         showEndTime = prefs.getBoolean("ScheduleAppwidgetShowEndTime", true)
@@ -192,9 +197,17 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setTime(view: RemoteViews, lesson: Lesson) {
+    private fun setTime(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
         if (showStartTime || showEndTime || showOrder || showType) {
-            val time = getTime(lesson, showOrder, showStartTime, showEndTime, showType)
+            val time = getTime(
+                lesson.first,
+                LessonTimeUtils.getTime(lesson.second.first, lesson.second.second),
+                lesson.second.first,
+                showOrder,
+                showStartTime,
+                showEndTime,
+                showType
+            )
             view.setTextViewText(R.id.text_lesson_time, time)
             view.setViewVisibility(R.id.text_lesson_time, View.VISIBLE)
         } else {
@@ -202,22 +215,22 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setTitle(view: RemoteViews, lesson: Lesson) {
-        view.setTextViewText(R.id.text_schedule_title, getTitle(lesson).toString())
+    private fun setTitle(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+        view.setTextViewText(R.id.text_schedule_title, getTitle(lesson.first).toString())
     }
 
-    private fun setTeachers(view: RemoteViews, lesson: Lesson) {
+    private fun setTeachers(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
         if (showTeachers) {
-            view.setTextViewText(R.id.text_lesson_teachers, getTeachers(lesson))
+            view.setTextViewText(R.id.text_lesson_teachers, getTeachers(lesson.first))
             view.setViewVisibility(R.id.text_lesson_teachers, View.VISIBLE)
         } else {
             view.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
         }
     }
 
-    private fun setAuditoriums(view: RemoteViews, lesson: Lesson) {
+    private fun setAuditoriums(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
         if (showAuditoriums) {
-            view.setTextViewText(R.id.text_lesson_auditoriums, getAuditoriums(lesson))
+            view.setTextViewText(R.id.text_lesson_auditoriums, getAuditoriums(lesson.first))
             view.setViewVisibility(R.id.text_lesson_auditoriums, View.VISIBLE)
         } else {
             view.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)

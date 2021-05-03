@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/schedule_day_width"
+    android:layout_height="@dimen/schedule_day_height"
+    android:layout_marginStart="4.0dp"
+    android:layout_marginEnd="4.0dp"
+    android:background="@drawable/shape_schedule_day"
+    android:orientation="vertical"
+    android:paddingTop="10dp">
+
+    <TextView
+        android:id="@+id/textview_day_of_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1.7dp"
+        android:fontFamily="@font/ubuntu_medium"
+        android:text="17"
+        android:textAlignment="center"
+        android:textSize="16.9dp" />
+
+    <TextView
+        android:id="@+id/textview_day_of_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8.7dp"
+        android:fontFamily="@font/ubuntu"
+        android:text="Пн"
+        android:textAlignment="center"
+        android:textSize="12.3dp" />
+
+    <LinearLayout
+        android:id="@+id/linearlayout_order_indicators"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/pair1"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder1" />
+
+        <View
+            android:id="@+id/pair2"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder2" />
+
+        <View
+            android:id="@+id/pair3"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder3" />
+
+        <View
+            android:id="@+id/pair4"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder4" />
+
+        <View
+            android:id="@+id/pair5"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder5" />
+
+        <View
+            android:id="@+id/pair6"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder6" />
+
+        <View
+            android:id="@+id/pair7"
+            android:layout_width="4.2dp"
+            android:layout_height="4.2dp"
+            android:layout_marginStart="1.7dp"
+            android:layout_marginEnd="1.7dp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/lessonOrder7" />
+    </LinearLayout>
+</LinearLayout>

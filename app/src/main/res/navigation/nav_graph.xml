@@ -70,12 +70,18 @@
         tools:layout="@layout/fragment_schedule_lesson_info"
         android:name="com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoFragment"
         android:label="LessonInfoFragment" >
-        <argument
-            android:name="titleTransitionNames"
-            app:argType="string[]" />
         <action
             android:id="@+id/action_lessonInfoFragment_to_groupInfoFragment"
             app:destination="@id/groupInfoFragment" />
+        <argument
+            android:name="lesson"
+            app:argType="com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace" />
+        <argument
+            android:name="date"
+            app:argType="java.time.LocalDate" />
+        <action
+            android:id="@+id/action_lessonInfoFragment_to_lessonTagFragment"
+            app:destination="@id/lessonTagFragment" />
     </dialog>
     <fragment
         android:id="@+id/deadlineFragment"
@@ -278,5 +284,18 @@
             android:name="group"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/lessonTagFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.LessonTagFragment"
+        android:label="LessonTagFragment" >
+        <argument
+            android:name="lesson"
+            app:argType="com.mospolytech.mospolyhelper.domain.schedule.model.Lesson" />
+        <argument
+            android:name="tag"
+            app:argType="com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
 
 </navigation>

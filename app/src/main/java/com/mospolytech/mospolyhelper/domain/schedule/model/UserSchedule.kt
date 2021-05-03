@@ -4,28 +4,31 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class UserSchedule {
-    abstract val id: String
+sealed class UserSchedule : Comparable<UserSchedule> {
     abstract val title: String
+
+    override fun compareTo(other: UserSchedule): Int {
+        return title.compareTo(other.title)
+    }
 }
 
 @Serializable
 @SerialName("student")
-class StudentSchedule(
-    override val id: String,
+data class StudentSchedule(
+    val id: String,
     override val title: String,
 ) : UserSchedule()
 
 @Serializable
 @SerialName("teacher")
-class TeacherSchedule(
-    override val id: String,
+data class TeacherSchedule(
+    val id: String,
     override val title: String,
 ) : UserSchedule()
 
 @Serializable
 @SerialName("auditorium")
-class AuditoriumSchedule(
-    override val id: String,
+data class AuditoriumSchedule(
+    val id: String,
     override val title: String,
 ) : UserSchedule()

@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.data.account.deadlines.repository
 import com.mospolytech.mospolyhelper.data.account.deadlines.local.DeadlinesLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.deadlines.remote.DeadlinesRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.domain.account.deadlines.repository.DeadlinesRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -25,7 +24,7 @@ class DeadlinesRepositoryImpl(
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun getDeadlines() = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )
@@ -44,7 +43,7 @@ class DeadlinesRepositoryImpl(
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun setDeadlines(deadlines: List<Deadline>) = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

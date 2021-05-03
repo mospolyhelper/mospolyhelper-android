@@ -1,44 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/recyclerview_lessons"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/textview_day_of_week"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/open_sans_light"
-        android:text="Понедельник"
-        android:textSize="27sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textview_day_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/open_sans_light"
-        android:text="24 апреля"
-        android:textAlignment="textStart"
-        android:textColor="@color/colorLevelSix"
-        android:textSize="24sp"
-        android:visibility="gone" />
-
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listLessons"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="false"
-        android:focusable="false"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        tools:listitem="@layout/item_lesson" />
-</LinearLayout>
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="false"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    tools:listitem="@layout/item_lesson" />

@@ -4,7 +4,6 @@ import com.mospolytech.mospolyhelper.data.account.messaging.local.MessagingLocal
 import com.mospolytech.mospolyhelper.data.account.messaging.remote.MessagingRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
 import com.mospolytech.mospolyhelper.domain.account.messaging.repository.MessagingRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
@@ -24,7 +23,7 @@ class MessagingRepositoryImplementation(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>> = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )
@@ -41,7 +40,7 @@ class MessagingRepositoryImplementation(
     }
 
     override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>> = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

@@ -18,7 +18,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.KoinComponent
 import java.time.LocalDate
-import java.time.LocalTime
 
 
 class ScheduleViewModel(
@@ -36,7 +35,7 @@ class ScheduleViewModel(
     private var firstLoading = true
 
     val date = MutableStateFlow(LocalDate.now())
-    val currentLessonOrder: MutableStateFlow<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>>
+    //val currentLessonOrder: MutableStateFlow<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>>
 
 
     val savedIds: MutableStateFlow<Set<UserSchedule>>
@@ -48,7 +47,6 @@ class ScheduleViewModel(
     val showImportantLessons: MutableStateFlow<Boolean>
     val showAverageLessons: MutableStateFlow<Boolean>
     val showNotImportantLessons: MutableStateFlow<Boolean>
-    val showNotLabeledLessons: MutableStateFlow<Boolean>
 
 
 
@@ -64,21 +62,13 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         launchTimer()
 
-        currentLessonOrder = MutableStateFlow(
-            Pair(
-                Lesson.getOrder(LocalTime.now(), false),
-                Lesson.getOrder(LocalTime.now(), true)
-            )
-        )
-
         showEndedLessons = MutableStateFlow(useCase.getShowEndedLessons())
         showCurrentLessons = MutableStateFlow(useCase.getShowCurrentLessons())
         showNotStartedLessons = MutableStateFlow(useCase.getShowNotStartedLessons())
         filterTypes = MutableStateFlow(useCase.getFilterTypes())
-        showImportantLessons = MutableStateFlow(useCase.getShowImportantLessons())
-        showAverageLessons = MutableStateFlow(useCase.getShowAverageLessons())
-        showNotImportantLessons = MutableStateFlow(useCase.getShowNotImportantLessons())
-        showNotLabeledLessons = MutableStateFlow(useCase.getShowNotLabeledLessons())
+        showImportantLessons = MutableStateFlow(PreferenceDefaults.ShowImportantLessons)
+        showAverageLessons = MutableStateFlow(PreferenceDefaults.ShowAverageLessons)
+        showNotImportantLessons = MutableStateFlow(PreferenceDefaults.ShowNotImportantLessons)
 
         viewModelScope.async {
             showEndedLessons.collect {
@@ -104,30 +94,6 @@ class ScheduleViewModel(
                 originalSchedule.value.onSuccess {
                     filteredSchedule.value = Result.success(it.copy(schedule = it.schedule?.filter(types = filters)))
                 }
-            }
-        }
-
-        viewModelScope.async {
-            showImportantLessons.collect {
-                useCase.setShowImportantLessons(it)
-            }
-        }
-
-        viewModelScope.async {
-            showAverageLessons.collect {
-                useCase.setShowAverageLessons(it)
-            }
-        }
-
-        viewModelScope.async {
-            showNotImportantLessons.collect {
-                useCase.setShowNotImportantLessons(it)
-            }
-        }
-
-        viewModelScope.async {
-            showNotLabeledLessons.collect {
-                useCase.setShowNotLabeledLessons(it)
             }
         }
 
@@ -202,7 +168,7 @@ class ScheduleViewModel(
                 if (sch == null) {
                     originalSchedule.value = Result.loading()
                 } else {
-                    originalSchedule.value = Result.success(ScheduleTagsDeadline(sch as Schedule, emptyMap(), emptyMap()))
+                    originalSchedule.value = Result.success(ScheduleTagsDeadline(sch as Schedule, emptyList(), emptyMap()))
                 }
             }
             MessageAddScheduleId -> {
@@ -231,17 +197,17 @@ class ScheduleViewModel(
     }
 
     private fun launchTimer() {
-        viewModelScope.async {
-            while (isActive) {
-                viewModelScope.async {
-                    currentLessonOrder.value = Pair(
-                        Lesson.getOrder(LocalTime.now(), false),
-                        Lesson.getOrder(LocalTime.now(), true)
-                    )
-                }
-                delay((60L - LocalTime.now().second) * 1000L)
-            }
-        }
+//        viewModelScope.async {
+//            while (isActive) {
+//                viewModelScope.async {
+//                    currentLessonOrder.value = Pair(
+//                        LessonTimeUtils.getOrder(LocalTime.now(), false),
+//                        LessonTimeUtils.getOrder(LocalTime.now(), true)
+//                    )
+//                }
+//                delay((60L - LocalTime.now().second) * 1000L)
+//            }
+//        }
     }
 
 
