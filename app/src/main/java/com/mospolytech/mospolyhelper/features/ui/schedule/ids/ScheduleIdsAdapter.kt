@@ -6,15 +6,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 
 class ScheduleIdsAdapter(
-    private val idList: List<Pair<Boolean, String>>,
+    private val idList: List<UserSchedule>,
     private var query: String,
     private var filterMode: FilterModes,
-    private val onItemClick: (Pair<Boolean, String>) -> Unit
+    private val onItemClick: (UserSchedule) -> Unit
 ): RecyclerView.Adapter<ScheduleIdsAdapter.ViewHolder>() {
 
-    private var filteredIdList: List<Pair<Boolean, String>>
+    private var filteredIdList: List<UserSchedule>
 
     init {
         filteredIdList = setFilteredList()
@@ -22,13 +24,13 @@ class ScheduleIdsAdapter(
 
     override fun getItemCount() = filteredIdList.size
 
-    private fun setFilteredList(): List<Pair<Boolean, String>> {
+    private fun setFilteredList(): List<UserSchedule> {
         return if (filterMode == FilterModes.All) {
-            idList.filter { it.second.contains(query, ignoreCase = true) }
+            idList.filter { it.title.contains(query, ignoreCase = true) }
         } else {
             idList.filter {
-                it.second.contains(query, ignoreCase = true) &&
-                        it.first == (filterMode == FilterModes.Groups)}
+                it.title.contains(query, ignoreCase = true) &&
+                        it is StudentSchedule == (filterMode == FilterModes.Groups)}
         }
     }
 
@@ -64,8 +66,8 @@ class ScheduleIdsAdapter(
 
         fun bind() {
             val item = filteredIdList[adapterPosition]
-            textView.text = item.second
-            if (item.first) {
+            textView.text = item.title
+            if (item is StudentSchedule) {
                 textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_group, 0, 0, 0)
             } else {
                 textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_teacher, 0, 0, 0)

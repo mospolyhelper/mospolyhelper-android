@@ -2,14 +2,9 @@ package com.mospolytech.mospolyhelper.data.account.applications.repository
 
 import com.mospolytech.mospolyhelper.data.account.applications.local.ApplicationsLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.applications.remote.ApplicationsRemoteDataSource
-import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
 import com.mospolytech.mospolyhelper.domain.account.applications.repository.ApplicationsRepository
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
@@ -29,7 +24,7 @@ class ApplicationsRepositoryImpl(
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun getApplications() = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

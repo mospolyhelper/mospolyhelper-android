@@ -70,6 +70,20 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         } else {
             viewModel.currentFragmentNavId.value = savedInstanceState.getInt("menuItemId", R.id.nav_schedule)
         }
+        // TODO: check event subscription
+        navigationView = findViewById(R.id.nav_view)
+        if (viewModel.currentFragmentNavId.value != -1) {
+            navigationView.selectedItemId = viewModel.currentFragmentNavId.value
+        }
+        navigationView.setOnNavigationItemSelectedListener {
+            val action = navController.graph.getAction(it.itemId)
+            val currentDestination = navController.currentBackStackEntry?.destination
+            if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
+                viewModel.currentFragmentNavId.value = it.itemId
+                navController.navigate(it.itemId)
+            }
+            true
+        }
 
 
         ActivityCompat.requestPermissions(
@@ -137,21 +151,6 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // TODO: check event subscription
-        navigationView = findViewById(R.id.nav_view)
-        navigationView.setOnNavigationItemSelectedListener {
-            val action = navController.graph.getAction(it.itemId)
-            val currentDestination = navController.currentBackStackEntry?.destination
-            if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
-                viewModel.currentFragmentNavId.value = it.itemId
-                navController.navigate(it.itemId)
-            }
-            true
-        }
-    }
 
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this)

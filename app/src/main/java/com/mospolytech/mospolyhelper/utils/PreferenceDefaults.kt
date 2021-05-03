@@ -4,7 +4,7 @@ import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 
 class PreferenceDefaults {
     companion object {
-        const val ScheduleGroupTitle = ""
+        const val ScheduleUser = ""
         const val ScheduleShowEmptyLessons = false
         const val ScheduleTypePreference = false
         const val ScheduleUserTypePreference = true

@@ -3,6 +3,9 @@ package com.mospolytech.mospolyhelper.data.schedule.local
 import android.util.Log
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -16,11 +19,11 @@ class ScheduleLocalDataSource {
         const val SCHEDULE_TEACHER_FOLDER = "teacher"
     }
 
-    fun get(id: String, isStudent: Boolean): Schedule? {
+    fun get(user: UserSchedule): Schedule? {
         val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
-            .resolve(if (isStudent) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
-            .resolve(id)
+            .resolve(if (user is StudentSchedule) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
+            .resolve(if (user is StudentSchedule) user.id else if (user is TeacherSchedule) user.id else "")
 
         if (!file.exists()) {
             return null
@@ -33,11 +36,11 @@ class ScheduleLocalDataSource {
         }
     }
 
-    fun set(schedule: Schedule, id: String, isStudent: Boolean) {
+    fun set(schedule: Schedule, user: UserSchedule) {
         val file = App.context!!.filesDir
             .resolve(SCHEDULE_FOLDER)
-            .resolve(if (isStudent) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
-            .resolve(id)
+            .resolve(if (user is StudentSchedule) SCHEDULE_STUDENT_FOLDER else SCHEDULE_TEACHER_FOLDER)
+            .resolve(if (user is StudentSchedule) user.id else if (user is TeacherSchedule) user.id else "")
         if (file.exists()) {
             file.delete()
         } else {

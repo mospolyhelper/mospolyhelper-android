@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.utils
 
 class PreferenceKeys {
     companion object {
-        const val ScheduleGroupTitle = "ScheduleGroupTitle"
+        const val ScheduleUser = "ScheduleUser"
         const val ScheduleDateFilter = "ScheduleDateFilter"
         const val ScheduleModuleFilter = "ScheduleModuleFilter"
         const val ScheduleSessionFilter = "ScheduleSessionFilter"

@@ -10,7 +10,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.Cookie
 
-class GroupListClient {
+class GroupListClient(
+    private val client: HttpClient
+) {
     companion object {
         private const val BASE_URL = "https://rasp.dmami.ru"
         private const val GET_GROUP_LIST = "$BASE_URL/groups-list.json"
@@ -18,10 +20,6 @@ class GroupListClient {
     private var cookiesStorage: CookiesStorage? = null
     private var cookiesCheckedCount = 0
         private set
-
-    private val groupListClient by lazy {
-        HttpClient()
-    }
 
     suspend fun getCookies() {
         val client = HttpClient()
@@ -55,14 +53,14 @@ class GroupListClient {
     suspend fun getGroupList(): String {
         val cookiesStorage = cookiesStorage
         if (cookiesStorage != null) {
-            groupListClient.config {
+            client.config {
                 install(HttpCookies) {
                     storage = cookiesStorage
                 }
             }
         }
 
-        return groupListClient.get(GET_GROUP_LIST) {
+        return client.get(GET_GROUP_LIST) {
             header("referer",
                 BASE_URL
             )

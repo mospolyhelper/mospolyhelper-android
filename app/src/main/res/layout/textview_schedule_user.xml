@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:textSize="15.5dp"
     android:gravity="center_vertical"
-    android:fontFamily="@font/open_sans"
+    android:fontFamily="@font/ubuntu"
     android:layout_width="wrap_content"
     android:layout_marginStart="7dp"
     android:minHeight="41dp"

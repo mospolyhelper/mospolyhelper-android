@@ -2,11 +2,10 @@ package com.mospolytech.mospolyhelper.data.schedule.converter
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
-import kotlinx.serialization.json.Json
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -57,6 +56,19 @@ class ScheduleRemoteConverter {
         private val regex5 = Regex("""\S- """)
     }
 
+    fun parseSchedules(schedulesString: String): Sequence<Schedule> {
+        val json = Json.parseToJsonElement(schedulesString)
+        val contents = json.jsonObject["contents"]?.jsonArray ?: return emptySequence()
+        return contents.iterator().asSequence().mapNotNull {
+            try {
+                parse(it.toString())
+            } catch (e: Exception) {
+                Log.e(TAG, "Schedule (Download all) parsing exception", e)
+                null
+            }
+        }
+    }
+
     fun parse(scheduleString: String): Schedule {
         val json = Json.parseToJsonElement(scheduleString)
         val status = json.jsonObject[STATUS_KEY]?.jsonPrimitive?.content
@@ -68,10 +80,10 @@ class ScheduleRemoteConverter {
             )
         } else if (status != STATUS_OK) {
             val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
-            Log.w(
-                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
-                        "Message: \"${message ?: ""}\""
-            )
+//            Log.w(
+//                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
+//                        "Message: \"${message ?: ""}\""
+//            )
         }
         val isByDate =
             json.jsonObject[IS_SESSION]?.jsonPrimitive?.boolean
@@ -149,14 +161,11 @@ class ScheduleRemoteConverter {
         json: JsonElement?,
         group: Group,
         isByDate: Boolean
-    ): List<List<Lesson>> {
+    ): List<List<LessonPlace>> {
         if (json == null) {
             throw SerializationException("SCHEDULE_GRID_KEY \"$SCHEDULE_GRID_KEY\" not found")
         }
-        val tempList: List<MutableList<Lesson>> = listOf(
-            mutableListOf(), mutableListOf(), mutableListOf(),
-            mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf()
-        )
+        val tempList = List(7) { mutableListOf<LessonPlace>() }
         for ((day, dailySchedule) in json.jsonObject) {
             // TODO: Is empty not suitable
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
@@ -181,21 +190,26 @@ class ScheduleRemoteConverter {
 
             for ((index, lessonPlace) in dailySchedule) {
                 if (lessonPlace !is JsonArray || lessonPlace.isEmpty()) continue
+
+                val lessons = mutableListOf<Lesson>()
                 val parsedOrder = index.toInt() - 1
                 for (lesson in lessonPlace) {
                     if (lesson !is JsonObject) continue
-                    val parsedLesson = parseLesson(lesson, parsedOrder, group, isByDate, date)
-                    tempList[parsedDay].add(parsedLesson)
+                    val parsedLesson = parseLesson(lesson, group, isByDate, date)
+                    lessons.add(parsedLesson)
                 }
-                tempList[parsedDay].sort()
+                lessons.sort()
+                tempList[parsedDay].add(LessonPlace(lessons, parsedOrder, group.isEvening))
             }
+            tempList[parsedDay].sort()
         }
         return tempList
     }
 
     private fun parseLesson(
-        json: JsonElement, order: Int,
-        group: Group, isByDate: Boolean,
+        json: JsonElement,
+        group: Group,
+        isByDate: Boolean,
         date: LocalDate
     ): Lesson {
         val title = processTitle(json.jsonObject[LESSON_TITLE_KEY]?.jsonPrimitive?.content
@@ -219,17 +233,16 @@ class ScheduleRemoteConverter {
         }
 
         return Lesson(
-            order,
             title,
-            teachers,
-            dateFrom,
-            dateTo,
-            auditoriums,
-            Lesson.fixType(
+            LessonTypeUtils.fixType(
                 type,
                 title
             ),
-            listOf(group)
+            teachers,
+            auditoriums,
+            listOf(group),
+            dateFrom,
+            dateTo
         )
     }
 

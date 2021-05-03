@@ -3,16 +3,11 @@ package com.mospolytech.mospolyhelper.data.schedule.repository
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.data.schedule.utils.ScheduleIterable
-import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduleRepositoryImpl(
@@ -27,17 +22,19 @@ class ScheduleRepositoryImpl(
             val lessonAuditoriums = HashSet<String>()
             val lessonTypes = HashSet<String>()
             for (dailySchedule in schedule.dailySchedules) {
-                for (lesson in dailySchedule) {
-                    lessonTitles.add(lesson.title)
-                    for (teacher in lesson.teachers) {
-                        lessonTeachers.add(teacher.name)
-                    }
-                    if (lesson.auditoriums.isNotEmpty()) {
-                        for (auditorium in lesson.auditoriums) {
-                            lessonAuditoriums.add(auditorium.title)
+                for (lessonPlace in dailySchedule) {
+                    for (lesson in lessonPlace.lessons) {
+                        lessonTitles.add(lesson.title)
+                        for (teacher in lesson.teachers) {
+                            lessonTeachers.add(teacher.name)
                         }
+                        if (lesson.auditoriums.isNotEmpty()) {
+                            for (auditorium in lesson.auditoriums) {
+                                lessonAuditoriums.add(auditorium.title)
+                            }
+                        }
+                        lessonTypes.add(lesson.type)
                     }
-                    lessonTypes.add(lesson.type)
                 }
             }
             return SchedulePack(
@@ -53,95 +50,84 @@ class ScheduleRepositoryImpl(
     private val scheduleCounter = AtomicInteger(0)
 
     override fun getSchedule(
-        id: String,
-        isStudent: Boolean,
+        user: UserSchedule?,
         refresh: Boolean
     ) = flow {
-        val schedule = if (refresh) {
-            refresh(id, isStudent) ?: localDataSource.get(id, isStudent)
+        if (user == null) {
+            emit(null)
         } else {
-            localDataSource.get(id, isStudent) ?: refresh(id, isStudent)
+            val schedule = if (refresh) {
+                refresh(user) ?: localDataSource.get(user)
+            } else {
+                localDataSource.get(user) ?: refresh(user)
+            }
+            emit(schedule)
         }
-        emit(schedule)
     }
 
-    private suspend fun refresh(id: String, isStudent: Boolean): Schedule? {
-        val schedule = if (isStudent) {
-            combine(
-                remoteDataSource.get(id, false),
-                remoteDataSource.get(id, true)
+    private suspend fun refresh(user: UserSchedule): Schedule? {
+        val schedule = when (user) {
+            is StudentSchedule -> combine(
+                remoteDataSource.get(user.id, false),
+                remoteDataSource.get(user.id, true)
             )
-        } else {
-            remoteTeacherDataSource.get(id)
+            is TeacherSchedule -> remoteTeacherDataSource.get(user.id)
+            is AuditoriumSchedule -> null
         }
         if (schedule != null) {
-            localDataSource.set(schedule, id, isStudent)
+            localDataSource.set(schedule, user)
         }
         return schedule
     }
 
-    override suspend fun getAnySchedules(ids: List<String>, isStudent: Boolean, onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
-        if (ids.isEmpty()) {
-            return@coroutineScope SchedulePackList(
-                emptyList(),
-                mutableSetOf(),
-                mutableSetOf(),
-                mutableSetOf(),
-                mutableSetOf()
-            )
-        }
 
+    override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
         scheduleCounter.set(0)
-        val maxProgress = ids.size * 2
 
-        val chunkSize = ids.size / (Runtime.getRuntime().availableProcessors() * 3)
-        val chunks = if (chunkSize > 3) ids.chunked(chunkSize) else listOf(ids)
+        val schedules = remoteDataSource.getAll(false) { c, t -> onProgressChanged(c.toFloat() / t)} +
+                remoteDataSource.getAll(true) { c, t -> onProgressChanged(c.toFloat() / t)}
 
-        val channel = Channel<Schedule?>()
-        val deferredList = chunks.map { chunk ->
-            async(context = Dispatchers.IO) {
-                for (groupTitle in chunk) {
-                    channel.send(refresh(groupTitle, isStudent))
-                    onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
+        val scheduleList = mutableListOf<Schedule>()
+        val lessonTitles = mutableSetOf<String>()
+        val lessonTeachers = mutableSetOf<String>()
+        val lessonGroups = mutableSetOf<String>()
+        val lessonAuditoriums = mutableSetOf<String>()
+        val lessonTypes = mutableSetOf<String>()
+
+
+        for (schedule in schedules) {
+            scheduleList.add(schedule)
+            for (dailySchedule in schedule.dailySchedules) {
+                for (lessonPlace in dailySchedule) {
+                    for (lesson in lessonPlace.lessons) {
+                        lessonTitles.add(lesson.title)
+                        for (teacher in lesson.teachers) {
+                            lessonTeachers.add(teacher.name)
+                        }
+                        for (group in lesson.groups) {
+                            lessonGroups.add(group.title)
+                        }
+                        for (auditorium in lesson.auditoriums) {
+                            lessonAuditoriums.add(auditorium.title)
+                        }
+                        lessonTypes.add(lesson.type)
+                    }
                 }
             }
-        }
 
-        launch {
-            deferredList.awaitAll()
-            channel.close()
         }
-
-        val packList =
-            SchedulePackList(
-                ScheduleIterable(
-                    ids
-                ),
-                sortedSetOf(),
-                sortedSetOf(),
-                sortedSetOf(),
-                sortedSetOf()
-            )
-        channel.receiveAsFlow().collect {
-            if (it == null) {
-                return@collect
-            }
-            for (dailySchedule in it.dailySchedules) {
-                for (lesson in dailySchedule) {
-                    packList.lessonTitles.add(lesson.title)
-                    for (teacher in lesson.teachers) {
-                        packList.lessonTeachers.add(teacher.name)
-                    }
-                    for (auditorium in lesson.auditoriums) {
-                        packList.lessonAuditoriums.add(auditorium.title)
-                    }
-                    packList.lessonTypes.add(lesson.type)
-                }
-            }
-            onProgressChanged(scheduleCounter.incrementAndGet().toFloat() / maxProgress)
-        }
-        return@coroutineScope packList
+        onProgressChanged(1f)
+        return@coroutineScope SchedulePackList(
+            scheduleList,
+            lessonTitles.sorted(),
+            lessonTypes.sorted(),
+            lessonTeachers.sorted(),
+            lessonGroups.sorted(),
+            lessonAuditoriums.sorted(),
+        )
     }
+
+
 
 
 

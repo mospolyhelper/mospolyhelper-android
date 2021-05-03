@@ -11,34 +11,32 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
-import android.util.TypedValue
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionInflater
+import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-import com.mospolytech.mospolyhelper.NavGraphDirections
-
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.Group
+import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
+import com.mospolytech.mospolyhelper.domain.schedule.utils.description
+import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_schedule_lesson_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class LessonInfoFragment : DialogFragment() {
+class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info) {
 
     companion object {
-        fun newInstance() = LessonInfoFragment()
-
         val lessonTypeColors = listOf(
             0xffeb4141.toInt(),   // Exam, Credit,..
             0xff29b6f6.toInt()    // Other
@@ -46,29 +44,18 @@ class LessonInfoFragment : DialogFragment() {
     }
     private val lessonLabelOneDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EE, d MMM,")
-    private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMM")
-    private val viewModel by viewModel<LessonInfoViewModel>()
+    private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
+    private val dateFormatter2 = DateTimeFormatter.ofPattern("d MMMM yyyy (EE)")
 
+    private val viewModel by viewModel<LessonInfoViewModel>()
+    private val viewBinding by viewBinding(FragmentScheduleLessonInfoBinding::bind)
     private val args: LessonInfoFragmentArgs by navArgs()
 
-    private lateinit var lessonTitleTextView: TextView
-    private lateinit var lessonTypeTextView: TextView
-    private lateinit var lessonTimeTextView: TextView
-    private lateinit var lessonAuditoriumsChips: ChipGroup
-    private lateinit var teacherChips: ChipGroup
-    private lateinit var lessonDateTextView: TextView
-    private lateinit var lessonGroupsChipGroup: ChipGroup
-    private lateinit var lessonLabelsChipGroup: ChipGroup
-    private lateinit var lessonDeadlinesTextView: TextView
-    private lateinit var lessonLabelOneDateTextView: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-//        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-//        sharedElementReturnTransition = sharedElementEnterTransition
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -81,32 +68,8 @@ class LessonInfoFragment : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        return inflater.inflate(
-            R.layout.fragment_schedule_lesson_info,
-            container,
-            false
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lessonTitleTextView = view.findViewById(R.id.text_schedule_title)
-        lessonTypeTextView = view.findViewById(R.id.text_schedule_type)
-        lessonTimeTextView = view.findViewById(R.id.text_lesson_time)
-        lessonAuditoriumsChips = view.findViewById(R.id.chipgroup_lesson_auditoriums)
-        teacherChips = view.findViewById(R.id.chipgroup_lesson_teachers)
-        lessonDateTextView = view.findViewById(R.id.text_lesson_date)
-        lessonGroupsChipGroup = view.findViewById(R.id.chipgroup_lesson_groups)
-        lessonDeadlinesTextView = view.findViewById(R.id.text_schedule_deadlines)
-        lessonLabelsChipGroup = view.findViewById(R.id.chipgroup_lesson_labels)
-        lessonLabelOneDateTextView = view.findViewById(R.id.text_label_one_date)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
@@ -115,8 +78,11 @@ class LessonInfoFragment : DialogFragment() {
         (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        if (viewModel.lesson.isEmpty) {
-            lessonTitleTextView.text = "Нет занятия"
+        viewModel.lessonPlace = args.lesson
+        viewModel.date = args.date
+
+        if (viewModel.lessonPlace.lessons.isEmpty()) {
+            //lessonTitleTextView.text = "Нет занятия"
             setTime()
         } else {
             setType()
@@ -133,18 +99,24 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setType() {
-        lessonTypeTextView.setTextColor(if (viewModel.lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
-        lessonTypeTextView.text = viewModel.lesson.type + ", ${viewModel.lesson.order + 1}-е занятие"
+        with(viewBinding) {
+            textScheduleType.setTextColor(if (viewModel.lesson.isImportant) lessonTypeColors[0] else lessonTypeColors[1])
+            textScheduleType.text = viewModel.lesson.type
+        }
     }
 
     private fun setTitle() {
-        lessonTitleTextView.text = viewModel.lesson.title
+        with(viewBinding) {
+            textScheduleTitle.text = viewModel.lesson.title
+        }
     }
 
     private fun setTime() {
-        val (startTime, endTime) = viewModel.lesson.time
+        val (startTime, endTime) = viewModel.lessonPlace.time
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
-        lessonTimeTextView.text = "$dateStr $startTime - $endTime"
+        with(viewBinding) {
+            this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonPlace.order + 1})"
+        }
     }
 
     private fun setAuditoriums() {
@@ -152,6 +124,7 @@ class LessonInfoFragment : DialogFragment() {
             return
         }
         val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
         for (auditorium in viewModel.lesson.auditoriums) {
             val audTitle = HtmlCompat.fromHtml(
                 auditorium.title,
@@ -186,10 +159,20 @@ class LessonInfoFragment : DialogFragment() {
                     Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+        with(viewBinding) {
+            recyclerviewAuditoriums.layoutManager = LinearLayoutManager(context)
+            recyclerviewAuditoriums.adapter = LessonInfoObjectAdapter(viewModel.lesson.auditoriums.map {
+                object : LessonInfoObject {
+                    override val title = HtmlCompat.fromHtml(
+                        it.title,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    ).toString()
+                    override val description = it.description
+                    override val avatar = R.drawable.ic_baseline_apartment_24
 
-            lessonAuditoriumsChips.addView(
-                createChip(text, lessonAuditoriumsChips, onClickListener)
-            )
+                }
+            })
         }
     }
 
@@ -226,37 +209,48 @@ class LessonInfoFragment : DialogFragment() {
 
 
     private fun setTeachers() {
-        for (teacher in viewModel.lesson.teachers) {
-            val text = if (viewModel.lesson.teachers.size < 3) {
-                teacher.name
-            } else {
-                teacher.getShortName()
-            }
-            teacherChips.addView(
-                createChip(text, teacherChips) {
-                    Toast.makeText(context, teacher.name, Toast.LENGTH_SHORT).show()
+        with(viewBinding) {
+            recyclerviewTeachers.layoutManager = LinearLayoutManager(context)
+            recyclerviewTeachers.adapter = LessonInfoObjectAdapter(viewModel.lesson.teachers.map {
+                object : LessonInfoObject {
+                    override val title = it.name
+                    override val description = ""
+                    override val avatar = R.drawable.ic_round_person_24
+
                 }
-            )
+            })
         }
     }
 
     private fun setDate() {
-        if (viewModel.lesson.dateFrom == viewModel.lesson.dateTo) {
-            lessonDateTextView.text = viewModel.lesson.dateFrom.format(shortDateFormatter)
-        } else {
-            lessonDateTextView.text = "С ${viewModel.lesson.dateFrom.format(shortDateFormatter)} " +
-                    "до ${viewModel.lesson.dateTo.format(shortDateFormatter)}"
+        with(viewBinding) {
+            textLessonDate.text = viewModel.date.format(dateFormatter2)
+            if (viewModel.lesson.dateFrom == viewModel.lesson.dateTo) {
+                textLessonDates.text = viewModel.lesson.dateFrom.format(shortDateFormatter)
+            } else {
+                textLessonDates.text = "${viewModel.lesson.dateFrom.format(shortDateFormatter)} " +
+                        "- ${viewModel.lesson.dateTo.format(shortDateFormatter)}"
+            }
         }
+
     }
 
     private fun setGroupInfo() {
-        for (group in viewModel.lesson.groups) {
-            lessonGroupsChipGroup.addView(
-                createChip(group.title, lessonGroupsChipGroup) {
-                    val text = "${group.title}"
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        with(viewBinding) {
+            recyclerviewGroups.layoutManager = LinearLayoutManager(context)
+            recyclerviewGroups.adapter = LessonInfoObjectAdapter(viewModel.lesson.groups.map {
+                object : LessonInfoObject {
+                    override val title = it.title
+                    override val description = if (it.isEvening) "Вечерняя" else ""
+                    override val avatar = R.drawable.ic_group_24
                 }
-            )
+            }) {
+                findNavController().safe {
+                    navigate(
+                        LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it)
+                    )
+                }
+            }
         }
     }
 
@@ -268,6 +262,9 @@ class LessonInfoFragment : DialogFragment() {
     }
 
     private fun setLabels() {
+        viewBinding.buttonAddLabel.setOnClickListener {
+            findNavController().safe { navigate(LessonInfoFragmentDirections.actionLessonInfoFragmentToLessonTagFragment(lesson = viewModel.lesson)) }
+        }
         //lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
 
     }

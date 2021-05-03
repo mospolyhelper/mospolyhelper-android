@@ -1,12 +1,8 @@
 package com.mospolytech.mospolyhelper.data.account.statements.repository
 
-import com.mospolytech.mospolyhelper.data.account.marks.local.MarksLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.marks.remote.MarksRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.statements.local.StatementsLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.statements.remote.StatementsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
-import com.mospolytech.mospolyhelper.domain.account.marks.repository.MarksRepository
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.domain.account.statements.repository.StatementsRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -27,7 +23,7 @@ class StatementsRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override suspend fun getInfo(semester: String?) = flow {
-        val sessionId = prefDataSource.getString(
+        val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )

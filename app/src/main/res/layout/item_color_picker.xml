@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="45dp"
+    android:layout_height="45dp"
+    android:layout_margin="6dp"
+    android:foreground="@drawable/ic_round_check_24"
+    android:foregroundTintMode="multiply"
+    android:foregroundTint="#00ffffff"
+    android:src="@drawable/ic_squircle_2"
+    android:tintMode="multiply" />

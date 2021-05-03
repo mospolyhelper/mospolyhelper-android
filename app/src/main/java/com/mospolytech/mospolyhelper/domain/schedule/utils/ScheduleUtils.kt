@@ -1,51 +1,111 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import java.time.LocalDate
+
+object ScheduleUtils {
+    fun getWindowsDecorator(lessonPlaces: List<LessonPlace>): List<ScheduleItem> {
+        if (lessonPlaces.isEmpty()) return lessonPlaces
+        val resList = mutableListOf<ScheduleItem>(lessonPlaces.first())
+
+        var prevOrder = lessonPlaces.first().order
+        for (i in 1 until lessonPlaces.size) {
+            val lessonPlace = lessonPlaces[i]
+            val lessonWindow = lessonPlace.order - prevOrder - 1
+            if (lessonWindow <= 0) {
+                if (prevOrder == 2 && lessonPlace.order == 3) {
+                    resList.add(LessonWindow(0))
+                }
+            } else {
+                resList.add(LessonWindow(lessonWindow))
+            }
+            resList.add(lessonPlace)
+            prevOrder = lessonPlace.order
+        }
+        return resList
+    }
+
+    fun getEmptyPairsDecorator(lessonPlaces: List<LessonPlace>): List<LessonPlace> {
+        if (lessonPlaces.isEmpty()) return lessonPlaces
+        val lastOrder = lessonPlaces.last().order
+        val resList = mutableListOf<LessonPlace>()
+
+        for (i in 0..lastOrder) {
+            var notFound = true
+            for (lessonPlace in lessonPlaces) {
+                if (lessonPlace.order == i) {
+                    notFound = false
+                    resList.add(lessonPlace)
+                } else if (lessonPlace.order > i && notFound) {
+                    resList.add(LessonPlace(emptyList(), i, false))
+                }
+            }
+        }
+
+        return resList
+    }
+
+    fun List<LessonPlace>?.getOrderMap(): Map<Int, Boolean> {
+        if (this == null) return (0..6).associateWith { false }
+        val map = mutableMapOf<Int, Boolean>()
+        for (lessonPlace in this) {
+            if (lessonPlace.lessons.isNotEmpty()) {
+                map[lessonPlace.order] = true
+            }
+        }
+        for (i in 0..6) {
+            if (i !in map) {
+                map[i] = false
+            }
+        }
+        return map
+    }
+}
+
+
+fun merge(lessonPlace1: LessonPlace, lessonPlace2: LessonPlace): LessonPlace {
+    val lessons = (lessonPlace1.lessons + lessonPlace2.lessons).toSortedSet().toMutableList()
+
+    val newList = mutableListOf<Lesson>()
+    for (lesson in lessons) {
+        val index = newList.indexOfFirst { it.canMergeByGroup(lesson) }
+        if (index == -1) {
+            newList += lesson
+        } else {
+            newList[index] = newList[index].mergeByGroup(lesson)
+        }
+    }
+
+    return LessonPlace(newList, lessonPlace1.order, lessonPlace1.isEvening)
+}
 
 fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
     if (schedule1 == null) return schedule2
     if (schedule2 == null) return schedule1
     if (schedule1 == schedule2) return schedule1
 
-    val resList = schedule1.dailySchedules
-        .zip(schedule2.dailySchedules) { day1, day2 ->
-            (day1 + day2).toSortedSet().toMutableList()
-        }
-
-    resList.forEach { it.sort() }
-
-    val tempListNew: List<MutableList<Lesson>> = listOf(
-        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
-        mutableListOf(), mutableListOf(), mutableListOf()
-    )
-
-    for (day in resList.withIndex()) {
-        val dayNew = tempListNew[day.index]
-        for (lesson in day.value) {
-            val indexGroup = dayNew.indexOfFirst { it.canMergeByGroup(lesson) }
-            if (indexGroup == -1) {
-                val indexDate = dayNew.indexOfFirst { it.canMergeByDate(lesson) }
-                if (indexDate == -1) {
-                    dayNew += lesson
-                } else {
-                    dayNew[indexDate] = dayNew[indexDate].mergeByDate(lesson)
-                }
+    val resList = schedule1.dailySchedules.map { it.toMutableList() }
+    for (day in schedule2.dailySchedules.withIndex()) {
+        for (lessonPlace in day.value) {
+            val index = resList[day.index].indexOfFirst { it.order == lessonPlace.order && it.isEvening == lessonPlace.isEvening }
+            if (index == -1) {
+                resList[day.index] += lessonPlace
             } else {
-                dayNew[indexGroup] = dayNew[indexGroup].mergeByGroup(lesson)
+                resList[day.index][index] = merge(resList[day.index][index], lessonPlace)
             }
         }
     }
 
-    return Schedule.from(tempListNew)
+    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
 }
 
 fun Schedule.getAllTypes(): Set<String> {
     val lessonTypes = HashSet<String>()
     for (dailySchedule in dailySchedules) {
-        for (lesson in dailySchedule) {
-            lessonTypes.add(lesson.type)
+        for (lessonPlace in dailySchedule) {
+            for (lesson in lessonPlace.lessons) {
+                lessonTypes.add(lesson.type)
+            }
         }
     }
     return lessonTypes
@@ -64,24 +124,27 @@ fun Schedule.filter(
     val filterTeachers = teachers == null
     val filterGroups = groups == null
 
-    val tempList: List<MutableList<Lesson>> = listOf(
-        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
-        mutableListOf(), mutableListOf(), mutableListOf()
-    )
+    val tempList = MutableList(7) { emptyList<LessonPlace>() }
 
     // !! used because filterTitles = titles == null
     for (i in dailySchedules.indices) {
-        tempList[i].addAll(dailySchedules[i].asSequence().filter { lesson ->
-            (filterTitles || checkFilter(titles!!, lesson.title)) &&
-                    (filterTypes || checkFilter(types!!, lesson.type)) &&
-                    (filterTeachers || checkFilter(teachers!!, lesson.teachers.map { it.name })) &&
-                    (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
-                    (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
+        tempList[i] = dailySchedules[i].map {
+            LessonPlace(
+                it.lessons.filter { lesson ->
+                (filterTitles || checkFilter(titles!!, lesson.title)) &&
+                        (filterTypes || checkFilter(types!!, lesson.type)) &&
+                        (filterTeachers || checkFilter(teachers!!, lesson.teachers.map { it.name })) &&
+                        (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
+                        (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
 
-        })
+                },
+                it.order,
+                it.isEvening
+            )
+        }
     }
 
-    return Schedule.from(tempList)
+    return Schedule.from(tempList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
 }
 
 fun Iterable<Schedule?>.filter(
@@ -97,78 +160,80 @@ fun Iterable<Schedule?>.filter(
     val filterTeachers = teachers == null
     val filterGroups = groups == null
 
-    val tempList: List<MutableList<Lesson>> = listOf(
-        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
-        mutableListOf(), mutableListOf(), mutableListOf()
-    )
+    val tempList = MutableList(7) { mutableListOf<LessonPlace>() }
 
     for (schedule in this) {
         if (schedule == null) continue
         // !! used because filterTitles = titles == null
         for (i in schedule.dailySchedules.indices) {
-            tempList[i].addAll(schedule.dailySchedules[i].asSequence().filter { lesson ->
-                (filterTitles || checkFilter(titles!!, lesson.title)) &&
-                        (filterTypes || checkFilter(types!!, lesson.type)) &&
-                        (filterTeachers || checkFilter(
-                            teachers!!,
-                            lesson.teachers.map { it.name })) &&
-                        (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
-                        (filterAuditoriums || checkFilter(
-                            auditoriums!!,
-                            lesson.auditoriums.map { it.title }))
-            })
+            val q = schedule.dailySchedules[i].mapNotNull {
+                val lessons = it.lessons.filter { lesson ->
+                    (filterTitles || checkFilter(titles!!, lesson.title)) &&
+                            (filterTypes || checkFilter(types!!, lesson.type)) &&
+                            (filterTeachers || checkFilter(teachers!!, lesson.teachers.map { it.name })) &&
+                            (filterGroups || checkFilter(groups!!, lesson.groups.map { it.title })) &&
+                            (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
+
+                }
+                if (lessons.isEmpty()) {
+                    null
+                } else {
+                    LessonPlace(
+                        lessons,
+                        it.order,
+                        it.isEvening
+                    )
+                }
+
+            }
+            tempList[i].addAll(q)
         }
     }
 
-    tempList.forEach { it.sort() }
-
-    val tempListNew: List<MutableList<Lesson>> = listOf(
-        mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf(),
-        mutableListOf(), mutableListOf(), mutableListOf()
-    )
+    val resList = List(7) { mutableListOf<LessonPlace>() }
 
     for (day in tempList.withIndex()) {
-        val dayNew = tempListNew[day.index]
-        for (lesson in day.value) {
-            val indexGroup = dayNew.indexOfFirst { it.canMergeByGroup(lesson) }
-            if (indexGroup == -1) {
-                val indexDate = dayNew.indexOfFirst { it.canMergeByDate(lesson) }
-                if (indexDate == -1) {
-                    dayNew += lesson
-                } else {
-                    dayNew[indexDate] = dayNew[indexDate].mergeByDate(lesson)
-                }
+        for (lessonPlace in day.value) {
+            val index = resList[day.index].indexOfFirst { it.order == lessonPlace.order && it.isEvening == lessonPlace.isEvening }
+            if (index == -1) {
+                resList[day.index] += lessonPlace
             } else {
-                dayNew[indexGroup] = dayNew[indexGroup].mergeByGroup(lesson)
+                resList[day.index][index] = merge(resList[day.index][index], lessonPlace)
             }
         }
     }
 
-    return Schedule.from(tempListNew)
+    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
 }
 
 fun filterByDate(
-    dailySchedule: List<Lesson>,
+    dailySchedule: List<LessonPlace>,
     date: LocalDate,
     showEnded: Boolean,
     showCurrent: Boolean,
     showNotStarted: Boolean
-): List<Lesson> {
-    return dailySchedule.filter {
-        if (showEnded && showCurrent && showNotStarted) return@filter true
-        if (!showEnded && !showCurrent && !showNotStarted) return@filter true
+): List<LessonPlace> {
+    return dailySchedule.map {
+        LessonPlace(
+            it.lessons.filter {
+                if (showEnded && showCurrent && showNotStarted) return@filter true
+                if (!showEnded && !showCurrent && !showNotStarted) return@filter true
 
-        if (showEnded && !showCurrent && !showNotStarted) return@filter date > it.dateTo
-        if (showEnded && showCurrent && !showNotStarted) return@filter date >= it.dateFrom
+                if (showEnded && !showCurrent && !showNotStarted) return@filter date > it.dateTo
+                if (showEnded && showCurrent && !showNotStarted) return@filter date >= it.dateFrom
 
-        if (!showEnded && !showCurrent && showNotStarted) return@filter date < it.dateFrom
-        if (!showEnded && showCurrent && showNotStarted) return@filter date <= it.dateTo
+                if (!showEnded && !showCurrent && showNotStarted) return@filter date < it.dateFrom
+                if (!showEnded && showCurrent && showNotStarted) return@filter date <= it.dateTo
 
-        if (!showEnded && showCurrent && !showNotStarted) return@filter date in it.dateFrom..it.dateTo
-        if (showEnded && !showCurrent && showNotStarted) return@filter date !in it.dateFrom..it.dateTo
+                if (!showEnded && showCurrent && !showNotStarted) return@filter date in it.dateFrom..it.dateTo
+                if (showEnded && !showCurrent && showNotStarted) return@filter date !in it.dateFrom..it.dateTo
 
-        return@filter true
-    }
+                return@filter true
+            },
+            it.order,
+            it.isEvening
+        )
+    }.filter{ it.lessons.isNotEmpty() }
 }
 
 private fun checkFilter(filterList: Iterable<String>, value: String): Boolean {

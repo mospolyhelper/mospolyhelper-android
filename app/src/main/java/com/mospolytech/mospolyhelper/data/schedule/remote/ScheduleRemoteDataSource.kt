@@ -21,4 +21,14 @@ class ScheduleRemoteDataSource(
             null
         }
     }
+
+    suspend fun getAll(isSession: Boolean, onProgress: (Int, Int) -> Unit = { _: Int, _: Int -> }): Sequence<Schedule> {
+        return try {
+            val scheduleString = client.getSchedules(isSession, onProgress)
+            scheduleParser.parseSchedules(scheduleString)
+        } catch (e: Exception) {
+            Log.e(TAG, "Schedule downloading and parsing exception: groupTitle: isSession: $isSession", e)
+            emptySequence()
+        }
+    }
 }

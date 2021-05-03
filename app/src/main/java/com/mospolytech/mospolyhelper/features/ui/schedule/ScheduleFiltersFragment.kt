@@ -71,9 +71,6 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
         if (viewModel.showNotImportantLessons.value) {
             chipLabelsNotImportant.isChecked = true
         }
-        if (viewModel.showNotLabeledLessons.value) {
-            chipLabelsNotLabeled.isChecked = true
-        }
 
 
 
@@ -96,9 +93,6 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
         }
         chipLabelsNotImportant.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.showNotImportantLessons.value = isChecked
-        }
-        chipLabelsNotLabeled.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showNotLabeledLessons.value = isChecked
         }
     }
 

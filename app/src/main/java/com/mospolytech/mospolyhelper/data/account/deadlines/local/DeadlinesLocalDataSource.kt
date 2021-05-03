@@ -1,11 +1,12 @@
 package com.mospolytech.mospolyhelper.data.account.deadlines.local
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class DeadlinesLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 
@@ -34,10 +35,10 @@ class DeadlinesLocalDataSource(private val prefDataSource: SharedPreferencesData
         }
         val currentInfo = Json.encodeToString(deadlines)
         if (getJson() != currentInfo)
-            prefDataSource.setString(PreferenceKeys.Deadlines, currentInfo)
+            prefDataSource.set(PreferenceKeys.Deadlines, currentInfo)
     }
 
     fun getJson(): String {
-        return prefDataSource.getString(PreferenceKeys.Deadlines, "")
+        return prefDataSource.get(PreferenceKeys.Deadlines, "")
     }
 }

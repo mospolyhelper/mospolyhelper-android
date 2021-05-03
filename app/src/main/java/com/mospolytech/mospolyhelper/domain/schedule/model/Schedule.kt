@@ -7,22 +7,24 @@ import java.time.LocalDate
 
 @Serializable
 data class Schedule(
-    val dailySchedules: List<List<Lesson>>,
+    val dailySchedules: List<List<LessonPlace>>,
     @Serializable(with = LocalDateSerializer::class)
     val dateFrom: LocalDate,
     @Serializable(with = LocalDateSerializer::class)
     val dateTo: LocalDate
 ) {
     companion object {
-        fun from(dailySchedules: List<List<Lesson>>): Schedule {
+        fun from(dailySchedules: List<List<LessonPlace>>): Schedule {
             var dateFrom = LocalDate.MAX
             var dateTo = LocalDate.MIN
             for (dailySchedule in dailySchedules) {
-                for (lesson in dailySchedule) {
-                    if (lesson.dateFrom < dateFrom)
-                        dateFrom = lesson.dateFrom;
-                    if (lesson.dateTo > dateTo)
-                        dateTo = lesson.dateTo;
+                for (lessonPlace in dailySchedule) {
+                    for (lesson in lessonPlace.lessons) {
+                        if (lesson.dateFrom < dateFrom)
+                            dateFrom = lesson.dateFrom
+                        if (lesson.dateTo > dateTo)
+                            dateTo = lesson.dateTo
+                    }
                 }
             }
 
@@ -34,7 +36,7 @@ data class Schedule(
         }
     }
 
-    fun getSchedule(
+    fun getLessons(
         date: LocalDate,
         showEnded: Boolean = false,
         showCurrent: Boolean = true,
@@ -46,21 +48,13 @@ data class Schedule(
         showCurrent,
         showNotStarted
     )
-
-    fun getScheduleCount(date: LocalDate): Int {
-        val dailySchedule = getSchedule(date)
-        val orders = mutableSetOf<Int>()
-        for (lesson in dailySchedule) {
-            orders.add(lesson.order)
-        }
-        return orders.size
-    }
 }
 
 class SchedulePackList(
     val schedules: Iterable<Schedule?>,
-    val lessonTitles: MutableSet<String>,
-    val lessonTeachers: MutableSet<String>,
-    val lessonAuditoriums: MutableSet<String>,
-    val lessonTypes: MutableSet<String>
+    val lessonTitles: List<String>,
+    val lessonTypes: List<String>,
+    val lessonTeachers: List<String>,
+    val lessonGroups: List<String>,
+    val lessonAuditoriums: List<String>,
 )

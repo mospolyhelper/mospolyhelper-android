@@ -13,48 +13,48 @@ class AuthRepositoryImpl(
     private val prefDataSource: SharedPreferencesDataSource
 ) : AuthRepository {
     override suspend fun logIn(login: String, password: String) = flow {
-        val oldSessionId = prefDataSource.getString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
+        val oldSessionId = prefDataSource.get(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
         val newSessionId = dataSource.auth(login, password, oldSessionId)
         newSessionId.onSuccess {
-            prefDataSource.setString(PreferenceKeys.SessionId, it)
+            prefDataSource.set(PreferenceKeys.SessionId, it)
         }
         emit(newSessionId)
     }
 
     override fun logOut() {
-        prefDataSource.setString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
-        prefDataSource.setString(PreferenceKeys.Info, "")
+        prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
+        prefDataSource.set(PreferenceKeys.Info, "")
     }
 
     override fun getLogin(): String {
-        return prefDataSource.getString(PreferenceKeys.Login, PreferenceDefaults.Login)
+        return prefDataSource.get(PreferenceKeys.Login, PreferenceDefaults.Login)
     }
 
     override fun setLogin(value: String) {
-        prefDataSource.setString(PreferenceKeys.Login, value)
+        prefDataSource.set(PreferenceKeys.Login, value)
     }
 
     override fun getPassword(): String {
-        return prefDataSource.getString(PreferenceKeys.Password, PreferenceDefaults.Password)
+        return prefDataSource.get(PreferenceKeys.Password, PreferenceDefaults.Password)
     }
 
     override fun setPassword(value: String) {
-        prefDataSource.setString(PreferenceKeys.Password, value)
+        prefDataSource.set(PreferenceKeys.Password, value)
     }
 
     override fun getSaveLogin(): Boolean {
-        return prefDataSource.getBoolean(PreferenceKeys.SaveLogin, PreferenceDefaults.SaveLogin)
+        return prefDataSource.get(PreferenceKeys.SaveLogin, PreferenceDefaults.SaveLogin)
     }
 
     override fun setSaveLogin(value: Boolean) {
-        prefDataSource.setBoolean(PreferenceKeys.SaveLogin, value)
+        prefDataSource.set(PreferenceKeys.SaveLogin, value)
     }
 
     override fun getSavePassword(): Boolean {
-        return prefDataSource.getBoolean(PreferenceKeys.SavePassword, PreferenceDefaults.SavePassword)
+        return prefDataSource.get(PreferenceKeys.SavePassword, PreferenceDefaults.SavePassword)
     }
 
     override fun setSavePassword(value: Boolean) {
-        prefDataSource.setBoolean(PreferenceKeys.SavePassword, value)
+        prefDataSource.set(PreferenceKeys.SavePassword, value)
     }
 }

@@ -9,9 +9,12 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -77,22 +80,22 @@ class ScheduleAppWidgetProvider : AppWidgetProvider() {
             setRemoteAdapter(R.id.list_schedule, adapterIntent)
 
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            var idFull = prefs.getString(
-                PreferenceKeys.ScheduleGroupTitle,
-                PreferenceDefaults.ScheduleGroupTitle
-            )!!
-            val isStudent = prefs.getBoolean(
-                PreferenceKeys.ScheduleUserTypePreference,
-                PreferenceDefaults.ScheduleUserTypePreference
-            )
-            if (!isStudent) {
-                idFull = "преп. ID" + idFull
+            val user = try {
+                Json.decodeFromString<UserSchedule>(prefs.getString(
+                    PreferenceKeys.ScheduleUser,
+                    PreferenceDefaults.ScheduleUser
+                )!!)
+            } catch (e: Exception) {
+                null
             }
-            if (idFull.isEmpty()) {
-                idFull = "группа / преподаватель не выбран"
+            val userTitle = when (user) {
+                is StudentSchedule -> user.title
+                is TeacherSchedule -> Teacher(user.title).getShortName()
+                is AuditoriumSchedule -> user.title
+                else -> ""
             }
             val date = LocalDate.now().format(dateFormatter).capitalize()
-            setTextViewText(R.id.text_lesson_date, "$date | $idFull")
+            setTextViewText(R.id.text_lesson_date, "$date | $userTitle")
         }
 
         // Tell the AppWidgetManager to perform an update on the current app widget

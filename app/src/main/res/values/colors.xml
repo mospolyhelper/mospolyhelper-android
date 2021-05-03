@@ -56,6 +56,57 @@
   <color name="lessonTypeNotImportant">#cfeafd</color>
   <color name="lessonTypeNotImportantText">#4a7d9d</color>
 
+  <color name="lessonOrder1">#FB6A5A</color>
+  <color name="lessonOrder2">#E3A24D</color>
+  <color name="lessonOrder3">#f2e1ad</color>
+  <color name="lessonOrder4">#8ADEF8</color>
+  <color name="lessonOrder5">#3F66BB</color>
+  <color name="lessonOrder6">#8250D2</color>
+  <color name="lessonOrder7">#612280</color>
+
+  <color name="lessonOrder1Text">#bb725d</color>
+  <color name="lessonOrder2Text">#db7924</color>
+  <color name="lessonOrder3Text">#C99F20</color>
+  <color name="lessonOrder4Text">#149FBB</color>
+  <color name="lessonOrder5Text">#496A70</color>
+  <color name="lessonOrder6Text">#415D71</color>
+  <color name="lessonOrder7Text">#413f5a</color>
+
+  <!-- red -->
+  <color name="lessonTagRed">#ED6666</color>
+  <!-- orange -->
+  <color name="lessonTagOrange">#fb9d38</color>
+  <!-- yellow -->
+  <color name="lessonTagYellow">#fbe938</color>
+  <!-- green -->
+  <color name="lessonTagGreen">#5cd256</color>
+  <!-- light blue -->
+  <color name="lessonTagLightBlue">#10acd2</color>
+  <!-- dark blue -->
+  <color name="lessonTagBlue">#556ad2</color>
+  <!-- purple -->
+  <color name="lessonTagPurple">#9B44DD</color>
+  <!-- pink -->
+  <color name="lessonTagPink">#FC54B4</color>
+
+  <!-- red -->
+  <color name="lessonTagRedText">#E1BABA</color>
+  <!-- orange -->
+  <color name="lessonTagOrangeText">#E4C9AC</color>
+  <!-- yellow -->
+  <color name="lessonTagYellowText">#FBF4B1</color>
+  <!-- green -->
+  <color name="lessonTagGreenText">#ABD7A9</color>
+  <!-- light blue -->
+  <color name="lessonTagLightBlueText">#8CC4D2</color>
+  <!-- dark blue -->
+  <color name="lessonTagBlueText">#949DCC</color>
+  <!-- purple -->
+  <color name="lessonTagPurpleText">#BE9DD7</color>
+  <!-- pink -->
+  <color name="lessonTagPinkText">#F8BCDE</color>
+
+
 
   <color name="textAccent">#222222</color>
   <color name="textAccentDisabled">#CCCCCC</color>
@@ -64,7 +115,7 @@
 
 
   <!-- Schedule Lesson Info  -->
-  <color name="lessonInfoBackground">@color/layerZero</color>
+  <color name="lessonInfoBackground">@color/layerOne</color>
   <color name="lessonInfoChipColor">@color/layerOne</color>
   <color name="lessonInfoText">#333333</color>
 
@@ -114,5 +165,13 @@
   <color name="addressesBackground">@color/layerZero</color>
   <color name="addressesTabLayout">@color/layerTwo</color>
   <color name="addressesItemBackground">@color/layerOne</color>
+
+  <color name="featureBackground">#DCE0FC</color>
+  <color name="featureText">#8C9FFF</color>
+
+  <color name="featureBackgroundNotImportant">#345473</color>
+  <color name="featureTextNotImportant">#9AD3FF</color>
+  <color name="featureBackgroundImportant">#733434</color>
+  <color name="featureTextImportant">#FF9A9A</color>
 
 </resources>

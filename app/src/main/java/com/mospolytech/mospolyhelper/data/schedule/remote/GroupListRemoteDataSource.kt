@@ -6,7 +6,7 @@ import com.mospolytech.mospolyhelper.data.schedule.converter.GroupListRemoteConv
 import com.mospolytech.mospolyhelper.utils.TAG
 
 class GroupListRemoteDataSource(
-    private val client: GroupListClient = GroupListClient(),
+    private val client: GroupListClient,
     private val groupListConverter: GroupListRemoteConverter = GroupListRemoteConverter()
 ) {
 

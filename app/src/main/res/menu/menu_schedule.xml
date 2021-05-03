@@ -16,4 +16,9 @@
         android:orderInCategory="101"
         app:showAsAction="never"
         android:title="Календарь" />
+    <item android:id="@+id/menu_schedule_user_choice"
+        android:icon="@drawable/ic_group_24"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:title="Выбор пользователя"/>
 </menu>

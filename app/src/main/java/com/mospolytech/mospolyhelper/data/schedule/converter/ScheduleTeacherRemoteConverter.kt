@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.data.schedule.converter
 
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.time.LocalDate
@@ -57,26 +58,28 @@ class ScheduleTeacherRemoteConverter {
         )
         val tableBody = parser.getElementsByTag("tbody").first()
 
-        val tempList: List<MutableList<Lesson>> = listOf(
-            mutableListOf(), mutableListOf(), mutableListOf(),
-            mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf()
-        )
+        val tempList: List<MutableList<LessonPlace>> = List(7) { mutableListOf() }
 
         val rows = tableBody.getElementsByTag("tr")
         for (row in rows.withIndex()) {
             val cells = row.value.getElementsByTag("td")
             for (cell in cells.withIndex()) {
                 val lessonDivs = cell.value.select(">div")
+                val order = row.index
+                val lessons = mutableListOf<Lesson>()
                 for (lessonDiv in lessonDivs) {
-                    val lesson = parseLesson(lessonDiv, row.index, teacher)
-                    tempList[(cell.index + 1) % 7].add(lesson)
+                    val lesson = parseLesson(lessonDiv, teacher)
+                    lessons.add(lesson)
                 }
+                tempList[(cell.index + 1) % 7].add(
+                    LessonPlace(lessons, order, false)
+                )
             }
         }
         return Schedule.from(tempList)
     }
 
-    private fun parseLesson(element: Element, order: Int, teacher: Teacher): Lesson {
+    private fun parseLesson(element: Element, teacher: Teacher): Lesson {
         val emoji = element
             .select(">b")
             .map { Auditorium.parseEmoji(it.text()) }
@@ -98,21 +101,20 @@ class ScheduleTeacherRemoteConverter {
             lessonTitle = lessonTitle.replace("($lessonType)", "")
         }
         lessonTitle = processTitle(lessonTitle)
-        lessonType = Lesson.fixTeacherType(lessonType, lessonTitle)
+        lessonType = LessonTypeUtils.fixTeacherType(lessonType, lessonTitle)
 
 
         val groups = element.getElementsByClass("lesson__group").map { it.text()!! }
 
 
         return Lesson(
-            order,
             lessonTitle,
-            listOf(teacher),
-            dateFrom,
-            dateTo,
-            auditoriums,
             lessonType,
-            groups.map { Group.fromTitle(it) }
+            listOf(teacher),
+            auditoriums,
+            groups.map { Group.fromTitle(it) }.sortedBy { it.title },
+            dateFrom,
+            dateTo
         )
     }
 

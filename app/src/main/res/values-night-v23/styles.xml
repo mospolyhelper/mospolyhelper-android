@@ -12,6 +12,7 @@
     <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     <item name="android:navigationBarColor">@color/layerZero</item>
     <item name="android:statusBarColor">@color/layerZero</item>
+<!--    <item name="android:statusBarColor">#4e7d96</item>-->
     <item name="android:windowLightStatusBar">false</item>
     <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
     <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>

@@ -1,37 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="@dimen/lesson_margin_start"
+    android:layout_marginEnd="@dimen/lesson_margin_end"
+    android:layout_marginTop="@dimen/lesson_margin_top"
+    android:layout_marginBottom="@dimen/lesson_margin_bottom"
+    android:paddingStart="@dimen/lesson_padding_start"
+    android:paddingEnd="@dimen/lesson_padding_end"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <TextView
-        android:layout_marginStart="@dimen/lesson_margin_start"
-        android:layout_marginTop="@dimen/lesson_margin_top"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="2dp"
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
+        android:layout_marginBottom="1dp"
         android:id="@+id/text_title"
-        style="@style/ScheduleLessonTime"
-        android:drawablePadding="8dp"
+        style="@style/ScheduleLessonSubtitle"
+        android:fontFamily="@font/ubuntu"
+        android:textColor="#9E9EA6"
+        android:textSize="17dp"
+        android:drawablePadding="@dimen/lesson_drawable_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:breakStrategy="simple"
         android:clickable="false"
-        android:text="Большой перерыв" />
+        android:text="Большой перерыв"
+        app:drawableTint="#9E9EA6" />
 
-    <TextView
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingEnd="@dimen/lesson_padding_end"
-        android:id="@+id/text_info"
-        style="@style/ScheduleLessonSubtitle"
+    <LinearLayout
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="@dimen/lesson_margin_end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/lesson_margin_start"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="14dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:visibility="gone"
+            android:layout_marginTop="1sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:tintMode="multiply"
+                app:srcCompat="@drawable/ic_squircle_2"
+                app:tint="#292A2F" />
+
+            <ImageView
+                android:id="@+id/imageview_info"
+                android:layout_gravity="center"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:scaleType="centerCrop" />
+        </FrameLayout>
+
+    <TextView
+        android:layout_marginStart="@dimen/lesson_icon_size"
+        android:paddingStart="@dimen/lesson_drawable_padding"
+        android:lineSpacingMultiplier="@dimen/text_line_spacing"
+        android:id="@+id/text_info"
+        style="@style/ScheduleLessonSubtitle"
+        android:textColor="#68686D"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:breakStrategy="balanced"
         android:clickable="false"
         android:text="окно в 1 час 50 минут" />
-
+    </LinearLayout>
 </LinearLayout>

@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.Tag
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 
 class TagAdapter : RecyclerView.Adapter<TagViewHolder>() {
 
-    var tags = emptyList<Tag>()
+    var tags = emptyList<LessonTag>()
 
     override fun getItemCount() = tags.size
 
@@ -28,7 +28,7 @@ class TagAdapter : RecyclerView.Adapter<TagViewHolder>() {
 }
 
 class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    fun bind(tag: Tag) {
+    fun bind(tag: LessonTag) {
         (itemView as TextView).text = tag.title
         TextViewCompat.setCompoundDrawableTintList(itemView, ColorStateList.valueOf(tag.color))
     }

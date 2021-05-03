@@ -1,11 +1,12 @@
 package com.mospolytech.mospolyhelper.data.account.statements.local
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class StatementsLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
     fun get(statements: String): Result<Statements> {
@@ -19,10 +20,10 @@ class StatementsLocalDataSource(private val prefDataSource: SharedPreferencesDat
     fun set(statements: Statements) {
         val currentInfo = Json.encodeToString(statements)
         if (getJson() != currentInfo)
-            prefDataSource.setString(PreferenceKeys.Statements, currentInfo)
+            prefDataSource.set(PreferenceKeys.Statements, currentInfo)
     }
 
     fun getJson(): String {
-        return prefDataSource.getString(PreferenceKeys.Statements, "")
+        return prefDataSource.get(PreferenceKeys.Statements, "")
     }
 }

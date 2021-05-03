@@ -1,8 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.calendar
 
-import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +8,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.utils.abbreviationFrom
-import com.mospolytech.mospolyhelper.domain.schedule.utils.getShortType
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.LocalDate
@@ -96,7 +92,7 @@ class CalendarSevenAdapter(
             if (schedule == null) return
 
             val date = firstPosDate.plusDays(adapterPosition.toLong())
-            val dailySchedule = schedule.getSchedule(date)
+            val dailySchedule = schedule.getLessons(date)
             setLessons(dailySchedule, date)
             setHead(date)
         }
@@ -111,65 +107,65 @@ class CalendarSevenAdapter(
             lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
         }
 
-        private fun setLessons(dailySchedule: List<Lesson>, date: LocalDate) {
-            val res = SpannableStringBuilder()
-
-            if (dailySchedule.isNotEmpty()) {
-                var title: String
-                spansAppend(
-                    res,
-                    (dailySchedule[0].order + 1).toString() + ") ",
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    //QuoteSpan(colorParagraph),
-                    //BackgroundColorSpan(colorTimeBackground),
-                    TypefaceSpan("sans-serif-medium")
-                )
-
-                spansAppend(
-                    res,
-                    getShortType(dailySchedule[0].type),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                    ForegroundColorSpan(
-                        if (dailySchedule[0].isImportant)
-                            lessonTypeColors[0]
-                        else
-                            lessonTypeColors[1]
-                    ),
-                    RelativeSizeSpan(0.9f),
-                    TypefaceSpan("sans-serif-medium"));
-
-                title = abbreviationFrom(dailySchedule[0].title)
-                res.append("\n" + title)
-
-
-                for (i in 1 until dailySchedule.size) {
-                    if (!dailySchedule[i].equalsTime(dailySchedule[i - 1])) {
-                        spansAppend(
-                            res, "\n" + (dailySchedule[i].order + 1) + ") ",
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                            //QuoteSpan(colorParagraph),
-                            //BackgroundColorSpan(colorTimeBackground),
-                            TypefaceSpan("sans-serif-medium")
-                        )
-                    }
-                    spansAppend(
-                        res,
-                        getShortType(dailySchedule[i].type),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        ForegroundColorSpan(
-                            if (dailySchedule[i].isImportant)
-                                lessonTypeColors[0]
-                            else
-                                lessonTypeColors[1]
-                        ),
-                        RelativeSizeSpan(0.9f),
-                        TypefaceSpan("sans-serif-medium")
-                    )
-                    title = abbreviationFrom(dailySchedule[i].title)
-                    res.append("\n" + title)
-                }
-            }
-            lessonType.setText(res, TextView.BufferType.NORMAL);
+        private fun setLessons(dailySchedule: List<LessonPlace>, date: LocalDate) {
+//            val res = SpannableStringBuilder()
+//
+//            if (dailySchedule.isNotEmpty()) {
+//                var title: String
+//                spansAppend(
+//                    res,
+//                    (dailySchedule[0].order + 1).toString() + ") ",
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                    //QuoteSpan(colorParagraph),
+//                    //BackgroundColorSpan(colorTimeBackground),
+//                    TypefaceSpan("sans-serif-medium")
+//                )
+//
+//                spansAppend(
+//                    res,
+//                    getShortType(dailySchedule[0].type),
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                    ForegroundColorSpan(
+//                        if (dailySchedule[0].isImportant)
+//                            lessonTypeColors[0]
+//                        else
+//                            lessonTypeColors[1]
+//                    ),
+//                    RelativeSizeSpan(0.9f),
+//                    TypefaceSpan("sans-serif-medium"));
+//
+//                title = abbreviationFrom(dailySchedule[0].title)
+//                res.append("\n" + title)
+//
+//
+//                for (i in 1 until dailySchedule.size) {
+//                    if (!dailySchedule[i].equalsTime(dailySchedule[i - 1])) {
+//                        spansAppend(
+//                            res, "\n" + (dailySchedule[i].order + 1) + ") ",
+//                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                            //QuoteSpan(colorParagraph),
+//                            //BackgroundColorSpan(colorTimeBackground),
+//                            TypefaceSpan("sans-serif-medium")
+//                        )
+//                    }
+//                    spansAppend(
+//                        res,
+//                        getShortType(dailySchedule[i].type),
+//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+//                        ForegroundColorSpan(
+//                            if (dailySchedule[i].isImportant)
+//                                lessonTypeColors[0]
+//                            else
+//                                lessonTypeColors[1]
+//                        ),
+//                        RelativeSizeSpan(0.9f),
+//                        TypefaceSpan("sans-serif-medium")
+//                    )
+//                    title = abbreviationFrom(dailySchedule[i].title)
+//                    res.append("\n" + title)
+//                }
+//            }
+//            lessonType.setText(res, TextView.BufferType.NORMAL);
         }
 
         private fun spansAppend(builder: SpannableStringBuilder, text: String, flags: Int, vararg spans: Any) {

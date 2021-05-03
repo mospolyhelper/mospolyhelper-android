@@ -11,7 +11,6 @@
     <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
     <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
     <item name="android:navigationBarColor">#0C0C0C</item>
-
     <item name="android:statusBarColor">@color/layerZero</item>
     <item name="android:windowLightStatusBar">true</item>
     <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
@@ -46,6 +45,27 @@
     <item name="android:windowLightStatusBar">false</item>
   </style>
 
+  <style name="ButtonStyle">
+    <item name="android:textSize">15sp</item>
+    <item name="android:fontFamily">@font/ubuntu_bold</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="android:minHeight">15sp</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:paddingTop">12.5sp</item>
+    <item name="android:paddingBottom">14sp</item>
+    <item name="android:background">@drawable/shape_button</item>
+  </style>
+
+  <style name="TextH1Style">
+    <item name="android:textSize">16sp</item>
+    <item name="android:fontFamily">@font/ubuntu_medium</item>
+  </style>
+
+  <style name="TextFeaturesStyle">
+    <item name="android:textSize">32sp</item>
+    <item name="android:fontFamily">@font/ubuntu_bold</item>
+  </style>
+
   <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
     <item name="android:layout_width">95dp</item>
     <item name="android:theme">@style/Theme.MaterialComponents.DayNight</item>
@@ -61,10 +81,27 @@
     <item name="bottomSheetStyle">@style/BottomSheet</item>
   </style>
 
+  <style name="BottomSheetDialog">
+    <item name="android:background">@android:color/transparent</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:windowTranslucentStatus">true</item>
+
+  </style>
+
+  <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:navigationBarColor">@color/layerOne</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="bottomSheetStyle">@style/BottomSheetDialog</item>
+  </style>
+
   <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" >
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
   </style>
+
+
+
 
   <style name="Dialog.Theme" parent="ThemeOverlay.MaterialComponents.Dialog">
     <item name="colorPrimary">@color/textColorPrimary</item>
@@ -72,12 +109,12 @@
 
   <style name="ScheduleToolbarText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
     <item name="android:textSize">30sp</item>
-    <item name="android:fontFamily">@font/open_sans</item>
+    <item name="android:fontFamily">@font/ubuntu</item>
   </style>
 
   <style name="ScheduleToolbarSubtitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
     <item name="android:textSize">13sp</item>
-    <item name="android:fontFamily">@font/open_sans_semibold</item>
+    <item name="android:fontFamily">@font/ubuntu_medium</item>
   </style>
 
   <style name="TabLayoutAddresses" parent="Widget.Design.TabLayout">
@@ -94,25 +131,39 @@
 
   <style name="TabLayoutAddressesTextAppearance" parent="TextAppearance.AppCompat">
     <item name="android:textSize">13dp</item>
-    <item name="fontFamily">@font/open_sans_bold</item>
+    <item name="fontFamily">@font/ubuntu_bold</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:textColor">@color/addresses_tab_selector</item>
   </style>
 
+  <style name="TabLayoutWeekText">
+    <item name="android:textSize">11dp</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:fontFamily">@font/ubuntu_medium</item>
+    <item name="android:textColor">#bbbbbb</item>
+  </style>
+
+  <style name="TabLayoutDayText">
+    <item name="android:textSize">15dp</item>
+    <item name="fontFamily">@font/ubuntu_medium</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:gravity">center_vertical</item>
+  </style>
+
   <style name="TabLayoutSchedule" parent="Widget.Design.TabLayout">
-<!--    <item name="tabIndicatorGravity">center</item>-->
-<!--    <item name="tabIndicatorHeight">@dimen/schedule_tab_indicator_height</item>-->
-<!--    <item name="tabBackground">@drawable/background_tab_schedule</item>-->
+    <item name="tabIndicatorGravity">center</item>
+    <item name="tabIndicatorHeight">@dimen/schedule_tab_indicator_height</item>
+    <item name="tabBackground">@drawable/background_tab_schedule</item>
     <item name="tabRippleColor">#00000000</item>
-    <item name="tabIndicatorColor">@color/colorSecondary</item>
-<!--    <item name="tabIndicator">@drawable/background_tab_indicator_schedule</item>-->
-<!--    <item name="tabPaddingStart">0dp</item>-->
-<!--    <item name="tabPaddingEnd">0dp</item>-->
+    <item name="tabIndicatorColor">@color/layerTwo</item>
+    <item name="tabIndicator">@drawable/background_tab_indicator_schedule</item>
+    <item name="tabPaddingStart">1dp</item>
+    <item name="tabPaddingEnd">1dp</item>
     <item name="tabTextAppearance">@style/TabLayoutScheduleTextAppearance</item>
   </style>
   <style name="TabLayoutScheduleTextAppearance" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">13dp</item>
-    <item name="fontFamily">@font/open_sans_semibold</item>
+    <item name="android:textSize">14dp</item>
+    <item name="fontFamily">@font/ubuntu_medium</item>
     <item name="android:textAllCaps">false</item>
   </style>
   <style name="TabLayoutScheduleType" parent="Widget.Design.TabLayout">
@@ -129,28 +180,29 @@
 
   <style name="TabLayoutScheduleTypeTextAppearance" parent="TextAppearance.AppCompat">
     <item name="android:textSize">15dp</item>
-    <item name="fontFamily">@font/open_sans_semibold</item>
+    <item name="fontFamily">@font/ubuntu_medium</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:textColor">@color/addresses_tab_selector</item>
   </style>
 
   <style name="ScheduleLessonTitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">18sp</item>
-    <item name="android:fontFamily">@font/open_sans</item>
+    <item name="android:textSize">17.8sp</item>
+    <item name="android:fontFamily">@font/ubuntu</item>
     <item name="android:textColor">@color/accent_text_color</item>
     <item name="android:breakStrategy">simple</item>
+    <item name="android:lineSpacingMultiplier">@dimen/text_line_spacing</item>
   </style>
 
   <style name="ScheduleLessonSubtitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">12.9sp</item>
-    <item name="android:fontFamily">@font/open_sans_semibold</item>
+    <item name="android:textSize">14.7sp</item>
+    <item name="android:fontFamily">@font/ubuntu</item>
     <item name="android:textColor">@color/secondary_text_color</item>
     <item name="android:drawableTint">@color/secondary_text_color</item>
   </style>
 
   <style name="ScheduleLessonTime" parent="TextAppearance.AppCompat">
     <item name="android:textSize">18sp</item>
-    <item name="android:fontFamily">@font/open_sans</item>
+    <item name="android:fontFamily">@font/ubuntu</item>
     <item name="android:textColor">@color/lessonTimeText</item>
     <item name="android:textAlignment">textStart</item>
   </style>

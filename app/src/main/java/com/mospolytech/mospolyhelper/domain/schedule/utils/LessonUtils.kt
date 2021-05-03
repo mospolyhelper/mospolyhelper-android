@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
+import androidx.core.text.HtmlCompat
+import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 
 private const val minCriticalTitleLength = 10
@@ -54,32 +56,72 @@ fun getShortType(type: String): String {
     return type.split(' ').filter { it.isNotEmpty() }.joinToString(" ") { cutWord(it) }
 }
 
-fun Lesson.canMergeByDate(other: Lesson): Boolean {
-    return order == other.order &&
-            title == other.title &&
-            type == other.type &&
-            teachers == other.teachers &&
-            auditoriums == other.auditoriums &&
-            groups == other.groups &&
-            (other.dateFrom in dateFrom..dateTo ||
-            dateFrom in other.dateFrom..other.dateTo)
-}
-
-fun Lesson.mergeByDate(other: Lesson): Lesson {
-    val minDate = if (dateFrom < other.dateFrom) dateFrom else other.dateFrom
-    val maxDate = if (dateTo > other.dateTo) dateTo else other.dateTo
-    return copy(dateFrom = minDate, dateTo = maxDate)
-}
-
 fun Lesson.canMergeByGroup(other: Lesson): Boolean {
-    return order == other.order &&
-            title == other.title &&
+    return title == other.title &&
             auditoriums == other.auditoriums &&
             teachers == other.teachers &&
-            dateFrom == other.dateFrom &&
-            dateTo == other.dateTo
+            (other.dateFrom in dateFrom..dateTo ||
+                    dateFrom in other.dateFrom..other.dateTo)
 }
 
 fun Lesson.mergeByGroup(other: Lesson): Lesson {
-    return copy(groups = (groups + other.groups).sortedBy { it.title })
+    val minDate = if (dateFrom < other.dateFrom) dateFrom else other.dateFrom
+    val maxDate = if (dateTo > other.dateTo) dateTo else other.dateTo
+    return copy(
+        groups = (groups + other.groups).sortedBy { it.title },
+        dateFrom = minDate,
+        dateTo = maxDate
+    )
 }
+
+val Auditorium.description: String
+    get() {
+        val parsedTitle = HtmlCompat.fromHtml(
+            title,
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        ).toString()
+        for (pair in audMap) {
+            val regex = Regex(pair.key, RegexOption.IGNORE_CASE)
+            if (regex.containsMatchIn(parsedTitle)) {
+                return regex.replace(parsedTitle, pair.value)
+            }
+        }
+        return parsedTitle
+    }
+
+private val audMap = mapOf(
+    """^ав\s*((\d)(\d)(.+))$""" to """Автозаводская, к. $2, этаж $3, ауд. $1""",
+
+    """^пр\s*((\d)(\d).+)$""" to """Прянишникова, к. $2, этаж $3, ауд. $1""",
+    """^пр\s*ВЦ\s*\d+\s*\(((\d)(\d).+)\)$""" to """Прянишникова, к. $2, этаж $3, ауд. $1""",
+    """^пр\s(ФО[\s-]*\d+)$""" to """Прянишникова, к. 2, этаж 4, ауд. $1""",
+
+    """^м\s*((\d)(\d).+)$""" to """Михалковская, к. $2, этаж $3, ауд. $1""",
+
+    """^(\d)пк\s*((\d).+)$""" to """Павла Корчагина, к. $1, этаж $3, ауд. $2""",
+    """^пк\s*((\d).+)$""" to """Павла Корчагина, к. 1, этаж $2, ауд. $1""",
+
+    """^([АБВНH]|Нд)\s*(\d).+$""" to """Б. Семёновская, к. $1, этаж $2, ауд. $0""",
+    """^(А)[\s-]?ОМД$""" to """Б. Семёновская, к. $1, Лаборатория обработки материалов давлением""",
+
+    """^[_]*ПД[_]*$""" to """Проектная деятельность""",
+
+    """^[_-]*(LMS|ЛМС)[_-]*$""" to """Обучение в ЛМС""",
+    """^Обучение\s+в\s+LMS$""" to """Обучение в ЛМС""",
+    """^Webex$""" to """Видеоконференция в Webex""",
+    """^Webinar$""" to """Онлайн лекция в Webinar""""",
+
+    """^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""" to """Михалковская, Спортзал""",
+    """^Зал\s+№*(\d)[_]*$""" to """Спортивный зал №$1""",
+    """^Автозаводская\s+(\d)$""" to """Спортивный зал №$1 (Автозаводская)""",
+    """^(.*Измайлово.*)$""" to """$1""",
+
+    """^ИМАШ(\sРАН)?[\s_]*$""" to """Институт машиноведения имени А. А. Благонравова РАН""",
+    """^ИОНХ(\sРАН)?[\s_]*$""" to """Институт общей и неорганической химии им. Н.С. Курнакова РАН""",
+    """^(.*Биоинженерии.*(РАН)?)$""" to """$1""",
+    """^(.*Техноград.*)$""" to """Техноград на ВДНХ""",
+    """^МИСиС$""" to """НИТУ МИСиС""",
+
+    """^Практика$""" to """Практика""",
+    """^Бизнес.кар$""" to """Группа компаний «БИЗНЕС КАР»""",
+)

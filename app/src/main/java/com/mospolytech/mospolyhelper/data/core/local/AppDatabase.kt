@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.core.local
 
-
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.mospolytech.mospolyhelper.data.deadline.DeadlineDAO

@@ -11,9 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -87,8 +86,6 @@ class CalendarFragment : DialogFragment() {
                     val recyclerAdapter = CalendarOneAdapter(
                         viewModel.filteredSchedule.value.getOrNull()?.schedule,
                         viewModel.isAdvancedSearch,
-                        requireContext().getColor(R.color.calendarParagraph),
-                        requireContext().getColor(R.color.calendarTimeBackground),
                         colorTitle,
                         colorCurrentTitle
                     )

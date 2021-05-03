@@ -15,7 +15,7 @@
             android:layout_marginEnd="20dp"
             android:drawableTop="@drawable/ic_sleeping_face"
             android:drawablePadding="20dp"
-            android:fontFamily="@font/open_sans"
+            android:fontFamily="@font/ubuntu"
             android:paddingBottom="?actionBarSize"
             android:text="@string/null_daily_schedule"
             android:textAlignment="center"
