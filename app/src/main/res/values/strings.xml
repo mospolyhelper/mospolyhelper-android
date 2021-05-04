@@ -130,4 +130,14 @@ VK: https://vk.com/alexandr_dyndin\n
 Github: https://github.com/IIOPHYIIIE4KA
     </string>
 
+    <!-- Account -->
+    <string name="auth">Авторизация</string>
+    <string name="info">Информация</string>
+    <string name="applications">Справки</string>
+    <string name="Payments">Оплата</string>
+    <string name="Students">Студенты</string>
+    <string name="teachers">Преподаватели</string>
+    <string name="classmates">Одногруппники</string>
+    <string name="statements">Ведомости</string>
+    <string name="account">Аккаунт</string>
 </resources>

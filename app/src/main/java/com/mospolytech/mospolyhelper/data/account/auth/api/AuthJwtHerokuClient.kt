@@ -28,13 +28,10 @@ class AuthJwtHerokuClient(
     }
 
     suspend fun refresh(accessToken: String, refreshToken: String): String {
-        val params = mutableMapOf(
-            "" to refreshToken
-        )
         return client.post(GET_REFRESH) {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer $accessToken")
-            body = params
+            body = refreshToken
         }
     }
 }

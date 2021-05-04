@@ -49,4 +49,10 @@ class AuthUseCase(
     fun setSavePassword(value: Boolean) {
         repository.setSavePassword(value)
     }
+
+    fun getName() = repository.getFio()
+
+    fun getAvatar() = repository.getAvatar()
+
+    fun getPermissions() = repository.getPermissions()
 }
