@@ -3,41 +3,51 @@
     <item
         android:id="@+id/nav_auth"
         android:icon="@drawable/ic_baseline_account_circle_24"
-        android:title="Auth" />
+        android:title="@string/auth"
+        android:visible="true"/>
     <item
         android:id="@+id/nav_info"
         android:icon="@drawable/ic_round_info_24"
-        android:title="Info" />
+        android:title="@string/info"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_applications"
         android:icon="@drawable/ic_round_article_24"
-        android:title="Applications" />
+        android:title="@string/applications"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_marks"
         android:icon="@drawable/ic_baseline_looks_5_24"
-        android:title="Marks" />
+        android:title="@string/marks"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_payments"
         android:icon="@drawable/ic_baseline_payments_24"
-        android:title="Payments" />
+        android:title="@string/Payments"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_students"
         android:icon="@drawable/ic_id_group"
-        android:title="Students" />
+        android:title="@string/Students"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_teachers"
         android:icon="@drawable/ic_id_teacher"
-        android:title="Teachers" />
+        android:title="@string/teachers"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_classmates"
         android:icon="@drawable/ic_round_person_24"
-        android:title="Classmates" />
+        android:title="@string/classmates"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_deadlines"
         android:icon="@drawable/ic_lesson_deadlines"
-        android:title="Deadlines" />
+        android:title="@string/nav_deadlines"
+        android:visible="false"/>
     <item
         android:id="@+id/nav_statements"
         android:icon="@drawable/ic_baseline_assignment_24"
-        android:title="Statements" />
+        android:title="@string/statements"
+        android:visible="false"/>
 </menu>

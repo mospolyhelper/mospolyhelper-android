@@ -23,7 +23,7 @@ class AuthRepositoryImpl(
         val token = dataSourceJWT.authJwt(login, password)
         emit(token.map {
             authJwtLocalDataSource.set(it.accessToken)
-            val sessionId = authJwtLocalDataSource.getSessionId()!!
+            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
             prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
             prefDataSource.setString(PreferenceKeys.RefreshToken, it.refreshToken)
             return@map sessionId
@@ -32,22 +32,36 @@ class AuthRepositoryImpl(
 
     @ExperimentalContracts
     override suspend fun refresh(): Flow<Result<String>> = flow {
-        if (authJwtLocalDataSource.isExpired()) {
+        if (authJwtLocalDataSource.get()?.isExpired() == true) {
             val oldToken = prefDataSource.getString(PreferenceKeys.AccessToken, "")
             val refresh = prefDataSource.getString(PreferenceKeys.RefreshToken, "")
             val newToken = dataSourceJWT.refresh(oldToken, refresh)
-            emit(newToken.map {
-                authJwtLocalDataSource.set(it)
-                val sessionId = authJwtLocalDataSource.getSessionId()!!
+            newToken.onSuccess {
+                authJwtLocalDataSource.set(it.replace("\"", ""))
+                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
                 prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
-                return@map sessionId
-            })
+            }
+//            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
+//            prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+//            emit(newToken.map {
+//                authJwtLocalDataSource.set(it)
+//                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
+//                prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+//                return@map sessionId
+//            })
         }
     }
+
+    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar() ?: ""
+
+    override fun getPermissions() = authJwtLocalDataSource.get()?.getPermissions() ?: emptyList()
+
+    override fun getFio() = authJwtLocalDataSource.get()?.getName() ?: ""
 
     override fun logOut() {
         prefDataSource.setString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
         prefDataSource.setString(PreferenceKeys.Info, "")
+        authJwtLocalDataSource.clear()
     }
 
     override fun getLogin(): String {

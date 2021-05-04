@@ -12,10 +12,12 @@ import java.lang.reflect.TypeVariable
 
 class AuthJwtLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 
-    private var jwt: JWT? = null
+    fun set(accessToken: String) {
+        prefDataSource.setString(PreferenceKeys.AccessToken, accessToken)
+    }
 
-    init {
-        jwt = try {
+    fun get(): JWT? {
+        return try {
             val jwt = prefDataSource.getString(PreferenceKeys.AccessToken, "")
             if (jwt.isNotEmpty())
                 JWT(jwt)
@@ -27,19 +29,8 @@ class AuthJwtLocalDataSource(private val prefDataSource: SharedPreferencesDataSo
         }
     }
 
-    fun getSessionId() = jwt?.getClaim("sessionId")?.asString()
-
-    fun getPermissions(): List<String> = jwt?.getClaim("permissions")?.asList(String::class.java) ?: emptyList()
-
-    fun getName(): String? = jwt?.getClaim("name")?.asString()
-
-    fun getAvatar(): String? = jwt?.getClaim("avatarUrl")?.asString()
-
-    fun isExpired(): Boolean = jwt?.isExpired(jwt?.expiresAt?.time ?: 0) ?: true
-
-    fun set(accessToken: String) {
-        prefDataSource.setString(PreferenceKeys.AccessToken, accessToken)
-        jwt = JWT(accessToken)
+    fun clear() {
+        prefDataSource.setString(PreferenceKeys.AccessToken, "")
     }
 
 }
