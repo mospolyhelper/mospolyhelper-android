@@ -13,12 +13,12 @@ import java.lang.reflect.TypeVariable
 class AuthJwtLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 
     fun set(accessToken: String) {
-        prefDataSource.setString(PreferenceKeys.AccessToken, accessToken)
+        prefDataSource.set(PreferenceKeys.AccessToken, accessToken)
     }
 
     fun get(): JWT? {
         return try {
-            val jwt = prefDataSource.getString(PreferenceKeys.AccessToken, "")
+            val jwt = prefDataSource.get(PreferenceKeys.AccessToken, "")
             if (jwt.isNotEmpty())
                 JWT(jwt)
             else
@@ -30,7 +30,7 @@ class AuthJwtLocalDataSource(private val prefDataSource: SharedPreferencesDataSo
     }
 
     fun clear() {
-        prefDataSource.setString(PreferenceKeys.AccessToken, "")
+        prefDataSource.set(PreferenceKeys.AccessToken, "")
     }
 
 }

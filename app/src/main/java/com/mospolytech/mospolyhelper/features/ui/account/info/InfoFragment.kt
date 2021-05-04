@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
@@ -47,11 +48,7 @@ class InfoFragment : Fragment() {
             }
         }
 
-        authSnackbar = Snackbar.make(info_swipe,
-            R.string.unauthorized, Snackbar.LENGTH_SHORT)
-        authSnackbar.setAction(R.string.authorize) {
-            findNavController().navigate(R.id.action_infoFragment_to_authFragment)
-        }
+        Glide.with(this).load(viewModel.getAvatar()).into(avatar_student)
 
         lifecycleScope.launchWhenResumed {
             viewModel.info.collect { result ->
@@ -63,12 +60,6 @@ class InfoFragment : Fragment() {
                 }.onFailure {
                     progress_loading.gone()
                     info_swipe.isRefreshing = false
-                    if (it is ClientRequestException) {
-                        if (it.response?.status?.value == 401) {
-                            authSnackbar.show()
-                        }
-                    } else
-                        Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                 }.onLoading {
                     if (!info_swipe.isRefreshing)
                         progress_loading.show()
@@ -81,7 +72,7 @@ class InfoFragment : Fragment() {
         }
 
     }
-    fun filldata(info: Info) {
+    private fun filldata(info: Info) {
         val information = String.format(resources.getString(R.string.base_info), info.educationLevel,
             info.course, info.group)
         info_student.text = information

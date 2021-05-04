@@ -24,8 +24,8 @@ class AuthRepositoryImpl(
         emit(token.map {
             authJwtLocalDataSource.set(it.accessToken)
             val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-            prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
-            prefDataSource.setString(PreferenceKeys.RefreshToken, it.refreshToken)
+            prefDataSource.set(PreferenceKeys.SessionId, sessionId)
+            prefDataSource.set(PreferenceKeys.RefreshToken, it.refreshToken)
             return@map sessionId
         })
     }
@@ -33,20 +33,20 @@ class AuthRepositoryImpl(
     @ExperimentalContracts
     override suspend fun refresh(): Flow<Result<String>> = flow {
         if (authJwtLocalDataSource.get()?.isExpired() == true) {
-            val oldToken = prefDataSource.getString(PreferenceKeys.AccessToken, "")
-            val refresh = prefDataSource.getString(PreferenceKeys.RefreshToken, "")
+            val oldToken = prefDataSource.get(PreferenceKeys.AccessToken, "")
+            val refresh = prefDataSource.get(PreferenceKeys.RefreshToken, "")
             val newToken = dataSourceJWT.refresh(oldToken, refresh)
             newToken.onSuccess {
                 authJwtLocalDataSource.set(it.replace("\"", ""))
                 val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-                prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+                prefDataSource.set(PreferenceKeys.SessionId, sessionId)
             }
 //            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//            prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+//            prefDataSource.set(PreferenceKeys.SessionId, sessionId)
 //            emit(newToken.map {
 //                authJwtLocalDataSource.set(it)
 //                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//                prefDataSource.setString(PreferenceKeys.SessionId, sessionId)
+//                prefDataSource.set(PreferenceKeys.SessionId, sessionId)
 //                return@map sessionId
 //            })
         }
@@ -59,40 +59,40 @@ class AuthRepositoryImpl(
     override fun getFio() = authJwtLocalDataSource.get()?.getName() ?: ""
 
     override fun logOut() {
-        prefDataSource.setString(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
-        prefDataSource.setString(PreferenceKeys.Info, "")
+        prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
+        prefDataSource.set(PreferenceKeys.Info, "")
         authJwtLocalDataSource.clear()
     }
 
     override fun getLogin(): String {
-        return prefDataSource.getString(PreferenceKeys.Login, PreferenceDefaults.Login)
+        return prefDataSource.get(PreferenceKeys.Login, PreferenceDefaults.Login)
     }
 
     override fun setLogin(value: String) {
-        prefDataSource.setString(PreferenceKeys.Login, value)
+        prefDataSource.set(PreferenceKeys.Login, value)
     }
 
     override fun getPassword(): String {
-        return prefDataSource.getString(PreferenceKeys.Password, PreferenceDefaults.Password)
+        return prefDataSource.get(PreferenceKeys.Password, PreferenceDefaults.Password)
     }
 
     override fun setPassword(value: String) {
-        prefDataSource.setString(PreferenceKeys.Password, value)
+        prefDataSource.set(PreferenceKeys.Password, value)
     }
 
     override fun getSaveLogin(): Boolean {
-        return prefDataSource.getBoolean(PreferenceKeys.SaveLogin, PreferenceDefaults.SaveLogin)
+        return prefDataSource.get(PreferenceKeys.SaveLogin, PreferenceDefaults.SaveLogin)
     }
 
     override fun setSaveLogin(value: Boolean) {
-        prefDataSource.setBoolean(PreferenceKeys.SaveLogin, value)
+        prefDataSource.set(PreferenceKeys.SaveLogin, value)
     }
 
     override fun getSavePassword(): Boolean {
-        return prefDataSource.getBoolean(PreferenceKeys.SavePassword, PreferenceDefaults.SavePassword)
+        return prefDataSource.get(PreferenceKeys.SavePassword, PreferenceDefaults.SavePassword)
     }
 
     override fun setSavePassword(value: Boolean) {
-        prefDataSource.setBoolean(PreferenceKeys.SavePassword, value)
+        prefDataSource.set(PreferenceKeys.SavePassword, value)
     }
 }
