@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.data.account.auth.remote
 
 
-import com.mospolytech.mospolyhelper.data.account.auth.api.AuthHerokuClient
 import com.mospolytech.mospolyhelper.data.account.auth.api.AuthJwtHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.auth.model.JwtModel
 import com.mospolytech.mospolyhelper.utils.Result
