@@ -162,14 +162,14 @@ class LessonRemoteAdapter(
         val remoteView = RemoteViews(context.packageName, R.layout.item_schedule_appwidget)
         val dailySchedule = dailySchedule
         if (dailySchedule == null) {
-            remoteView.setTextViewText(R.id.text_schedule_title, "Расписание не найдено")
+            remoteView.setTextViewText(R.id.textview_lesson_title, "Расписание не найдено")
             remoteView.setViewVisibility(R.id.text_lesson_time, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)
             return remoteView
         }
         if (dailySchedule.isEmpty()) {
-            remoteView.setTextViewText(R.id.text_schedule_title, "Сегодня нет занятий")
+            remoteView.setTextViewText(R.id.textview_lesson_title, "Сегодня нет занятий")
             remoteView.setViewVisibility(R.id.text_lesson_time, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)
@@ -216,7 +216,7 @@ class LessonRemoteAdapter(
     }
 
     private fun setTitle(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
-        view.setTextViewText(R.id.text_schedule_title, getTitle(lesson.first).toString())
+        view.setTextViewText(R.id.textview_lesson_title, getTitle(lesson.first).toString())
     }
 
     private fun setTeachers(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {

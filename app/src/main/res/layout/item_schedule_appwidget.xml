@@ -21,7 +21,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/text_schedule_title"
+        android:id="@+id/textview_lesson_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:breakStrategy="balanced"

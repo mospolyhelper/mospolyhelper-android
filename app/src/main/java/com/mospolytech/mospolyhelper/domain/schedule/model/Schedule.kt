@@ -48,6 +48,17 @@ data class Schedule(
         showCurrent,
         showNotStarted
     )
+
+    fun getLessons(
+        date: LocalDate,
+        lessonDateFilter: LessonDateFilter = LessonDateFilter.Default
+    ) = filterByDate(
+        dailySchedules[date.dayOfWeek.value % 7],
+        date,
+        lessonDateFilter.showEndedLessons,
+        lessonDateFilter.showCurrentLessons,
+        lessonDateFilter.showNotStartedLessons
+    )
 }
 
 class SchedulePackList(

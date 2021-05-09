@@ -72,39 +72,41 @@
   <color name="lessonOrder6Text">#415D71</color>
   <color name="lessonOrder7Text">#413f5a</color>
 
-  <!-- red -->
-  <color name="lessonTagRed">#ED6666</color>
-  <!-- orange -->
-  <color name="lessonTagOrange">#fb9d38</color>
-  <!-- yellow -->
-  <color name="lessonTagYellow">#fbe938</color>
-  <!-- green -->
-  <color name="lessonTagGreen">#5cd256</color>
-  <!-- light blue -->
-  <color name="lessonTagLightBlue">#10acd2</color>
-  <!-- dark blue -->
-  <color name="lessonTagBlue">#556ad2</color>
-  <!-- purple -->
-  <color name="lessonTagPurple">#9B44DD</color>
-  <!-- pink -->
-  <color name="lessonTagPink">#FC54B4</color>
+
 
   <!-- red -->
-  <color name="lessonTagRedText">#E1BABA</color>
+  <color name="lessonTagRed">#733434</color>
   <!-- orange -->
-  <color name="lessonTagOrangeText">#E4C9AC</color>
+  <color name="lessonTagOrange">#D78A3C</color>
   <!-- yellow -->
-  <color name="lessonTagYellowText">#FBF4B1</color>
+  <color name="lessonTagBrown">#8B593E</color>
   <!-- green -->
-  <color name="lessonTagGreenText">#ABD7A9</color>
+  <color name="lessonTagGreen">#4B8855</color>
   <!-- light blue -->
-  <color name="lessonTagLightBlueText">#8CC4D2</color>
+  <color name="lessonTagLightBlue">#345473</color>
   <!-- dark blue -->
-  <color name="lessonTagBlueText">#949DCC</color>
+<!--  <color name="lessonTagBlue">#2F2F7A</color>-->
   <!-- purple -->
-  <color name="lessonTagPurpleText">#BE9DD7</color>
+  <color name="lessonTagPurple">#794BB3</color>
   <!-- pink -->
-  <color name="lessonTagPinkText">#F8BCDE</color>
+  <color name="lessonTagPink">#BC519F</color>
+
+  <!-- red -->
+  <color name="lessonTagRedText">#F5A6A6</color>
+  <!-- orange -->
+  <color name="lessonTagOrangeText">#FFD1B8</color>
+  <!-- yellow -->
+  <color name="lessonTagBrownText">#FFC4AB</color>
+  <!-- green -->
+  <color name="lessonTagGreenText">#ABEBBD</color>
+  <!-- light blue -->
+  <color name="lessonTagLightBlueText">#85BAE4</color>
+  <!-- dark blue -->
+<!--  <color name="lessonTagBlueText">#949DCC</color>-->
+  <!-- purple -->
+  <color name="lessonTagPurpleText">#E0BEFE</color>
+  <!-- pink -->
+  <color name="lessonTagPinkText">#FFBCE3</color>
 
 
 

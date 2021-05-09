@@ -33,7 +33,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/text_schedule_title"
+                android:id="@+id/textview_lesson_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
@@ -184,7 +184,7 @@
             android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
             tools:itemCount="2"
             tools:listitem="@layout/item_lesson_info_object" />
 
@@ -212,7 +212,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
             tools:itemCount="2"
             tools:listitem="@layout/item_lesson_info_object" />
 
@@ -238,7 +238,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
             tools:itemCount="2"
             tools:listitem="@layout/item_lesson_info_object" />
 
