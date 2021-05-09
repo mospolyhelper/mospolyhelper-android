@@ -1,9 +1,7 @@
 package com.mospolytech.mospolyhelper.data.account.auth.api
 
 import io.ktor.client.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
 
 class AuthJwtHerokuClient(
@@ -27,11 +25,14 @@ class AuthJwtHerokuClient(
         }
     }
 
-    suspend fun refresh(accessToken: String, refreshToken: String): String {
+    suspend fun refresh(expiredAccessToken: String, refreshToken: String): String {
+        val params = mutableMapOf(
+            "expiredAccessToken" to expiredAccessToken,
+            "refreshToken" to refreshToken
+        )
         return client.post(GET_REFRESH) {
             contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer $accessToken")
-            body = refreshToken
+            body = params
         }
     }
 }
