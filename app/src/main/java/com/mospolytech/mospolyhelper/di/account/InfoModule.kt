@@ -15,7 +15,7 @@ val infoModule = module {
     single { InfoHerokuClient(get(named("accountHerokuClient"))) }
     single { InfoRemoteDataSource(get()) }
     single { InfoLocalDataSource(get()) }
-    single<InfoRepository> { InfoRepositoryImpl(get(), get(), get()) }
+    single<InfoRepository> { InfoRepositoryImpl(get(), get(), get(), get()) }
     single { InfoUseCase(get()) }
     viewModel { InfoViewModel(get(), get()) }
 }

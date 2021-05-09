@@ -12,6 +12,8 @@ class AuthUseCase(
             emit(Result.loading())
         }
 
+    suspend fun refresh() = repository.refresh().onStart { emit(Result.loading()) }
+
     fun logOut() {
         repository.logOut()
     }
@@ -47,4 +49,10 @@ class AuthUseCase(
     fun setSavePassword(value: Boolean) {
         repository.setSavePassword(value)
     }
+
+    fun getName() = repository.getFio()
+
+    fun getAvatar() = repository.getAvatar()
+
+    fun getPermissions() = repository.getPermissions()
 }

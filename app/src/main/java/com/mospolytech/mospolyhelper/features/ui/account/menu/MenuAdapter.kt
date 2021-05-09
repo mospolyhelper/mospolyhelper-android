@@ -2,7 +2,9 @@ package com.mospolytech.mospolyhelper.features.ui.account.menu
 
 import android.view.*
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
@@ -10,12 +12,12 @@ import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 
 class MenuAdapter(
-    private val menu: Menu
+    private val menu: List<MenuItem>
 ) : RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
 
     val onItemMenuClick: Event1<Int> = Action1()
 
-    override fun getItemCount() = menu.size()
+    override fun getItemCount() = menu.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
@@ -31,9 +33,10 @@ class MenuAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val icon: ImageView = view.findViewById(R.id.imageIcon)
         private val label: TextView = view.findViewById(R.id.textLabel)
+        private val layout: ConstraintLayout = view.findViewById(R.id.container)
 
         fun bind(menuItem: MenuItem) {
-            itemView.setOnClickListener {
+            layout.setOnClickListener {
                 (onItemMenuClick as Action1).invoke(menuItem.itemId)
             }
             icon.setImageDrawable(menuItem.icon)

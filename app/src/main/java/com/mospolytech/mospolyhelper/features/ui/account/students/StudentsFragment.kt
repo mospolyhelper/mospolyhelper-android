@@ -153,6 +153,14 @@ class StudentsFragment : Fragment(), CoroutineScope {
                 search(adapter)
             }
         }
+
+        recycler_students.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
+            if (p4<0) {
+                fab_students.hide()
+            } else {
+                fab_students.show()
+            }
+        }
     }
 
     private fun search(adapter: StudentsAdapter) {

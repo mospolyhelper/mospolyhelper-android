@@ -20,4 +20,5 @@ class InfoUseCase(
             //emit(Result.loading())
         }
 
+    fun getAvatar() = repository.getAvatar()
 }

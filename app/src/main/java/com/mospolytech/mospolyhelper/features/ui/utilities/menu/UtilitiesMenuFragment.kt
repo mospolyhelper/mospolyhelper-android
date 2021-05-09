@@ -36,7 +36,7 @@ class UtilitiesMenuFragment : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun setMenu() {
-        menuList.layoutManager = GridLayoutManager(context, 3)
+        menuList.layoutManager = GridLayoutManager(context, 2)
         val menu = MenuBuilder(context)
         requireActivity().menuInflater.inflate(R.menu.menu_utilities, menu)
         val adapter = MenuAdapter(menu)

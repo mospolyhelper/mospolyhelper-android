@@ -103,6 +103,14 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
             }
         }
+
+        recycler_marks.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
+            if (p4<0) {
+                fab_share.hide()
+            } else {
+                fab_share.show()
+            }
+        }
     }
     private fun filldata() {
         ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
