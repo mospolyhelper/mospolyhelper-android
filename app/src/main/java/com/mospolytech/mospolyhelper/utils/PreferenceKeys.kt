@@ -40,5 +40,6 @@ class PreferenceKeys {
         const val JWT = "JWT"
         const val AccessToken = "AccessToken"
         const val RefreshToken = "RefreshToken"
+        const val Dialogs = "Dialogs"
     }
 }
