@@ -34,4 +34,6 @@ class InfoViewModel(
         }
     }
 
+    fun getAvatar() = useCase.getAvatar()
+
 }

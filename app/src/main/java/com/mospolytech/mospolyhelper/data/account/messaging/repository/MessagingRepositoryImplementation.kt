@@ -22,6 +22,7 @@ class MessagingRepositoryImplementation(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
+    @Suppress("UNCHECKED_CAST")
     override suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,

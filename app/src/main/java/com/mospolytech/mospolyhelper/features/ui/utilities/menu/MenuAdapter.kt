@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.utilities.menu
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
@@ -32,9 +33,10 @@ class MenuAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val icon: ImageView = view.findViewById(R.id.imageIcon)
         private val label: TextView = view.findViewById(R.id.textLabel)
+        private val layout: ConstraintLayout = view.findViewById(R.id.container)
 
         fun bind(menuItem: MenuItem) {
-            itemView.setOnClickListener {
+            layout.setOnClickListener {
                 (onItemMenuClick as Action1).invoke(menuItem.itemId)
             }
             icon.setImageDrawable(menuItem.icon)
