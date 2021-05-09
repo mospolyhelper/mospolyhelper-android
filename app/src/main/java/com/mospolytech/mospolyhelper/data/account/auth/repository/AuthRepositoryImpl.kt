@@ -60,8 +60,14 @@ class AuthRepositoryImpl(
 
     override fun logOut() {
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
-        prefDataSource.set(PreferenceKeys.Info, "")
+        prefDataSource.set(PreferenceKeys.RefreshToken, "")
         authJwtLocalDataSource.clear()
+        prefDataSource.set(PreferenceKeys.Classmates, "")
+        prefDataSource.set(PreferenceKeys.Deadlines, "")
+        prefDataSource.set(PreferenceKeys.Info, "")
+        prefDataSource.set(PreferenceKeys.Marks, "")
+        prefDataSource.set(PreferenceKeys.Payments, "")
+        prefDataSource.set(PreferenceKeys.Statements, "")
     }
 
     override fun getLogin(): String {

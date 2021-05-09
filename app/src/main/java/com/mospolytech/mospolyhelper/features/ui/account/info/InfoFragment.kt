@@ -25,8 +25,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InfoFragment : Fragment() {
 
-    private lateinit var authSnackbar: Snackbar
-
     private val viewModel by viewModel<InfoViewModel>()
 
     override fun onCreateView(

@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.menu
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
@@ -28,8 +29,6 @@ class AccountMenuFragment : Fragment() {
 
     private lateinit var menuList: RecyclerView
 
-    private lateinit var permissions: List<String>
-
     private val viewModel by viewModel<MenuViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         GlobalScope.launch(Dispatchers.Main) {
@@ -54,7 +53,6 @@ class AccountMenuFragment : Fragment() {
         } else {
             text_fio.text = requireContext().getText(R.string.account)
         }
-        text_fio.text = viewModel.getName()
         avatar_user.isVisible = viewModel.getAvatar().isNotEmpty()
         Glide.with(this).load(viewModel.getAvatar()).into(avatar_user)
         menuList = view.findViewById(R.id.listMenu)
@@ -64,25 +62,27 @@ class AccountMenuFragment : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun setMenu(permissions: List<String>) {
-        menuList.layoutManager = GridLayoutManager(context, 3)
+        menuList.layoutManager = GridLayoutManager(context, 2)
         val menu = MenuBuilder(context)
         requireActivity().menuInflater.inflate(R.menu.menu_account, menu)
-//        val menuItems: MutableList<MenuItemImpl> = mutableListOf()
-//        permissions.forEach {
-//            when (it) {
-//                //"dialogs" -> { menuItems.add(menu.visibleItems[1]) }
-//                "info" -> { menuItems.add(menu.visibleItems[1]) }
-//                "payments" -> { menuItems.add(menu.visibleItems[4]) }
-//                "marks" -> { menuItems.add(menu.visibleItems[3]) }
-//                "grade-sheets" -> { menuItems.add(menu.visibleItems[9]) }
-//                "classmates" -> { menuItems.add(menu.visibleItems[7]) }
-//                "teachers" -> { menuItems.add(menu.visibleItems[6]) }
-//                "applications" -> { menuItems.add(menu.visibleItems[2]) }
-//                "myportfolio" -> { menuItems.add(menu.visibleItems[8])}
-//                "students" -> { menuItems.add(menu.visibleItems[5]) }
-//            }
-//        }
-        val adapter = MenuAdapter(menu)
+        val menuItems: MutableList<MenuItem> = mutableListOf()
+        menuItems.add(menu.getItem(0))
+        permissions.forEach {
+            when (it) {
+                //"dialogs" -> { menuItems.add(menu.visibleItems[1]) }
+                "info" -> { menuItems.add(menu.getItem(1)) }
+                "payments" -> { menuItems.add(menu.getItem(4)) }
+                "marks" -> { menuItems.add(menu.getItem(3)) }
+                "grade-sheets" -> { menuItems.add(menu.getItem(9)) }
+                "classmates" -> { menuItems.add(menu.getItem(7)) }
+                "teachers" -> { menuItems.add(menu.getItem(6)) }
+                "applications" -> { menuItems.add(menu.getItem(2)) }
+                "myportfolio" -> { menuItems.add(menu.getItem(8)) }
+                //"students" -> { menuItems.add(menu.getItem(5)) }
+            }
+        }
+        menuItems.add(menu.getItem(5))
+        val adapter = MenuAdapter(menuItems)
         adapter.onItemMenuClick += {
             when (it) {
                 R.id.nav_auth -> findNavController().safe {
