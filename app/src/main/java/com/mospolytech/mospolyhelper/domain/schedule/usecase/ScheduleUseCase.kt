@@ -151,6 +151,8 @@ class ScheduleUseCase(
         )
     }
 
+    fun getTagsMessage() =
+        tagRepository.getMessage()
 
     suspend fun getAllTags() =
         tagRepository.getAll()

@@ -10,20 +10,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
+            android:id="@+id/linearlayout_tags"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
                 android:id="@+id/button_new_tag"
-                android:text="New"
+                android:text="@string/create_new_tag"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:id="@+id/recyclerview_tags"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                tools:itemCount="10"
+                tools:listitem="@layout/item_lesson_tag_choosing"/>
         </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintlayout_edit_tag"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,8 +67,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/view2"
                 tools:text="Create tag" />
 
+            <TextView
+                android:id="@+id/textview_tag_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextFeaturesStyle"
+                android:textSize="30sp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textview_title"/>
+
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/edittext_tag_title"
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_marginStart="20dp"
@@ -65,6 +91,7 @@
                 android:backgroundTint="@color/layerZero"
                 android:ems="10"
                 android:fontFamily="@font/ubuntu"
+                android:maxLength="15"
                 android:hint="Enter tag name"
                 android:inputType="textShortMessage"
                 android:paddingStart="20dp"
@@ -72,7 +99,7 @@
                 android:textSize="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textview_title" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_tag_preview" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_colors"
@@ -85,10 +112,21 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+                app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
                 app:spanCount="6"
                 tools:itemCount="9"
                 tools:listitem="@layout/item_color_picker" />
+
+            <TextView
+                android:id="@+id/textview_message"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerview_colors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/btn_remove"
@@ -103,7 +141,7 @@
                 android:textColor="#FF0000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerview_colors" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_message" />
 
             <Button
                 android:id="@+id/button_cancel"
@@ -118,7 +156,7 @@
                 android:textColor="#2894FE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/button_apply"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerview_colors" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_message" />
 
             <Button
                 android:id="@+id/button_apply"
@@ -133,7 +171,7 @@
                 android:textColor="#2894FE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerview_colors" />
+                app:layout_constraintTop_toBottomOf="@+id/textview_message" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

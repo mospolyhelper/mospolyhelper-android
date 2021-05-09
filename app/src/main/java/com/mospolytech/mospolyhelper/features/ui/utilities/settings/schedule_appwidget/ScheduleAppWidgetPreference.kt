@@ -252,7 +252,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         }
 
         private fun setTitle(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
-            view.findViewById<TextView>(R.id.text_schedule_title).text = LessonRemoteAdapter.getTitle(lesson.first)
+            view.findViewById<TextView>(R.id.textview_lesson_title).text = LessonRemoteAdapter.getTitle(lesson.first)
         }
 
         private fun setTeachers(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {

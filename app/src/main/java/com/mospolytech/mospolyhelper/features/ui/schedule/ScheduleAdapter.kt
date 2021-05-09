@@ -10,13 +10,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.PageScheduleBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.CurrentLesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleItem
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import com.mospolytech.mospolyhelper.utils.Action2
 import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
@@ -25,15 +23,12 @@ import java.time.temporal.ChronoUnit
 
 
 class ScheduleAdapter(
-    val schedule: Schedule?,
-    private val tags: List<LessonTag>,
-    private val deadlines: Map<String, List<Deadline>>,
-    private val showEndedLessons: Boolean,
-    private val showCurrentLessons: Boolean,
-    private val showNotStartedLessons: Boolean,
-    private val showEmptyLessons: Boolean,
-    private val showGroups: Boolean,
-    private val showTeachers: Boolean
+    var schedule: Schedule? = null,
+    private var tags: List<LessonTag>,
+    private var deadlines: Map<String, List<Deadline>>,
+    private var lessonDateFilter: LessonDateFilter,
+    private var showEmptyLessons: Boolean,
+    private var lessonFeaturesSettings: LessonFeaturesSettings
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val MAX_COUNT = 400
@@ -43,11 +38,11 @@ class ScheduleAdapter(
         private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
         private val dateFormatterWeek = DateTimeFormatter.ofPattern("EEEE")
     }
-    var firstPosDate: LocalDate = LocalDate.now()
+    var from: LocalDate = LocalDate.now()
     private var count = 0
     private val commonPool = RecyclerView.RecycledViewPool()
 
-    val lessonClick: Event2<LessonPlace, LocalDate> = Action2()
+    var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
     private val timerTick: Event2<List<CurrentLesson>, Boolean> = Action2()
 
     init {
@@ -63,10 +58,30 @@ class ScheduleAdapter(
 //        timerTick.invoke(currentLessons, updatePrev)
 //    }
 
+
+    fun submitData(
+        schedule: Schedule?,
+        tags: List<LessonTag>,
+        deadlines: Map<String, List<Deadline>>,
+        lessonDateFilter: LessonDateFilter,
+        showEmptyLessons: Boolean,
+        lessonFeaturesSettings: LessonFeaturesSettings
+    ) {
+        this.schedule = schedule
+        this.tags = tags
+        this.deadlines = deadlines
+        this.lessonDateFilter = lessonDateFilter
+        this.showEmptyLessons = showEmptyLessons
+        this.lessonFeaturesSettings = lessonFeaturesSettings
+        setCount()
+        setFirstPosDate()
+    }
+
     override fun getItemCount() = count
 
 
     private fun setCount() {
+        val schedule = schedule
         if (schedule == null) {
             count = 1
         } else {
@@ -78,8 +93,9 @@ class ScheduleAdapter(
     }
 
     private fun setFirstPosDate() {
+        val schedule = schedule
         if (schedule != null) {
-            firstPosDate = if (count == MAX_COUNT) {
+            from = if (count == MAX_COUNT) {
                 LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
             } else {
                 schedule.dateFrom
@@ -87,19 +103,20 @@ class ScheduleAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int) = when {
-        schedule == null -> VIEW_TYPE_NULL
-        schedule
-            .getLessons(
-                firstPosDate.plusDays(position.toLong()),
-                showEndedLessons,
-                showCurrentLessons,
-                showNotStartedLessons
-            ).isEmpty() -> {
-            VIEW_TYPE_EMPTY
-        }
-        else -> {
-            VIEW_TYPE_NORMAL
+    override fun getItemViewType(position: Int): Int {
+        val schedule = schedule
+        return when {
+            schedule == null -> VIEW_TYPE_NULL
+            schedule
+                .getLessons(
+                    from.plusDays(position.toLong()),
+                    lessonDateFilter,
+                ).isEmpty() -> {
+                VIEW_TYPE_EMPTY
+            }
+            else -> {
+                VIEW_TYPE_NORMAL
+            }
         }
     }
 
@@ -118,7 +135,7 @@ class ScheduleAdapter(
             else -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.page_schedule, parent, false)
-                return ViewHolder(view, commonPool, (lessonClick as Action2)::invoke)
+                return ViewHolder(view, commonPool, lessonClick)
             }
         }
     }
@@ -126,18 +143,23 @@ class ScheduleAdapter(
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         when (viewHolder.itemViewType) {
             VIEW_TYPE_NORMAL -> {
-                val date = firstPosDate.plusDays(position.toLong())
+                val date = from.plusDays(position.toLong())
 
-                var rawDailySchedule = schedule!!.getLessons(
-                    date,
-                    showEndedLessons,
-                    showCurrentLessons,
-                    showNotStartedLessons
-                )
-                if (showEmptyLessons) rawDailySchedule = ScheduleUtils.getEmptyPairsDecorator(rawDailySchedule)
-                val dailySchedule = ScheduleUtils.getWindowsDecorator(rawDailySchedule)
+                val dailySchedule = DailySchedulePack.Builder()
+                    .withEmptyLessons(showEmptyLessons)
+                    .withLessonWindows(true)
+                    .build(
+                        schedule!!,
+                        date,
+                        lessonDateFilter,
+                        lessonFeaturesSettings,
+                        { lesson, dayOfWeek, order ->
+                            val tagKey = LessonTagKey.fromLesson(lesson, dayOfWeek, order)
+                            tags.filter { it.lessons.contains(tagKey) }
+                        }
+                    )
 
-                (viewHolder as ViewHolder).bind(SchedulePack(dailySchedule, date, showGroups, showTeachers))
+                (viewHolder as ViewHolder).bind(SchedulePack(dailySchedule, date, lessonFeaturesSettings))
             }
             VIEW_TYPE_EMPTY -> (viewHolder as ViewHolderEmpty).bind()
         }
@@ -154,14 +176,14 @@ class ScheduleAdapter(
     class ViewHolder(
         view: View,
         recyclerViewPool: RecyclerView.RecycledViewPool,
-        onItemClick: (LessonPlace, LocalDate) -> Unit = { _, _ -> }
+        onItemClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
     ) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(PageScheduleBinding::bind)
         private val listAdapter = LessonAdapter()
 
         init {
-            listAdapter.lessonClick += onItemClick
+            listAdapter.lessonClick = onItemClick
             viewBinding.recyclerviewLessons.adapter = listAdapter
 
             viewBinding.recyclerviewLessons.setRecycledViewPool(recyclerViewPool)
@@ -194,16 +216,14 @@ class ScheduleAdapter(
             listAdapter.submitList(
                 item.dailySchedule,
                 item.date,
-                item.showGroups,
-                item.showTeachers
+                item.lessonFeaturesSettings
             )
         }
     }
 
     class SchedulePack(
-        val dailySchedule: List<ScheduleItem>,
+        val dailySchedule: DailySchedulePack,
         val date: LocalDate,
-        val showGroups: Boolean,
-        val showTeachers: Boolean
+        val lessonFeaturesSettings: LessonFeaturesSettings
     )
 }

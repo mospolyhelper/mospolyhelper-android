@@ -129,6 +129,8 @@ Github: https://github.com/tipapro\n\n
 VK: https://vk.com/alexandr_dyndin\n
 Github: https://github.com/IIOPHYIIIE4KA
     </string>
+    <string name="lesson_tag_example">Пример</string>
+    <string name="create_new_tag">Создать новую метку</string>
 
     <!-- Account -->
     <string name="auth">Авторизация</string>

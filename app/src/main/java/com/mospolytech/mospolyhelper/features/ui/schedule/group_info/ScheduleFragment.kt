@@ -25,27 +25,27 @@ class ScheduleFragment : Fragment(R.layout.fragment_lessons) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(viewBinding) {
-            runBlocking {
-                ScheduleRepositoryImpl(
-                    ScheduleLocalDataSource(),
-                    ScheduleRemoteDataSource(ScheduleClient(HttpClient()), ScheduleRemoteConverter()),
-                    ScheduleRemoteTeacherDataSource(ScheduleClient(HttpClient()), ScheduleTeacherRemoteConverter())
-                ).getSchedule(StudentSchedule("181-721", "181-721"), false).collect {
-                    viewpagerSchedule.adapter = ScheduleAdapter(
-                        it,
-                        emptyList(),
-                        emptyMap(),
-                        false,
-                        true,
-                        false,
-                        false,
-                        false,
-                        true
-                    )
-                }
-            }
-
-        }
+//        with(viewBinding) {
+//            runBlocking {
+//                ScheduleRepositoryImpl(
+//                    ScheduleLocalDataSource(),
+//                    ScheduleRemoteDataSource(ScheduleClient(HttpClient()), ScheduleRemoteConverter()),
+//                    ScheduleRemoteTeacherDataSource(ScheduleClient(HttpClient()), ScheduleTeacherRemoteConverter())
+//                ).getSchedule(StudentSchedule("181-721", "181-721"), false).collect {
+//                    viewpagerSchedule.adapter = ScheduleAdapter(
+//                        it,
+//                        emptyList(),
+//                        emptyMap(),
+//                        false,
+//                        true,
+//                        false,
+//                        false,
+//                        false,
+//                        true
+//                    )
+//                }
+//            }
+//
+//        }
     }
 }

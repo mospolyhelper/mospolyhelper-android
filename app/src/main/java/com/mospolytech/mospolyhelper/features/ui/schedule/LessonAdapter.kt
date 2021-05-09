@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -17,13 +18,16 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemLessonBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonEmptyBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonInfoBinding
-import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
+import com.mospolytech.mospolyhelper.databinding.ItemLessonTimeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.utils.Action2
-import com.mospolytech.mospolyhelper.utils.Event2
+import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPlacePack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonWindowPack
 import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
+import com.mospolytech.mospolyhelper.utils.dp
 import com.mospolytech.mospolyhelper.utils.setSafeOnClickListener
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,69 +39,68 @@ import kotlin.math.roundToInt
 class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        const val VIEW_TYPE_LESSON_PLACE = 0
-        const val VIEW_TYPE_LESSON_PLACE_EMPTY = 1
+        const val VIEW_TYPE_LESSON = 0
+        const val VIEW_TYPE_LESSON_EMPTY = 1
         const val VIEW_TYPE_INFO = 2
+        const val VIEW_TYPE_TIME = 3
 
         private val dateFormatter = DateTimeFormatter.ofPattern("d MMM")
     }
 
-    var dailySchedule: List<ScheduleItem> = emptyList()
-    val tags: Map<LessonTagKey, List<LessonTag>> = emptyMap()
-    val deadlines: Map<String, List<Deadline>> = emptyMap()
+
+    var dailySchedule: DailySchedulePack = DailySchedulePack(emptyList())
     var date: LocalDate = LocalDate.now()
-    var showGroups: Boolean = false
-    var showTeachers: Boolean = false
+    var lessonFeaturesSettings: LessonFeaturesSettings =
+        LessonFeaturesSettings(
+            showGroups = false,
+            showTeachers = false,
+            showAuditoriums = false
+        )
 
-    val lessonClick: Event2<LessonPlace, LocalDate> = Action2()
+    var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
 
-    override fun getItemCount() = dailySchedule.size
-
-    private var currentOrder = -2
-    private var currentOrderIsStarted = false
-    private var cleared = true
-
-    private var currentOrderEvening = -2
-    private var currentOrderIsStartedEvening = false
-    private var clearedEvening = true
-
+    override fun getItemCount() = dailySchedule.lessons.size
 
     fun submitList(
-        dailySchedule: List<ScheduleItem>,
+        dailySchedule: DailySchedulePack,
         date: LocalDate,
-        showGroups: Boolean,
-        showTeachers: Boolean
+        lessonFeaturesSettings: LessonFeaturesSettings
     ) {
         this.dailySchedule = dailySchedule
-        this.showGroups = showGroups
-        this.showTeachers = showTeachers
+        this.lessonFeaturesSettings = lessonFeaturesSettings
         this.date = date
         notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int {
-        val scheduleItem = dailySchedule[position]
-        return when (scheduleItem) {
-            is LessonWindow -> VIEW_TYPE_INFO
-            is LessonPlace ->
-                if (scheduleItem.lessons.isEmpty()) VIEW_TYPE_LESSON_PLACE_EMPTY else VIEW_TYPE_LESSON_PLACE
-            else -> VIEW_TYPE_LESSON_PLACE_EMPTY
+        return when (val scheduleItem = dailySchedule.lessons[position]) {
+            is LessonWindowPack -> VIEW_TYPE_INFO
+            is LessonPlacePack -> VIEW_TYPE_TIME
+            is LessonPack ->
+                if (scheduleItem.lesson.isEmpty) VIEW_TYPE_LESSON_EMPTY else VIEW_TYPE_LESSON
+            else -> VIEW_TYPE_LESSON_EMPTY
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_LESSON_PLACE -> {
+            VIEW_TYPE_TIME -> {
+                val view = LayoutInflater
+                    .from(parent.context)
+                    .inflate(R.layout.item_lesson_time, parent, false)
+                ViewHolderTime(view)
+            }
+            VIEW_TYPE_LESSON -> {
                 val view = LayoutInflater
                     .from(parent.context)
                     .inflate(R.layout.item_lesson, parent, false)
-                ViewHolder(view, viewType)
+                ViewHolderLesson(view)
             }
-            VIEW_TYPE_LESSON_PLACE_EMPTY -> {
+            VIEW_TYPE_LESSON_EMPTY -> {
                 val view = LayoutInflater
                     .from(parent.context)
                     .inflate(R.layout.item_lesson_empty, parent, false)
-                ViewHolderEmpty(view)
+                ViewHolderEmptyLesson(view)
             }
             VIEW_TYPE_INFO -> {
                 val view = LayoutInflater
@@ -105,80 +108,58 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     .inflate(R.layout.item_lesson_info, parent, false)
                 ViewHolderInfo(view)
             }
-            else -> onCreateViewHolder(parent, VIEW_TYPE_LESSON_PLACE)
+            else -> onCreateViewHolder(parent, VIEW_TYPE_LESSON)
         }
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         when (viewHolder.itemViewType) {
-            VIEW_TYPE_LESSON_PLACE -> {
-                val lessonPlace = dailySchedule[position] as LessonPlace
-                val tags = emptyList<LessonTag>()//tags[LessonTagKey.fromLesson(lesson)] ?: emptyList()
-                (viewHolder as ViewHolder).bind(this, lessonPlace, tags) { lesson, date ->
-                    (lessonClick as Action2).invoke(lesson, date) }
+            VIEW_TYPE_TIME -> {
+                val lessonPlacePack = dailySchedule.lessons[position] as LessonPlacePack
+                (viewHolder as ViewHolderTime).bind(lessonPlacePack)
             }
-            VIEW_TYPE_LESSON_PLACE_EMPTY -> {
-                val lessonPlace = dailySchedule[position] as LessonPlace
-                (viewHolder as ViewHolderEmpty).bind(lessonPlace, this)
+            VIEW_TYPE_LESSON -> {
+                val lessonPack = dailySchedule.lessons[position] as LessonPack
+                (viewHolder as ViewHolderLesson).bind(this, lessonPack) { time, lesson ->
+                    lessonClick.invoke(time, lesson, date)
+                }
+            }
+            VIEW_TYPE_LESSON_EMPTY -> {
+                val lessonPack = dailySchedule.lessons[position] as LessonPack
+                (viewHolder as ViewHolderEmptyLesson).bind(lessonPack)
             }
             VIEW_TYPE_INFO -> {
-                val lessonWindows = dailySchedule[position] as LessonWindow
-                val prevLesson = if (position - 1 >= 0) dailySchedule[position - 1] as LessonPlace else LessonPlace(
-                    emptyList(), 0, false)
-                val nextLesson = if (position + 1 < dailySchedule.size) dailySchedule[position + 1] as LessonPlace else LessonPlace(
-                        emptyList(), 6, false)
-                (viewHolder as ViewHolderInfo).bind(lessonWindows, prevLesson, nextLesson, this)
+                val lessonWindow = dailySchedule.lessons[position] as LessonWindowPack
+                (viewHolder as ViewHolderInfo).bind(lessonWindow, this)
             }
         }
     }
 
-    class ViewHolder(
-        val view: View,
-        preViewType: Int
+    class ViewHolderLesson(
+        val view: View
     ) : RecyclerView.ViewHolder(view) {
         private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
         private val viewBinding by viewBinding(ItemLessonBinding::bind)
 
-        init {
-            viewBinding.tags.layoutManager = FlexboxLayoutManager(view.context).apply {
-                recycleChildrenOnDetach = true
-            }
-        }
-
         // ViewHolder class is not inner because recycler views have common pool
         fun bind(
             adapter: LessonAdapter,
-            lessonPlace: LessonPlace,
-            tags: List<LessonTag>,
-            onLessonClick: (LessonPlace, LocalDate) -> Unit
+            lessonPack: LessonPack,
+            onLessonClick: (LessonTime, Lesson) -> Unit
         ) {
-            val lesson = lessonPlace.lessons.firstOrNull() ?: Lesson.getEmpty()
             viewBinding.layoutLesson.setSafeOnClickListener {
-                onLessonClick(lessonPlace.copy(lessons = listOf(lesson)), adapter.date)
+                onLessonClick(lessonPack.lessonTime, lessonPack.lesson)
             }
-            val enabled = adapter.date in lesson.dateFrom..lesson.dateTo
+            val enabled = adapter.date in lessonPack.lesson.dateFrom..lessonPack.lesson.dateTo
 
             setBottomPadding(adapter)
-            setTime(lessonPlace, adapter)
-            setLessonTitleAndFeatures(lesson, lessonPlace, enabled)
-            setAuditoriums(lesson, enabled)
-            setTeachers(lesson, adapter, enabled)
-            setGroups(lesson, adapter, enabled)
-            setTags(tags)
-            setAnotherLessons(lessonPlace)
-        }
-
-        private fun setAnotherLessons(lessonPlace: LessonPlace) {
-            val hide = lessonPlace.lessons.size == 1
-
-            if (hide) {
-                viewBinding.viewLessonsSeparator.visibility = View.GONE
-                viewBinding.textviewAnotherLessons.visibility = View.GONE
-            } else {
-                viewBinding.textviewAnotherLessons.text = "Ещё ${lessonPlace.lessons.size - 1} занятие в это время"
-                viewBinding.viewLessonsSeparator.visibility = View.VISIBLE
-                viewBinding.textviewAnotherLessons.visibility = View.VISIBLE
-            }
+            setLessonType(lessonPack.lesson, enabled)
+            setLessonDuration(lessonPack.lesson)
+            setLessonTitle(lessonPack.lesson, enabled)
+            setAuditoriums(lessonPack.lesson, lessonPack.featuresSettings, enabled)
+            setTeachers(lessonPack.lesson, lessonPack.featuresSettings, enabled)
+            setGroups(lessonPack.lesson, lessonPack.featuresSettings, enabled)
+            setTags(lessonPack.tags)
         }
 
         private fun setBottomPadding(adapter: LessonAdapter) {
@@ -198,92 +179,17 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     paddingBottom = (actionBarHeight * 0.8).toInt()
                 }
             }
-            val dp8 = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                12f,
-                view.resources.displayMetrics
-            ).toInt()
-            val dp3 = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                3f,
-                view.resources.displayMetrics
-            ).toInt()
-            view.setPadding(view.paddingLeft, dp3,view.paddingRight, paddingBottom)
-        }
-
-        private fun setTime(lessonPlace: LessonPlace, adapter: LessonAdapter) {
-
-            val currentOrder: Int
-            val currentLessonIsStarted: Boolean
-            if (lessonPlace.isEvening) {
-                currentOrder = adapter.currentOrderEvening
-                currentLessonIsStarted = adapter.currentOrderIsStartedEvening
-            } else {
-                currentOrder = adapter.currentOrder
-                currentLessonIsStarted = adapter.currentOrderIsStarted
-            }
-
-            // Current lessons label
-//            if (order == currentOrder) {
-//                val currentLessonText: String
-//                if (currentLessonIsStarted) {
-//                    val time = getTime((lesson.localTime.first.until(LocalTime.now(), ChronoUnit.SECONDS) / 60f).roundToLong(), true)
-//                    currentLessonText = "Идёт ${time.toLowerCase()}"
-//                } else {
-//                    val time = getTime((LocalTime.now().until(lesson.localTime.first, ChronoUnit.SECONDS) / 60f).roundToLong(), false)
-//                    currentLessonText = "До начала ${time.toLowerCase()}"
-//                }
-//
-//                viewBinding.textLessonCurrent.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_current_lesson, 0, 0, 0)
-//                viewBinding.textLessonCurrent.text = currentLessonText
-//                viewBinding.textLessonCurrent.visibility = View.VISIBLE
-//            } else {
-                //viewBinding.textLessonCurrent.visibility = View.GONE
-            //}
-
-            var orderColor: Int
-            var orderTextColor: Int
-            when (lessonPlace.order) {
-                0 -> {
-                    orderColor = R.color.lessonOrder1
-                    orderTextColor = R.color.lessonOrder1Text
-                }
-                1 -> {
-                    orderColor = R.color.lessonOrder2
-                    orderTextColor = R.color.lessonOrder2Text
-                }
-                2 -> {
-                    orderColor = R.color.lessonOrder3
-                    orderTextColor = R.color.lessonOrder3Text
-                }
-                3 -> {
-                    orderColor = R.color.lessonOrder4
-                    orderTextColor = R.color.lessonOrder4Text
-                }
-                4 -> {
-                    orderColor = R.color.lessonOrder5
-                    orderTextColor = R.color.lessonOrder5Text
-                }
-                5 -> {
-                    orderColor = R.color.lessonOrder6
-                    orderTextColor = R.color.lessonOrder6Text
-                }
-                else -> {
-                    orderColor = R.color.lessonOrder7
-                    orderTextColor = R.color.lessonOrder7Text
-                }
-            }
-            orderColor = viewBinding.root.context.getColor(orderColor)
-
-
-            viewBinding.textLessonTime.compoundDrawableTintList = ColorStateList.valueOf(orderColor)
-
-            val (timeStart, timeEnd) = lessonPlace.time
-            viewBinding.textLessonTime.text = "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
+            val dp3 = 3.dp(itemView.context).toInt()
+            view.setPadding(view.paddingLeft, dp3, view.paddingRight, paddingBottom)
         }
 
         private fun setTags(tags: List<LessonTag>) {
-            viewBinding.tags.adapter = TagAdapter().apply { this.tags = tags }
+            if (tags.isEmpty()) {
+                viewBinding.tags.visibility = View.GONE
+            } else {
+                viewBinding.tags.visibility = View.VISIBLE
+                viewBinding.tags.text = getFeaturesString(tags)
+            }
         }
 
         private fun getDeadlinesEnd(count: Int): String {
@@ -296,35 +202,18 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun getFeaturesString(features: Iterable<String>, isImportant: Boolean): SpannableStringBuilder {
-            var oneFlag = true
+        private fun getFeaturesString(features: List<LessonTag>): SpannableStringBuilder {
             val iterator = features.iterator()
             val builder = SpannableStringBuilder()
             while (iterator.hasNext()) {
-                val backgroundColor: Int
-                val textColor: Int
-                if (oneFlag) {
-                    oneFlag = false
-                    if (isImportant) {
-                        backgroundColor = view.context.getColor(R.color.featureBackgroundImportant)
-                        textColor = view.context.getColor(R.color.featureTextImportant)
-                    } else {
-                        backgroundColor = view.context.getColor(R.color.featureBackgroundNotImportant)
-                        textColor = view.context.getColor(R.color.featureTextNotImportant)
-                    }
-
-                } else {
-                    backgroundColor = view.context.getColor(R.color.featureBackground)
-                    textColor = view.context.getColor(R.color.featureText)
-                }
-
                 val feature = iterator.next()
+                val color = feature.getColor()
                 builder.append(
                     "\u00A0",
                     RoundedBackgroundSpan(
-                        backgroundColor = backgroundColor,
-                        textColor = textColor,
-                        text = feature
+                        backgroundColor = itemView.context.getColor(color.colorId),
+                        textColor = itemView.context.getColor(color.textColorId),
+                        text = feature.title
                     ),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
@@ -335,8 +224,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             return builder
         }
 
-        private fun setLessonTitleAndFeatures(lesson: Lesson, lessonPlace: LessonPlace, enabled: Boolean) {
-            val builder = SpannableStringBuilder()
+        private fun setLessonType(lesson: Lesson, enabled: Boolean) {
             val colorType = if (enabled) {
                 (if (lesson.isImportant)
                     view.context.getColor(R.color.lessonTypeImportant)
@@ -348,54 +236,26 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val colorTextType = if (enabled) {
                 (if (lesson.isImportant)
                     0xffFC3636.toInt()
-                    //view.context.getColor(R.color.viewBinding.textScheduleFeaturesImportantText)
+                //view.context.getColor(R.color.viewBinding.textScheduleFeaturesImportantText)
                 else
                     0xff818289.toInt())
-                    //view.context.getColor(R.color.viewBinding.textScheduleFeaturesNotImportantText))
+                //view.context.getColor(R.color.viewBinding.textScheduleFeaturesNotImportantText))
             } else {
                 0xffffffff.toInt()
             }
 
+            viewBinding.textviewLessonType.text = lesson.type
+            viewBinding.textviewLessonType.setTextColor(colorTextType)
+            viewBinding.textviewLessonType.isEnabled = enabled
+        }
 
-            // Lesson type label
-            builder.append(
-                lesson.title
-            )
-//            builder.appendAny(
-//                "\u00A0",
-//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                RoundedBackgroundSpan(colorType, height = sp17, text = lesson.type, textColor = colorTextType),
-//                StyleSpan(Typeface.BOLD)
-//            )
-            //builder.append(lesson.type, ForegroundColorSpan(colorType), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val dates: String
-            if (lesson.dateFrom == lesson.dateTo) {
-                dates = dateFormatter.format(lesson.dateFrom)
-            } else {
-                dates = dateFormatter.format(lesson.dateFrom) + " - " +
-                        dateFormatter.format(lesson.dateTo)
-            }
+        private fun setLessonDuration(lesson: Lesson) {
+            viewBinding.textScheduleDates.text = getDuration(lesson)
+        }
 
-            // Duration label
-            viewBinding.textLessonDuration.text = getDuration(lesson)
-            viewBinding.textScheduleFeatures.text = lesson.type
-//            viewBinding.textScheduleFeatures.text = getFeaturesString(
-//                listOf(
-//                    lesson.type,
-//                    "${lessonPlace.order + 1}-я пара"
-//
-//                ),
-//                lesson.isImportant
-//            )
-            // Todo: add support for 3rd pair
-            viewBinding.textScheduleDates.text = getDuration(lesson)//dates
-            viewBinding.textScheduleFeatures.setTextColor(colorTextType)
-
-            //lessonFeatures.text = builder
-            viewBinding.textScheduleFeatures.isEnabled = enabled
-            //lessonFeatures.visibility = View.GONE
-            // Lesson title
-            viewBinding.textScheduleTitle.text =  builder
+        private fun setLessonTitle(lesson: Lesson, enabled: Boolean) {
+            viewBinding.textviewLessonTitle.text =  lesson.title
+            viewBinding.textviewLessonType.isEnabled = enabled
         }
 
         private fun getDuration(lesson: Lesson): String {
@@ -451,9 +311,9 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun setAuditoriums(lesson: Lesson, enabled: Boolean) {
+        private fun setAuditoriums(lesson: Lesson, featuresSettings: LessonFeaturesSettings, enabled: Boolean) {
             viewBinding.textLessonAuditoriums.isEnabled = enabled
-            if (lesson.auditoriums.isEmpty()) {
+            if (!featuresSettings.showAuditoriums || lesson.auditoriums.isEmpty()) {
                 viewBinding.textLessonAuditoriums.visibility = View.GONE
             } else {
                 viewBinding.textLessonAuditoriums.visibility = View.VISIBLE
@@ -471,13 +331,13 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 
-        private fun setTeachers(lesson: Lesson, adapter: LessonAdapter, enabled: Boolean) {
+        private fun setTeachers(lesson: Lesson, featuresSettings: LessonFeaturesSettings,  enabled: Boolean) {
             val teachers = if (lesson.teachers.size == 1)
                 lesson.teachers.first().name
             else
                 lesson.teachers.joinToString(", ") { it.getShortName() }
 
-            if (!adapter.showTeachers || teachers.isEmpty()) {
+            if (!featuresSettings.showTeachers || teachers.isEmpty()) {
                 viewBinding.textLessonTeachers.visibility = View.GONE
             } else {
                 viewBinding.textLessonTeachers.setText(teachers, TextView.BufferType.NORMAL)
@@ -486,11 +346,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun setGroups(lesson: Lesson, adapter: LessonAdapter, enabled: Boolean) {
+        private fun setGroups(lesson: Lesson, featuresSettings: LessonFeaturesSettings,  enabled: Boolean) {
 
             val groupsText = Group.getShort(lesson.groups)
 
-            if (!adapter.showGroups || groupsText.isEmpty()) {
+            if (!featuresSettings.showGroups || groupsText.isEmpty()) {
                 viewBinding.textLessonGroups.visibility = View.GONE
             } else {
                 viewBinding.textLessonGroups.setText(groupsText, TextView.BufferType.NORMAL)
@@ -501,26 +361,59 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    class ViewHolderEmpty(private val view: View): RecyclerView.ViewHolder(view) {
-        private val viewBinding by viewBinding(ItemLessonEmptyBinding::bind)
+    class ViewHolderTime(view: View): RecyclerView.ViewHolder(view) {
+        private val viewBinding by viewBinding(ItemLessonTimeBinding::bind)
 
-        fun bind(lessonPlace: LessonPlace, adapter: LessonAdapter) {
-            setBottomPadding()
-            viewBinding.textLessonTime.text = "${lessonPlace.time.first}, ${lessonPlace.order + 1}-е занятие"
+        fun bind(lessonPlacePack: LessonPlacePack) {
+            setTime(lessonPlacePack.lessonPlace)
         }
 
-        private fun setBottomPadding() {
-            val dp8 = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                8f,
-                view.resources.displayMetrics
-            ).toInt()
-            view.setPadding(
-                view.paddingLeft,
-                if (bindingAdapterPosition == 0) dp8 else 0,
-                view.paddingRight,
-                view.paddingBottom
-            )
+        private fun setTime(lessonPlace: LessonPlace) {
+
+            var orderColor: Int
+            var orderTextColor: Int
+            when (lessonPlace.order) {
+                0 -> {
+                    orderColor = R.color.lessonOrder1
+                    orderTextColor = R.color.lessonOrder1Text
+                }
+                1 -> {
+                    orderColor = R.color.lessonOrder2
+                    orderTextColor = R.color.lessonOrder2Text
+                }
+                2 -> {
+                    orderColor = R.color.lessonOrder3
+                    orderTextColor = R.color.lessonOrder3Text
+                }
+                3 -> {
+                    orderColor = R.color.lessonOrder4
+                    orderTextColor = R.color.lessonOrder4Text
+                }
+                4 -> {
+                    orderColor = R.color.lessonOrder5
+                    orderTextColor = R.color.lessonOrder5Text
+                }
+                5 -> {
+                    orderColor = R.color.lessonOrder6
+                    orderTextColor = R.color.lessonOrder6Text
+                }
+                else -> {
+                    orderColor = R.color.lessonOrder7
+                    orderTextColor = R.color.lessonOrder7Text
+                }
+            }
+            orderColor = viewBinding.root.context.getColor(orderColor)
+
+            TextViewCompat.setCompoundDrawableTintList(viewBinding.textLessonTime, ColorStateList.valueOf(orderColor))
+            val (timeStart, timeEnd) = lessonPlace.time
+            viewBinding.textLessonTime.text = "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
+        }
+    }
+
+    class ViewHolderEmptyLesson(view: View): RecyclerView.ViewHolder(view) {
+        private val viewBinding by viewBinding(ItemLessonEmptyBinding::bind)
+
+        fun bind(lessonPack: LessonPack) {
         }
     }
 
@@ -529,13 +422,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val viewBinding by viewBinding(ItemLessonInfoBinding::bind)
 
         fun bind(
-            lessonWindow: LessonWindow,
-            prevLesson: LessonPlace,
-            nextLesson: LessonPlace,
+            lessonWindow: LessonWindowPack,
             adapter: LessonAdapter
         ) {
             this.adapter = adapter
-            setInfo(prevLesson, nextLesson)
+            setInfo(lessonWindow.lessonWindow.previousLessonPlace, lessonWindow.lessonWindow.nextLessonPlace)
         }
 
         private fun setInfo(
