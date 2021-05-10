@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
     android:layout_marginBottom="1dp"
@@ -14,11 +15,24 @@
         android:layout_height="match_parent"
         android:padding="@dimen/marginCard"
         android:background="?android:selectableItemBackground">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/image_corner"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            app:cardCornerRadius="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/student_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
         <TextView
             android:id="@+id/title_student"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/fio"
+            tools:text="@string/fio"
             android:textColor="@color/predmetcolor"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
@@ -26,7 +40,7 @@
             android:layout_marginStart="@dimen/marginCard"
             android:ellipsize="end"
             android:layout_marginBottom="@dimen/marginCard"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/chip_education"
             app:layout_constraintBottom_toBottomOf="@+id/chip_education"/>
@@ -34,43 +48,44 @@
             android:id="@+id/dir_spec_student"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="50dp"
             android:layout_marginStart="@dimen/marginCard"
-            android:text="Направление: \nПрофиль:"
+            tools:text="Направление: \nПрофиль:"
             android:layout_marginBottom="@dimen/marginCard"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/textColorPrimary"
             android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_corner"
             app:layout_constraintTop_toBottomOf="@id/chip_education"
             app:layout_constraintEnd_toEndOf="parent"/>
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_group"
-            android:text="Группа"
-            app:chipIcon="@drawable/ic_id_group"
-            android:layout_width="wrap_content"
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dir_spec_student"/>
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_course"
-            android:text="Курс"
-            app:chipIcon="@drawable/ic_baseline_looks_3_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/chip_group"
-            app:layout_constraintTop_toBottomOf="@id/dir_spec_student"/>
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_form"
-            android:text="Форма обучения"
-            app:chipIcon="@drawable/ic_id_teacher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/chip_course"
-            app:layout_constraintTop_toBottomOf="@id/dir_spec_student"/>
+            app:layout_constraintTop_toBottomOf="@id/dir_spec_student">
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_group"
+                tools:text="Группа"
+                app:chipIcon="@drawable/ic_id_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_course"
+                tools:text="Курс"
+                app:chipIcon="@drawable/ic_baseline_looks_3_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_form"
+                tools:text="Форма обучения"
+                app:chipIcon="@drawable/ic_id_teacher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.chip.ChipGroup>
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_education"
-            android:text="Бакалавр"
+            tools:text="Бакалавр"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"

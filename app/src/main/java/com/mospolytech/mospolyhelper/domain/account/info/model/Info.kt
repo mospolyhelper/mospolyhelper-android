@@ -14,6 +14,8 @@ data class Info(
     val faculty: String,
     val course: String,
     val group: String,
+    val dormitory: String,
+    val dormitoryRoom: String,
     val direction: String,
     val specialization: String,
     val educationPeriod: String,
@@ -21,5 +23,5 @@ data class Info(
     val financingType: String,
     val educationLevel: String,
     val admissionYear: String,
-    val orders: List<String>,
+    val orders: List<String>
 )
