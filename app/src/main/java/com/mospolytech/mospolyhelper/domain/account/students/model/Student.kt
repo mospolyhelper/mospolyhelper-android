@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Student(
     val id: Int,
     val name: String,
+    val avatarUrl: String,
     val group: String,
     val direction: String,
     val specialization: String,

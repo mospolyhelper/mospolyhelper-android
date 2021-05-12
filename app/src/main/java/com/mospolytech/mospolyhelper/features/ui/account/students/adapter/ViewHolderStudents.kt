@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.students.adapter
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
@@ -13,4 +14,5 @@ class ViewHolderStudents(view : View) : RecyclerView.ViewHolder(view) {
     val educationForm: Chip = view.chip_form
     val direction_specialization: TextView = view.dir_spec_student
     val education: Chip = view.chip_education
+    val avatar: ImageView = view.student_avatar
 }
