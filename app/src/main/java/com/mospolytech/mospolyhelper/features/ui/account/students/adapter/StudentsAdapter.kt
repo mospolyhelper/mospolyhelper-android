@@ -9,6 +9,7 @@ import androidx.paging.PagedListAdapter
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
@@ -80,10 +81,17 @@ class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>
                 }
                 education.text = res
                 if (res.isNotEmpty()) education.show() else education.hide()
+                Glide.with(itemView.context).load("https://e.mospolytech.ru/${it.avatarUrl}").into(avatar)
             }
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        with (holder as ViewHolderStudents) {
+            Glide.with(itemView.context).clear(avatar)
+        }
+    }
 
 
 }
