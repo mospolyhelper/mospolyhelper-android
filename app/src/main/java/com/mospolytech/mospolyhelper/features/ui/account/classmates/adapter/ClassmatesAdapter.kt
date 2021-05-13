@@ -14,7 +14,6 @@ import com.mospolytech.mospolyhelper.utils.inflate
 class ClassmatesAdapter(var items : List<Classmate>,
                         private val classmateClick:(String) -> Unit
 ):RecyclerView.Adapter<ClassmatesViewHolder>() {
-    private lateinit var context: Context
 
     fun updateList(newList: List<Classmate>) {
         val diffResult =
@@ -24,7 +23,6 @@ class ClassmatesAdapter(var items : List<Classmate>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassmatesViewHolder {
-        context = parent.context
         return ClassmatesViewHolder(parent.inflate(R.layout.item_classmate))
     }
 
@@ -43,7 +41,7 @@ class ClassmatesAdapter(var items : List<Classmate>,
                 }
             }
             card.setOnClickListener { classmateClick.invoke(items[position].dialogKey) }
-            Glide.with(context).load("https://e.mospolytech.ru/${items[position].avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${items[position].avatarUrl}").into(avatar)
         }
     }
 

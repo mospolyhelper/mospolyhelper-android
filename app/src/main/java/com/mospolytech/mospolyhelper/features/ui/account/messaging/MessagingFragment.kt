@@ -28,6 +28,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MessagingFragment : Fragment() {
 
+    companion object {
+        const val DIALOG_ID = "DialogID"
+    }
+
     private val viewModel by viewModel<MessagingViewModel>()
 
     override fun onCreateView(
@@ -45,7 +49,7 @@ class MessagingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recycler_messaging.layoutManager = LinearLayoutManager(requireContext())
         recycler_messaging.adapter = MessagesAdapter(emptyList())
-        dialogId = arguments?.getString("DialogID").orEmpty()
+        dialogId = arguments?.getString(DIALOG_ID).orEmpty()
         viewModel.setDialogId(dialogId)
         send_message.setOnClickListener {
 //            lifecycleScope.async {
