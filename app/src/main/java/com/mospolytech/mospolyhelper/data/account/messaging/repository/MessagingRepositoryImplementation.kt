@@ -1,13 +1,12 @@
 package com.mospolytech.mospolyhelper.data.account.messaging.repository
 
+import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.messaging.local.MessagingLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.messaging.remote.MessagingRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
 import com.mospolytech.mospolyhelper.domain.account.messaging.repository.MessagingRepository
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
-import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,8 @@ import kotlinx.coroutines.flow.flowOn
 class MessagingRepositoryImplementation(
     private val remoteDataSource: MessagingRemoteDataSource,
     private val localDataSource: MessagingLocalDataSource,
-    private val prefDataSource: SharedPreferencesDataSource
+    private val prefDataSource: SharedPreferencesDataSource,
+    private val jwtLocalDataSource: AuthJwtLocalDataSource
 ): MessagingRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -47,4 +47,9 @@ class MessagingRepositoryImplementation(
         )
         emit(remoteDataSource.sendMessage(sessionId, dialogKey, message, fileNames))
     }.flowOn(ioDispatcher)
+
+    override fun getName() = jwtLocalDataSource.get()?.getName() ?: ""
+
+    override fun getAvatar() = jwtLocalDataSource.get()?.getAvatar() ?: ""
+
 }

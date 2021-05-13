@@ -30,4 +30,15 @@ class MessagingUseCase(
             emit(Result.loading())
         }
 
+    fun getName(): String {
+        val name = repository.getName().substringBeforeLast(" ", "")
+        val formattedName = "${name.substringAfter(" ")} ${name.substringBefore(" ")}"
+        return formattedName
+    }
+
+    fun getAvatar(): String {
+        var avatar = repository.getAvatar().replace("https://e.mospolytech.ru/img/", "")
+        avatar = avatar.replace("photos/", "")
+        return avatar
+    }
 }

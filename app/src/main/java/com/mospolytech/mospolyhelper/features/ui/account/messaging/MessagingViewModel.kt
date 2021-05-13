@@ -27,27 +27,23 @@ class MessagingViewModel(
 
     val message = MutableStateFlow<Result<Message>>(Result.loading())
 
-    private var dialogId: String = ""
-
-    fun setDialogId(id: String) {
-        dialogId = id
-    }
-
-    suspend fun getDialog() {
+    suspend fun getDialog(dialogId: String) {
         useCase.getLocalDialog(dialogId).collect {
             dialog.value = it
         }
-        //dialog.value = Result.loading()
         useCase.getDialog(dialogId).collect {
             dialog.value = it
-
         }
     }
 
-    suspend fun sendMessage(message: String, fileNames: List<String> = emptyList()) {
+    suspend fun sendMessage(dialogId: String, message: String, fileNames: List<String> = emptyList()) {
         useCase.sendMessage(dialogId, message, fileNames).collect {
             this.message.value = it
         }
     }
+
+    fun getName() = useCase.getName()
+
+    fun getAvatar() = useCase.getAvatar()
 
 }

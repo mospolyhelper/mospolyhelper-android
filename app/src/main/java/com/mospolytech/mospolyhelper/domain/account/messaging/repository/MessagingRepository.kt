@@ -9,4 +9,6 @@ interface MessagingRepository {
     suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>>
     suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>>
     suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>>
+    fun getName(): String
+    fun getAvatar(): String
 }

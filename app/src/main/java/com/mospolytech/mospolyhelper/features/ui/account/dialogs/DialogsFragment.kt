@@ -28,6 +28,7 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
     private val adapter = DialogAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         DialogAdapter.dialogClickListener = {
             val data = bundleOf(DIALOG_ID to it)
@@ -37,8 +38,6 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         lifecycleScope.launch {
             viewModel.getInfo()
         }
-
-        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
