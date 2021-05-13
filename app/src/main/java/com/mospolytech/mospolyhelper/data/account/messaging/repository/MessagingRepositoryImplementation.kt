@@ -40,7 +40,7 @@ class MessagingRepositoryImplementation(
         }.flowOn(ioDispatcher)
     }
 
-    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>> = flow {
+    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId

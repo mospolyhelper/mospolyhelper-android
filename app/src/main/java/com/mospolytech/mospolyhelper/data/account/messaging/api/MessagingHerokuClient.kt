@@ -24,22 +24,10 @@ class MessagingHerokuClient(
     }
 
     suspend fun sendMessage(sessionId: String, message: MessageSend): String {
-//        return client.post(SEND_MESSAGE) {
-//            //header("accept", "application/json")
-//            header("sessionId", sessionId)
-//            //header("Content-Type", "application/json")
-//            contentType(ContentType("application","json"))
-//            body = message
-//        }
-        val params = mutableMapOf(
-            "dialogKey" to message.dialogKey,
-            "message" to message.message,
-            "fileNames" to message.fileNames
-        )
         return client.post(SEND_MESSAGE) {
             header("sessionId", sessionId)
             contentType(ContentType.Application.Json)
-            body = params
+            body = message
         }
     }
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -76,7 +77,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    inner class OtherMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    internal class OtherMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(ItemMessageBinding::bind)
 
@@ -85,14 +86,9 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val avatar: ImageView = viewBinding.avatarStudent
         val card: CardView = viewBinding.card
 
-        @Suppress("DEPRECATION")
         fun bind(item: Message) {
             name.text = item.authorName
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                message.text = Html.fromHtml(item.message, Html.FROM_HTML_MODE_COMPACT)
-            } else {
-                message.text = Html.fromHtml(item.message)
-            }
+            message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
         }
 
@@ -101,7 +97,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    inner class MyMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    internal class MyMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(ItemMyMessageBinding::bind)
 
@@ -110,14 +106,9 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val avatar: ImageView = viewBinding.avatarStudent
         val card: CardView = viewBinding.card
 
-        @Suppress("DEPRECATION")
         fun bind(item: Message) {
             name.text = item.authorName
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                message.text = Html.fromHtml(item.message, Html.FROM_HTML_MODE_COMPACT)
-            } else {
-                message.text = Html.fromHtml(item.message)
-            }
+            message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
         }
 
@@ -126,7 +117,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    inner class MessagesDiffCallback(private val oldList: List<Message>, private val newList: List<Message>) : DiffUtil.Callback() {
+    internal class MessagesDiffCallback(private val oldList: List<Message>, private val newList: List<Message>) : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             oldList[oldItemPosition].id == newList[newItemPosition].id

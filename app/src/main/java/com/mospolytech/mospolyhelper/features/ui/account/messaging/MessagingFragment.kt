@@ -40,7 +40,7 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
     private val adapter = MessagesAdapter()
 
     var dialogId: String = ""
-    lateinit var dialog: MutableList<Message>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,7 +64,6 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
             lifecycleScope.launch {
                 viewModel.sendMessage(dialogId, viewBinding.editMessage.text.toString())
             }
-            Toast.makeText(requireContext(), "Скоро будет", Toast.LENGTH_SHORT).show()
         }
 
         lifecycleScope.launchWhenResumed {
@@ -72,7 +71,6 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
                 result.onSuccess {
                     viewBinding.sendMessage.show()
                     viewBinding.progressLoading.gone()
-                    dialog = it.toMutableList()
                     adapter.items = it
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
@@ -83,13 +81,13 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
                     viewBinding.progressLoading.show()
                 }
             }
-            
+
             viewModel.message.collect { result ->
                 result.onSuccess {
                     viewBinding.sendMessage.show()
                     viewBinding.progressLoading.gone()
-                    dialog.add(it)
-                    adapter.items = dialog
+                    adapter.items = it
+                    //viewBinding.recyclerMessaging.scrollToPosition(0)
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.sendMessage.show()

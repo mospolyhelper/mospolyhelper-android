@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface MessagingRepository {
     suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>>
     suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>>
-    suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>>
+    suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>>
     fun getName(): String
     fun getAvatar(): String
 }

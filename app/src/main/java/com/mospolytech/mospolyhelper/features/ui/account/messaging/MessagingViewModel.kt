@@ -25,7 +25,7 @@ class MessagingViewModel(
 
     val dialog = MutableStateFlow<Result<List<Message>>>(Result.loading())
 
-    val message = MutableStateFlow<Result<Message>>(Result.loading())
+    val message = MutableStateFlow<Result<List<Message>>>(Result.loading())
 
     suspend fun getDialog(dialogId: String) {
         useCase.getLocalDialog(dialogId).collect {
