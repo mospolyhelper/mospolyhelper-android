@@ -13,6 +13,8 @@ interface LessonTagsRepository {
 
     suspend fun addTag(tag: LessonTag)
 
+    suspend fun addTagToLesson(tagTitle: String, lesson: LessonTagKey)
+
     suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int)
 
     suspend fun removeTag(tagTitle: String)

@@ -29,6 +29,17 @@ class LessonTagsLocalDataSource(
         return SuccessMessage(LessonTagMessages.SuccessfulCreation)
     }
 
+    fun addTagToLesson(tagTitle: String, lesson: LessonTagKey): Message<LessonTagMessages> {
+        setAll(getAll().map { tag ->
+            if (tag.title.equals(tagTitle, ignoreCase = true)) {
+                tag.copy(lessons = tag.lessons + lesson)
+            } else {
+                tag
+            }
+        })
+        return SuccessMessage(LessonTagMessages.SuccessfulAdding)
+    }
+
     fun editTag(tagTitle: String, newTitle: String, newColor: Int): Message<LessonTagMessages> {
         if (newTitle.isEmpty()) {
             return ExceptionMessage(LessonTagMessages.EmptyTitle)

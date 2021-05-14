@@ -160,6 +160,9 @@ class ScheduleUseCase(
     suspend fun addTag(tag: LessonTag) =
         tagRepository.addTag(tag)
 
+    suspend fun addTagToLesson(tagTitle: String, lesson: LessonTagKey) =
+        tagRepository.addTagToLesson(tagTitle, lesson)
+
     suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int) =
         tagRepository.editTag(tagTitle, newTitle, newColor)
 

@@ -156,6 +156,9 @@ class ScheduleAdapter(
                         { lesson, dayOfWeek, order ->
                             val tagKey = LessonTagKey.fromLesson(lesson, dayOfWeek, order)
                             tags.filter { it.lessons.contains(tagKey) }
+                        },
+                        { lesson ->
+                            emptyList()
                         }
                     )
 

@@ -1,6 +1,10 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.calendar
 
+import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.TypefaceSpan
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.utils.cutTitle
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.DayOfWeek
@@ -20,12 +25,7 @@ import java.time.temporal.ChronoUnit
 
 // TODO: Return filter
 class CalendarThreeAdapter(
-    val schedule: Schedule?,
-    var showGroup: Boolean,
-    val colorParagraph: Int,
-    val colorTimeBackground: Int,
-    val colorTitle: Int,
-    val colorCurrentTitle: Int
+    val schedule: Schedule?
 ) : RecyclerView.Adapter<CalendarThreeAdapter.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
@@ -80,6 +80,11 @@ class CalendarThreeAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val colorParagraph: Int = view.context.getColor(R.color.calendarParagraph)
+        val colorTimeBackground: Int = view.context.getColor(R.color.calendarTimeBackground)
+        val colorTitle: Int = view.context.getColor(R.color.calendarTitle)
+        val colorCurrentTitle: Int = view.context.getColor(R.color.calendarCurrentTitle)
+
         private val lessonTime: TextView = view.findViewById(R.id.text_schedule_time_grid)
         private val lessonType: TextView = view.findViewById(R.id.text_schedule_grid)
         private val lessonPlace: LinearLayout = view.findViewById(R.id.linear_layout_schedule_grid)
@@ -93,7 +98,7 @@ class CalendarThreeAdapter(
         fun bind() {
             if (schedule == null) return
 
-            val date = firstPosDate.plusDays(adapterPosition.toLong())
+            val date = firstPosDate.plusDays(bindingAdapterPosition.toLong())
             val dailySchedule = schedule.getLessons(date)
             setLessons(dailySchedule, date)
             setHead(date)
@@ -147,7 +152,7 @@ class CalendarThreeAdapter(
                 }
                 DayOfWeek.SUNDAY -> {
                     paddingStart = 0
-                    if (adapterPosition % 3 == 2) paddingEnd = 0
+                    if (bindingAdapterPosition % 3 == 2) paddingEnd = 0
                     paddingTop = 0
                 }
                 null -> {
@@ -167,97 +172,66 @@ class CalendarThreeAdapter(
         }
 
         private fun setLessons(dailySchedule: List<LessonPlace>, date: LocalDate) {
-//            val res = SpannableStringBuilder()
-//
-//            if (dailySchedule.isNotEmpty()) {
-//                var title: String
-//                var time = dailySchedule[0].time
-//                spansAppend(
-//                    res,
-//                    (dailySchedule[0].order + 1).toString() + ") " + time.first + "-" + time.second,
-//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                    //QuoteSpan(colorParagraph),
-//                    //BackgroundColorSpan(colorTimeBackground),
-//                    TypefaceSpan("sans-serif-medium")
-//                )
-//
-//                if (showGroup) {
-//                    spansAppend(
-//                        res,
-//                        "\n" + dailySchedule[0].type + "  " + dailySchedule[0].groups.joinToString { it.title },
-//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                        ForegroundColorSpan(
-//                            if (dailySchedule[0].isImportant)
-//                                lessonTypeColors[0]
-//                            else
-//                                lessonTypeColors[1]
-//                        ),
-//                        RelativeSizeSpan(0.9f),
-//                        TypefaceSpan("sans-serif-medium"))
-//                } else {
-//                    spansAppend(
-//                        res,
-//                        "\n" + dailySchedule[0].type,
-//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                        ForegroundColorSpan(
-//                            if (dailySchedule[0].isImportant)
-//                                lessonTypeColors[0]
-//                            else
-//                                lessonTypeColors[1]
-//                        ),
-//                        RelativeSizeSpan(0.9f),
-//                        TypefaceSpan("sans-serif-medium"));
-//                }
-//
-//                title = cutTitle(dailySchedule[0].title)
-//                res.append("\n" + title);
-//
-//
-//                for (i in 1 until dailySchedule.size) {
-//                    if (!dailySchedule[i].equalsTime(dailySchedule[i - 1])) {
-//                        time = dailySchedule[i].time
-//                        spansAppend(
-//                            res, "\n" + (dailySchedule[i].order + 1) + ") " + time.first + "-" + time.second,
-//                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                            //QuoteSpan(colorParagraph),
-//                            //BackgroundColorSpan(colorTimeBackground),
-//                            TypefaceSpan("sans-serif-medium")
-//                        )
-//                    }
-//                    if (showGroup) {
-//                        spansAppend(
-//                            res,
-//                            "\n" + dailySchedule[i].type + "  " + dailySchedule[i].groups.joinToString { it.title },
-//                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                            ForegroundColorSpan(
-//                                if (dailySchedule[i].isImportant)
-//                                    lessonTypeColors[0]
-//                                else
-//                                    lessonTypeColors[1]
-//                            ),
-//                            RelativeSizeSpan(0.9f),
-//                            TypefaceSpan("sans-serif-medium")
-//                        )
-//                    } else {
-//                        spansAppend(
-//                            res,
-//                            "\n" + dailySchedule[i].type,
-//                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                            ForegroundColorSpan(
-//                                if (dailySchedule[i].isImportant)
-//                                    lessonTypeColors[0]
-//                                else
-//                                    lessonTypeColors[1]
-//                            ),
-//                            RelativeSizeSpan(0.9f),
-//                            TypefaceSpan("sans-serif-medium")
-//                        )
-//                    }
-//                    title = cutTitle(dailySchedule[i].title)
-//                    res.append("\n" + title)
-//                }
-//            }
-//            lessonType.setText(res, TextView.BufferType.NORMAL);
+            val res = SpannableStringBuilder()
+
+            if (dailySchedule.isNotEmpty()) {
+                var title: String
+                var time: Pair<String, String>
+                var lessonPlace = dailySchedule[0]
+                time = lessonPlace.time
+                spansAppend(
+                    res,
+                    (lessonPlace.order + 1).toString() + ") " + time.first + "-" + time.second,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    TypefaceSpan("sans-serif-medium")
+                )
+                for (lesson in lessonPlace.lessons) {
+                    spansAppend(
+                        res,
+                        "\n" + lesson.type,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                        ForegroundColorSpan(
+                            if (lesson.isImportant)
+                                lessonTypeColors[0]
+                            else
+                                lessonTypeColors[1]
+                        ),
+                        RelativeSizeSpan(0.9f),
+                        TypefaceSpan("sans-serif-medium")
+                    )
+                    title = cutTitle(lesson.title)
+                    res.append("\n" + title)
+                }
+
+                for (i in 1 until dailySchedule.size) {
+                    lessonPlace = dailySchedule[i]
+                    time = lessonPlace.time
+                    spansAppend(
+                        res,
+                        "\n" + (lessonPlace.order + 1) + ") " + time.first + "-" + time.second,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                        TypefaceSpan("sans-serif-medium")
+                    )
+                    for (lesson in lessonPlace.lessons) {
+                        spansAppend(
+                            res,
+                            "\n" + lesson.type,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                            ForegroundColorSpan(
+                                if (lesson.isImportant)
+                                    lessonTypeColors[0]
+                                else
+                                    lessonTypeColors[1]
+                            ),
+                            RelativeSizeSpan(0.9f),
+                            TypefaceSpan("sans-serif-medium")
+                        )
+                        title = cutTitle(lesson.title)
+                        res.append("\n" + title)
+                    }
+                }
+            }
+            lessonType.setText(res, TextView.BufferType.NORMAL);
         }
 
         private fun spansAppend(builder: SpannableStringBuilder, text: String, flags: Int, vararg spans: Any) {

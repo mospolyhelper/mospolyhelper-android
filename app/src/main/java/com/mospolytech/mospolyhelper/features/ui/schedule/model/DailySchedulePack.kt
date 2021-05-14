@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.model
 
+import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils
@@ -28,7 +29,8 @@ class DailySchedulePack(
             date: LocalDate,
             dateFilter: LessonDateFilter,
             featuresSettings: LessonFeaturesSettings,
-            lessonTagProvider: (lesson: Lesson, dayOfWeek: DayOfWeek, order: Int) -> List<LessonTag>
+            lessonTagProvider: (lesson: Lesson, dayOfWeek: DayOfWeek, order: Int) -> List<LessonTag>,
+            lessonDeadlineProvider: (lesson: Lesson) -> List<Deadline>
         ): DailySchedulePack {
             var rawDailySchedule = schedule.getLessons(
                 date,
@@ -48,7 +50,7 @@ class DailySchedulePack(
                                     it,
                                     LessonTime.fromLessonPlace(scheduleItem),
                                     lessonTagProvider(it, date.dayOfWeek, scheduleItem.order),
-                                    emptyList(),
+                                    lessonDeadlineProvider(it),
                                     dateFilter,
                                     featuresSettings
                                 )

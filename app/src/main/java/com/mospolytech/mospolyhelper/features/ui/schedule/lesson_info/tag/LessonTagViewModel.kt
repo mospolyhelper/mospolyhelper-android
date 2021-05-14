@@ -72,4 +72,28 @@ class LessonTagViewModel(
             )
         }
     }
+
+    suspend fun lessonTagCheckedChanged(tag: LessonTag, lesson: LessonTagKey, isChecked: Boolean) {
+        if (isChecked) {
+            useCase.addTagToLesson(
+                tag.title,
+                lesson
+            )
+        } else {
+            useCase.removeTagFromLesson(
+                tag.title,
+                lesson
+            )
+        }
+    }
+
+
+    suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int) {
+        useCase.editTag(tagTitle, newTitle, newColor)
+    }
+
+    suspend fun removeTag(tagTitle: String) {
+        useCase.removeTag(tagTitle)
+    }
+
 }
