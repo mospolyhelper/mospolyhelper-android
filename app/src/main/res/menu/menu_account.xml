@@ -50,4 +50,9 @@
         android:icon="@drawable/ic_fluent_clipboard_text_ltr_20_regular"
         android:title="@string/statements"
         android:visible="false"/>
+    <item
+        android:id="@+id/nav_dialogs"
+        android:icon="@drawable/ic_baseline_send_24"
+        android:title="@string/nav_dialogs"
+        android:visible="false"/>
 </menu>

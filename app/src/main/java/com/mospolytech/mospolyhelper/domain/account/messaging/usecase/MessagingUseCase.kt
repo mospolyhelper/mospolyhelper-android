@@ -1,16 +1,9 @@
 package com.mospolytech.mospolyhelper.domain.account.messaging.usecase
 
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
-import com.mospolytech.mospolyhelper.domain.account.marks.repository.MarksRepository
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
 import com.mospolytech.mospolyhelper.domain.account.messaging.repository.MessagingRepository
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 
 class MessagingUseCase(
@@ -25,9 +18,19 @@ class MessagingUseCase(
             //emit(Result.loading())
         }
 
-    suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<Message>> =
+    suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>> =
         repository.sendMessage(dialogKey, message, fileNames).onStart {
             emit(Result.loading())
         }
 
+    fun getName(): String {
+        val name = repository.getName().substringBeforeLast(" ", "")
+        return "${name.substringAfter(" ")} ${name.substringBefore(" ")}"
+    }
+
+    fun getAvatar(): String {
+        var avatar = repository.getAvatar().replace("https://e.mospolytech.ru/img/", "")
+        avatar = avatar.replace("photos/", "")
+        return avatar
+    }
 }

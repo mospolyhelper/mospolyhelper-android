@@ -19,7 +19,7 @@ class MessagingRemoteDataSource(
         }
     }
 
-    suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result<Message> {
+    suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result<List<Message>> {
         return try {
             //val json = Json.encodeToString(MessageSend(dialogKey, message, fileNames))
             val res = client.sendMessage(sessionId, MessageSend(dialogKey, message, fileNames))

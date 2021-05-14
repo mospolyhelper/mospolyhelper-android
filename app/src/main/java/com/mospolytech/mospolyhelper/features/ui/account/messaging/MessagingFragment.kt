@@ -13,7 +13,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentAccountMessagingBinding
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
@@ -21,78 +23,81 @@ import com.mospolytech.mospolyhelper.features.ui.account.classmates.adapter.Clas
 import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter.MessagesAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.fragment_account_messaging.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MessagingFragment : Fragment() {
+class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
-    private val viewModel by viewModel<MessagingViewModel>()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account_messaging, container, false)
+    companion object {
+        const val DIALOG_ID = "DialogID"
     }
 
+    private val viewModel by viewModel<MessagingViewModel>()
+    private val viewBinding by viewBinding(FragmentAccountMessagingBinding::bind)
+
+    private val adapter = MessagesAdapter()
+
     var dialogId: String = ""
-    lateinit var dialog: MutableList<Message>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        MessagesAdapter.MY_AVATAR = viewModel.getAvatar()
+        MessagesAdapter.MY_NAME = viewModel.getName()
+
+        dialogId = arguments?.getString(DIALOG_ID).orEmpty()
+
+        lifecycleScope.launch {
+            viewModel.getDialog(dialogId)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_messaging.layoutManager = LinearLayoutManager(requireContext())
-        recycler_messaging.adapter = MessagesAdapter(emptyList())
-        dialogId = arguments?.getString("DialogID").orEmpty()
-        viewModel.setDialogId(dialogId)
-        send_message.setOnClickListener {
-//            lifecycleScope.async {
-//                viewModel.sendMessage(edit_message.text.toString())
-//            }
-            Toast.makeText(requireContext(), "Скоро будет", Toast.LENGTH_SHORT).show()
-        }
-        lifecycleScope.launchWhenResumed {
-            viewModel.dialog.collect { result ->
-                result.onSuccess {
-                    send_message.show()
-                    progress_loading.gone()
-                    dialog = it.toMutableList()
-                    recycler_messaging.adapter?.let { adapter ->
-                        if (adapter is MessagesAdapter) adapter.updateList(dialog)
-                    }
-                }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    send_message.show()
-                    progress_loading.gone()
-                }.onLoading {
-                    send_message.hide()
-                    progress_loading.show()
-                }
-            }
-            viewModel.message.collect { result ->
-                result.onSuccess {
-                    send_message.show()
-                    progress_loading.gone()
-                    dialog.add(it)
-                    recycler_messaging.adapter?.let { adapter ->
-                        if (adapter is MessagesAdapter) adapter.updateList(dialog)
-                    }
-                }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    send_message.show()
-                    progress_loading.gone()
-                }.onLoading {
-                    //send_message.hide()
-                    //progress_loading.show()
-                }
+
+        viewBinding.recyclerMessaging.adapter = adapter
+        viewBinding.recyclerMessaging.layoutManager = LinearLayoutManager(requireContext())
+
+        viewBinding.sendMessage.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.sendMessage(dialogId, viewBinding.editMessage.text.toString())
             }
         }
 
-        lifecycleScope.async {
-            viewModel.getDialog()
+        lifecycleScope.launchWhenResumed {
+            viewModel.dialog.collect { result ->
+                result.onSuccess {
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    adapter.items = it
+                }.onFailure {
+                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                }.onLoading {
+                    viewBinding.sendMessage.hide()
+                    viewBinding.progressLoading.show()
+                }
             }
+
+            viewModel.message.collect { result ->
+                result.onSuccess {
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    adapter.items = it
+                    //viewBinding.recyclerMessaging.scrollToPosition(0)
+                }.onFailure {
+                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                }.onLoading {
+                    viewBinding.sendMessage.hide()
+                    viewBinding.progressLoading.show()
+                }
+            }
+        }
 
     }
 }

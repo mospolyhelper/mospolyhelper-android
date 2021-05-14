@@ -69,7 +69,7 @@ class AccountMenuFragment : Fragment() {
         menuItems.add(menu.getItem(0))
         permissions.forEach {
             when (it) {
-                //"dialogs" -> { menuItems.add(menu.visibleItems[1]) }
+                "dialogs" -> { menuItems.add(menu.getItem(10)) }
                 "info" -> { menuItems.add(menu.getItem(1)) }
                 "payments" -> { menuItems.add(menu.getItem(4)) }
                 "marks" -> { menuItems.add(menu.getItem(3)) }
@@ -142,6 +142,12 @@ class AccountMenuFragment : Fragment() {
                     navigate(
                         AccountMenuFragmentDirections
                             .actionAccountMenuFragmentToStatementsFragment()
+                    )
+                }
+                R.id.nav_dialogs -> findNavController().safe {
+                    navigate(
+                        AccountMenuFragmentDirections
+                            .actionAccountMenuFragmentToDialogsFragment()
                     )
                 }
             }
