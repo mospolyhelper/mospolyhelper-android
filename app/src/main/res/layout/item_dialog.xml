@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
     android:layout_margin="1dp"
@@ -10,6 +11,7 @@
     app:cardBackgroundColor="@color/layerOne"
     android:elevation="3dp">
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:selectableItemBackground">
@@ -26,19 +28,18 @@
             app:layout_constraintTop_toTopOf="parent" >
 
             <ImageView
-                android:id="@+id/avatar_student"
+                android:id="@+id/avatar_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="100dp"
                 android:minHeight="100dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background" />
+                android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
         <TextView
-            android:id="@+id/title_student"
+            android:id="@+id/title_dialog"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/fio"
+            tools:text="@string/fio"
             android:textColor="@color/predmetcolor"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
@@ -54,14 +55,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Инфо"
+            tools:text="Инфо"
             android:layout_marginBottom="@dimen/marginCard"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/textColorPrimary"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@+id/avatar_student_circle"
-            app:layout_constraintTop_toBottomOf="@+id/title_student"
+            app:layout_constraintTop_toBottomOf="@+id/title_dialog"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
