@@ -69,6 +69,20 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
     private fun setTagList(tags: List<LessonTag>) {
         viewBinding.recyclerviewTags.adapter = LessonTagAdapter().apply {
+            onTagCheckedListener = { tag: LessonTag, lesson: LessonTagKey, isChecked: Boolean ->
+                lifecycleScope.launchWhenResumed {
+                    viewModel.lessonTagCheckedChanged(tag, lesson, isChecked)
+                }
+            }
+            onTagEditListener = {
+                // TODO: set edit tag views
+            }
+            onTagRemoveListener = {
+                lifecycleScope.launchWhenResumed {
+                    viewModel.removeTag(it.title)
+                }
+            }
+
             val lesson = viewModel.lesson.value
             val dayOfWeek = viewModel.dayOfWeek.value
             val order = viewModel.order.value

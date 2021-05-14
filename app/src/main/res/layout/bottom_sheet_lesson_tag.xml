@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:nestedScrollingEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -24,16 +25,17 @@
                 android:layout_marginEnd="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:id="@+id/recyclerview_tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="10"
-                tools:listitem="@layout/item_lesson_tag_choosing"/>
+                tools:listitem="@layout/item_lesson_tag_choosing" />
         </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintlayout_edit_tag"

@@ -1,5 +1,8 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag
 
+import android.content.res.ColorStateList
+import android.graphics.BlendMode
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +17,10 @@ class LessonTagAdapter : RecyclerView.Adapter<LessonTagAdapter.ViewHolder>() {
 
     private var tags: List<LessonTag> = emptyList()
     private var lesson: LessonTagKey? = null
+
+    var onTagCheckedListener: (tag: LessonTag, lesson: LessonTagKey, isChecked: Boolean) -> Unit = { _, _, _ -> }
+    var onTagEditListener: (tag: LessonTag) -> Unit = { }
+    var onTagRemoveListener: (tag: LessonTag) -> Unit = { }
 
     fun submitData(tags: List<LessonTag>, lesson: LessonTagKey) {
         this.tags = tags
@@ -30,14 +37,40 @@ class LessonTagAdapter : RecyclerView.Adapter<LessonTagAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(tags[position], lesson)
+        with(holder) {
+            bind(tags[position], lesson!!)
+            this.onTagCheckedListener = this@LessonTagAdapter.onTagCheckedListener
+            this.onTagEditListener = this@LessonTagAdapter.onTagEditListener
+            this.onTagRemoveListener = this@LessonTagAdapter.onTagRemoveListener
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonTagChoosingBinding::bind)
 
-        fun bind(tag: LessonTag, lesson: LessonTagKey?) {
+        var onTagCheckedListener: (tag: LessonTag, lesson: LessonTagKey, isChecked: Boolean) -> Unit = { _, _, _ -> }
+        var onTagEditListener: (tag: LessonTag) -> Unit = { }
+        var onTagRemoveListener: (tag: LessonTag) -> Unit = { }
+
+        fun bind(tag: LessonTag, lesson: LessonTagKey) {
             viewBinding.checkboxTag.text = tag.title
+            viewBinding.root.backgroundTintList = ColorStateList.valueOf(itemView.context.getColor(tag.getColor().colorId))
+            viewBinding.checkboxTag.setTextColor(itemView.context.getColor(tag.getColor().textColorId))
+            viewBinding.checkboxTag.buttonTintList = ColorStateList.valueOf(itemView.context.getColor(tag.getColor().textColorId))
+            viewBinding.root.setOnClickListener {
+                onTagCheckedListener(tag, lesson, !viewBinding.checkboxTag.isChecked)
+                viewBinding.checkboxTag.isChecked = !viewBinding.checkboxTag.isChecked
+            }
+            viewBinding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                menu.add("Edit").setOnMenuItemClickListener {
+                    onTagEditListener(tag)
+                    true
+                }
+                menu.add("Remove").setOnMenuItemClickListener {
+                    onTagRemoveListener(tag)
+                    true
+                }
+            }
             viewBinding.checkboxTag.isChecked = lesson in tag.lessons
         }
     }

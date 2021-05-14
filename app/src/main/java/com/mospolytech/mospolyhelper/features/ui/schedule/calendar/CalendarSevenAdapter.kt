@@ -18,12 +18,7 @@ import java.time.temporal.ChronoUnit
 
 // TODO: Return filter
 class CalendarSevenAdapter(
-    val schedule: Schedule?,
-    var showGroup: Boolean,
-    val colorParagraph: Int,
-    val colorTimeBackground: Int,
-    val colorTitle: Int,
-    val colorCurrentTitle: Int
+    val schedule: Schedule?
 ) : RecyclerView.Adapter<CalendarSevenAdapter.ViewHolder>() {
     companion object {
         val lessonTypeColors = listOf(
@@ -78,6 +73,10 @@ class CalendarSevenAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val colorParagraph: Int = view.context.getColor(R.color.calendarParagraph)
+        val colorTimeBackground: Int = view.context.getColor(R.color.calendarTimeBackground)
+        val colorTitle: Int = view.context.getColor(R.color.calendarTitle)
+        val colorCurrentTitle: Int = view.context.getColor(R.color.calendarCurrentTitle)
         private val lessonTime: TextView = view.findViewById(R.id.text_schedule_time_grid)
         private val lessonType: TextView = view.findViewById(R.id.text_schedule_grid)
         private val lessonPlace: LinearLayout = view.findViewById(R.id.linear_layout_schedule_grid)

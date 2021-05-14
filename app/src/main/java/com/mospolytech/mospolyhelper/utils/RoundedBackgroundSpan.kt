@@ -14,12 +14,12 @@ class RoundedBackgroundSpan(
     private val backgroundColor: Int,
     private val textColor: Int? = null,
     private val text: String,
-    private val relativeTextSize: Float = 0.65f,
+    private val relativeTextSize: Float = 0.63f,
     private val cornerRadiusPercentage: Float = 0.26f // 0.275f
 ) : ReplacementSpan(), LineHeightSpan {
 
     companion object {
-        private const val horizontalGrowthRate = 1.75f
+        private const val horizontalGrowthRate = 2.00f
         private const val relativeTextSize2 = 0.85f  // To add some bottom padding to text
     }
 

@@ -37,6 +37,16 @@ class LessonTagsRepositoryImpl(
         }
     }
 
+    override suspend fun addTagToLesson(tagTitle: String, lesson: LessonTagKey) {
+        withContext(ioDispatcher) {
+            val message = dataSource.addTagToLesson(tagTitle, lesson)
+            messageFlow.emit(message)
+            if (message !is ExceptionMessage) {
+                changesFlow.emit(Unit)
+            }
+        }
+    }
+
     override suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int) {
         withContext(ioDispatcher) {
             val message = dataSource.editTag(tagTitle, newTitle, newColor)

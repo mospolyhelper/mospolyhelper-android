@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/shape_button"
+    android:background="@drawable/shape_lesson_tag"
+    android:backgroundTintMode="multiply"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkbox_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
         android:fontFamily="@font/ubuntu"
         android:textSize="20sp"
         android:layout_marginStart="12dp"
