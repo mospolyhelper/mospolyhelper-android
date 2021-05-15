@@ -4,20 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentAccountAuthBinding
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.fragment_account_auth.*
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AuthFragment : Fragment() {
+class AuthFragment : Fragment(R.layout.fragment_account_auth) {
 
     private lateinit var loginText: TextView
     private lateinit var passwordText: TextView
@@ -25,26 +23,21 @@ class AuthFragment : Fragment() {
     private lateinit var savePasswordCheckBox: CheckBox
     private lateinit var logInButton: Button
     private lateinit var logOutButton: Button
+    private lateinit var progressAuth: ProgressBar
 
+    private val viewBinding by viewBinding(FragmentAccountAuthBinding::bind)
     private val viewModel by viewModel<AuthViewModel>()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account_auth, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loginText = view.findViewById(R.id.text_login)
-        passwordText = view.findViewById(R.id.text_password)
-        saveLoginCheckBox = view.findViewById(R.id.checkbox_save_login)
-        savePasswordCheckBox = view.findViewById(R.id.checkbox_save_password)
-        logInButton = view.findViewById(R.id.btn_login)
-        logOutButton = view.findViewById(R.id.btn_logout)
+        loginText = viewBinding.textLogin
+        passwordText = viewBinding.textPassword
+        saveLoginCheckBox = viewBinding.checkboxSaveLogin
+        savePasswordCheckBox = viewBinding.checkboxSavePassword
+        logInButton = viewBinding.btnLogin
+        logOutButton = viewBinding.btnLogout
+        progressAuth = viewBinding.progressAuth
 
         loginText.text = viewModel.login.value
         passwordText.text = viewModel.password.value
@@ -69,16 +62,16 @@ class AuthFragment : Fragment() {
                 viewModel.logIn().collect {
                     it.onSuccess {
                         logOutButton.show()
-                        progress_auth.hide()
+                        progressAuth.hide()
                         logInButton.show()
                         Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
                     }.onFailure {
-                        progress_auth.hide()
+                        progressAuth.hide()
                         logInButton.show()
                         logOutButton.hide()
                         Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     }.onLoading {
-                        progress_auth.show()
+                        progressAuth.show()
                         logInButton.hide()
                         logOutButton.hide()
                         Toast.makeText(context, "Loading", Toast.LENGTH_LONG).show()

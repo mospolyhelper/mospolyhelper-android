@@ -24,6 +24,7 @@
                     android:id="@+id/applications"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:overScrollMode="never"
                     tools:listitem="@layout/item_application"/>
                 <ProgressBar

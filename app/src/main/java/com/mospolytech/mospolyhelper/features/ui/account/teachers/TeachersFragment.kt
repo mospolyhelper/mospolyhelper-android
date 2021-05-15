@@ -16,79 +16,76 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentAccountTeachersBinding
 import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
+import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.teachers.adapter.TeachersAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.fragment_account_teachers.*
-import kotlinx.android.synthetic.main.item_address.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.coroutines.CoroutineContext
 
 
-class TeachersFragment : Fragment(), CoroutineScope {
+class TeachersFragment : Fragment(R.layout.fragment_account_teachers), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
     private var job : Job = Job()
 
-
+    private val viewBinding by viewBinding(FragmentAccountTeachersBinding::bind)
     private val viewModel  by viewModel<TeachersViewModel>()
 
+    private var adapter = TeachersAdapter()
 
-    private val diffUtil = object : DiffUtil.ItemCallback<Teacher>() {
-        override fun areItemsTheSame(oldItem: Teacher, newItem: Teacher) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Teacher, newItem: Teacher) = oldItem == newItem
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account_teachers, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.newCoroutineContext(this@TeachersFragment.coroutineContext)
+        TeachersAdapter.teacherClickListener = {
+            val data = bundleOf(DIALOG_ID to it)
+            findNavController().navigate(R.id.action_teachersFragment_to_messagingFragment, data)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.newCoroutineContext(this@TeachersFragment.coroutineContext)
+
 //        recycler_teachers.layoutManager = GridLayoutManager(requireContext(),
 //            calculateNoOfColumns(requireContext(), 180f))
-        recycler_teachers.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = TeachersAdapter(diffUtil) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            val data = bundleOf("DialogID" to it)
-            findNavController().navigate(R.id.action_teachersFragment_to_messagingFragment, data)
-        }
-        recycler_teachers.adapter = adapter.withLoadStateFooter(
+
+        viewBinding.recyclerTeachers.adapter = adapter.withLoadStateFooter(
             PagingLoadingAdapter { adapter.retry() }
         )
-        swipe_teachers.setOnRefreshListener {
+
+        viewBinding.swipeTeachers.setOnRefreshListener {
             if (adapter.itemCount != 0)
                 adapter.refresh()
             else {
                 job.cancel()
                 job = Job()
+
                 lifecycleScope.launch {
-                    viewModel.fetchTeachers(edit_search_teacher.text.toString())
+                    viewModel.fetchTeachers(viewBinding.editSearchTeacher.text.toString())
                         .collectLatest { pagingData ->
                             adapter.submitData(pagingData)
                         }
                 }
             }
         }
-        edit_search_teacher.setOnEditorActionListener { _, i, _ ->
+
+        viewBinding.editSearchTeacher.setOnEditorActionListener { _, i, _ ->
             if (i == EditorInfo.IME_ACTION_SEARCH) {
                 adapter.submitData(lifecycle, PagingData.empty())
                 job.cancel()
                 job = Job()
                 lifecycleScope.launch {
-                    viewModel.fetchTeachers(edit_search_teacher.text.toString())
+                    viewModel.fetchTeachers(viewBinding.editSearchTeacher.text.toString())
                         .collectLatest { pagingData ->
                             adapter.submitData(pagingData)
                         }
@@ -96,17 +93,18 @@ class TeachersFragment : Fragment(), CoroutineScope {
                 true
             } else false
         }
+
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
                 when(loadStates.refresh) {
                     is LoadState.Loading -> {
                         if (adapter.itemCount == 0)
-                            if (!swipe_teachers.isRefreshing)
-                                progress_first_loading.show()
+                            if (!viewBinding.swipeTeachers.isRefreshing)
+                                viewBinding.progressFirstLoading.show()
                     }
                     is LoadState.Error -> {
-                        progress_first_loading.hide()
-                        swipe_teachers.isRefreshing = false
+                        viewBinding.progressFirstLoading.hide()
+                        viewBinding.swipeTeachers.isRefreshing = false
                         Toast.makeText(
                             requireContext(),
                             (loadStates.refresh as LoadState.Error).error.localizedMessage,
@@ -115,8 +113,8 @@ class TeachersFragment : Fragment(), CoroutineScope {
                     }
                     is LoadState.NotLoading -> {
                         if (!job.isCancelled) {
-                            progress_first_loading.hide()
-                            swipe_teachers.isRefreshing = false
+                            viewBinding.progressFirstLoading.hide()
+                            viewBinding.swipeTeachers.isRefreshing = false
                         }
                     }
                 }
@@ -134,6 +132,11 @@ class TeachersFragment : Fragment(), CoroutineScope {
     override fun onStop() {
         super.onStop()
         if (job.isActive) job.cancel()
+    }
+
+    override fun onDestroy() {
+        TeachersAdapter.teacherClickListener = null
+        super.onDestroy()
     }
 
     fun calculateNoOfColumns(
