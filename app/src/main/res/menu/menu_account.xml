@@ -42,7 +42,7 @@
         android:visible="false"/>
     <item
         android:id="@+id/nav_deadlines"
-        android:icon="@drawable/ic_fluent_task_list_ltr_20_regular"
+        android:icon="@drawable/ic_fluent_task_list_square_ltr_20_regular"
         android:title="@string/nav_deadlines"
         android:visible="false"/>
     <item
@@ -52,7 +52,7 @@
         android:visible="false"/>
     <item
         android:id="@+id/nav_dialogs"
-        android:icon="@drawable/ic_baseline_send_24"
+        android:icon="@drawable/ic_fluent_chat_20_regular"
         android:title="@string/nav_dialogs"
         android:visible="false"/>
 </menu>

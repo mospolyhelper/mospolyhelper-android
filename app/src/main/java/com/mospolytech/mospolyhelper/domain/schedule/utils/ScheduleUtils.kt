@@ -80,9 +80,7 @@ fun merge(lessonPlace1: LessonPlace, lessonPlace2: LessonPlace): LessonPlace {
     return LessonPlace(newList, lessonPlace1.order, lessonPlace1.isEvening)
 }
 
-fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
-    if (schedule1 == null) return schedule2
-    if (schedule2 == null) return schedule1
+fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
     if (schedule1 == schedule2) return schedule1
 
     val resList = schedule1.dailySchedules.map { it.toMutableList() }

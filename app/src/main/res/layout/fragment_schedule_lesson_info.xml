@@ -1,8 +1,9 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@color/lessonInfoBackground"
     android:scrollbars="none">
 
@@ -12,57 +13,69 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/layerTwo"
-            android:orientation="vertical">
+            android:layout_height="250dp"
+            android:background="@color/layerTwo">
 
-            <include layout="@layout/toolbar_lesson_info" />
+            <include
+                android:id="@+id/include"
+                layout="@layout/toolbar_lesson_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_schedule_type"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-                android:layout_marginTop="80dp"
-                android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:fontFamily="@font/ubuntu_medium"
-                android:text="Лекционное занятие"
                 android:textIsSelectable="true"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/textview_lesson_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Лекционное занятие" />
 
             <TextView
                 android:id="@+id/textview_lesson_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-                android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
                 android:fontFamily="@font/ubuntu_medium"
                 android:hyphenationFrequency="none"
-                android:text="Объектно-ориентированное программирование"
                 android:textColor="@color/textColorPrimary"
                 android:textIsSelectable="true"
                 android:textSize="21sp"
-                android:transitionName="lessonInfoTitle" />
+                android:transitionName="lessonInfoTitle"
+                app:layout_constraintBottom_toTopOf="@+id/text_lesson_dates"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Объектно-ориентированное программирование" />
 
             <TextView
                 android:id="@+id/text_lesson_dates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-                android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
                 android:fontFamily="@font/ubuntu_medium"
-                android:text="10 февраля - 10 июня"
                 android:textAlignment="textEnd"
                 android:textColor="@color/lessonInfoText"
                 android:textIsSelectable="true"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="21 февраля - 14 июня" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <LinearLayout
@@ -75,7 +88,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:layout_weight="0.8"
@@ -107,7 +120,7 @@
                 android:layout_height="match_parent"/>
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:layout_weight="1"
@@ -133,17 +146,13 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tags"
+        <TextView
+            android:id="@+id/textview_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="4"
-            tools:itemCount="5"
-            tools:listitem="@layout/item_tag" />
+            style="@style/TextFeaturesStyle"
+            android:textSize="28.0sp"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_add_label"
@@ -239,7 +248,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
-            tools:itemCount="2"
+            tools:itemCount="3"
             tools:listitem="@layout/item_lesson_info_object" />
 
 
@@ -277,4 +286,4 @@
             android:textSize="17sp"
             android:visibility="gone" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

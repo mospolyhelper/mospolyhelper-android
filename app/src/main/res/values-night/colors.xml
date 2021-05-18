@@ -17,13 +17,6 @@
   <color name="colorLevelFive">#484a51</color>
   <color name="colorLevelSix">#6c6f7a</color>
 
-  <color name="colorLevelZeroText">#000000</color>
-  <color name="colorLevelOneText">#111111</color>
-  <color name="colorLevelTwoText">#222222</color>
-  <color name="colorLevelThreeText">#333333</color>
-  <color name="colorLevelFourText">#444444</color>
-  <color name="colorLevelFiveText">#555555</color>
-
 
   <!--  Common  -->
   <color name="layerZero">@color/colorLevelTwo</color>
@@ -39,23 +32,18 @@
 
 
   <!--  Main Menu  -->
-  <color name="mainMenuBackground">@color/layerZero</color>
 
   <!--  Schedule  -->
   <color name="scheduleBackground">@color/layerZero</color>
   <color name="scheduleLessonBackground">@color/layerOne</color>
   <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
-  <color name="scheduleLessonChip">@color/colorLevelFive</color>
-  <color name="scheduleLessonChipText">#ffffff</color>
 
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
   <color name="lessonTimeText">@color/accent_text_color</color>
   <color name="lessonTypeImportant">#f0dcf3</color>
-  <color name="lessonTypeImportantText">#7b3688</color>
   <color name="lessonTypeNotImportant">#cfeafd</color>
-  <color name="lessonTypeNotImportantText">#4a7d9d</color>
 
   <color name="textAccent">#EAEAEA</color>
   <color name="textAccentDisabled">#545454</color>
@@ -69,12 +57,6 @@
 
 
   <!--  Schedule Advanced Search  -->
-  <color name="advancedSearchColor">#202020</color>
-  <color name="advancedSearchBorderColor">#303030</color>
-  <color name="advancedSearchHead">#2D2D2D</color>
-  <color name="advancedSearchBody">#1C1C1C</color>
-  <color name="advancedSearchTextHead">#C9C9C9</color>
-  <color name="advancedSearchTextHeadSecondary">#858585</color>
 
 
   <!--  Schedule Calendar  -->
@@ -102,7 +84,6 @@
   <color name="colorPinned">#1E1E22</color>
 
   <color name="defaultCardColor">#1e1e1e</color>
-  <color name="bottomColor">#121212</color>
   <color name="textColorDate">#6E6E6E</color>
   <color name="colorFabIcon">#000000</color>
   <color name="pushPin">#AAAAAA</color>
@@ -110,7 +91,6 @@
 
   <!--  Addresses  -->
   <color name="addressesBackground">@color/layerZero</color>
-  <color name="addressesTabLayout">@color/layerTwo</color>
   <color name="addressesItemBackground">@color/layerOne</color>
 
   <color name="featureBackground">#525669</color>

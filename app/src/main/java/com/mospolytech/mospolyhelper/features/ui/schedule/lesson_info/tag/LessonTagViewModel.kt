@@ -8,6 +8,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -27,9 +28,7 @@ class LessonTagViewModel(
     val tag = MutableStateFlow<LessonTag?>(null)
     val title = MutableStateFlow("")
     val checkedColor = MutableStateFlow(LessonTagColors.ColorDefault)
-    val tags = MutableStateFlow<List<LessonTag>>(emptyList())
-
-    val message = MutableStateFlow<Message<LessonTagMessages>?>(null)
+    val tags = MutableStateFlow<Result2<List<LessonTag>>>(Result2.Loading())
 
     init {
         viewModelScope.launch {
@@ -49,12 +48,6 @@ class LessonTagViewModel(
         viewModelScope.launch {
             useCase.getAllTags().collect {
                 tags.value = it
-            }
-        }
-
-        viewModelScope.launch {
-            useCase.getTagsMessage().collect {
-                message.value = it
             }
         }
     }

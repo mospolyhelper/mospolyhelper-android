@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:nestedScrollingEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,9 +19,20 @@
                 android:id="@+id/button_new_tag"
                 android:text="@string/create_new_tag"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:textColor="#878998"
+                android:textSize="15sp"
+                android:breakStrategy="balanced"
+                android:fontFamily="@font/ubuntu_medium"
+                android:text="Select tags for the lesson"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -30,10 +40,10 @@
                 android:id="@+id/recyclerview_tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                android:orientation="horizontal"
                 tools:itemCount="10"
                 tools:listitem="@layout/item_lesson_tag_choosing" />
         </LinearLayout>
@@ -177,4 +187,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

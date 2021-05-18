@@ -16,7 +16,7 @@
         style="@style/ScheduleLessonSubtitle"
         android:fontFamily="@font/ubuntu"
         android:textColor="#9E9EA6"
-        android:textSize="17dp"
+        android:textSize="15.4dp"
         android:drawablePadding="@dimen/lesson_drawable_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         app:drawableTint="#9E9EA6" />
 
     <LinearLayout
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4.5dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="@dimen/lesson_margin_end"
         android:layout_width="match_parent"

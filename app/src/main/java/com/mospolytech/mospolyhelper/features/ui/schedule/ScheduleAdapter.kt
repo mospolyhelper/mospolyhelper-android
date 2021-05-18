@@ -13,8 +13,8 @@ import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
+import com.mospolytech.mospolyhelper.features.utils.RecyclerViewInViewPagerHelper
 import com.mospolytech.mospolyhelper.utils.Action2
 import com.mospolytech.mospolyhelper.utils.Event2
 import java.time.LocalDate
@@ -79,7 +79,6 @@ class ScheduleAdapter(
 
     override fun getItemCount() = count
 
-
     private fun setCount() {
         val schedule = schedule
         if (schedule == null) {
@@ -121,36 +120,34 @@ class ScheduleAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
-            VIEW_TYPE_NULL -> {
-                val view = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            VIEW_TYPE_NULL -> ViewHolderSimple(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.page_schedule_null, parent, false)
-                return ViewHolderSimple(view)
-            }
-            VIEW_TYPE_EMPTY -> {
-                val view = LayoutInflater.from(parent.context)
+            )
+            VIEW_TYPE_EMPTY -> ViewHolderEmpty(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.page_schedule_empty, parent, false)
-                return ViewHolderEmpty(view)
-            }
-            else -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.page_schedule, parent, false)
-                return ViewHolder(view, commonPool, lessonClick)
-            }
+            )
+            VIEW_TYPE_NORMAL -> ViewHolderDailySchedule(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.page_schedule, parent, false),
+                commonPool,
+                lessonClick
+            )
+            else -> throw IllegalArgumentException()
         }
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        when (viewHolder.itemViewType) {
-            VIEW_TYPE_NORMAL -> {
-                val date = from.plusDays(position.toLong())
-
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is ViewHolderDailySchedule -> {
                 val dailySchedule = DailySchedulePack.Builder()
                     .withEmptyLessons(showEmptyLessons)
                     .withLessonWindows(true)
                     .build(
                         schedule!!,
-                        date,
+                        from.plusDays(position.toLong()),
                         lessonDateFilter,
                         lessonFeaturesSettings,
                         { lesson, dayOfWeek, order ->
@@ -162,71 +159,42 @@ class ScheduleAdapter(
                         }
                     )
 
-                (viewHolder as ViewHolder).bind(SchedulePack(dailySchedule, date, lessonFeaturesSettings))
+                holder.bind(dailySchedule)
             }
-            VIEW_TYPE_EMPTY -> (viewHolder as ViewHolderEmpty).bind()
         }
     }
 
-    inner class ViewHolderSimple(val view: View) : RecyclerView.ViewHolder(view)
+    class ViewHolderSimple(view: View) : RecyclerView.ViewHolder(view)
 
-    inner class ViewHolderEmpty(val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind() {
-        }
-    }
+    class ViewHolderEmpty(view: View) : RecyclerView.ViewHolder(view)
 
-
-    class ViewHolder(
+    class ViewHolderDailySchedule(
         view: View,
         recyclerViewPool: RecyclerView.RecycledViewPool,
         onItemClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
     ) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(PageScheduleBinding::bind)
-        private val listAdapter = LessonAdapter()
 
         init {
-            listAdapter.lessonClick = onItemClick
-            viewBinding.recyclerviewLessons.adapter = listAdapter
-
-            viewBinding.recyclerviewLessons.setRecycledViewPool(recyclerViewPool)
-            viewBinding.recyclerviewLessons.layoutManager = LinearLayoutManager(view.context).apply {
-                recycleChildrenOnDetach = true
-            }
-            viewBinding.recyclerviewLessons.itemAnimator = null
-            viewBinding.recyclerviewLessons.setHasFixedSize(true)
-
-            // To solve viewpager - recyclerview conflict when you try to scroll vertically
-            viewBinding.recyclerviewLessons.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                    if (e.action == MotionEvent.ACTION_DOWN &&
-                        rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
-                    ) {
-                        rv.stopScroll()
-                    }
-                    return false
+            with (viewBinding.recyclerviewLessons) {
+                adapter = LessonAdapter().apply {
+                    lessonClick = onItemClick
                 }
-
-                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
-
-                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
-            })
+                setRecycledViewPool(recyclerViewPool)
+                layoutManager = LinearLayoutManager(view.context).apply {
+                    recycleChildrenOnDetach = true
+                }
+                itemAnimator = null
+                setHasFixedSize(true)
+                addOnItemTouchListener(RecyclerViewInViewPagerHelper)
+            }
         }
 
 
-        fun bind(item: SchedulePack) {
+        fun bind(dailySchedule: DailySchedulePack) {
             viewBinding.recyclerviewLessons.scrollToPosition(0)
-            listAdapter.submitList(
-                item.dailySchedule,
-                item.date,
-                item.lessonFeaturesSettings
-            )
+            (viewBinding.recyclerviewLessons.adapter as LessonAdapter).submitList(dailySchedule)
         }
     }
-
-    class SchedulePack(
-        val dailySchedule: DailySchedulePack,
-        val date: LocalDate,
-        val lessonFeaturesSettings: LessonFeaturesSettings
-    )
 }
