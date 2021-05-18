@@ -7,41 +7,34 @@
     <dimen name="bottomDimenTop">18dp</dimen>
     <dimen name="icon_margin">64dp</dimen>
 
-    <dimen name="lesson_info_divider_height">0.5dp</dimen>
     <dimen name="lesson_info_margin_horizontal">20dp</dimen>
     <dimen name="lesson_info_margin_vertical">10dp</dimen>
     <dimen name="lesson_info_drawable_padding">8dp</dimen>
 
-    <dimen name="lesson_corner_radius">30dp</dimen>
+    <dimen name="lesson_corner_radius">26dp</dimen>
 
     <dimen name="dropdown_padding_left_right">15dp</dimen>
     <dimen name="dropdown_padding_up_down">10dp</dimen>
 
     <dimen name="lesson_icon_size">20dp</dimen>
-    <dimen name="lesson_info_icon_size">19dp</dimen>
 
-    <dimen name="lesson_padding_top">20dp</dimen>
-    <dimen name="lesson_padding_bottom">16.5dp</dimen>
-    <dimen name="lesson_padding_start">28dp</dimen>
-    <dimen name="lesson_padding_end">28dp</dimen>
+    <dimen name="lesson_padding_top">16.0dp</dimen>
+    <dimen name="lesson_padding_bottom">13.4dp</dimen>
+    <dimen name="lesson_padding_start">27dp</dimen>
+    <dimen name="lesson_padding_end">27dp</dimen>
 
 
     <dimen name="lesson_margin_top">7dp</dimen>
-    <dimen name="lesson_margin_bottom">10dp</dimen>
-    <dimen name="lesson_margin_start">16dp</dimen>
-    <dimen name="lesson_margin_end">16dp</dimen>
+    <dimen name="lesson_margin_bottom">8dp</dimen>
+    <dimen name="lesson_margin_start">14dp</dimen>
+    <dimen name="lesson_margin_end">14dp</dimen>
 
 
-    <dimen name="lesson_drawable_padding">9dp</dimen>
+    <dimen name="lesson_drawable_padding">8.8dp</dimen>
 
     <dimen name="schedule_tab_indicator_height">44dp</dimen>
     <dimen name="schedule_tab_indicator_half_height">22dp</dimen>
 
-    <dimen name="addresses_tab_height">32sp</dimen>
-    <dimen name="addresses_tab_height_half">16sp</dimen>
-    <dimen name="addresses_tab_text_size">14sp</dimen>
-    <dimen name="teacher_card_width">180dp</dimen>
-
-    <dimen name="schedule_day_height">74dp</dimen>
-    <dimen name="schedule_day_width">62dp</dimen>
+    <dimen name="schedule_day_height">69dp</dimen>
+    <dimen name="schedule_day_width">58dp</dimen>
 </resources>

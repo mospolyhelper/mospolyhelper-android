@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
     android:elevation="2dp"
     android:orientation="vertical"
     android:paddingStart="3dp"
-    android:paddingEnd="3dp"
     android:paddingTop="3dp"
-    android:paddingBottom="3dp">
+    android:paddingEnd="3dp"
+    android:paddingBottom="2dp">
 
     <TextView
         android:id="@+id/text_lesson_time"
@@ -17,45 +19,71 @@
         android:clickable="false"
         android:textAlignment="viewStart"
         android:textColor="@color/widgetTitleText"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textSize="11.5dp"
+        android:textStyle="bold"
+        tools:text="10:40 - 12:10    Лаб. работа" />
 
     <TextView
         android:id="@+id/textview_lesson_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="1.5dp"
         android:breakStrategy="balanced"
         android:clickable="false"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/widgetLessonTitleText"
-        android:textSize="13sp" />
+        android:textSize="12dp"
+        tools:text="Объектно-ориентированное программирование" />
 
     <TextView
         android:id="@+id/text_lesson_teachers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:breakStrategy="balanced"
         android:clickable="false"
-        android:drawableStart="@drawable/ic_teacher_10dp"
+        android:drawableStart="@drawable/appwidget_ic_teachers"
         android:drawablePadding="3dp"
         android:drawableTint="@color/widgetSecondaryTextColor"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
+        android:maxLines="2"
         android:textColor="@color/widgetSecondaryTextColor"
-        android:textSize="12sp" />
+        android:textSize="11.8dp"
+        tools:text="Арсентьев Д. А." />
+
+    <TextView
+        android:id="@+id/textview_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:breakStrategy="balanced"
+        android:clickable="false"
+        android:drawableStart="@drawable/appwidget_ic_gropus"
+        android:drawablePadding="3dp"
+        android:drawableTint="@color/widgetSecondaryTextColor"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:textColor="@color/widgetSecondaryTextColor"
+        android:textSize="11.8dp"
+        tools:text="181-721, -722, -723. -724, -725" />
 
     <TextView
         android:id="@+id/text_lesson_auditoriums"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:breakStrategy="balanced"
         android:clickable="false"
-        android:drawableStart="@drawable/ic_location_10dp"
+        android:drawableStart="@drawable/appwidget_ic_auditoriums"
         android:drawablePadding="3dp"
         android:drawableTint="@color/widgetSecondaryTextColor"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
+        android:maxLines="2"
         android:textColor="@color/widgetSecondaryTextColor"
-        android:textSize="12sp" />
+        android:textSize="11.8dp"
+        tools:text="Пр2303, Пр2306" />
 </LinearLayout>

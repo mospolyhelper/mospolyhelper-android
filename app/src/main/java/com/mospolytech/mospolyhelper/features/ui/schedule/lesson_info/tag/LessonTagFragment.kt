@@ -20,8 +20,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetLessonTagBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagException
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
+import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -215,25 +217,25 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.tags.collect {
-                setTagList(it)
-            }
-        }
-
-        lifecycleScope.launchWhenResumed {
-            viewModel.message.collect {
-                if (it != null) {
-                    when (it.text) {
-                        LessonTagMessages.SuccessfulCreation -> {
-                            switchViews(true)
-                        }
-                        LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = it.text.toString()
-                        LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = it.text.toString()
-                        else -> viewBinding.textviewMessage.text = it.text.toString()
+                when (it) {
+                    is Result2.Success -> {
+                        switchViews(true)
+                        setTagList(it.value)
                     }
-                    viewBinding.textviewMessage.visibility = View.VISIBLE
-                } else {
-                    viewBinding.textviewMessage.text = ""
-                    viewBinding.textviewMessage.visibility = View.GONE
+                    is Result2.Failure -> {
+                        val ex = it.exception
+                        if (ex is LessonTagException) {
+                            when (ex.resultMessage) {
+                                LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
+                                LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
+                                else -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
+                            }
+                            viewBinding.textviewMessage.visibility = View.VISIBLE
+                        } else {
+                            viewBinding.textviewMessage.text = ""
+                            viewBinding.textviewMessage.visibility = View.GONE
+                        }
+                    }
                 }
             }
         }

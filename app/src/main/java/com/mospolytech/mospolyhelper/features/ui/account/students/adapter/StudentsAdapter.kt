@@ -19,7 +19,6 @@ import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
 import com.mospolytech.mospolyhelper.utils.show
-import kotlinx.android.synthetic.main.item_error.view.*
 import java.util.*
 
 class StudentsAdapter(diffCallback: DiffUtil.ItemCallback<Student>

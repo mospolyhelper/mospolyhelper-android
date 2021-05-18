@@ -12,6 +12,9 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -158,6 +161,11 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
         val menuBuilder = MenuBuilder(context)
         val inflater = MenuInflater(context)
         inflater.inflate(R.menu.menu_schedule, menuBuilder)
+        menuBuilder.forEach {
+            val drawable = DrawableCompat.wrap(it.icon)
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(requireContext(), R.color.textColorPrimary))
+            it.icon = drawable
+        }
         val optionsMenu = MenuPopupHelper(requireContext(), menuBuilder, viewBinding.btnMenu)
         optionsMenu.setForceShowIcon(true)
 
@@ -418,11 +426,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
 //        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_schedule, menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.schedule_advanced_search -> {
@@ -470,6 +473,10 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
     ) : OnPageChangeCallback() {
         private var previousScrollState = 0
         private var scrollState = 0
+
+        init {
+            reset()
+        }
 
         override fun onPageScrollStateChanged(state: Int) {
             previousScrollState = scrollState
@@ -547,10 +554,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
         fun reset() {
             scrollState = ViewPager2.SCROLL_STATE_IDLE
             previousScrollState = scrollState
-        }
-
-        init {
-            reset()
         }
     }
 

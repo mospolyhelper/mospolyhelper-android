@@ -15,7 +15,7 @@ class RoundedBackgroundSpan(
     private val textColor: Int? = null,
     private val text: String,
     private val relativeTextSize: Float = 0.63f,
-    private val cornerRadiusPercentage: Float = 0.26f // 0.275f
+    private val cornerRadiusPercentage: Float = 0.263f // 0.275f
 ) : ReplacementSpan(), LineHeightSpan {
 
     companion object {

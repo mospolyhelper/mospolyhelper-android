@@ -2,18 +2,20 @@ package com.mospolytech.mospolyhelper.data.schedule.repository
 
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
-import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteTeacherDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
+import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.getOrDefault
+import com.mospolytech.mospolyhelper.utils.getOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduleRepositoryImpl(
     private val localDataSource: ScheduleLocalDataSource,
-    private val remoteDataSource: ScheduleRemoteDataSource,
-    private val remoteTeacherDataSource: ScheduleRemoteTeacherDataSource
+    private val remoteDataSource: ScheduleRemoteDataSource
 ) : ScheduleRepository {
     companion object {
         fun allDataFromSchedule(schedule: Schedule): SchedulePack {
@@ -57,25 +59,22 @@ class ScheduleRepositoryImpl(
             emit(null)
         } else {
             val schedule = if (refresh) {
-                refresh(user) ?: localDataSource.get(user)
+                refresh(user).getOrNull() ?: localDataSource.get(user)
             } else {
-                localDataSource.get(user) ?: refresh(user)
+                localDataSource.get(user) ?: refresh(user).getOrNull()
             }
             emit(schedule)
         }
     }
 
-    private suspend fun refresh(user: UserSchedule): Schedule? {
+    private suspend fun refresh(user: UserSchedule): Result2<Schedule> {
         val schedule = when (user) {
-            is StudentSchedule -> combine(
-                remoteDataSource.get(user.id, false),
-                remoteDataSource.get(user.id, true)
-            )
-            is TeacherSchedule -> remoteTeacherDataSource.get(user.id)
-            is AuditoriumSchedule -> null
+            is StudentSchedule -> remoteDataSource.getByGroup(user.id)
+            is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
+            is AuditoriumSchedule -> Result2.Failure(Exception())
         }
-        if (schedule != null) {
-            localDataSource.set(schedule, user)
+        if (schedule is Result2.Success) {
+            localDataSource.set(schedule.value, user)
         }
         return schedule
     }
@@ -84,8 +83,12 @@ class ScheduleRepositoryImpl(
     override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
         scheduleCounter.set(0)
 
-        val schedules = remoteDataSource.getAll(false) { c, t -> onProgressChanged(c.toFloat() / t)} +
-                remoteDataSource.getAll(true) { c, t -> onProgressChanged(c.toFloat() / t)}
+        val schedules = remoteDataSource
+            .getAll(false, onProgressChanged)
+            .getOrDefault(emptySequence()) +
+                remoteDataSource
+                    .getAll(true, onProgressChanged)
+                    .getOrDefault(emptySequence())
 
         val scheduleList = mutableListOf<Schedule>()
         val lessonTitles = mutableSetOf<String>()
@@ -126,10 +129,6 @@ class ScheduleRepositoryImpl(
             lessonAuditoriums.sorted(),
         )
     }
-
-
-
-
 
     class SchedulePack(
         val schedule: Schedule,

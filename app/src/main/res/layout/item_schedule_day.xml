@@ -6,7 +6,7 @@
     android:layout_marginEnd="4.0dp"
     android:background="@drawable/shape_schedule_day"
     android:orientation="vertical"
-    android:paddingTop="10dp">
+    android:paddingTop="8.5dp">
 
     <TextView
         android:id="@+id/textview_day_of_month"
@@ -16,17 +16,17 @@
         android:fontFamily="@font/ubuntu_medium"
         android:text="17"
         android:textAlignment="center"
-        android:textSize="16.9dp" />
+        android:textSize="15.8dp" />
 
     <TextView
         android:id="@+id/textview_day_of_week"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8.7dp"
-        android:fontFamily="@font/ubuntu"
+        android:fontFamily="@font/ubuntu_medium"
         android:text="Пн"
         android:textAlignment="center"
-        android:textSize="12.3dp" />
+        android:textSize="11.5dp" />
 
     <LinearLayout
         android:id="@+id/linearlayout_order_indicators"

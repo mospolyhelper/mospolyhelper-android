@@ -98,6 +98,10 @@ class LessonRemoteAdapter(
             return lesson.teachers.joinToString { it.getShortName() }
         }
 
+        fun getGroups(lesson: Lesson): CharSequence {
+            return lesson.groups.joinToString { it.title }
+        }
+
         fun getAuditoriums(lesson: Lesson): CharSequence {
             return lesson.auditoriums.joinToString { parseAuditoriumTitle(it.title) }
         }
@@ -116,6 +120,7 @@ class LessonRemoteAdapter(
     private var showOrder = false
     private var showType = true
     private var showTeachers = false
+    private var showGroups = false
     private var showAuditoriums = true
 
     override fun onCreate() {
@@ -159,6 +164,7 @@ class LessonRemoteAdapter(
     override fun hasStableIds() = true
 
     override fun getViewAt(position: Int): RemoteViews? {
+        // TODO: Fix strange behaviour
         val remoteView = RemoteViews(context.packageName, R.layout.item_schedule_appwidget)
         val dailySchedule = dailySchedule
         if (dailySchedule == null) {
@@ -184,6 +190,7 @@ class LessonRemoteAdapter(
                 setTime(remoteView, lesson)
                 setTitle(remoteView, lesson)
                 setTeachers(remoteView, lesson)
+                setGroups(remoteView, lesson)
                 setAuditoriums(remoteView, lesson)
 
                 return remoteView
@@ -225,6 +232,15 @@ class LessonRemoteAdapter(
             view.setViewVisibility(R.id.text_lesson_teachers, View.VISIBLE)
         } else {
             view.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
+        }
+    }
+
+    private fun setGroups(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+        if (showGroups) {
+            view.setTextViewText(R.id.textview_groups, getGroups(lesson.first))
+            view.setViewVisibility(R.id.textview_groups, View.VISIBLE)
+        } else {
+            view.setViewVisibility(R.id.textview_groups, View.GONE)
         }
     }
 

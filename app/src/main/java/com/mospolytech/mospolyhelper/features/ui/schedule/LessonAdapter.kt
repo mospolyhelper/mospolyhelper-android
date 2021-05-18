@@ -13,10 +13,8 @@ import androidx.core.text.HtmlCompat
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemLessonBinding
-import com.mospolytech.mospolyhelper.databinding.ItemLessonEmptyBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonInfoBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonTimeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
@@ -47,28 +45,23 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val dateFormatter = DateTimeFormatter.ofPattern("d MMM")
     }
 
-
-    var dailySchedule: DailySchedulePack = DailySchedulePack(emptyList())
-    var date: LocalDate = LocalDate.now()
-    var lessonFeaturesSettings: LessonFeaturesSettings =
+    var dailySchedule: DailySchedulePack = DailySchedulePack(
+        emptyList(),
+        LocalDate.now(),
         LessonFeaturesSettings(
             showGroups = false,
             showTeachers = false,
             showAuditoriums = false
         )
+    )
+
 
     var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
 
     override fun getItemCount() = dailySchedule.lessons.size
 
-    fun submitList(
-        dailySchedule: DailySchedulePack,
-        date: LocalDate,
-        lessonFeaturesSettings: LessonFeaturesSettings
-    ) {
+    fun submitList(dailySchedule: DailySchedulePack) {
         this.dailySchedule = dailySchedule
-        this.lessonFeaturesSettings = lessonFeaturesSettings
-        this.date = date
         notifyDataSetChanged()
     }
 
@@ -84,54 +77,40 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_TIME -> {
-                val view = LayoutInflater
-                    .from(parent.context)
+            VIEW_TYPE_TIME -> ViewHolderTime(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_lesson_time, parent, false)
-                ViewHolderTime(view)
-            }
-            VIEW_TYPE_LESSON -> {
-                val view = LayoutInflater
-                    .from(parent.context)
+            )
+            VIEW_TYPE_LESSON -> ViewHolderLesson(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_lesson, parent, false)
-                ViewHolderLesson(view)
-            }
-            VIEW_TYPE_LESSON_EMPTY -> {
-                val view = LayoutInflater
-                    .from(parent.context)
+            )
+            VIEW_TYPE_LESSON_EMPTY -> ViewHolderEmptyLesson(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_lesson_empty, parent, false)
-                ViewHolderEmptyLesson(view)
-            }
-            VIEW_TYPE_INFO -> {
-                val view = LayoutInflater
-                    .from(parent.context)
+            )
+            VIEW_TYPE_INFO -> ViewHolderInfo(
+                LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_lesson_info, parent, false)
-                ViewHolderInfo(view)
-            }
-            else -> onCreateViewHolder(parent, VIEW_TYPE_LESSON)
+            )
+            else -> throw IllegalArgumentException()
         }
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        when (viewHolder.itemViewType) {
-            VIEW_TYPE_TIME -> {
-                val lessonPlacePack = dailySchedule.lessons[position] as LessonPlacePack
-                (viewHolder as ViewHolderTime).bind(lessonPlacePack)
-            }
-            VIEW_TYPE_LESSON -> {
-                val lessonPack = dailySchedule.lessons[position] as LessonPack
-                (viewHolder as ViewHolderLesson).bind(this, lessonPack) { time, lesson ->
-                    lessonClick.invoke(time, lesson, date)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is ViewHolderTime ->
+                holder.bind(dailySchedule.lessons[position] as LessonPlacePack)
+            is ViewHolderLesson ->
+                holder.bind(
+                    dailySchedule.lessons[position] as LessonPack,
+                    dailySchedule.date,
+                    itemCount - 1
+                ) { time, lesson ->
+                    lessonClick.invoke(time, lesson, dailySchedule.date)
                 }
-            }
-            VIEW_TYPE_LESSON_EMPTY -> {
-                val lessonPack = dailySchedule.lessons[position] as LessonPack
-                (viewHolder as ViewHolderEmptyLesson).bind(lessonPack)
-            }
-            VIEW_TYPE_INFO -> {
-                val lessonWindow = dailySchedule.lessons[position] as LessonWindowPack
-                (viewHolder as ViewHolderInfo).bind(lessonWindow, this)
-            }
+            is ViewHolderInfo ->
+                holder.bind(dailySchedule.lessons[position] as LessonWindowPack)
         }
     }
 
@@ -141,18 +120,18 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
         private val viewBinding by viewBinding(ItemLessonBinding::bind)
 
-        // ViewHolder class is not inner because recycler views have common pool
         fun bind(
-            adapter: LessonAdapter,
             lessonPack: LessonPack,
+            date: LocalDate,
+            lastItemPosition: Int,
             onLessonClick: (LessonTime, Lesson) -> Unit
         ) {
             viewBinding.layoutLesson.setSafeOnClickListener {
                 onLessonClick(lessonPack.lessonTime, lessonPack.lesson)
             }
-            val enabled = adapter.date in lessonPack.lesson.dateFrom..lessonPack.lesson.dateTo
+            val enabled = date in lessonPack.lesson.dateFrom..lessonPack.lesson.dateTo
 
-            setBottomPadding(adapter)
+            setBottomPadding(lastItemPosition)
             setLessonType(lessonPack.lesson, enabled)
             setLessonDuration(lessonPack.lesson)
             setLessonTitle(lessonPack.lesson, enabled)
@@ -162,9 +141,9 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             setTags(lessonPack.tags)
         }
 
-        private fun setBottomPadding(adapter: LessonAdapter) {
+        private fun setBottomPadding(lastItemPosition: Int) {
             var paddingBottom = 0
-            if (bindingAdapterPosition == adapter.itemCount - 1) {
+            if (bindingAdapterPosition == lastItemPosition) {
                 val tv = TypedValue()
                 if (viewBinding.layoutLesson.context.theme.resolveAttribute(
                         android.R.attr.actionBarSize,
@@ -213,7 +192,8 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     RoundedBackgroundSpan(
                         backgroundColor = itemView.context.getColor(color.colorId),
                         textColor = itemView.context.getColor(color.textColorId),
-                        text = feature.title
+                        text = feature.title,
+                        relativeTextSize = 0.65f
                     ),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
@@ -254,7 +234,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         private fun setLessonTitle(lesson: Lesson, enabled: Boolean) {
-            viewBinding.textviewLessonTitle.text =  lesson.title
+            viewBinding.textviewLessonTitle.text = lesson.title
             viewBinding.textviewLessonType.isEnabled = enabled
         }
 
@@ -311,15 +291,20 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun setAuditoriums(lesson: Lesson, featuresSettings: LessonFeaturesSettings, enabled: Boolean) {
+        private fun setAuditoriums(
+            lesson: Lesson,
+            featuresSettings: LessonFeaturesSettings,
+            enabled: Boolean
+        ) {
             viewBinding.textLessonAuditoriums.isEnabled = enabled
             if (!featuresSettings.showAuditoriums || lesson.auditoriums.isEmpty()) {
                 viewBinding.textLessonAuditoriums.visibility = View.GONE
             } else {
                 viewBinding.textLessonAuditoriums.visibility = View.VISIBLE
-                viewBinding.textLessonAuditoriums.text = lesson.auditoriums.joinToString(separator = ", ") {
-                    parseAuditoriumTitle(it.title)
-                }
+                viewBinding.textLessonAuditoriums.text =
+                    lesson.auditoriums.joinToString(separator = ", ") {
+                        parseAuditoriumTitle(it.title)
+                    }
             }
         }
 
@@ -330,8 +315,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
 
-
-        private fun setTeachers(lesson: Lesson, featuresSettings: LessonFeaturesSettings,  enabled: Boolean) {
+        private fun setTeachers(
+            lesson: Lesson,
+            featuresSettings: LessonFeaturesSettings,
+            enabled: Boolean
+        ) {
             val teachers = if (lesson.teachers.size == 1)
                 lesson.teachers.first().name
             else
@@ -346,7 +334,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun setGroups(lesson: Lesson, featuresSettings: LessonFeaturesSettings,  enabled: Boolean) {
+        private fun setGroups(
+            lesson: Lesson,
+            featuresSettings: LessonFeaturesSettings,
+            enabled: Boolean
+        ) {
 
             val groupsText = Group.getShort(lesson.groups)
 
@@ -361,7 +353,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
-    class ViewHolderTime(view: View): RecyclerView.ViewHolder(view) {
+    class ViewHolderTime(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonTimeBinding::bind)
 
         fun bind(lessonPlacePack: LessonPlacePack) {
@@ -369,64 +361,36 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         private fun setTime(lessonPlace: LessonPlace) {
-
-            var orderColor: Int
-            var orderTextColor: Int
-            when (lessonPlace.order) {
-                0 -> {
-                    orderColor = R.color.lessonOrder1
-                    orderTextColor = R.color.lessonOrder1Text
-                }
-                1 -> {
-                    orderColor = R.color.lessonOrder2
-                    orderTextColor = R.color.lessonOrder2Text
-                }
-                2 -> {
-                    orderColor = R.color.lessonOrder3
-                    orderTextColor = R.color.lessonOrder3Text
-                }
-                3 -> {
-                    orderColor = R.color.lessonOrder4
-                    orderTextColor = R.color.lessonOrder4Text
-                }
-                4 -> {
-                    orderColor = R.color.lessonOrder5
-                    orderTextColor = R.color.lessonOrder5Text
-                }
-                5 -> {
-                    orderColor = R.color.lessonOrder6
-                    orderTextColor = R.color.lessonOrder6Text
-                }
-                else -> {
-                    orderColor = R.color.lessonOrder7
-                    orderTextColor = R.color.lessonOrder7Text
-                }
+            val orderColor = when (lessonPlace.order) {
+                0 -> R.color.lessonOrder1
+                1 -> R.color.lessonOrder2
+                2 -> R.color.lessonOrder3
+                3 -> R.color.lessonOrder4
+                4 -> R.color.lessonOrder5
+                5 -> R.color.lessonOrder6
+                else -> R.color.lessonOrder7
             }
-            orderColor = viewBinding.root.context.getColor(orderColor)
 
-            TextViewCompat.setCompoundDrawableTintList(viewBinding.textLessonTime, ColorStateList.valueOf(orderColor))
+            TextViewCompat.setCompoundDrawableTintList(
+                viewBinding.textLessonTime,
+                ColorStateList.valueOf(itemView.context.getColor(orderColor))
+            )
             val (timeStart, timeEnd) = lessonPlace.time
-            viewBinding.textLessonTime.text = "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
+            viewBinding.textLessonTime.text =
+                "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
         }
     }
 
-    class ViewHolderEmptyLesson(view: View): RecyclerView.ViewHolder(view) {
-        private val viewBinding by viewBinding(ItemLessonEmptyBinding::bind)
+    class ViewHolderEmptyLesson(view: View) : RecyclerView.ViewHolder(view)
 
-        fun bind(lessonPack: LessonPack) {
-        }
-    }
-
-    class ViewHolderInfo(val view: View): RecyclerView.ViewHolder(view) {
-        private lateinit var adapter: LessonAdapter
+    class ViewHolderInfo(val view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonInfoBinding::bind)
 
-        fun bind(
-            lessonWindow: LessonWindowPack,
-            adapter: LessonAdapter
-        ) {
-            this.adapter = adapter
-            setInfo(lessonWindow.lessonWindow.previousLessonPlace, lessonWindow.lessonWindow.nextLessonPlace)
+        fun bind(lessonWindow: LessonWindowPack) {
+            setInfo(
+                lessonWindow.lessonWindow.previousLessonPlace,
+                lessonWindow.lessonWindow.nextLessonPlace
+            )
         }
 
         private fun setInfo(

@@ -73,10 +73,10 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
-        (activity as MainActivity).setSupportActionBar(toolbar)
-        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
-        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+//        (activity as MainActivity).setSupportActionBar(toolbar)
+//        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//        (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
+//        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         viewModel.lessonTime = args.lessonTime
         viewModel.lesson = args.lesson

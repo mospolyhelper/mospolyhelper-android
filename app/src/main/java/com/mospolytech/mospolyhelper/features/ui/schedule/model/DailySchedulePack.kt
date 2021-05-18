@@ -8,7 +8,9 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 class DailySchedulePack(
-    val lessons: List<ScheduleItemPacked>
+    val lessons: List<ScheduleItemPacked>,
+    val date: LocalDate,
+    val lessonFeaturesSettings: LessonFeaturesSettings
 ) {
     class Builder {
         private var showEmptyLessons = false
@@ -36,29 +38,34 @@ class DailySchedulePack(
                 date,
                 dateFilter
             )
-            if (showEmptyLessons) rawDailySchedule = ScheduleUtils.getEmptyPairsDecorator(rawDailySchedule)
+            if (showEmptyLessons) rawDailySchedule =
+                ScheduleUtils.getEmptyPairsDecorator(rawDailySchedule)
             val dailySchedule: List<ScheduleItem> = if (showLessonWindows) {
                 ScheduleUtils.getWindowsDecorator(rawDailySchedule)
             } else {
                 rawDailySchedule
             }
-            return DailySchedulePack(dailySchedule.flatMap { scheduleItem ->
-                return@flatMap when (scheduleItem) {
-                    is LessonPlace -> listOf<ScheduleItemPacked>(LessonPlacePack(scheduleItem)) +
-                            scheduleItem.lessons.map {
-                                LessonPack(
-                                    it,
-                                    LessonTime.fromLessonPlace(scheduleItem),
-                                    lessonTagProvider(it, date.dayOfWeek, scheduleItem.order),
-                                    lessonDeadlineProvider(it),
-                                    dateFilter,
-                                    featuresSettings
-                                )
-                            }
-                    is LessonWindow -> listOf<ScheduleItemPacked>(LessonWindowPack(scheduleItem))
-                    else -> emptyList()
-                }
-            })
+            return DailySchedulePack(
+                dailySchedule.flatMap { scheduleItem ->
+                    return@flatMap when (scheduleItem) {
+                        is LessonPlace -> listOf<ScheduleItemPacked>(LessonPlacePack(scheduleItem)) +
+                                scheduleItem.lessons.map {
+                                    LessonPack(
+                                        it,
+                                        LessonTime.fromLessonPlace(scheduleItem),
+                                        lessonTagProvider(it, date.dayOfWeek, scheduleItem.order),
+                                        lessonDeadlineProvider(it),
+                                        dateFilter,
+                                        featuresSettings
+                                    )
+                                }
+                        is LessonWindow -> listOf<ScheduleItemPacked>(LessonWindowPack(scheduleItem))
+                        else -> emptyList()
+                    }
+                },
+                date,
+                featuresSettings
+            )
         }
     }
 }
