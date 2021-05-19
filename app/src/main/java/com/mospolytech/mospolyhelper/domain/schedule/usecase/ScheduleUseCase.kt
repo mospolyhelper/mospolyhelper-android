@@ -12,10 +12,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.*
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
-import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.StringId
-import com.mospolytech.mospolyhelper.utils.StringProvider
+import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
@@ -49,7 +46,7 @@ class ScheduleUseCase(
             tagRepository.getAll(),
             flowOf(mapOf<String, List<Deadline>>())
         ) { schedule, tags, deadlines ->
-            ScheduleTagsDeadline(schedule, tags, deadlines)
+            ScheduleTagsDeadline(schedule, (tags as Result2.Success).value, deadlines)
         }
     }
 
@@ -152,11 +149,14 @@ class ScheduleUseCase(
     }
 
 
-    suspend fun getAllTags() =
+    fun getAllTags() =
         tagRepository.getAll()
 
     suspend fun addTag(tag: LessonTag) =
         tagRepository.addTag(tag)
+
+    suspend fun addTagToLesson(tagTitle: String, lesson: LessonTagKey) =
+        tagRepository.addTagToLesson(tagTitle, lesson)
 
     suspend fun editTag(tagTitle: String, newTitle: String, newColor: Int) =
         tagRepository.editTag(tagTitle, newTitle, newColor)

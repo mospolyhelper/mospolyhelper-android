@@ -33,8 +33,7 @@ val scheduleModule = module {
     single { GroupListRemoteConverter() }
 
     // DataSources
-    single { ScheduleRemoteDataSource(get(), get()) }
-    single { ScheduleRemoteTeacherDataSource(get(), get()) }
+    single { ScheduleRemoteDataSource(get(), get(), get()) }
     single { ScheduleLocalDataSource() }
     single { GroupListLocalDataSource() }
     single { GroupListRemoteDataSource(get(), get()) }
@@ -48,7 +47,7 @@ val scheduleModule = module {
 
     // Repositories
     single<ScheduleRepository> {
-        ScheduleRepositoryImpl(get(), get(), get())
+        ScheduleRepositoryImpl(get(), get())
     }
     single<LessonTagsRepository> {
         LessonTagsRepositoryImpl(get())

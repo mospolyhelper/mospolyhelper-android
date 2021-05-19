@@ -10,8 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils
 import com.mospolytech.mospolyhelper.features.ui.schedule.LessonAdapter
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
@@ -62,32 +64,6 @@ class RelevantFragment : Fragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.getSchedule().collect {
-                val date = LocalDate.now()
-                val dailySchedule = ScheduleUtils.getWindowsDecorator(
-                    it!!.getLessons(
-                        date
-                    )
-                )
-
-                if (listAdapter == null) {
-                    listAdapter = LessonAdapter()
-//                    listAdapter?.let {
-//                        it.lessonClick += { lesson, date, view ->
-//                            //(lessonClick as Action3).invoke(lesson, date, view)
-//                        }
-//                    }
-                    listAdapter?.let {
-                        //timerTick += it::updateTime
-                    }
-                    lessonList.adapter = listAdapter
-                } else {
-                    listAdapter!!.submitList(
-                        dailySchedule,
-                        date,
-                        false,
-                        true
-                    )
-                }
             }
         }
     }

@@ -7,7 +7,8 @@
     android:background="@color/colorLevelZero"
     android:focusableInTouchMode="true">
 
-        <include layout="@layout/toolbar_schedule_calendar" />
+        <include android:id="@+id/toolbar_schedule_calendar"
+            layout="@layout/toolbar_schedule_calendar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_schedule_day"

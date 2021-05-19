@@ -6,10 +6,10 @@
             <solid android:color="#00000000"/>
         </shape>
     </item>
-    <item android:top="5.0dp"
-        android:bottom="4.0dp"
-        android:left="4.5dp"
-        android:right="4.5dp">
+    <item android:top="5.8dp"
+        android:bottom="5.2dp"
+        android:left="5.5dp"
+        android:right="5.5dp">
         <shape
             android:shape="oval"
             android:useLevel="false">

@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">mospolyhelper</string>
     <string name="nav_schedule">Расписание</string>
-    <string name="nav_addresses">Адреса</string>
-    <string name="nav_settings">Настройки</string>
 
     <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
     <string name="null_schedule">Расписание не найдено</string>
@@ -51,8 +49,6 @@
     <string name="cancel">Отмена</string>
     <string name="select_all">Выбрать все</string>
     <string name="unselect_all">Снять все</string>
-    <string name="advanced_search">Расширенный поиск</string>
-    <string name="advanced_search_hint">Загрузите нужные расписания для применения к ним фильтров</string>
 
     <string name="settings_title">Настройки</string>
 
@@ -82,7 +78,6 @@
     <string name="notification_channel_schedule_current_lesson">Текущее занятие</string>
 
     <string name="marks">Оценки</string>
-    <string name="fio_input">Введите ФИО студента</string>
     <string name="retry">Повторить</string>
     <string name="loading_error">Ошибка загрузки данных</string>
     <string name="fio">ФИО</string>
@@ -114,19 +109,12 @@
     <string name="ed_year">%1$s год набора</string>
 
 
+
     <!-- University pass service -->
     <string name="university_pass_service_description">Служба NFC пропуска Московского Политеха</string>
     <string name="university_pass_aid_description">Relvest</string>
 
-    <string name="hce_not_supported_title">Эмуляция карт не поддерживается</string>
-    <string name="hce_not_supported_message">Работа приложения будет завершена.</string>
-    <string name="hce_not_supported_ok_button">OK</string>
-
-    <string name="activate_hce_service">Активировать</string>
-    <string name="deactivate_hce_service">Деактивировать</string>
     <string name="user_id">Идентификатор пользователя:\10%1$s</string>
-    <string name="service_active">Служба активна.</string>
-    <string name="service_inactive">Служба неактивна.</string>
 
     <!-- About app -->
     <string name="about_app">Неофициальное приложение - помощник
@@ -139,6 +127,8 @@ Github: https://github.com/tipapro\n\n
 VK: https://vk.com/alexandr_dyndin\n
 Github: https://github.com/IIOPHYIIIE4KA
     </string>
+    <string name="lesson_tag_example">Пример</string>
+    <string name="create_new_tag">Создать новую метку</string>
 
     <!-- Account -->
     <string name="auth">Авторизация</string>
@@ -148,9 +138,17 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="Students">Студенты</string>
     <string name="teachers">Преподаватели</string>
     <string name="classmates">Одногруппники</string>
-    <string name="statements">Ведомости</string>
+    <string name="statements">Электронная зачетная книжка</string>
     <string name="account">Аккаунт</string>
     <string name="nav_dialogs">Диалоги</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="Dialog">Диалог</string>
+    <string name="menu_schedule_advanced_search">Продвинутый поиск</string>
+    <string name="menu_schedule_filters">Фильтры</string>
+    <string name="menu_schedule_calendar">Календарь</string>
+    <string name="menu_schedule_user_choosing">Выбор пользователя</string>
+    <string name="settings">Настройки</string>
+    <string name="addresses">Адреса</string>
+    <string name="pass">Пропуск</string>
+    <string name="menu_about_app">О приложении</string>
 </resources>

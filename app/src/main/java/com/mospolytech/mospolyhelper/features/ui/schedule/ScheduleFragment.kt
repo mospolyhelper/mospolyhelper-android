@@ -12,6 +12,9 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -91,12 +94,12 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
 //        }
     }
 
-    private fun onLessonClick(lesson: LessonPlace, date: LocalDate) {
-
+    private fun onLessonClick(lessonTime: LessonTime, lesson: Lesson, date: LocalDate) {
         findNavController().safe {
             navigate(
                 ScheduleFragmentDirections
                     .actionScheduleFragmentToLessonInfoFragment(
+                        lessonTime = lessonTime,
                         lesson = lesson,
                         date = date
                     )
@@ -129,21 +132,26 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
             scheduleTagsDeadline.schedule,
             scheduleTagsDeadline.tags,
             scheduleTagsDeadline.deadlines,
-            showEndedLessons,
-            showCurrentLessons,
-            showNotStartedLessons,
+            LessonDateFilter(
+                showEndedLessons,
+                showCurrentLessons,
+                showNotStartedLessons
+            ),
             showEmptyLessons,
-            showGroups = viewModel.id.value is TeacherSchedule || viewModel.isAdvancedSearch,
-            showTeachers = viewModel.id.value is StudentSchedule || viewModel.isAdvancedSearch
+            LessonFeaturesSettings(
+                viewModel.id.value is TeacherSchedule || viewModel.isAdvancedSearch,
+                viewModel.id.value is StudentSchedule || viewModel.isAdvancedSearch,
+                true
+            )
         )
         //newAdapter.setHasStableIds(true)
         val toPosition = if (oldAdapter is ScheduleAdapter) {
-            newAdapter.firstPosDate.until(oldAdapter.firstPosDate, ChronoUnit.DAYS) + viewBinding.viewpager.currentItem
+            newAdapter.from.until(oldAdapter.from, ChronoUnit.DAYS) + viewBinding.viewpager.currentItem
         } else {
-            newAdapter.firstPosDate.until(LocalDate.now(), ChronoUnit.DAYS)
+            newAdapter.from.until(LocalDate.now(), ChronoUnit.DAYS)
         }
         viewBinding.viewpager.adapter = newAdapter
-        newAdapter.lessonClick += ::onLessonClick
+        newAdapter.lessonClick = ::onLessonClick
         viewBinding.viewpager.adapter?.notifyDataSetChanged()
         viewBinding.viewpager.setCurrentItem(toPosition.toInt(), false)
     }
@@ -153,6 +161,11 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
         val menuBuilder = MenuBuilder(context)
         val inflater = MenuInflater(context)
         inflater.inflate(R.menu.menu_schedule, menuBuilder)
+        menuBuilder.forEach {
+            val drawable = DrawableCompat.wrap(it.icon)
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(requireContext(), R.color.textColorPrimary))
+            it.icon = drawable
+        }
         val optionsMenu = MenuPopupHelper(requireContext(), menuBuilder, viewBinding.btnMenu)
         optionsMenu.setForceShowIcon(true)
 
@@ -295,7 +308,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
                     with(viewBinding.viewpagerDates.adapter as DateAdapter) {
                         val scheduleAdapter = viewBinding.viewpager.adapter as ScheduleAdapter
                         update(
-                            scheduleAdapter.firstPosDate, scheduleAdapter.firstPosDate.plusDays(
+                            scheduleAdapter.from, scheduleAdapter.from.plusDays(
                                 scheduleAdapter.itemCount.toLong()
                             ),
                             viewModel.date.value,
@@ -353,9 +366,9 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
             viewModel.date.collect {
                 val adapter = viewBinding.viewpager.adapter
                 if (adapter is ScheduleAdapter) {
-                    if (it != adapter.firstPosDate.plusDays(viewBinding.viewpager.currentItem.toLong()))
+                    if (it != adapter.from.plusDays(viewBinding.viewpager.currentItem.toLong()))
                         async(Dispatchers.Main) { viewBinding.viewpager.setCurrentItem(
-                            adapter.firstPosDate.until(it, ChronoUnit.DAYS).toInt(),
+                            adapter.from.until(it, ChronoUnit.DAYS).toInt(),
                             false
                         ) }
                 }
@@ -413,11 +426,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
 //        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_schedule, menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.schedule_advanced_search -> {
@@ -466,6 +474,10 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
         private var previousScrollState = 0
         private var scrollState = 0
 
+        init {
+            reset()
+        }
+
         override fun onPageScrollStateChanged(state: Int) {
             previousScrollState = scrollState
             scrollState = state
@@ -485,11 +497,11 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
                     || previousScrollState == ViewPager2.SCROLL_STATE_DRAGGING
 
             val dayOffset = if (positionOffset < 0.5) 0L else 1L
-            val date0 = (viewBinding.viewpager.adapter as ScheduleAdapter).firstPosDate.plusDays(
+            val date0 = (viewBinding.viewpager.adapter as ScheduleAdapter).from.plusDays(
                 position.toLong()
             )
             val date =
-                (viewBinding.viewpager.adapter as ScheduleAdapter).firstPosDate.plusDays(position + dayOffset)
+                (viewBinding.viewpager.adapter as ScheduleAdapter).from.plusDays(position + dayOffset)
             if (updateText) {
                 if (LocalDate.now() == date) {
                     viewBinding.buttonHome.hide()
@@ -522,7 +534,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
 
         override fun onPageSelected(position: Int) {
             viewModel.date.value =
-                (viewBinding.viewpager.adapter as ScheduleAdapter).firstPosDate.plusDays(position.toLong())
+                (viewBinding.viewpager.adapter as ScheduleAdapter).from.plusDays(position.toLong())
             val weekPosition = viewModel.date.value.dayOfWeek.value - 1
 //            if (viewBinding.tablayoutSchedule.selectedTabPosition != weekPosition) {
 //                // Select the tab, only updating the indicator if we're not being dragged/settled
@@ -542,10 +554,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule), CoroutineScope {
         fun reset() {
             scrollState = ViewPager2.SCROLL_STATE_IDLE
             previousScrollState = scrollState
-        }
-
-        init {
-            reset()
         }
     }
 

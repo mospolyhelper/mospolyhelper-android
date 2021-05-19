@@ -14,13 +14,13 @@ class RoundedBackgroundSpan(
     private val backgroundColor: Int,
     private val textColor: Int? = null,
     private val text: String,
-    private val relativeTextSize: Float = 0.65f,
-    private val cornerRadiusPercentage: Float = 0.26f // 0.275f
+    private val relativeTextSize: Float = 0.63f,
+    private val cornerRadiusPercentage: Float = 0.263f // 0.275f
 ) : ReplacementSpan(), LineHeightSpan {
 
     companion object {
-        private const val horizontalGrowthRate = 1.65f
-        private const val additionTextRatio = 0.85f  // To add some space in bottom of feature rect
+        private const val horizontalGrowthRate = 2.00f
+        private const val relativeTextSize2 = 0.85f  // To add some bottom padding to text
     }
 
     private var height: Int = 0
@@ -52,6 +52,7 @@ class RoundedBackgroundSpan(
         val ratio = totalHeight0 / totalHeight
         val baselineDelta0 = descent * ratio
 
+        // Baseline as bottom of rect (without bias)
         val newBaseline0 = baseline - baselineDelta0
 
 
@@ -66,12 +67,12 @@ class RoundedBackgroundSpan(
 
         // For addition text ratio
         val height1 = newBottomOfLine - newTopOfLine
+        val heightDelta1 = height1 - height1 * relativeTextSize2
+        val textNewBottomOfLine = newBottomOfLine - (height1 - heightDelta1)
+        val baselineDelta1 = (textNewBottomOfLine - newBaseLine) * relativeTextSize2
+        val newBaseLine1 = textNewBottomOfLine - baselineDelta1
 
-        val pseudoNewBottomOfLine = baseline - height1 * additionTextRatio
-        val baselineDelta1 = (pseudoNewBottomOfLine - newBaseLine) * additionTextRatio
-        val newBaseLine1 = pseudoNewBottomOfLine - baselineDelta1
-
-        paint.textSize *= relativeTextSize * ratio * additionTextRatio
+        paint.textSize *= relativeTextSize * ratio * relativeTextSize2
 
 
         var textWidth = paint.measureText(this.text.toString(), start, end)
@@ -142,7 +143,7 @@ class RoundedBackgroundSpan(
         val totalHeight0 = -ascent
         val ratio = totalHeight0 / totalHeight
 
-        paint.textSize *= relativeTextSize * ratio * additionTextRatio
+        paint.textSize *= relativeTextSize * ratio * relativeTextSize2
 
         val start = 0
         val end = this.text.length
