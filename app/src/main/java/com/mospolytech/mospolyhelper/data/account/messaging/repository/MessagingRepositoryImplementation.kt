@@ -29,7 +29,9 @@ class MessagingRepositoryImplementation(
             PreferenceDefaults.SessionId
         )
         val res = remoteDataSource.getMessages(sessionId, dialogKey)
-        if (res.isSuccess) localDataSource.setDialog(res.value as List<Message>, dialogKey)
+        res.onSuccess {
+            localDataSource.setDialog(it, dialogKey)
+        }
         emit(res)
     }.flowOn(ioDispatcher)
 
@@ -45,7 +47,11 @@ class MessagingRepositoryImplementation(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
         )
-        emit(remoteDataSource.sendMessage(sessionId, dialogKey, message, fileNames))
+        val res = remoteDataSource.sendMessage(sessionId, dialogKey, message, fileNames)
+        res.onSuccess {
+            localDataSource.setDialog(it, dialogKey)
+        }
+        emit(res)
     }.flowOn(ioDispatcher)
 
     override fun getName() = jwtLocalDataSource.get()?.getName() ?: ""

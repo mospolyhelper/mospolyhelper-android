@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.collect
 import org.koin.core.KoinComponent
 
 class DialogsViewModel(mediator: Mediator<String, ViewModelMessage>,
-                       private val useCase: DialogsUseCase,
-                       private val messagingUseCase: MessagingUseCase): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
+                       private val useCase: DialogsUseCase): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
     KoinComponent {
 
     val dialogs = MutableStateFlow<Result<List<DialogModel>>>(Result.loading())
@@ -33,8 +32,4 @@ class DialogsViewModel(mediator: Mediator<String, ViewModelMessage>,
             dialogs.value = it
         }
     }
-
-    fun getName() = messagingUseCase.getName()
-
-    fun getAvatar() = messagingUseCase.getAvatar()
 }

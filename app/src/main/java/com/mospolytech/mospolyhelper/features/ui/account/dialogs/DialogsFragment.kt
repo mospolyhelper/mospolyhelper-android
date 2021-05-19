@@ -36,15 +36,13 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         lifecycleScope.launch {
             viewModel.getInfo()
         }
-
-        DialogAdapter.NAME = viewModel.getName()
-        DialogAdapter.AVATAR = viewModel.getAvatar()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewBinding.recyclerDialogs.adapter = adapter
+        viewBinding.recyclerDialogs.itemAnimator = null
 
         lifecycleScope.launchWhenResumed {
             viewModel.dialogs.collect { result ->

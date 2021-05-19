@@ -7,16 +7,21 @@
     android:background="@color/layerZero"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_messaging"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar_messaging">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_messaging"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:overScrollMode="never"
-            tools:listitem="@layout/item_message"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/toolbar_messaging"/>
+            tools:listitem="@layout/item_message"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_messaging"
         android:layout_width="match_parent"
@@ -32,7 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:drawableStart="@drawable/ic_baseline_attach_file_24"
-                android:layout_weight="0.45"/>
+                android:layout_weight="0.45"
+                android:visibility="gone"/>
             <EditText
                 android:id="@+id/edit_message"
                 android:layout_width="match_parent"
@@ -57,7 +63,8 @@
                     android:id="@+id/send_message"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:drawableStart="@drawable/ic_baseline_send_24"/>
+                    android:layout_marginEnd="10dp"
+                    android:drawableEnd="@drawable/ic_baseline_send_24"/>
                 <ProgressBar
                     android:id="@+id/progress_loading"
                     style="?android:attr/progressBarStyle"
@@ -66,10 +73,6 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
             </FrameLayout>
-
-
-
-
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 </androidx.constraintlayout.widget.ConstraintLayout>

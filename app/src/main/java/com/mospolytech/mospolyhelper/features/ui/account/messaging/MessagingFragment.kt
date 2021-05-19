@@ -45,7 +45,14 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
         super.onViewCreated(view, savedInstanceState)
 
         viewBinding.recyclerMessaging.adapter = adapter
-        viewBinding.recyclerMessaging.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.recyclerMessaging.layoutManager = LinearLayoutManager(requireContext(),
+            LinearLayoutManager.VERTICAL, true)
+
+        viewBinding.swipeMessaging.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.downloadDialog(dialogId)
+            }
+        }
 
         viewBinding.sendMessage.setOnClickListener {
             lifecycleScope.launch {
@@ -59,29 +66,19 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
                     viewBinding.sendMessage.show()
                     viewBinding.progressLoading.gone()
                     adapter.items = it
+                    viewBinding.recyclerMessaging.scrollToPosition(0)
+                    viewBinding.editMessage.text.clear()
+                    viewBinding.swipeMessaging.isRefreshing = false
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.sendMessage.show()
                     viewBinding.progressLoading.gone()
+                    viewBinding.swipeMessaging.isRefreshing = false
                 }.onLoading {
                     viewBinding.sendMessage.hide()
-                    viewBinding.progressLoading.show()
-                }
-            }
-
-            viewModel.message.collect { result ->
-                result.onSuccess {
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                    adapter.items = it
-                    //viewBinding.recyclerMessaging.scrollToPosition(0)
-                }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                }.onLoading {
-                    viewBinding.sendMessage.hide()
-                    viewBinding.progressLoading.show()
+                    if (!viewBinding.swipeMessaging.isRefreshing) {
+                        viewBinding.progressLoading.show()
+                    }
                 }
             }
         }

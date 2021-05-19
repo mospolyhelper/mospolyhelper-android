@@ -20,8 +20,6 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
     companion object {
         var dialogClickListener: ((dialogId: String) -> Unit)? = null
-        var NAME = ""
-        var AVATAR = ""
     }
 
     var items: List<DialogModel> = emptyList()
