@@ -14,27 +14,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageButton
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RelativeLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.mospolytech.mospolyhelper.NavGraphDirections
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog.AddBottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.utils.TAG
-import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_deadline.*
-import kotlinx.android.synthetic.main.toolbar_deadline.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,7 +42,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.coroutines.CoroutineContext
 
 
-class DeadlineFragment : Fragment(), CoroutineScope,
+class DeadlineFragment : Fragment(R.layout.fragment_deadline), CoroutineScope,
     View.OnClickListener {
 
 
@@ -53,6 +52,8 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     private lateinit var vibrator: Vibrator
 
     private var isVibrated = false
+    
+    private val viewBinding by viewBinding(FragmentDeadlineBinding::bind)
     private val viewModel by viewModel<DeadlineViewModel>()
 
     private val job = SupervisorJob()
@@ -75,13 +76,6 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         retainInstance = true
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_deadline, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = activity as MainActivity
@@ -90,7 +84,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         setRecycler()
         setToolbar()
-        fab.setOnClickListener(this)
+        viewBinding.fab.setOnClickListener(this)
     }
 
     // простите меня за это
@@ -170,20 +164,20 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun defaultData() {
-        loading_spinner.visibility = View.VISIBLE
+        viewBinding.loadingSpinner.visibility = View.VISIBLE
         type = DataType.FULL
         viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
-            if (recycler.adapter == null) {
-                recycler.adapter =
+            if (viewBinding.recycler.adapter == null) {
+                viewBinding.recycler.adapter =
                     MyDeadlineRecyclerViewAdapter(
                         it,
                         viewModel
                     )
             } else {
-                (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                (viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
             }
-            loading_spinner.visibility = View.GONE
-            noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
+            viewBinding.loadingSpinner.visibility = View.GONE
+            noDeadlines((viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
         })
     }
 
@@ -192,36 +186,36 @@ class DeadlineFragment : Fragment(), CoroutineScope,
         when(typeData){
             DataType.FULL -> {
                 viewModel.data.observe(viewLifecycleOwner, Observer<List<Deadline>> {
-                    if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
-                        (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    if (viewBinding.recycler.adapter is MyDeadlineRecyclerViewAdapter) {
+                        (viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
                     } else {
-                        recycler.adapter =
+                        viewBinding.recycler.adapter =
                             MyDeadlineRecyclerViewAdapter(
                                 it,
                                 viewModel
                             )
                     }
-                    noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
+                    noDeadlines((viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
             }
             DataType.FIND -> {
                 viewModel.foundData.observe(viewLifecycleOwner, Observer<List<Deadline>> {
-                    if (recycler.adapter is MyDeadlineRecyclerViewAdapter) {
-                        (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    if (viewBinding.recycler.adapter is MyDeadlineRecyclerViewAdapter) {
+                        (viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
                     } else {
-                        recycler.adapter =
+                        viewBinding.recycler.adapter =
                             MyDeadlineRecyclerViewAdapter(
                                 it,
                                 viewModel
                             )
                     }
-                    noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
+                    noDeadlines((viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
             }
             DataType.NOTCOMP -> {
                 viewModel.dataCurrent.observe(viewLifecycleOwner, Observer<List<Deadline>> {
-                    (recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
-                    noDeadlines((recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
+                    (viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).updateBookList(it)
+                    noDeadlines((viewBinding.recycler.adapter as MyDeadlineRecyclerViewAdapter).itemCount != 0)
                 })
             }
         }
@@ -229,19 +223,19 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun setRecycler() {
-        recycler.layoutManager = LinearLayoutManager(context)
-        registerForContextMenu(recycler)
+        viewBinding.recycler.layoutManager = LinearLayoutManager(context)
+        registerForContextMenu(viewBinding.recycler)
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
-        itemTouchHelper.attachToRecyclerView(recycler)
-        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        itemTouchHelper.attachToRecyclerView(viewBinding.recycler)
+        viewBinding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
-                    fab.hide()
+                    viewBinding.fab.hide()
                 }
                 else if (dy < 0) {
-                    if (toolbar_deadline_main.visibility != View.GONE) {
-                        fab.show()
+                    if (requireView().findViewById<RelativeLayout>(R.id.toolbar_deadline_main).visibility != View.GONE) {
+                        viewBinding.fab.show()
                     }
                 }
             }
@@ -249,7 +243,7 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun noDeadlines(t: Boolean) {
-        textViewEmpty.visibility = if (t) View.GONE else View.VISIBLE
+        viewBinding.textViewEmpty.visibility = if (t) View.GONE else View.VISIBLE
     }
 
     private var simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
@@ -345,32 +339,32 @@ class DeadlineFragment : Fragment(), CoroutineScope,
     }
 
     private fun setToolbar(){
-        val bottomAppBar = bottomAppBar
+        val bottomAppBar = requireView().findViewById<BottomAppBar>(R.id.bottomAppBar)
         (activity as MainActivity).setSupportActionBar(bottomAppBar)
         (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
         val inputMethodManager =
             requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        button_search_deadline.setOnClickListener {
-            toolbar_deadline_main.visibility = View.GONE
-            toolbar_deadline_search.visibility = View.VISIBLE
-            edit_search_deadline.requestFocus()
-            inputMethodManager.showSoftInput(edit_search_deadline, 0)
+        requireView().findViewById<Button>(R.id.button_search_deadline).setOnClickListener {
+            requireView().findViewById<RelativeLayout>(R.id.toolbar_deadline_main).visibility = View.GONE
+            requireView().findViewById<RelativeLayout>(R.id.toolbar_deadline_search).visibility = View.VISIBLE
+            requireView().findViewById<EditText>(R.id.edit_search_deadline).requestFocus()
+            inputMethodManager.showSoftInput(requireView().findViewById<EditText>(R.id.edit_search_deadline), 0)
             if (!viewModel.foundData.hasActiveObservers()) {
                 requestData(DataType.FIND)
             } else if (it.toString().isEmpty()) {
                 requestData(DataType.FULL)
             }
-            fab.hide()
+            viewBinding.fab.hide()
         }
-        button_search_clear.setOnClickListener {
-            toolbar_deadline_main.visibility = View.VISIBLE
-            toolbar_deadline_search.visibility = View.GONE
-            edit_search_deadline.text.clear()
+        requireView().findViewById<Button>(R.id.button_search_clear).setOnClickListener {
+            requireView().findViewById<RelativeLayout>(R.id.toolbar_deadline_main).visibility = View.VISIBLE
+            requireView().findViewById<RelativeLayout>(R.id.toolbar_deadline_search).visibility = View.GONE
+            requireView().findViewById<EditText>(R.id.edit_search_deadline).text.clear()
             inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
             requestData(DataType.FULL)
-            fab.show()
+            viewBinding.fab.show()
         }
-        edit_search_deadline.addTextChangedListener {
+        requireView().findViewById<EditText>(R.id.edit_search_deadline).addTextChangedListener {
             if (viewModel.foundData.hasActiveObservers()) {
                 viewModel.find(it.toString())
             }

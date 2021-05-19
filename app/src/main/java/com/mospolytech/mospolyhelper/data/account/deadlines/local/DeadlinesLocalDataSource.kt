@@ -12,28 +12,28 @@ class DeadlinesLocalDataSource(private val prefDataSource: SharedPreferencesData
 
     fun get(deadlines: String): Result<List<Deadline>> {
         return try {
-            val res = Json.decodeFromString<List<Deadline>>(deadlines)
-            res.sortedBy {
+            var res = Json.decodeFromString<List<Deadline>>(deadlines)
+            res = res.sortedBy {
                 it.pinned
             }
-            res.sortedBy {
+            res = res.sortedBy {
                 !it.completed
             }
             Result.success(res)
 
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.success(emptyList())
         }
     }
 
     fun set(deadlines: List<Deadline>) {
-        deadlines.sortedBy {
+        var list = deadlines.sortedBy {
             it.pinned
         }
-        deadlines.sortedBy {
+        list = list.sortedBy {
             !it.completed
         }
-        val currentInfo = Json.encodeToString(deadlines)
+        val currentInfo = Json.encodeToString(list)
         if (getJson() != currentInfo)
             prefDataSource.set(PreferenceKeys.Deadlines, currentInfo)
     }

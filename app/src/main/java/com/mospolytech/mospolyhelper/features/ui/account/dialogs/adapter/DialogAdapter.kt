@@ -1,8 +1,10 @@
 package com.mospolytech.mospolyhelper.features.ui.account.dialogs.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -10,6 +12,9 @@ import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemDialogBinding
 import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.show
+import java.time.LocalDateTime
 
 class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
@@ -44,19 +49,80 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
         private val viewBinding by viewBinding(ItemDialogBinding::bind)
 
+        @SuppressLint("SetTextI18n")
         fun bind(item: DialogModel) {
             with(viewBinding) {
-                message.text = item.message
-                titleDialog.text = item.senderName
-                Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.senderImageUrl}").into(avatarDialog)
-                viewBinding.dialogContainer.setOnClickListener {
+                when {
+                    item.senderName.isNotEmpty() -> {
+                        var name = item.senderName
+                        name = if (item.senderGroup.contains("сотрудник", true)) {
+                            item.senderName.replaceAfter(" ", "").replace(" ", "")
+                        } else {
+                            item.senderName.replaceBefore(" ", "").replace(" ", "")
+                        }
+                        var avatar = item.senderImageUrl.replace("img/", "")
+                        avatar = avatar.replace("photos/thumb_", "")
+                        message.text = "${name}: ${HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)}"
+                    }
+                    item.senderImageUrl.isNotEmpty() -> {
+                        message.text = "Вы: ${HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)}"
+                    }
+                    else -> {
+                        message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                    }
+                }
+
+                var time = item.date
+                val hour = if (time.hour<10) "0${time.hour}" else time.hour.toString()
+                val minute = if (time.minute<10) "0${time.minute}" else time.minute.toString()
+                val day = if (time.dayOfMonth<10) "0${time.dayOfMonth}" else time.dayOfMonth.toString()
+                val month = if (time.monthValue<10) "0${time.monthValue}" else time.monthValue.toString()
+                val year = time.year.toString()
+
+                time = LocalDateTime.now()
+
+                if (item.date.year == time.year && item.date.dayOfYear == time.dayOfYear) {
+                    dateMessage.text = "${hour}:${minute}"
+                } else if (item.date.year == time.year) {
+                    dateMessage.text = "${day}.${month}"
+                } else {
+                    dateMessage.text = "${day}.${month}.${year}"
+                }
+
+                if (item.authorName.isNotEmpty()) {
+                    titleDialog.text = item.authorName
+                } else {
+                    titleDialog.text = itemView.context.getString(R.string.Dialog)
+                }
+
+                if (item.avatarUrl.isNotEmpty()) {
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatarDialog)
+                } else {
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/img/no_avatar.jpg").into(avatarDialog)
+                }
+
+                if (item.senderImageUrl.isNotEmpty()) {
+                    avatarSenderCircle.show()
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.senderImageUrl}").into(avatarSender)
+                } else {
+                    avatarSenderCircle.gone()
+                }
+
+                dialogContainer.setOnClickListener {
                     dialogClickListener?.invoke(item.dialogKey)
                 }
+                if (item.hasRead) {
+                    unreadMessage.gone()
+                } else {
+                    unreadMessage.show()
+                }
+
             }
         }
 
         fun recycle() {
             Glide.with(itemView.context).clear(viewBinding.avatarDialog)
+            Glide.with(itemView.context).clear(viewBinding.avatarSender)
         }
     }
 

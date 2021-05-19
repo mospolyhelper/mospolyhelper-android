@@ -1,45 +1,42 @@
 package com.mospolytech.mospolyhelper.features.ui.account.deadlines
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
+import com.mospolytech.mospolyhelper.databinding.FragmentAccountDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
-import com.mospolytech.mospolyhelper.features.ui.account.applications.ApplicationsViewModel
-import com.mospolytech.mospolyhelper.features.ui.account.applications.adapter.ApplicationsAdapter
+import com.mospolytech.mospolyhelper.features.ui.account.deadlines.DeadlinesBottomSheetFragment.Companion.DEADLINES
 import com.mospolytech.mospolyhelper.features.ui.account.deadlines.adapter.DeadlinesAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.fragment_account_deadline.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class DeadlinesFragment: Fragment() {
+class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
 
+    private val viewBinding by viewBinding(FragmentAccountDeadlineBinding::bind)
+    private val viewModel by sharedViewModel<DeadlinesViewModel>()
 
-    private val viewModel by viewModel<DeadlinesViewModel>()
+    private var deadlines: List<Deadline>? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account_deadline, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            viewModel.getInfo()
+        }
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        deadlines_recycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        deadline_swipe.setOnRefreshListener {
-            lifecycleScope.async {
+
+        viewBinding.deadlineSwipe.setOnRefreshListener {
+            lifecycleScope.launch {
                 viewModel.downloadInfo()
             }
         }
@@ -47,33 +44,31 @@ class DeadlinesFragment: Fragment() {
         lifecycleScope.launch {
             viewModel.deadlines.collect { result ->
                 result.onSuccess {
-                    loading_spinner.gone()
-                    filldata(it)
-                    deadline_swipe.isRefreshing = false
+                    viewBinding.loadingSpinner.gone()
+                    fillData(it)
+                    deadlines = it
+                    viewBinding.deadlineSwipe.isRefreshing = false
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    loading_spinner.gone()
-                    deadline_swipe.isRefreshing = false
+                    viewBinding.loadingSpinner.gone()
+                    viewBinding.deadlineSwipe.isRefreshing = false
                 }.onLoading {
-                    if (!deadline_swipe.isRefreshing)
-                        loading_spinner.show()
+                    if (!viewBinding.deadlineSwipe.isRefreshing)
+                        viewBinding.loadingSpinner.show()
                 }
             }
         }
 
-        lifecycleScope.launchWhenResumed {
-
-        }
-
-        lifecycleScope.async {
-            viewModel.getInfo()
-        }
-
-        fab.setOnClickListener {
-            findNavController().navigate(R.id.action_deadlinesFragment_to_deadlinesBottomSheetFragment)
+        viewBinding.fab.setOnClickListener {
+            deadlines?.let {
+                val data = bundleOf(DEADLINES to it.toTypedArray())
+                findNavController().navigate(R.id.action_deadlinesFragment_to_deadlinesBottomSheetFragment, data)
+            } ?: let {
+                Toast.makeText(requireContext(), "Дедлайны не загружены", Toast.LENGTH_SHORT)
+            }
         }
     }
-    fun filldata(deadlines: List<Deadline>) {
-        deadlines_recycler.adapter = DeadlinesAdapter(deadlines)
+    private fun fillData(deadlines: List<Deadline>) {
+        viewBinding.deadlinesRecycler.adapter = DeadlinesAdapter(deadlines)
     }
 }

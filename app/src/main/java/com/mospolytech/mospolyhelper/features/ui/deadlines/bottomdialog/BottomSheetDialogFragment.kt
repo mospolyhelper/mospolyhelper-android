@@ -12,13 +12,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.BottomSheetDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import kotlinx.android.synthetic.main.bottom_sheet_deadline.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,6 +45,8 @@ class AddBottomSheetDialogFragment(ctx: Context)
     private var openType = OpenType.SIMPLE
     private var deadline: Deadline? = null
     private var name: String = ""
+    
+    private val viewBinding by viewBinding(BottomSheetDeadlineBinding::bind)
     private val viewModel by viewModel<DialogFragmentViewModel>()
 
     private val job = SupervisorJob()
@@ -55,7 +58,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
         { _, year, monthOfYear, dayOfMonth ->
             val localDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
             val dateFormatter = DateTimeFormatter.ofPattern("eee, dd.MM.yyyy")
-            editDate.setText(localDate.format(dateFormatter))
+            viewBinding.editDate.setText(localDate.format(dateFormatter))
         }, LocalDate.now().year,
         LocalDate.now().month.value - 1,
         LocalDate.now().dayOfMonth)
@@ -65,7 +68,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
         { _, hourOfDay, minute ->
             val localTime = LocalTime.of(hourOfDay, minute)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            editTime.setText(localTime.format(timeFormatter))
+            viewBinding.editTime.setText(localTime.format(timeFormatter))
         }, LocalTime.now().hour,
         LocalTime.now().minute,true)
 
@@ -86,39 +89,39 @@ class AddBottomSheetDialogFragment(ctx: Context)
     }
 
     private fun setEditable(deadline: Deadline) {
-        btadd.setText(R.string.updateButton)
+        viewBinding.btadd.setText(R.string.updateButton)
         val item = deadline
-        editPredmet.setText(item.name)
-        editDescription.setText(item.description)
-        editDate.setText(item.date)
-        editTime.setText(item.time)
+        viewBinding.editPredmet.setText(item.name)
+        viewBinding.editDescription.setText(item.description)
+        viewBinding.editDate.setText(item.date)
+        viewBinding.editTime.setText(item.time)
         when(item.importance) {
-            R.color.colorLow -> chipLow.isChecked = true
-            R.color.colorMedium -> chipMedium.isChecked = true
-            R.color.colorHigh -> chipHigh.isChecked = true
+            R.color.colorLow -> viewBinding.chipLow.isChecked = true
+            R.color.colorMedium -> viewBinding.chipMedium.isChecked = true
+            R.color.colorHigh -> viewBinding.chipHigh.isChecked = true
         }
         if (item.pinned) {
-            imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+            viewBinding.imgPinned.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_push_pin_24px,0,0,0)
-            imgPinned.contentDescription = "pinned"
+            viewBinding.imgPinned.contentDescription = "pinned"
         } else {
-            imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+            viewBinding.imgPinned.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_push_unpin_24px, 0, 0, 0)
-            imgPinned.contentDescription = "unpinned"
+            viewBinding.imgPinned.contentDescription = "unpinned"
         }
-        btadd.setOnClickListener {
-            val predmet = editPredmet.text.toString()
-            val descr = editDescription.text.toString()
+        viewBinding.btadd.setOnClickListener {
+            val predmet = viewBinding.editPredmet.text.toString()
+            val descr = viewBinding.editDescription.text.toString()
             var color: Int = R.color.colorLow
-            if (chipMedium.isChecked) {
+            if (viewBinding.chipMedium.isChecked) {
                 color = R.color.colorMedium
             }
-            if (chipHigh.isChecked) {
+            if (viewBinding.chipHigh.isChecked) {
                 color = R.color.colorHigh
             }
-            val pinned = imgPinned.contentDescription == "pinned"
-            val date = editDate.text.toString()
-            val time = editTime.text.toString()
+            val pinned = viewBinding.imgPinned.contentDescription == "pinned"
+            val date = viewBinding.editDate.text.toString()
+            val time = viewBinding.editTime.text.toString()
             item.name = predmet
             item.description = descr
             item.date = date
@@ -148,7 +151,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
             }
             OpenType.ADD -> {
                 clear()
-                editPredmet.setText(this.name)
+                viewBinding.editPredmet.setText(this.name)
             }
         }
 
@@ -158,29 +161,29 @@ class AddBottomSheetDialogFragment(ctx: Context)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chipId = chipLow.id
+        chipId = viewBinding.chipLow.id
         when (openType) {
             OpenType.SIMPLE -> {
-                btadd.setOnClickListener(this)
+                viewBinding.btadd.setOnClickListener(this)
             }
             OpenType.ADD -> {
-                btadd.setOnClickListener(this)
+                viewBinding.btadd.setOnClickListener(this)
                 clear()
-                editPredmet.setText(this.name)
+                viewBinding.editPredmet.setText(this.name)
             }
             OpenType.EDIT -> {
                 setEditable(this.deadline as Deadline)
             }
         }
-        editDate.setOnClickListener {
+        viewBinding.editDate.setOnClickListener {
             datePickerDialog.show()
         }
 
-        editTime.setOnClickListener {
+        viewBinding.editTime.setOnClickListener {
             timePickerDialog.show()
         }
 
-        imgPinned.setOnClickListener { it as TextView
+        viewBinding.imgPinned.setOnClickListener { it as TextView
             if (it.contentDescription == getString(R.string.pin)){
                 it.setCompoundDrawablesWithIntrinsicBounds(
                     R.drawable.ic_push_unpin_24px,0,0,0)
@@ -192,7 +195,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
             }
         }
 
-        chipGr.setOnCheckedChangeListener { _, checkedId ->
+        viewBinding.chipGr.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.chipLow -> { chipId = R.id.chipLow }
                 R.id.chipMedium -> { chipId = R.id.chipMedium }
@@ -205,10 +208,10 @@ class AddBottomSheetDialogFragment(ctx: Context)
             lessons = emptyList<String>()
         }
         lessons.let {
-            editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
+            viewBinding.editPredmet.setAdapter(ArrayAdapter<String>(requireContext(),
                 R.layout.item_dropdown,
                 R.id.autoCompleteItem,
-                it!!))
+                it))
         }
 
         viewModel.onMessage += {
@@ -219,27 +222,27 @@ class AddBottomSheetDialogFragment(ctx: Context)
     }
 
     override fun onClick(v: View?) {
-        val predmet =  editPredmet.text.toString()
-        val descr = editDescription.text.toString()
+        val predmet =  viewBinding.editPredmet.text.toString()
+        val descr = viewBinding.editDescription.text.toString()
         if (descr.isEmpty()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 Toast.makeText(App.context, R.string.predmetError, Toast.LENGTH_SHORT).show()
             } else {
-                editDescription.error = resources.getString(R.string.predmetError)
+                viewBinding.editDescription.error = resources.getString(R.string.predmetError)
             }
             return
         }
 
         var color: Int = R.color.colorLow
-        if (chipMedium.isChecked) {
+        if (viewBinding.chipMedium.isChecked) {
             color = R.color.colorMedium
         }
-        if (chipHigh.isChecked) {
+        if (viewBinding.chipHigh.isChecked) {
             color = R.color.colorHigh
         }
-        val pinned = imgPinned.contentDescription == "pinned"
-        val date = editDate.text.toString()
-        val time = editTime.text.toString()
+        val pinned = viewBinding.imgPinned.contentDescription == "pinned"
+        val date = viewBinding.editDate.text.toString()
+        val time = viewBinding.editTime.text.toString()
         val d = Deadline(
             name = predmet, description = descr, pinned = pinned,
             date = date, time = time, importance = color
@@ -256,20 +259,20 @@ class AddBottomSheetDialogFragment(ctx: Context)
 
 
     private fun clear() {
-        editPredmet.text.clear()
-        editDescription.text.clear()
-        editDate.text.clear()
-        editTime.text.clear()
-        imgPinned.setCompoundDrawablesWithIntrinsicBounds(
+        viewBinding.editPredmet.text.clear()
+        viewBinding.editDescription.text.clear()
+        viewBinding.editDate.text.clear()
+        viewBinding.editTime.text.clear()
+        viewBinding.imgPinned.setCompoundDrawablesWithIntrinsicBounds(
             R.drawable.ic_push_unpin_24px,0,0,0)
-        imgPinned.contentDescription = getString(R.string.unpin)
-        chipLow.isChecked = true
+        viewBinding.imgPinned.contentDescription = getString(R.string.unpin)
+        viewBinding.chipLow.isChecked = true
         if (openType == OpenType.EDIT) {
-            btadd.setOnClickListener(this)
-            btadd.setText(R.string.add)
+            viewBinding.btadd.setOnClickListener(this)
+            viewBinding.btadd.setText(R.string.add)
             openType = OpenType.SIMPLE
         }
-        editDescription.error = null
+        viewBinding.editDescription.error = null
     }
 
 }

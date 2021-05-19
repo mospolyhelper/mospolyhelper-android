@@ -25,7 +25,11 @@ class MessagingViewModel(
 
     val dialog = MutableStateFlow<Result<List<Message>>>(Result.loading())
 
-    val message = MutableStateFlow<Result<List<Message>>>(Result.loading())
+    suspend fun downloadDialog(dialogId: String) {
+        useCase.getDialog(dialogId).collect {
+            dialog.value = it
+        }
+    }
 
     suspend fun getDialog(dialogId: String) {
         useCase.getLocalDialog(dialogId).collect {
@@ -38,7 +42,7 @@ class MessagingViewModel(
 
     suspend fun sendMessage(dialogId: String, message: String, fileNames: List<String> = emptyList()) {
         useCase.sendMessage(dialogId, message, fileNames).collect {
-            this.message.value = it
+            this.dialog.value = it
         }
     }
 

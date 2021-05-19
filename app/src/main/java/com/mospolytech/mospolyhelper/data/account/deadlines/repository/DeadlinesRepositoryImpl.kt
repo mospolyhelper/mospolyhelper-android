@@ -8,6 +8,7 @@ import com.mospolytech.mospolyhelper.domain.account.deadlines.repository.Deadlin
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +30,9 @@ class DeadlinesRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        if (res.isSuccess) localDataSource.set(res.value as List<Deadline>)
+        res.onSuccess {
+            localDataSource.set(it)
+        }
         emit(res)
     }.flowOn(ioDispatcher)
 
@@ -48,7 +51,9 @@ class DeadlinesRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.set(sessionId, deadlines)
-        if (res.isSuccess) localDataSource.set(res.value as List<Deadline>)
+        res.onSuccess {
+            localDataSource.set(it)
+        }
         emit(res)
     }.flowOn(ioDispatcher)
 
