@@ -17,5 +17,5 @@ val dialogsModule = module {
     single { DialogsLocalDataSource(get()) }
     single<DialogsRepository> { DialogsRepositoryImpl(get(), get(), get()) }
     single { DialogsUseCase(get()) }
-    viewModel { DialogsViewModel(get(), get()) }
+    viewModel { DialogsViewModel(get(), get(), get()) }
 }

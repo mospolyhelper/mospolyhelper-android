@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.dialogs
 
 import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.domain.account.dialogs.usecase.DialogsUseCase
+import com.mospolytech.mospolyhelper.domain.account.messaging.usecase.MessagingUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.collect
 import org.koin.core.KoinComponent
 
 class DialogsViewModel(mediator: Mediator<String, ViewModelMessage>,
-private val useCase: DialogsUseCase): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
+                       private val useCase: DialogsUseCase,
+                       private val messagingUseCase: MessagingUseCase): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
     KoinComponent {
 
     val dialogs = MutableStateFlow<Result<List<DialogModel>>>(Result.loading())
@@ -22,7 +24,6 @@ private val useCase: DialogsUseCase): ViewModelBase(mediator, DialogsViewModel::
         }
     }
 
-
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {
             dialogs.value = it
@@ -32,4 +33,8 @@ private val useCase: DialogsUseCase): ViewModelBase(mediator, DialogsViewModel::
             dialogs.value = it
         }
     }
+
+    fun getName() = messagingUseCase.getName()
+
+    fun getAvatar() = messagingUseCase.getAvatar()
 }

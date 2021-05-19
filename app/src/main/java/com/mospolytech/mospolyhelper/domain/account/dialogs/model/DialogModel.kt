@@ -1,6 +1,9 @@
 package com.mospolytech.mospolyhelper.domain.account.dialogs.model
 
+import com.mospolytech.mospolyhelper.utils.MessageDateSerializer
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Serializable
 data class DialogModel(val id: Int,
@@ -9,7 +12,9 @@ data class DialogModel(val id: Int,
                        val authorGroup: String,
                        val avatarUrl: String,
                        val message: String,
-                       val date: String,
+                       @Serializable(with = MessageDateSerializer::class)
+                       val date: LocalDateTime,
+                       val senderGroup: String,
                        val senderImageUrl: String,
                        val senderName: String,
                        val hasAttachments: Boolean,

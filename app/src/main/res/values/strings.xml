@@ -152,4 +152,5 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="account">Аккаунт</string>
     <string name="nav_dialogs">Диалоги</string>
     <string name="nothing_found">Ничего не найдено</string>
+    <string name="Dialog">Диалог</string>
 </resources>

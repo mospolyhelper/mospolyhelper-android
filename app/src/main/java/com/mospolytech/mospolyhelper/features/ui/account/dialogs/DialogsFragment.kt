@@ -36,6 +36,9 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         lifecycleScope.launch {
             viewModel.getInfo()
         }
+
+        DialogAdapter.NAME = viewModel.getName()
+        DialogAdapter.AVATAR = viewModel.getAvatar()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
