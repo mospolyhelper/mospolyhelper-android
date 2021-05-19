@@ -13,7 +13,6 @@ import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemMarkBinding
 import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
-import kotlinx.android.synthetic.main.item_mark.view.*
 import java.util.*
 
 class MarksAdapter(): RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {

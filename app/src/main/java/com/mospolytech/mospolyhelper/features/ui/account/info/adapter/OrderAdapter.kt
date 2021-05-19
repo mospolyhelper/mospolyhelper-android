@@ -1,18 +1,13 @@
 package com.mospolytech.mospolyhelper.features.ui.account.info.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemOrderBinding
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
-import kotlinx.android.synthetic.main.item_order.view.*
-import java.util.*
 
 class OrderAdapter(private var items : List<String>): RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 

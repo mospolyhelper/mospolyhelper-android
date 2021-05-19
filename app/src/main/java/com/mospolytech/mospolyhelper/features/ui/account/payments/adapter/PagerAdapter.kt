@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentsBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Contract
-import kotlinx.android.synthetic.main.item_payments.view.*
 
 class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<PagerAdapter.PagerViewHolder>() {
 
@@ -41,7 +39,7 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
         val info: TextView = viewBinding.paymentInfo
         val all: TextView = viewBinding.paymentAll
         val current: TextView = viewBinding.paymentCurrent
-        val sberQr: ImageView = viewBinding.imageSber
+        private val sberQr: ImageView = viewBinding.imageSber
 
         fun bind(contract: Contract) {
             recycler.adapter = PaymentsAdapter(contract.payments)

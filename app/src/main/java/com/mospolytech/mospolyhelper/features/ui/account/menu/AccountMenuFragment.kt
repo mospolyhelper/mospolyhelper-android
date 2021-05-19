@@ -2,15 +2,11 @@ package com.mospolytech.mospolyhelper.features.ui.account.menu
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +15,8 @@ import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentMenuAccountBinding
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_menu_account.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

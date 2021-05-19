@@ -1,33 +1,19 @@
 package com.mospolytech.mospolyhelper.features.ui.account.teachers.adapter
 
-import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
-import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemTeacherBinding
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
-import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
-import com.mospolytech.mospolyhelper.features.ui.common.PagingAdapter
-import com.mospolytech.mospolyhelper.utils.gone
-import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
-import com.mospolytech.mospolyhelper.utils.show
-import kotlinx.android.synthetic.main.item_error.view.*
-import kotlinx.android.synthetic.main.item_teacher.view.*
-import java.util.*
 
 class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diffUtil) {
 

@@ -1,8 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter
 
-import android.content.Context
-import android.os.Build
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView

@@ -1,8 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.applications.adapter
 
-import android.content.Context
-import android.os.Build
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +16,6 @@ import com.mospolytech.mospolyhelper.databinding.ItemApplicationBinding
 import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
-import kotlinx.android.synthetic.main.item_application.view.*
-import java.util.*
 
 class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.ApplicationsViewHolder>() {
 

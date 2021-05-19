@@ -8,14 +8,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.mospolytech.mospolyhelper.R
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountDialogsBinding
 import com.mospolytech.mospolyhelper.features.ui.account.dialogs.adapter.DialogAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,7 +42,6 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         super.onViewCreated(view, savedInstanceState)
 
         viewBinding.recyclerDialogs.adapter = adapter
-        viewBinding.recyclerDialogs.layoutManager = LinearLayoutManager(requireContext())
 
         lifecycleScope.launchWhenResumed {
             viewModel.dialogs.collect { result ->

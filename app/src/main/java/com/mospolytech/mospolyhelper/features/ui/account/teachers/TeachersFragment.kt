@@ -2,9 +2,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.teachers
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -13,15 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.ListPreloader
-import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountTeachersBinding
-import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.teachers.adapter.TeachersAdapter
@@ -44,6 +36,7 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
 
     private var adapter = TeachersAdapter()
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.newCoroutineContext(this@TeachersFragment.coroutineContext)
@@ -95,14 +88,17 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
         }
 
         lifecycleScope.launch {
+            if (job.isCancelled) return@launch
             adapter.loadStateFlow.collectLatest { loadStates ->
                 when(loadStates.refresh) {
                     is LoadState.Loading -> {
+                        viewBinding.textEmpty.hide()
                         if (adapter.itemCount == 0)
                             if (!viewBinding.swipeTeachers.isRefreshing)
                                 viewBinding.progressFirstLoading.show()
                     }
                     is LoadState.Error -> {
+                        viewBinding.textEmpty.hide()
                         viewBinding.progressFirstLoading.hide()
                         viewBinding.swipeTeachers.isRefreshing = false
                         Toast.makeText(
@@ -112,10 +108,11 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
                         ).show()
                     }
                     is LoadState.NotLoading -> {
-                        if (!job.isCancelled) {
-                            viewBinding.progressFirstLoading.hide()
-                            viewBinding.swipeTeachers.isRefreshing = false
-                        }
+                        if (adapter.itemCount == 0 &&
+                            viewBinding.editSearchTeacher.text.isNotEmpty())
+                                viewBinding.textEmpty.show()
+                        viewBinding.progressFirstLoading.hide()
+                        viewBinding.swipeTeachers.isRefreshing = false
                     }
                 }
             }

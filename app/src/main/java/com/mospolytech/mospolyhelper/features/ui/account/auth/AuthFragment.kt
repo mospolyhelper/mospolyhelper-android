@@ -1,9 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.auth
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment

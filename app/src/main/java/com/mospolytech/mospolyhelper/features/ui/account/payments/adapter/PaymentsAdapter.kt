@@ -9,7 +9,6 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Payment
 import com.mospolytech.mospolyhelper.utils.inflate
-import kotlinx.android.synthetic.main.item_payment.view.*
 
 class PaymentsAdapter(private val items: List<Payment>): RecyclerView.Adapter<PaymentsAdapter.PaymentsViewHolder>() {
 

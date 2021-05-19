@@ -1,14 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging
 
-import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -16,14 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountMessagingBinding
-import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
-import com.mospolytech.mospolyhelper.features.ui.account.classmates.adapter.ClassmatesAdapter
-import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter.MessagesAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

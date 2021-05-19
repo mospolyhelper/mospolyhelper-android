@@ -1,9 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.payments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +13,6 @@ import com.mospolytech.mospolyhelper.databinding.FragmentAccountPaymentsBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
 import com.mospolytech.mospolyhelper.features.ui.account.payments.adapter.PagerAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

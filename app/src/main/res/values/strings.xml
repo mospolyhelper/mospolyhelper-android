@@ -151,4 +151,5 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="statements">Ведомости</string>
     <string name="account">Аккаунт</string>
     <string name="nav_dialogs">Диалоги</string>
+    <string name="nothing_found">Ничего не найдено</string>
 </resources>

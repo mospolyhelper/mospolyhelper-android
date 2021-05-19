@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.statements.adapter
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
@@ -15,12 +14,10 @@ import com.budiyev.android.circularprogressbar.CircularProgressBar
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStatementBinding
-import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
-import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
-import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.item_statement.view.*
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.hide
+import com.mospolytech.mospolyhelper.utils.show
 import java.util.*
 
 class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatements>() {
@@ -60,7 +57,7 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
         fun bind(statement: Statement) {
             type.text = statement.loadType
             name.text = statement.subject
-            view.mark_layout.show()
+            viewBinding.markLayout.show()
             var mark = ""
             when (statement.grade.toLowerCase(Locale.getDefault())) {
                 "отлично" -> {
@@ -127,7 +124,7 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
                         R.color.colorHigh
                     )
                 }
-                "" -> view.mark_layout.gone()
+                "" -> viewBinding.markLayout.gone()
                 else -> statement.grade.substring(0, 2)
             }
             this.mark.text = mark
