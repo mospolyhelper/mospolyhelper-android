@@ -5,6 +5,7 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Parcelize
 data class Deadline(
     val id: Int,
     val name: String,
@@ -13,4 +14,4 @@ data class Deadline(
     val date: String,
     val completed: Boolean,
     val importance: Int
-)
+): Parcelable

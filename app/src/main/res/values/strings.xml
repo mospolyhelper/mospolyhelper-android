@@ -87,14 +87,27 @@
     <string name="input_message">Введите сообщение</string>
     <string name="course">%1$s курс</string>
     <string name="semester">%1$s семестр</string>
+    <string name="education_form">%1$s форма обучения</string>
+    <string name="direction">Направление: %1$s</string>
+    <string name="specialization">Форма обучения: %1$s</string>
     <string name="exam">Экзамен</string>
     <string name="reg_application">Регистрационный номер: %1$s</string>
     <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
     <string name="prim">Примечание: %1$s</string>
     <string name="payment_left">Осталось заплатить %1$s из %2$s руб.</string>
+    <string name="payment">%1$s руб.</string>
     <string name="payment_credit">Задолженность %1$s руб. на %2$s</string>
     <string name="payment_debet">Переплата %1$s руб. на %2$s</string>
     <string name="payment_no_credit">Задолженности на %1$s нет</string>
+    <string name="unauthorized">Необходима авторизация</string>
+    <string name="authorize">Войти</string>
+    <string name="download_statement">Скачать ведомость</string>
+    <string name="open_browser">Открыть в браузере</string>
+    <string name="dormitory">Общежитие</string>
+    <string name="tuition">Обучение</string>
+    <string name="ed_form">%1$s %2$s форма обучения</string>
+    <string name="ed_year">%1$s год набора</string>
+
 
 
     <!-- University pass service -->
@@ -128,6 +141,8 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="statements">Электронная зачетная книжка</string>
     <string name="account">Аккаунт</string>
     <string name="nav_dialogs">Диалоги</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="Dialog">Диалог</string>
     <string name="menu_schedule_advanced_search">Продвинутый поиск</string>
     <string name="menu_schedule_filters">Фильтры</string>
     <string name="menu_schedule_calendar">Календарь</string>

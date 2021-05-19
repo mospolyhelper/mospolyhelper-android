@@ -3,47 +3,56 @@ package com.mospolytech.mospolyhelper.features.ui.account.marks
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentAccountMarksBinding
 import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
 import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
 import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.android.synthetic.main.fragment_account_marks.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnItemSelectedListener {
 
+    private val viewBinding by viewBinding(FragmentAccountMarksBinding::bind)
     private val viewModel by viewModel<MarksViewModel>()
+
+    private val adapter = MarksAdapter()
+
+    private val editor = object : TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {
+            adapter.items = getMarksByName(marksList, p0.toString())
+        }
+        override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { }
+        override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { } }
+
     private lateinit var marksList: MutableList<MarkInfo>
     private lateinit var semesters: MutableList<String>
     private var currentSemester: Int = -1
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account_marks, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            viewModel.getInfo()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycler_marks.layoutManager = LinearLayoutManager(requireContext())
-        recycler_marks.adapter = MarksAdapter(emptyList())
-        swipe_marks.setOnRefreshListener {
-            lifecycleScope.async {
+
+        viewBinding.recyclerMarks.adapter = adapter
+
+        viewBinding.swipeMarks.setOnRefreshListener {
+            lifecycleScope.launch {
                 viewModel.downloadInfo()
             }
         }
@@ -51,77 +60,65 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
         lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
                 result.onSuccess {
-                    swipe_marks.isRefreshing = false
-                    progress_loading.gone()
+                    viewBinding.swipeMarks.isRefreshing = false
+                    viewBinding.progressLoading.gone()
                     setMarks(it.marks)
                     setSemesters(it.marks)
-                    button_search.isEnabled = true
-                    filldata()
+                    viewBinding.buttonSearch.isEnabled = true
+                    fillData()
                 }.onFailure {
-                    swipe_marks.isRefreshing = false
+                    viewBinding.swipeMarks.isRefreshing = false
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    progress_loading.gone()
+                    viewBinding.progressLoading.gone()
                 }.onLoading {
-                    if (!swipe_marks.isRefreshing)
-                        progress_loading.show()
-                    button_search.isEnabled = false
+                    if (!viewBinding.swipeMarks.isRefreshing)
+                        viewBinding.progressLoading.show()
+                    viewBinding.buttonSearch.isEnabled = false
                 }
             }
         }
 
-        lifecycleScope.async {
-            viewModel.getInfo()
-            }
-
-        val editor = object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                if (recycler_marks.adapter is MarksAdapter)
-                    (recycler_marks.adapter as MarksAdapter).updateList(getMarksByName(marksList, p0.toString()))
-            }
-            override fun beforeTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence, p1: Int, p2: Int, p3: Int) { } }
-
-        button_search.setOnClickListener {
-            marks_search.show()
-            marks_select.gone()
-            edit_search_marks.addTextChangedListener(editor)
-            (recycler_marks.adapter as MarksAdapter).updateList(emptyList())
-            (recycler_marks.adapter as MarksAdapter).updateList(getMarksByName(marksList, ""))
-            swipe_marks.isEnabled = false
+        viewBinding.buttonSearch.setOnClickListener {
+            viewBinding.marksSearch.show()
+            viewBinding.marksSelect.gone()
+            viewBinding.editSearchMarks.addTextChangedListener(editor)
+            adapter.items = emptyList()
+            adapter.items = getMarksByName(marksList, "")
+            viewBinding.swipeMarks.isEnabled = false
         }
 
-        button_search_clear.setOnClickListener {
-            swipe_marks.isEnabled = true
-            marks_search.gone()
-            marks_select.show()
-            edit_search_marks.removeTextChangedListener(editor)
-            edit_search_marks.text.clear()
-            if (semesters_spinner.adapter.count == semesters_spinner.selectedItemPosition + 1) {
-                (recycler_marks.adapter as MarksAdapter).
-                updateList(getMarksBySemesters(marksList, semesters_spinner.adapter.count))
+        viewBinding.buttonSearchClear.setOnClickListener {
+            viewBinding.swipeMarks.isEnabled = true
+            viewBinding.marksSearch.gone()
+            viewBinding.marksSelect.show()
+            viewBinding.editSearchMarks.removeTextChangedListener(editor)
+            viewBinding.editSearchMarks.text.clear()
+            if (viewBinding.semestersSpinner.adapter.count == viewBinding.semestersSpinner.selectedItemPosition + 1) {
+                adapter.items = getMarksBySemesters(marksList, viewBinding.semestersSpinner.adapter.count)
             } else {
-                semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
+                viewBinding.semestersSpinner.setSelection(viewBinding.semestersSpinner.adapter.count - 1)
             }
         }
 
-        recycler_marks.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
+        viewBinding.recyclerMarks.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
             if (p4<0) {
-                fab_share.hide()
+                viewBinding.fabShare.hide()
             } else {
-                fab_share.show()
+                viewBinding.fabShare.show()
             }
         }
     }
-    private fun filldata() {
+
+    private fun fillData() {
         ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
             semesters.map { "$it семестр" }).also { adapterSpinner ->
             adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            semesters_spinner.adapter = adapterSpinner
+            viewBinding.semestersSpinner.adapter = adapterSpinner
         }
-        semesters_spinner.onItemSelectedListener = this
+        viewBinding.semestersSpinner.onItemSelectedListener = this
         if (currentSemester == -1)
-            semesters_spinner.setSelection(semesters_spinner.adapter.count - 1)
-        else semesters_spinner.setSelection(currentSemester)
+            viewBinding.semestersSpinner.setSelection(viewBinding.semestersSpinner.adapter.count - 1)
+        else viewBinding.semestersSpinner.setSelection(currentSemester)
     }
 
     private fun setSemesters(marks: Map<String, Map<String, List<Mark>>>) {
@@ -167,13 +164,11 @@ class MarksFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        if (recycler_marks.adapter is MarksAdapter)
-            (recycler_marks.adapter as MarksAdapter).updateList(getMarksBySemesters(marksList, p2 + 1).toList())
+        adapter.items = getMarksBySemesters(marksList, p2 + 1).toList()
         currentSemester = p2
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        if (recycler_marks.adapter is MarksAdapter)
-            (recycler_marks.adapter as MarksAdapter).updateList(mutableListOf())
+        adapter.items = mutableListOf()
     }
 }

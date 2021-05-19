@@ -3,20 +3,24 @@ package com.mospolytech.mospolyhelper.features.ui.deadlines
 import android.view.ContextMenu
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ItemDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import kotlinx.android.synthetic.main.item_deadline.view.*
 import java.util.*
 
 class DeadlinesViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-    private val predmet = view.tvPred
-    private val zadanie = view.tvZad
-    private val completed = view.rbComp
-    private val pinned = view.imgPin
-    private val datetime = view.tvDateTime
+
+    private val viewBinding by viewBinding(ItemDeadlineBinding::bind)
+
+    private val predmet = viewBinding.tvPred
+    private val zadanie = viewBinding.tvZad
+    private val completed = viewBinding.rbComp
+    private val pinned = viewBinding.imgPin
+    private val datetime = viewBinding.tvDateTime
     //val importance : Int? = R.color.colorLow
-    private val card = view.card
-    private val img = view.imgClock
+    private val card = viewBinding.card
+    private val img = viewBinding.imgClock
     private var contextMenu: ContextMenu? = null
 
     private lateinit var deadline: Deadline

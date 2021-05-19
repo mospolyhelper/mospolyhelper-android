@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.domain.account.dialogs.usecase
 
 import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.domain.account.dialogs.repository.DialogsRepository
+import com.mospolytech.mospolyhelper.domain.account.messaging.repository.MessagingRepository
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onStart
@@ -16,4 +17,5 @@ class DialogsUseCase(private val repository: DialogsRepository) {
         repository.getLocalDialogs().onStart {
             //emit(Result.loading())
         }
+
 }

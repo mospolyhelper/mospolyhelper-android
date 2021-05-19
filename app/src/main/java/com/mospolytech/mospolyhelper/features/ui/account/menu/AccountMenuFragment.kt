@@ -2,62 +2,58 @@ package com.mospolytech.mospolyhelper.features.ui.account.menu
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentMenuAccountBinding
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_menu_account.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AccountMenuFragment : Fragment() {
+class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
 
     private lateinit var menuList: RecyclerView
 
+    private val viewBinding by viewBinding(FragmentMenuAccountBinding::bind)
     private val viewModel by viewModel<MenuViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         GlobalScope.launch(Dispatchers.Main) {
             viewModel.refresh().collect()
         }
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_menu_account, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val name = viewModel.getName()
         if (name.isNotEmpty()) {
-            text_fio.text = name
+            viewBinding.textFio.text = name
         } else {
-            text_fio.text = requireContext().getText(R.string.account)
+            viewBinding.textFio.text = requireContext().getText(R.string.account)
         }
-        avatar_user.isVisible = viewModel.getAvatar().isNotEmpty()
-        Glide.with(this).load(viewModel.getAvatar()).into(avatar_user)
-        menuList = view.findViewById(R.id.listMenu)
+        viewBinding.avatarUser.isVisible = viewModel.getAvatar().isNotEmpty()
+        Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarUser)
+        menuList = viewBinding.listMenu
 
         setMenu(viewModel.getPermissions())
+    }
+
+    override fun onDestroyView() {
+        Glide.with(this).clear(viewBinding.avatarUser)
+        super.onDestroyView()
     }
 
     @SuppressLint("RestrictedApi")

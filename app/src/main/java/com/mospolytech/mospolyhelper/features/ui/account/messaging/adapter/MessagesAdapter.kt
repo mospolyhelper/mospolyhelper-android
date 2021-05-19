@@ -1,8 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter
 
-import android.content.Context
-import android.os.Build
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -31,7 +28,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var items: List<Message> = emptyList()
     set(value) {
         val diffResult =
-            DiffUtil.calculateDiff(MessagesDiffCallback(field, value), true)
+            DiffUtil.calculateDiff(MessagesDiffCallback(field, value), false)
         field = value
         diffResult.dispatchUpdatesTo(this)
     }
@@ -105,15 +102,18 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val message: TextView = viewBinding.message
         val avatar: ImageView = viewBinding.avatarStudent
         val card: CardView = viewBinding.card
+        val recycler = viewBinding.recyclerFiles
 
         fun bind(item: Message) {
             name.text = item.authorName
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            recycler.adapter = FilesAdapter(item.attachments)
         }
 
         fun recycle() {
             Glide.with(itemView.context).clear(avatar)
+            recycler.adapter = null
         }
     }
 

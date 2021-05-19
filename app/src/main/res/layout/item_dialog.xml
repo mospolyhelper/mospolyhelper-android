@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
-    android:layout_margin="1dp"
-    app:cardCornerRadius="25dp"
-    app:cardBackgroundColor="@color/layerOne"
-    android:elevation="3dp">
+    android:background="@color/layerOne">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialog_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="7dp"
         android:background="?android:selectableItemBackground">
         <androidx.cardview.widget.CardView
             android:id="@+id/avatar_student_circle"
@@ -29,40 +27,97 @@
 
             <ImageView
                 android:id="@+id/avatar_dialog"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                />
+        </androidx.cardview.widget.CardView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@id/avatar_student_circle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+            <androidx.cardview.widget.CardView
+                android:id="@+id/avatar_sender_circle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="100dp"
-                android:minHeight="100dp"
-                android:scaleType="centerCrop" />
-        </androidx.cardview.widget.CardView>
-        <TextView
-            android:id="@+id/title_dialog"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="@string/fio"
-            android:textColor="@color/predmetcolor"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="20sp"
-            android:layout_marginStart="10dp"
-            android:ellipsize="end"
-            android:layout_marginBottom="@dimen/marginCard"
-            app:layout_constraintStart_toEndOf="@+id/avatar_student_circle"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-        <TextView
-            android:id="@+id/message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            tools:text="Инфо"
-            android:layout_marginBottom="@dimen/marginCard"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="15sp"
-            app:layout_constraintStart_toEndOf="@+id/avatar_student_circle"
-            app:layout_constraintTop_toBottomOf="@+id/title_dialog"
-            app:layout_constraintEnd_toEndOf="parent"/>
+                app:cardCornerRadius="100dp"
+                android:layout_marginEnd="5dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/message"
+                app:layout_constraintBottom_toBottomOf="@id/message">
+
+                <ImageView
+                    android:id="@+id/avatar_sender"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/title_dialog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="@string/Dialog"
+                android:textColor="@color/textColorPrimary"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17sp"
+                android:ellipsize="end"
+                android:layout_marginEnd="5dp"
+                android:maxLines="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date_message"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.05"/>
+            <TextView
+                android:id="@+id/date_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="11.11"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/textSecondary"
+                android:textSize="13sp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/title_dialog"
+                app:layout_constraintBottom_toBottomOf="@id/title_dialog"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Сообщение Сообщение Сообщение Сообщение Сообщение"
+                android:layout_marginBottom="@dimen/marginCard"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/textSecondary"
+                android:textSize="16sp"
+                android:maxLines="1"
+                app:layout_constraintStart_toEndOf="@+id/avatar_sender_circle"
+                app:layout_constraintTop_toBottomOf="@+id/title_dialog"
+                app:layout_constraintEnd_toStartOf="@id/unread_message"/>
+            <ImageView
+                android:id="@+id/unread_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_circle"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_marginEnd="7dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/message"
+                app:layout_constraintBottom_toBottomOf="@id/message"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</FrameLayout>
