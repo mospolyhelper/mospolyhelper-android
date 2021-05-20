@@ -38,7 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp">
+            android:paddingVertical="5dp"
+            android:background="?attr/selectableItemBackground">
             <TextView
                 android:id="@+id/title_student"
                 android:layout_width="match_parent"
@@ -64,7 +65,7 @@
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@+id/title_student"
                 app:layout_constraintEnd_toEndOf="parent"/>
-            <com.mospolytech.mospolyhelper.features.widget.NoTouchRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_files"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

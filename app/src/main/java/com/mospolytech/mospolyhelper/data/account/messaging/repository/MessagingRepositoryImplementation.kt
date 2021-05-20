@@ -22,7 +22,6 @@ class MessagingRepositoryImplementation(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    @Suppress("UNCHECKED_CAST")
     override suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
@@ -53,6 +52,19 @@ class MessagingRepositoryImplementation(
         }
         emit(res)
     }.flowOn(ioDispatcher)
+
+    override suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result<List<Message>>>  = flow {
+        val sessionId = prefDataSource.get(
+            PreferenceKeys.SessionId,
+            PreferenceDefaults.SessionId
+        )
+        val res = remoteDataSource.deleteMessage(sessionId, removeKey)
+        res.onSuccess {
+            localDataSource.setDialog(it, dialogKey)
+        }
+        emit(res)
+    }.flowOn(ioDispatcher)
+
 
     override fun getName() = jwtLocalDataSource.get()?.getName() ?: ""
 

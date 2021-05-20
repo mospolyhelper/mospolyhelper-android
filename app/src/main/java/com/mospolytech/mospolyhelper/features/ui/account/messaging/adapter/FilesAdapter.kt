@@ -31,8 +31,9 @@ class FilesAdapter(private val items: List<Attachment>):RecyclerView.Adapter<Fil
         fun bind(item: Attachment) {
             with(viewBinding) {
                 fileName.text = item.name
+                val url = "https://e.mospolytech.ru/down.php?f=${item.url}"
                 itemView.setOnClickListener {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     ContextCompat.startActivity(itemView.context, browserIntent, null)
                 }
             }

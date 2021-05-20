@@ -36,6 +36,12 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
         dialogId = arguments?.getString(DIALOG_ID).orEmpty()
 
+        MessagesAdapter.deleteMessageClickListener = {
+            lifecycleScope.launch {
+                viewModel.deleteMessage(dialogId, it)
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.getDialog(dialogId)
         }
@@ -83,5 +89,31 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
             }
         }
 
+        lifecycleScope.launchWhenResumed {
+            viewModel.update.collect { result ->
+                result.onSuccess {
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    adapter.items = it
+                    viewBinding.swipeMessaging.isRefreshing = false
+                }.onFailure {
+                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    viewBinding.swipeMessaging.isRefreshing = false
+                }.onLoading {
+                    viewBinding.sendMessage.hide()
+                    if (!viewBinding.swipeMessaging.isRefreshing) {
+                        viewBinding.progressLoading.show()
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun onDestroy() {
+        MessagesAdapter.deleteMessageClickListener = null
+        super.onDestroy()
     }
 }
