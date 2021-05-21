@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen app:key="MainScreen"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
   <PreferenceScreen
       app:title="@string/appearance"
       app:key="DecorScreen"
@@ -47,14 +46,19 @@
         app:summary="@string/pref_appwidget_schedule_show_type_summary"
         app:defaultValue="true"/>
     <CheckBoxPreference
-        app:key="ScheduleAppwidgetShowAuditoriums"
-        app:title="@string/pref_appwidget_schedule_show_auditoriums"
-        app:summary="@string/pref_appwidget_schedule_show_auditoriums_summary"
-        app:defaultValue="true"/>
-    <CheckBoxPreference
         app:key="ScheduleAppwidgetShowTeachers"
         app:title="@string/pref_appwidget_schedule_show_teachers"
         app:summary="@string/pref_appwidget_schedule_show_teachers_summary"
         app:defaultValue="false"/>
+      <CheckBoxPreference
+          app:key="ScheduleAppwidgetShowGroups"
+          app:title="@string/pref_appwidget_schedule_show_groups"
+          app:summary="@string/pref_appwidget_schedule_show_groups_summary"
+          app:defaultValue="false"/>
+      <CheckBoxPreference
+          app:key="ScheduleAppwidgetShowAuditoriums"
+          app:title="@string/pref_appwidget_schedule_show_auditoriums"
+          app:summary="@string/pref_appwidget_schedule_show_auditoriums_summary"
+          app:defaultValue="true"/>
   </PreferenceScreen>
 </PreferenceScreen>

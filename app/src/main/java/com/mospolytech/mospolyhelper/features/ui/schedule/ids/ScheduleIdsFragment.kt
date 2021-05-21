@@ -3,17 +3,18 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.ids
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
-import android.widget.EditText
-import android.widget.ProgressBar
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.ChipGroup
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentScheduleIdsBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
@@ -21,14 +22,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ScheduleIdsFragment: DialogFragment() {
-    private val viewModel by viewModel<ScheduleIdsViewModel>()
+class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
 
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
-    private lateinit var editText: EditText
-    private lateinit var chipGroup: ChipGroup
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var progressBar: ProgressBar
+    private val viewModel by viewModel<ScheduleIdsViewModel>()
+    private val viewBinding by viewBinding(FragmentScheduleIdsBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,22 +42,8 @@ class ScheduleIdsFragment: DialogFragment() {
         menu.clear()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_schedule_ids, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        toolbar = view.findViewById(R.id.toolbar_schedule_id)
-        editText = view.findViewById(R.id.edittext_schedule_id)
-        chipGroup = view.findViewById(R.id.chipgroup_schedule_id_type)
-        recyclerView = view.findViewById(R.id.recyclerview_schedule_ids)
-        progressBar = view.findViewById(R.id.progressBar)
 
         setToolbar()
         setEditText()
@@ -70,14 +53,14 @@ class ScheduleIdsFragment: DialogFragment() {
     }
 
     private fun setToolbar() {
-        (activity as MainActivity).setSupportActionBar(toolbar)
+        (activity as MainActivity).setSupportActionBar(viewBinding.toolbarScheduleId)
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
     private fun setEditText() {
-        editText.doAfterTextChanged {
+        viewBinding.edittextScheduleId.doAfterTextChanged {
             if (it != null) {
                 viewModel.searchQuery.value = it.toString()
             } else {
@@ -87,7 +70,7 @@ class ScheduleIdsFragment: DialogFragment() {
     }
 
     private fun setChipGroup() {
-        chipGroup.setOnCheckedChangeListener { _, checkedId ->
+        viewBinding.chipgroupScheduleIdType.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.chip_schedule_id_all ->
                     viewModel.filterMode.value = FilterModes.All
@@ -100,7 +83,7 @@ class ScheduleIdsFragment: DialogFragment() {
     }
 
     private fun setRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        viewBinding.recyclerviewScheduleIds.layoutManager = LinearLayoutManager(context)
     }
 
     private var progressBarFlag = true
@@ -112,20 +95,20 @@ class ScheduleIdsFragment: DialogFragment() {
                 if (progressBarFlag) {
                     progressBarFlag = false
                 } else {
-                    progressBar.visibility = View.GONE
+                    viewBinding.progressBar.visibility = View.GONE
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             combine(viewModel.searchQuery, viewModel.filterMode) { query, filterMode ->
-                (recyclerView.adapter as? ScheduleIdsAdapter)?.update(filterMode, query)
+                (viewBinding.recyclerviewScheduleIds.adapter as? ScheduleIdsAdapter)?.update(filterMode, query)
             }.collect()
         }
     }
 
     private fun setAdapter(idList: List<UserSchedule>) {
-        recyclerView.adapter = ScheduleIdsAdapter(
+        viewBinding.recyclerviewScheduleIds.adapter = ScheduleIdsAdapter(
             idList,
             viewModel.searchQuery.value,
             viewModel.filterMode.value

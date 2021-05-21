@@ -19,5 +19,5 @@
         android:textSize="25sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <include layout="@layout/page_schedule"/>
+    <include android:id="@+id/include_page_schedule" layout="@layout/page_schedule"/>
 </LinearLayout>

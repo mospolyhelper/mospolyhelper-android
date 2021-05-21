@@ -37,4 +37,9 @@
 
     <dimen name="schedule_day_height">69dp</dimen>
     <dimen name="schedule_day_width">58dp</dimen>
+
+    <dimen name="schedule_day_indicator_height">4.2dp</dimen>
+    <dimen name="schedule_day_indicator_width">4.2dp</dimen>
+    <dimen name="schedule_day_indicator_margin_start">1.7dp</dimen>
+    <dimen name="schedule_day_indicator_margin_end">1.7dp</dimen>
 </resources>

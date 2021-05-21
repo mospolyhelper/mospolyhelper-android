@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.data.addresses.local
+package com.mospolytech.mospolyhelper.data.utilities.addresses.local
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.App

@@ -1,13 +1,15 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.addresses
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.PageAddressesBinding
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
+import com.mospolytech.mospolyhelper.features.utils.RecyclerViewInViewPagerHelper
 
 class AddressesPageAdapter(
     private val addressMap: AddressMap
@@ -25,35 +27,21 @@ class AddressesPageAdapter(
 
     override fun getItemCount() = addressMap.size
 
-    inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        private val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_addresses)
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val viewBinding by viewBinding(PageAddressesBinding::bind)
 
         init {
-            recyclerView.layoutManager = LinearLayoutManager(view.context)
+            viewBinding.recyclerAddresses.layoutManager = LinearLayoutManager(view.context)
             val scale = view.context.resources.displayMetrics.density
-            recyclerView.addItemDecoration(AddressesAdapter.ItemDecoration((8 * scale + 0.5f).toInt()))
-            recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                    if (e.action == MotionEvent.ACTION_DOWN &&
-                        rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
-                    ) {
-                        rv.stopScroll()
-                    }
-                    return false
-                }
-
-                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
-
-                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
-            })
+            viewBinding.recyclerAddresses.addItemDecoration(AddressesAdapter.ItemDecoration((8 * scale + 0.5f).toInt()))
+            viewBinding.recyclerAddresses.addOnItemTouchListener(RecyclerViewInViewPagerHelper)
         }
 
         fun bind() {
+            val pair = addressMap.entries.toList()[bindingAdapterPosition]
 
-            val pair = addressMap.entries.toList()[adapterPosition]
-
-            recyclerView.adapter = AddressesAdapter(pair.value, pair.key)
-            recyclerView.adapter?.notifyDataSetChanged()
+            viewBinding.recyclerAddresses.adapter = AddressesAdapter(pair.value, pair.key)
+            viewBinding.recyclerAddresses.adapter?.notifyDataSetChanged()
         }
     }
 }

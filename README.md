@@ -1,27 +1,40 @@
 # mospolyhelper
-Неофицильное приложение Московского Политеха 
-<a href='https://play.google.com/store/apps/details?id=com.mospolytech.mospolyhelper&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Доступно в Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ru_badge_web_generic.png' height="60"/></a>
+Неофицильное приложение Московского Политеха
 
-## Features
+Скачать в Google Play:
+<br/><a href='https://play.google.com/store/apps/details?id=com.mospolytech.mospolyhelper'><img alt='Доступно в Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ru_badge_web_generic.png' height="60"/></a>
+
+## Стэк технологий
 
 - Clean Architecture
 - MVVM
 - [Coroutines](https://developer.android.com/kotlin/coroutines) и [Flow](https://developer.android.com/kotlin/flow)
-- [Koin](https://insert-koin.io/) - Dependency Injection фреймворк
+- [Koin](https://insert-koin.io/) - DI фреймворк
 - [Paging V3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) - Пагинация
-- [View Binding](https://developer.android.com/topic/libraries/view-binding) - View Binding
-- [Ktor](https://ktor.io/)
+- [View Binding](https://developer.android.com/topic/libraries/view-binding)
+- [Ktor](https://ktor.io/) - Взаимодействие с сетью
 - [Glide](https://github.com/bumptech/glide) - Загрузка изображений
-- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization)
-- [Navigation](https://developer.android.com/guide/navigation) - Навигация в приложении
+- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - Сериализация данных
+- [Room](https://developer.android.com/training/data-storage/room) - Для хранения данных в SQLite
+- [Navigation component](https://developer.android.com/guide/navigation) - Навигация в приложении
+- [Jsoup](https://jsoup.org) - Html парсер
+- [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
 
 ## TODO
 
 - Разделить слои на модули
-- Использовать [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
 - Использовать Github Actions для сборки
-- Закрыть unit-тестами
+- Покрыть unit-тестами
 - (Возможно) перейти на [Hilt](https://dagger.dev/hilt/)
+- Перейти на [Jetpack Compose](https://developer.android.com/jetpack/compose)
+
+### Скриншоты
+
+![screenshot 1](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_1.jpg)
+![screenshot 2](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_2.jpg)
+![screenshot 3](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_3.jpg)
+![screenshot 4](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_4.jpg)
+![screenshot 5](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_5.jpg)
 
 ## Старый репозиторий
 

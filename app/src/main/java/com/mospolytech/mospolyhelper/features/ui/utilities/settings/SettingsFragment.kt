@@ -7,9 +7,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
-
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
 
 class SettingsFragment : PreferenceFragmentCompat(),

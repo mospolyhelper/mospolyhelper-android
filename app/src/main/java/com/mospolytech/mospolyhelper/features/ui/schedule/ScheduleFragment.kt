@@ -30,7 +30,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadlin
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.android.synthetic.main.fragment_schedule.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine

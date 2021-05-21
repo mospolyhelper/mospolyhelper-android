@@ -1,7 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.statements
 
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
-import com.mospolytech.mospolyhelper.domain.account.marks.usecase.MarksUseCase
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.domain.account.statements.usecase.StatementsUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
@@ -10,7 +8,7 @@ import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class StatementsViewModel(
     mediator: Mediator<String, ViewModelMessage>,

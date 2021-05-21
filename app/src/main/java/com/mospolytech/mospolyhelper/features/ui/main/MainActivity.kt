@@ -4,26 +4,22 @@ import android.Manifest
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ActivityMainBinding
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
 class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -33,11 +29,11 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
     private var doubleBackToExitPressedOnce = false
 
     private val viewModel by inject<MainViewModel>()
+    private val viewBinding by viewBinding(ActivityMainBinding::bind)
     private val navHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
     }
     private val navController by lazy { navHostFragment.navController }
-    private lateinit var navigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -71,11 +67,10 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
             viewModel.currentFragmentNavId.value = savedInstanceState.getInt("menuItemId", R.id.nav_schedule)
         }
         // TODO: check event subscription
-        navigationView = findViewById(R.id.nav_view)
         if (viewModel.currentFragmentNavId.value != -1) {
-            navigationView.selectedItemId = viewModel.currentFragmentNavId.value
+            viewBinding.navView.selectedItemId = viewModel.currentFragmentNavId.value
         }
-        navigationView.setOnNavigationItemSelectedListener {
+        viewBinding.navView.setOnNavigationItemSelectedListener {
             val action = navController.graph.getAction(it.itemId)
             val currentDestination = navController.currentBackStackEntry?.destination
             if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {

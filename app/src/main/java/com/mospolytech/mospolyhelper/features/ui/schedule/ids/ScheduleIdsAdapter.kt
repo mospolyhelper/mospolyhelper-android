@@ -3,9 +3,10 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.ids
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ItemScheduleIdBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 
@@ -51,26 +52,25 @@ class ScheduleIdsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind()
+        holder.bind(filteredIdList[position])
     }
 
     inner class ViewHolder(
         view: View
     ): RecyclerView.ViewHolder(view) {
 
-        private val textView = view.findViewById<TextView>(R.id.textview_id)
+        private val viewBinding by viewBinding(ItemScheduleIdBinding::bind)
 
         init {
-            textView.setOnClickListener { onItemClick(filteredIdList[adapterPosition]) }
+            viewBinding.textviewId.setOnClickListener { onItemClick(filteredIdList[bindingAdapterPosition]) }
         }
 
-        fun bind() {
-            val item = filteredIdList[adapterPosition]
-            textView.text = item.title
-            if (item is StudentSchedule) {
-                textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_group, 0, 0, 0)
+        fun bind(user: UserSchedule) {
+            viewBinding.textviewId.text = user.title
+            if (user is StudentSchedule) {
+                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_group, 0, 0, 0)
             } else {
-                textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_teacher, 0, 0, 0)
+                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_teacher, 0, 0, 0)
             }
         }
     }

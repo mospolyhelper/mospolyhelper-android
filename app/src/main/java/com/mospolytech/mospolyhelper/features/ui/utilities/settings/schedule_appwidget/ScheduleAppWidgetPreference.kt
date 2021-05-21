@@ -56,8 +56,10 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
             "ScheduleAppwidgetShowStartTime",
             "ScheduleAppwidgetShowEndTime",
             "ScheduleAppwidgetShowType",
+            "ScheduleAppwidgetShowTeachers",
+            "ScheduleAppwidgetShowGroups",
             "ScheduleAppwidgetShowAuditoriums",
-            "ScheduleAppwidgetShowTeachers" -> {
+             -> {
                 (update as Action0).invoke()
             }
         }
@@ -72,12 +74,13 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
 
     private val update: Event0 = Action0()
 
-    private var showAuditoriums = true
-    private var showEndTime = true
-    private var showOrder = true
-    private var showType = true
     private var showStartTime = true
-    private var showTeachers = true
+    private var showEndTime = false
+    private var showOrder = false
+    private var showType = true
+    private var showTeachers = false
+    private var showGroups = false
+    private var showAuditoriums = true
 
     private lateinit var appWidgetTitle: TextView
     private lateinit var appWidgetList: ListView
@@ -97,11 +100,12 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
 
     private fun updateAppWidget() {
 
-        showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", true)
+        showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", false)
         showStartTime = prefs.getBoolean("ScheduleAppwidgetShowStartTime", true)
-        showEndTime = prefs.getBoolean("ScheduleAppwidgetShowEndTime", true)
+        showEndTime = prefs.getBoolean("ScheduleAppwidgetShowEndTime", false)
         showAuditoriums = prefs.getBoolean("ScheduleAppwidgetShowAuditoriums", true)
-        showTeachers = prefs.getBoolean("ScheduleAppwidgetShowTeachers", true)
+        showTeachers = prefs.getBoolean("ScheduleAppwidgetShowTeachers", false)
+        showGroups = prefs.getBoolean("ScheduleAppwidgetShowGroups", false)
         showType = prefs.getBoolean("ScheduleAppwidgetShowType", true)
 
         val user = try {
@@ -156,6 +160,10 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         private val teacher2 = Teacher("Норин Владимир Павлович")
         private val teacher3 = Teacher("Петров Денис Альбертович")
 
+        private val group1 = Group("181-721", false)
+        private val group2 = Group("181-722", false)
+        private val group3 = Group("181-725", false)
+
         private val auditorium1 = Auditorium("Пр ВЦ 3 (2555)", "")
         private val auditorium2 = Auditorium("Пк214", "")
         private val auditorium3 = Auditorium("В165", "")
@@ -168,7 +176,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         "Лаб. работа",
                         listOf(teacher1, teacher3),
                         listOf(auditorium1),
-                        listOf(),
+                        listOf(group1),
                         LocalDate.MIN,
                         LocalDate.MAX
                     )
@@ -183,7 +191,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         "Курсовой проект",
                         listOf(teacher2),
                         listOf(auditorium2, auditorium1),
-                        listOf(),
+                        listOf(group2),
                         LocalDate.MIN,
                         LocalDate.MAX
                     )
@@ -198,7 +206,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         "Лекция",
                         listOf(teacher1),
                         listOf(auditorium3),
-                        listOf(),
+                        listOf(group1, group2, group3),
                         LocalDate.MIN,
                         LocalDate.MAX
                     )
@@ -225,6 +233,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
             setTime(view, lesson)
             setTitle(view, lesson)
             setTeachers(view, lesson)
+            setGroups(view, lesson)
             setAuditoriums(view, lesson)
 
             return view
@@ -262,6 +271,16 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                 teachersTextView.visibility = View.VISIBLE
             } else {
                 teachersTextView.visibility = View.GONE
+            }
+        }
+
+        private fun setGroups(view: View, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+            val groupsTextView = view.findViewById<TextView>(R.id.textview_groups)
+            if (showGroups) {
+                groupsTextView.text = LessonRemoteAdapter.getGroups(lesson.first)
+                groupsTextView.visibility = View.VISIBLE
+            } else {
+                groupsTextView.visibility = View.GONE
             }
         }
 

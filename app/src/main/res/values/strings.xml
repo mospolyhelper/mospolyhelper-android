@@ -34,10 +34,12 @@
     <string name="pref_appwidget_schedule_show_end_time_summary">Показывать время конца занятия</string>
     <string name="pref_appwidget_schedule_show_type">Тип занятия</string>
     <string name="pref_appwidget_schedule_show_type_summary">Показывать тип занятия</string>
-    <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
-    <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
     <string name="pref_appwidget_schedule_show_teachers">Преподаватели</string>
     <string name="pref_appwidget_schedule_show_teachers_summary">Показывать преподавателей</string>
+    <string name="pref_appwidget_schedule_show_groups">Группы</string>
+    <string name="pref_appwidget_schedule_show_groups_summary">Показывать группы</string>
+    <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
+    <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
 
     <string name="all_groups">Все группы</string>
     <string name="all_subjects">Все предметы</string>

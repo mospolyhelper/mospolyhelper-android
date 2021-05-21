@@ -1,67 +1,32 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.addresses
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
-
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentAddressesBinding
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddressesFragment : Fragment() {
-
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var addressesViewPager: ViewPager2
-    private lateinit var addressesTabLayout: TabLayout
+class AddressesFragment : Fragment(R.layout.fragment_addresses) {
 
     private val viewModel by viewModel<AddressesViewModel>()
-
-    private fun setUpBuildings(addressMap: AddressMap?) {
-        if (addressMap == null) return
-        addressesViewPager.adapter = AddressesPageAdapter(addressMap)
-        TabLayoutMediator(addressesTabLayout, addressesViewPager) { tab, position->
-            tab.text = addressMap.entries.toList()[position].key
-        }.attach()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_addresses, container, false)
-    }
+    private val viewBinding by viewBinding(FragmentAddressesBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addressesViewPager = view.findViewById(R.id.viewpager_addresses)
-        addressesTabLayout = view.findViewById(R.id.tablayout_addresses)
-        swipeRefreshLayout = view.findViewById(R.id.addresses_update)
+        viewBinding.addressesUpdate.setOnRefreshListener { viewModel.refresh() }
 
-
-        swipeRefreshLayout.setOnRefreshListener { viewModel.refresh() }
-
-//        val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
-//        (activity as MainActivity).setSupportActionBar(bottomAppBar)
-//        (activity as MainActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
-//        bottomAppBar.setNavigationOnClickListener {
-//            findNavController().safe {
-//                navigate(NavGraphDirections.actionGlobalMainMenuFragment())
-//            }
-//        }
-
-        addressesViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        viewBinding.viewpagerAddresses.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
-                swipeRefreshLayout.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
+                viewBinding.addressesUpdate.isEnabled = state == ViewPager.SCROLL_STATE_IDLE
             }
 
             override fun onPageScrolled(
@@ -74,13 +39,7 @@ class AddressesFragment : Fragment() {
             override fun onPageSelected(position: Int) {
             }
         })
-
-
-//        addressesTypeChipGroup.setOnCheckedChangeListener { group, checkedId ->
-//            if (checkedId != View.NO_ID) {
-//                viewModel.addressesType.value = group.findViewById<Chip>(checkedId).text.toString()
-//            }
-//        }
+        
 
         lifecycleScope.launchWhenResumed {
             viewModel.addressesType.collect {
@@ -120,11 +79,19 @@ class AddressesFragment : Fragment() {
 //                    val r = q + 1
 //                }
                 setUpBuildings(it)
-                swipeRefreshLayout.isRefreshing = false
+                viewBinding.addressesUpdate.isRefreshing = false
             }
         }
 
         this.viewModel.setUpAddresses()
+    }
+
+    private fun setUpBuildings(addressMap: AddressMap?) {
+        if (addressMap == null) return
+        viewBinding.viewpagerAddresses.adapter = AddressesPageAdapter(addressMap)
+        TabLayoutMediator(viewBinding.tablayoutAddresses, viewBinding.viewpagerAddresses) { tab, position->
+            tab.text = addressMap.entries.toList()[position].key
+        }.attach()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

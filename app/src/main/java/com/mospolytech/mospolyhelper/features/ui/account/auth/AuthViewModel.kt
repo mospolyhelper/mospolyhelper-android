@@ -10,7 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class AuthViewModel(
     mediator: Mediator<String, ViewModelMessage>,

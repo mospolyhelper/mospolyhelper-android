@@ -9,10 +9,11 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ItemScheduleCalendarThreeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.cutTitle
@@ -85,12 +86,11 @@ class CalendarThreeAdapter(
         val colorTitle: Int = view.context.getColor(R.color.calendarTitle)
         val colorCurrentTitle: Int = view.context.getColor(R.color.calendarCurrentTitle)
 
-        private val lessonTime: TextView = view.findViewById(R.id.text_schedule_time_grid)
-        private val lessonType: TextView = view.findViewById(R.id.text_schedule_grid)
-        private val lessonPlace: LinearLayout = view.findViewById(R.id.linear_layout_schedule_grid)
+        private val viewBinding by viewBinding(ItemScheduleCalendarThreeBinding::bind)
+
 
         init {
-            lessonPlace.setOnClickListener {
+            viewBinding.linearLayoutScheduleGrid.setOnClickListener {
                 (dayClick as Action1).invoke(firstPosDate.plusDays(adapterPosition.toLong()))
             }
         }
@@ -158,17 +158,17 @@ class CalendarThreeAdapter(
                 null -> {
                 }
             }
-            lessonPlace.setPaddingRelative(paddingStart, 0, paddingEnd, paddingBottom)
+            viewBinding.linearLayoutScheduleGrid.setPaddingRelative(paddingStart, 0, paddingEnd, paddingBottom)
         }
 
         private fun setHead(date: LocalDate) {
-            lessonTime.setTextColor(colorTitle)
+            viewBinding.textScheduleTimeGrid.setTextColor(colorTitle)
             val today = LocalDate.now()
 
             if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
-                lessonTime.setTextColor(colorCurrentTitle)
+                viewBinding.textScheduleTimeGrid.setTextColor(colorCurrentTitle)
             }
-            lessonTime.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
+            viewBinding.textScheduleTimeGrid.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
         }
 
         private fun setLessons(dailySchedule: List<LessonPlace>, date: LocalDate) {
@@ -231,7 +231,7 @@ class CalendarThreeAdapter(
                     }
                 }
             }
-            lessonType.setText(res, TextView.BufferType.NORMAL);
+            viewBinding.textScheduleGrid.setText(res, TextView.BufferType.NORMAL);
         }
 
         private fun spansAppend(builder: SpannableStringBuilder, text: String, flags: Int, vararg spans: Any) {

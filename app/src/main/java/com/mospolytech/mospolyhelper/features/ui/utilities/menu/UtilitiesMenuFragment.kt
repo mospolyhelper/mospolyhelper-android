@@ -2,41 +2,29 @@ package com.mospolytech.mospolyhelper.features.ui.utilities.menu
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentMenuUtilitiesBinding
 import com.mospolytech.mospolyhelper.utils.safe
 
-class UtilitiesMenuFragment : Fragment() {
+class UtilitiesMenuFragment : Fragment(R.layout.fragment_menu_utilities) {
 
-    private lateinit var menuList: RecyclerView
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_menu_utilities, container, false)
-    }
+    private val viewBinding by viewBinding(FragmentMenuUtilitiesBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        menuList = view.findViewById(R.id.listMenu)
 
         setMenu()
     }
 
     @SuppressLint("RestrictedApi")
     private fun setMenu() {
-        menuList.layoutManager = GridLayoutManager(context, 2)
+        viewBinding.listMenu.layoutManager = GridLayoutManager(context, 2)
         val menu = MenuBuilder(context)
         requireActivity().menuInflater.inflate(R.menu.menu_utilities, menu)
         val adapter = MenuAdapter(menu)
@@ -74,6 +62,6 @@ class UtilitiesMenuFragment : Fragment() {
                 }
             }
         }
-        menuList.adapter = adapter
+        viewBinding.listMenu.adapter = adapter
     }
 }

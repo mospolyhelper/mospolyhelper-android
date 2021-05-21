@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import kotlinx.coroutines.flow.Flow
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class RelevantViewModel(
     mediator: Mediator<String, ViewModelMessage>,

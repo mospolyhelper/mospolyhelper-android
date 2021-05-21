@@ -3,38 +3,28 @@ package com.mospolytech.mospolyhelper.features.ui.utilities.university_pass
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.databinding.FragmentUniversityPassBinding
 import com.mospolytech.mospolyhelper.features.services.UniversityPassService
 import kotlinx.coroutines.delay
 import java.util.*
 
 
-class UniversityPassFragment : Fragment() {
+class UniversityPassFragment : Fragment(R.layout.fragment_university_pass) {
 
     private val SERVICE_STATE = "state"
     private var currentDialog: AlertDialog? = null
-    private lateinit var passSwitch: SwitchCompat
-    private lateinit var techInfoTextView: TextView
-    private lateinit var logTextView: TextView
     private lateinit var dataSource: SharedPreferencesDataSource
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_university_pass, container, false)
-    }
+    private val viewBinding by viewBinding(FragmentUniversityPassBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (!requireActivity().packageManager
@@ -44,21 +34,18 @@ class UniversityPassFragment : Fragment() {
         }
         super.onViewCreated(view, savedInstanceState)
 
-        passSwitch = view.findViewById(R.id.switch_pass)
-        techInfoTextView = view.findViewById(R.id.text_tech_info)
-        logTextView = view.findViewById(R.id.text_log)
 
-        passSwitch.setOnCheckedChangeListener { _, isChecked ->
+        viewBinding.switchPass.setOnCheckedChangeListener { _, isChecked ->
             setServiceState(isChecked)
         }
 
         dataSource = SharedPreferencesDataSource(PreferenceManager.getDefaultSharedPreferences(context))
 
-        logTextView.text = dataSource.get("UniversityPassLog", "")
+        viewBinding.textLog.text = dataSource.get("UniversityPassLog", "")
         lifecycleScope.launchWhenResumed {
             while (true) {
                 delay(5000)
-                logTextView.text = dataSource.get("UniversityPassLog", "")
+                viewBinding.textLog.text = dataSource.get("UniversityPassLog", "")
             }
         }
     }
@@ -93,8 +80,8 @@ class UniversityPassFragment : Fragment() {
             requireActivity().packageName + "_preferences", 0
         ).getBoolean(SERVICE_STATE, true)
 
-        techInfoTextView.text = getString(R.string.user_id, androidId)
-        passSwitch.isChecked = serviceActivated
+        viewBinding.textTechInfo.text = getString(R.string.user_id, androidId)
+        viewBinding.switchPass.isChecked = serviceActivated
     }
 
     private fun setServiceState(state: Boolean) {

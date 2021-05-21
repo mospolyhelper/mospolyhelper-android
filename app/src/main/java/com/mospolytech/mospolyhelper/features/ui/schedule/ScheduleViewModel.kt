@@ -16,7 +16,7 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfo
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 import java.time.LocalDate
 
 
