@@ -16,6 +16,7 @@
         android:id="@+id/btngroup_schedule_calendar"
         android:layout_gravity="end"
         app:singleSelection="true"
+        android:visibility="gone"
         app:selectionRequired="true"
         app:checkedButton="@id/btn_schedule_calendar_three"
         android:theme="@style/ButtonGroup"

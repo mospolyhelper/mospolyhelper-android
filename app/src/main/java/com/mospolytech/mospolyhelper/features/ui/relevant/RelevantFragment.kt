@@ -1,41 +1,26 @@
 package com.mospolytech.mospolyhelper.features.ui.relevant
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils
+import com.mospolytech.mospolyhelper.databinding.FragmentRelevantBinding
 import com.mospolytech.mospolyhelper.features.ui.schedule.LessonAdapter
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDate
 
-class RelevantFragment : Fragment() {
+class RelevantFragment : Fragment(R.layout.fragment_relevant) {
 
     private val viewModel  by viewModel<RelevantViewModel>()
-
-    private lateinit var lessonList: RecyclerView
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_relevant, container, false)
-    }
+    private val viewBinding by viewBinding(FragmentRelevantBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        lessonList = view.findViewById(R.id.recyclerview_lessons)
 
         setLessonList()
     }
@@ -43,9 +28,9 @@ class RelevantFragment : Fragment() {
     private fun setLessonList() {
         var listAdapter: LessonAdapter? = null
 
-        lessonList.layoutManager = LinearLayoutManager(context)
+        viewBinding.includePageSchedule.recyclerviewLessons.layoutManager = LinearLayoutManager(context)
             .apply { recycleChildrenOnDetach = true }
-        lessonList.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+        viewBinding.includePageSchedule.recyclerviewLessons.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 if (e.action == MotionEvent.ACTION_DOWN &&
                     rv.scrollState == RecyclerView.SCROLL_STATE_SETTLING
@@ -59,7 +44,7 @@ class RelevantFragment : Fragment() {
 
             override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
         })
-        lessonList.itemAnimator = null
+        viewBinding.includePageSchedule.recyclerviewLessons.itemAnimator = null
 
 
         lifecycleScope.launchWhenResumed {

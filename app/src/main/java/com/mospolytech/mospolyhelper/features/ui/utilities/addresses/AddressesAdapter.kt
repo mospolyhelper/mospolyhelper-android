@@ -5,10 +5,11 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.ItemAddressBinding
 import com.mospolytech.mospolyhelper.domain.addresses.model.Address
 
 class AddressesAdapter(
@@ -25,18 +26,21 @@ class AddressesAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val address = addresses[position]
-        val spannedDescription = HtmlCompat.fromHtml(address.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val spannedTitle = HtmlCompat.fromHtml(address.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val builder = SpannableStringBuilder()
-        builder.append(spannedTitle)
-            .append('\n')
-            .append(spannedDescription)
-        viewHolder.text.text = builder
+        viewHolder.bind(addresses[position])
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val text: TextView = view.findViewById<TextView>(R.id.text);
+        private val viewBinding by viewBinding(ItemAddressBinding::bind)
+
+        fun bind(address: Address) {
+            val spannedDescription = HtmlCompat.fromHtml(address.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val spannedTitle = HtmlCompat.fromHtml(address.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val builder = SpannableStringBuilder()
+            builder.append(spannedTitle)
+                .append('\n')
+                .append(spannedDescription)
+            viewBinding.text.text = builder
+        }
     }
 
     class ItemDecoration(private val offset: Int) : RecyclerView.ItemDecoration() {

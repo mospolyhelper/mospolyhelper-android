@@ -8,7 +8,7 @@ import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class InfoViewModel(
     mediator: Mediator<String, ViewModelMessage>,

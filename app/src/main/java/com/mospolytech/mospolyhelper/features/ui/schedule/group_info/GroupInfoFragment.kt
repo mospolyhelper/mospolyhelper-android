@@ -1,13 +1,10 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.group_info
 
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,11 +12,8 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.api.GroupInfoApi
 import com.mospolytech.mospolyhelper.data.schedule.remote.GroupInfoRemoteDataSource
 import com.mospolytech.mospolyhelper.databinding.FragmentGroupInfoBinding
-import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.StudentsAdapter
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import io.ktor.client.*
-import kotlinx.android.synthetic.main.fragment_account_students.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.runBlocking
 
 class GroupInfoFragment : Fragment(R.layout.fragment_group_info) {

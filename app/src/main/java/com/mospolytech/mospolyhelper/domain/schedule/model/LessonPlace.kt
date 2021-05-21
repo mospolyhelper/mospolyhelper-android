@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.domain.schedule.model
 
 import android.os.Parcelable
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 

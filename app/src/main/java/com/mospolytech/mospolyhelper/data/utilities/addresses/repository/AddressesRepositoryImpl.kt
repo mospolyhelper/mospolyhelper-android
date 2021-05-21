@@ -1,8 +1,8 @@
-package com.mospolytech.mospolyhelper.data.addresses.repository
+package com.mospolytech.mospolyhelper.data.utilities.addresses.repository
 
-import com.mospolytech.mospolyhelper.data.addresses.local.AddressesLocalAssetsDataSource
-import com.mospolytech.mospolyhelper.data.addresses.local.AddressesLocalStorageDataSource
-import com.mospolytech.mospolyhelper.data.addresses.remote.AddressesRemoteDataSource
+import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalAssetsDataSource
+import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalStorageDataSource
+import com.mospolytech.mospolyhelper.data.utilities.addresses.remote.AddressesRemoteDataSource
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.domain.addresses.repository.AddressesRepository
 import kotlinx.coroutines.flow.flow

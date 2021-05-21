@@ -1,18 +1,15 @@
 package com.mospolytech.mospolyhelper.features.ui.account.deadlines
 
 import androidx.lifecycle.MutableLiveData
-import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
-import com.mospolytech.mospolyhelper.domain.account.applications.usecase.ApplicationsUseCase
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.domain.account.deadlines.usecase.DeadlinesUseCase
-import com.mospolytech.mospolyhelper.features.ui.account.applications.ApplicationsViewModel
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class DeadlinesViewModel(
     mediator: Mediator<String, ViewModelMessage>,

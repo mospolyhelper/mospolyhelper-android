@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.payments
 
-import androidx.lifecycle.ViewModel
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
 import com.mospolytech.mospolyhelper.domain.account.payments.usecase.PaymentsUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
@@ -9,7 +8,7 @@ import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class PaymentsViewModel(mediator: Mediator<String, ViewModelMessage>,
                         private val useCase: PaymentsUseCase

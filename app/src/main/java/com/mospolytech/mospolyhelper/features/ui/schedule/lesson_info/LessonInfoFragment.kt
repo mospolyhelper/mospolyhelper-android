@@ -16,7 +16,6 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
 import androidx.fragment.app.DialogFragment
@@ -29,7 +28,6 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.format.DateTimeFormatter
@@ -70,8 +68,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
 //        (activity as MainActivity).setSupportActionBar(toolbar)
 //        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)

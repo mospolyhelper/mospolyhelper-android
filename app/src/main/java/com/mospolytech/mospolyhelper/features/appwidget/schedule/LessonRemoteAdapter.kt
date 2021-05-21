@@ -153,11 +153,12 @@ class LessonRemoteAdapter(
         dailySchedule = schedule.getLessons(LocalDate.now()).flatMap { lessonPlace ->
             lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
         }
-        showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", true)
+        showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", false)
         showStartTime = prefs.getBoolean("ScheduleAppwidgetShowStartTime", true)
-        showEndTime = prefs.getBoolean("ScheduleAppwidgetShowEndTime", true)
+        showEndTime = prefs.getBoolean("ScheduleAppwidgetShowEndTime", false)
         showAuditoriums = prefs.getBoolean("ScheduleAppwidgetShowAuditoriums", true)
-        showTeachers = prefs.getBoolean("ScheduleAppwidgetShowTeachers", true)
+        showTeachers = prefs.getBoolean("ScheduleAppwidgetShowTeachers", false)
+        showGroups = prefs.getBoolean("ScheduleAppwidgetShowGroups", false)
         showType = prefs.getBoolean("ScheduleAppwidgetShowType", true)
     }
 
@@ -178,6 +179,7 @@ class LessonRemoteAdapter(
             remoteView.setTextViewText(R.id.textview_lesson_title, "Сегодня нет занятий")
             remoteView.setViewVisibility(R.id.text_lesson_time, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
+            remoteView.setViewVisibility(R.id.textview_groups, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)
             return remoteView
         }

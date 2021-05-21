@@ -1,13 +1,11 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.menu
 
 import android.view.*
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.features.ui.utilities.addresses.AddressesAdapter
+import com.mospolytech.mospolyhelper.databinding.ItemMenuBinding
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 
@@ -31,16 +29,16 @@ class MenuAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val icon: ImageView = view.findViewById(R.id.imageIcon)
-        private val label: TextView = view.findViewById(R.id.textLabel)
-        private val layout: ConstraintLayout = view.findViewById(R.id.container)
+        private val viewBinding by viewBinding(ItemMenuBinding::bind)
 
         fun bind(menuItem: MenuItem) {
-            layout.setOnClickListener {
-                (onItemMenuClick as Action1).invoke(menuItem.itemId)
+            with(viewBinding) {
+                container.setOnClickListener {
+                    (onItemMenuClick as Action1).invoke(menuItem.itemId)
+                }
+                imageIcon.setImageDrawable(menuItem.icon)
+                textLabel.text = menuItem.title
             }
-            icon.setImageDrawable(menuItem.icon)
-            label.text = menuItem.title
         }
     }
 }
