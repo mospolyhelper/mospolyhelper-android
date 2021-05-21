@@ -30,11 +30,7 @@
 
 ### Скриншоты
 
-![screenshot 1](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_1.jpg)
-![screenshot 2](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_2.jpg)
-![screenshot 3](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_3.jpg)
-![screenshot 4](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_4.jpg)
-![screenshot 5](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshot_5.jpg)
+![screenshots 1](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshots_1.jpg)
 
 ## Старый репозиторий
 
