@@ -1,5 +1,5 @@
 # mospolyhelper
-Неофицильное приложение Московского Политеха
+Неофициальное приложение Московского Политеха
 
 Скачать в Google Play:
 <br/><a href='https://play.google.com/store/apps/details?id=com.mospolytech.mospolyhelper'><img alt='Доступно в Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ru_badge_web_generic.png' height="60"/></a>
@@ -28,7 +28,7 @@
 - (Возможно) перейти на [Hilt](https://dagger.dev/hilt/)
 - Перейти на [Jetpack Compose](https://developer.android.com/jetpack/compose)
 
-### Скриншоты
+## Скриншоты
 
 ![screenshots 1](https://github.com/mospolyhelper/mospolyhelper-android/raw/master/screenshots/screenshots_1.png)
 
