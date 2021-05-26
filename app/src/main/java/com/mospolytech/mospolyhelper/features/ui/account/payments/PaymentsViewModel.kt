@@ -5,7 +5,7 @@ import com.mospolytech.mospolyhelper.domain.account.payments.usecase.PaymentsUse
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
@@ -14,7 +14,7 @@ class PaymentsViewModel(mediator: Mediator<String, ViewModelMessage>,
                         private val useCase: PaymentsUseCase
 ): ViewModelBase(mediator, PaymentsViewModel::class.java.simpleName), KoinComponent {
 
-    val payments = MutableStateFlow<Result<Payments>>(Result.loading())
+    val payments = MutableStateFlow<Result2<Payments>>(Result2.loading())
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {

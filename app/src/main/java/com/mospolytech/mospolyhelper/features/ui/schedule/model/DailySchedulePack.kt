@@ -52,11 +52,12 @@ class DailySchedulePack(
                                 scheduleItem.lessons.map {
                                     LessonPack(
                                         it,
-                                        LessonTime.fromLessonPlace(scheduleItem),
-                                        lessonTagProvider(it, date.dayOfWeek, scheduleItem.order),
+                                        scheduleItem.time,
+                                        lessonTagProvider(it, date.dayOfWeek, scheduleItem.time.order),
                                         lessonDeadlineProvider(it),
                                         dateFilter,
-                                        featuresSettings
+                                        featuresSettings,
+                                        date in it.dateFrom..it.dateTo
                                     )
                                 }
                         is LessonWindow -> listOf<ScheduleItemPacked>(LessonWindowPack(scheduleItem))

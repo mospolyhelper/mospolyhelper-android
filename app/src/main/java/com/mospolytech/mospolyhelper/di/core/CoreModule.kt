@@ -24,7 +24,9 @@ val coreModule = module {
             get(),
             AppDatabase::class.java,
             "database"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
+        // TODO: Remove
     }
 
     single { SharedPreferencesDataSource(get()) }

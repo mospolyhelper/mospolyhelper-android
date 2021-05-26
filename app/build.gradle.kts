@@ -26,18 +26,6 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-        applicationVariants.all {
-            buildConfigField(
-                "String",
-                "URL_SCHEDULES_ALL",
-                "\"" + getProp("URL_SCHEDULES_ALL") + "\""
-            )
-            buildConfigField(
-                "String",
-                "URL_SCHEDULES_SESSION_ALL",
-                "\"" + getProp("URL_SCHEDULES_SESSION_ALL") + "\""
-            )
-        }
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -50,15 +38,6 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
-    }
-}
-
-fun getProp(key: String): Any {
-    val props = loadProperties(rootDir.absolutePath + "\\secrets.properties")
-    return if (props.containsKey(key)) {
-        props.getProperty(key)
-    } else {
-        ""
     }
 }
 

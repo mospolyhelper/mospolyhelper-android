@@ -1,8 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
 import androidx.core.text.HtmlCompat
-import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 
 private const val minCriticalTitleLength = 10
 private const val minCriticalWordLength = 5
@@ -70,11 +69,17 @@ fun Lesson.mergeByGroup(other: Lesson): Lesson {
     val minDate = if (dateFrom < other.dateFrom) dateFrom else other.dateFrom
     val maxDate = if (dateTo > other.dateTo) dateTo else other.dateTo
     return copy(
-        groups = (groups + other.groups).sortedBy { it.title },
+        groups = (groups + other.groups).distinct().sortedBy { it.title },
         dateFrom = minDate,
         dateTo = maxDate
     )
 }
+
+val Auditorium.fullTitle: String
+    get() {
+        val typeText = if (type.isNotEmpty()) "($type) " else ""
+        return typeText + title
+    }
 
 val Auditorium.description: String
     get() {

@@ -21,9 +21,9 @@ class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.Applications
 
     var items: List<Application> = emptyList()
     set(value) {
-        val diffResult = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), true)
+        val diffResult2 = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), true)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApplicationsViewHolder {

@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 @Entity
 data class ScheduleDb(
     @PrimaryKey
-    val user: String,
+    val userScheduleId: String,
     val schedule: Schedule?,
     val downloadingDateTime: ZonedDateTime
 )

@@ -5,7 +5,7 @@ import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,7 +66,7 @@ class AuthViewModel(
         }
     }
 
-    suspend fun logIn(): Flow<Result<String>> {
+    suspend fun logIn(): Flow<Result2<String>> {
         return useCase.logIn(login.value, password.value)
     }
 

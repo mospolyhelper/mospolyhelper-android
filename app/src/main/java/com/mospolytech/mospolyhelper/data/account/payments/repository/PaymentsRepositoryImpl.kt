@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
 import com.mospolytech.mospolyhelper.domain.account.payments.repository.PaymentsRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +32,7 @@ class PaymentsRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalPayments(): Flow<Result<Payments>>{
+    override suspend fun getLocalPayments(): Flow<Result2<Payments>>{
         val payments = localDataSource.getJson()
         return flow {
                 if (payments.isNotEmpty()) emit(localDataSource.get(payments))

@@ -1,8 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.students
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.view.View

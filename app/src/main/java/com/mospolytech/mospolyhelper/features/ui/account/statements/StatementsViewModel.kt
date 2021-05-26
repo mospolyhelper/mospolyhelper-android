@@ -5,7 +5,7 @@ import com.mospolytech.mospolyhelper.domain.account.statements.usecase.Statement
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
@@ -15,7 +15,7 @@ class StatementsViewModel(
     private val useCase: StatementsUseCase
 ) : ViewModelBase(mediator, StatementsViewModel::class.java.simpleName), KoinComponent {
 
-    val statements = MutableStateFlow<Result<Statements>>(Result.loading())
+    val statements = MutableStateFlow<Result2<Statements>>(Result2.loading())
 
     suspend fun downloadInfo(semesters: String? = null) {
         useCase.getInfo(semesters).collect {
@@ -27,7 +27,7 @@ class StatementsViewModel(
         useCase.getLocalInfo().collect {
             statements.value = it
         }
-        //marks.value = Result.loading()
+        //marks.value = Result2.loading()
         useCase.getInfo(semesters).collect {
             statements.value = it
         }

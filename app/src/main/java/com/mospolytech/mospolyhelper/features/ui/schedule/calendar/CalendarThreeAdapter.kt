@@ -178,10 +178,10 @@ class CalendarThreeAdapter(
                 var title: String
                 var time: Pair<String, String>
                 var lessonPlace = dailySchedule[0]
-                time = lessonPlace.time
+                time = lessonPlace.time.timeString
                 spansAppend(
                     res,
-                    (lessonPlace.order + 1).toString() + ") " + time.first + "-" + time.second,
+                    (lessonPlace.time.order + 1).toString() + ") " + time.first + "-" + time.second,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                     TypefaceSpan("sans-serif-medium")
                 )
@@ -205,10 +205,10 @@ class CalendarThreeAdapter(
 
                 for (i in 1 until dailySchedule.size) {
                     lessonPlace = dailySchedule[i]
-                    time = lessonPlace.time
+                    time = lessonPlace.time.timeString
                     spansAppend(
                         res,
-                        "\n" + (lessonPlace.order + 1) + ") " + time.first + "-" + time.second,
+                        "\n" + (lessonPlace.time.order + 1) + ") " + time.first + "-" + time.second,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                         TypefaceSpan("sans-serif-medium")
                     )

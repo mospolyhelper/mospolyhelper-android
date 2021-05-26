@@ -4,7 +4,6 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.utils.io.charsets.*
-import kotlin.text.Charsets
 
 class AuthClient(
     private val client: HttpClient

@@ -19,10 +19,10 @@ class MarksAdapter(): RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
 
     var items : List<MarkInfo> = emptyList()
     set(value) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(MarksDiffCallback(field, value), true)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderMarks {

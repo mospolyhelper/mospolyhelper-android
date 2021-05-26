@@ -13,5 +13,6 @@ data class LessonPack(
     val tags: List<LessonTag>,
     val deadlines: List<Deadline>,
     val dateFilter: LessonDateFilter,
-    val featuresSettings: LessonFeaturesSettings
+    val featuresSettings: LessonFeaturesSettings,
+    val isEnabled: Boolean
 ) : ScheduleItemPacked

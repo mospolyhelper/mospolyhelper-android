@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.data.utils
 
 import androidx.room.TypeConverter
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

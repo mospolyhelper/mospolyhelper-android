@@ -2,12 +2,11 @@ package com.mospolytech.mospolyhelper.data.account.students.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
-import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult
-import java.lang.Exception
+import com.mospolytech.mospolyhelper.domain.account.students.model.StudentsSearchResult2
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class StudentsRemoteDataSource(
     private val client: StudentsHerokuClient, private val query: String): PagingSource<Int, Student>() {
@@ -15,7 +14,7 @@ class StudentsRemoteDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Student> {
         return try {
             val response = client.getStudents(query, params.key?: 1)
-            val students = Json.decodeFromString<StudentsSearchResult>(response)
+            val students = Json.decodeFromString<StudentsSearchResult2>(response)
             LoadResult.Page(
                 students.portfolios,
                 if (students.currentPage <= 1) null else students.currentPage - 1,

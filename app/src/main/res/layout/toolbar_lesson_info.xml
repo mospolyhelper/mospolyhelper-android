@@ -6,4 +6,4 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     app:elevation="0dp"
-    tools:showIn="@layout/fragment_schedule_lesson_info"></androidx.appcompat.widget.Toolbar>
+    tools:showIn="@layout/fragment_schedule_lesson_info" />

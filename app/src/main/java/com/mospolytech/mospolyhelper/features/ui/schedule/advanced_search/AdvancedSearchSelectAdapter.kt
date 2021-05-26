@@ -3,16 +3,13 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import androidx.databinding.ObservableList
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemAdvancedSearchBinding
-import com.mospolytech.mospolyhelper.databinding.ItemScheduleDayBinding
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
-import kotlin.collections.ArrayList
 
 // TODO: add id to viewHolder
 class AdvancedSearchAdapter(

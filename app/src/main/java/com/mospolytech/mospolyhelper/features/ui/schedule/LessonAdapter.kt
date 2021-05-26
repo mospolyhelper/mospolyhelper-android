@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +18,13 @@ import com.mospolytech.mospolyhelper.databinding.ItemLessonInfoBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonTimeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
+import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPlacePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonWindowPack
 import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.dp
 import com.mospolytech.mospolyhelper.utils.setSafeOnClickListener
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -103,9 +102,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.bind(dailySchedule.lessons[position] as LessonPlacePack)
             is ViewHolderLesson ->
                 holder.bind(
-                    dailySchedule.lessons[position] as LessonPack,
-                    dailySchedule.date,
-                    itemCount - 1
+                    dailySchedule.lessons[position] as LessonPack
                 ) { time, lesson ->
                     lessonClick.invoke(time, lesson, dailySchedule.date)
                 }
@@ -122,44 +119,18 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(
             lessonPack: LessonPack,
-            date: LocalDate,
-            lastItemPosition: Int,
             onLessonClick: (LessonTime, Lesson) -> Unit
         ) {
             viewBinding.layoutLesson.setSafeOnClickListener {
                 onLessonClick(lessonPack.lessonTime, lessonPack.lesson)
             }
-            val enabled = date in lessonPack.lesson.dateFrom..lessonPack.lesson.dateTo
-
-            setBottomPadding(lastItemPosition)
-            setLessonType(lessonPack.lesson, enabled)
+            setLessonType(lessonPack.lesson, lessonPack.isEnabled)
             setLessonDuration(lessonPack.lesson)
-            setLessonTitle(lessonPack.lesson, enabled)
-            setAuditoriums(lessonPack.lesson, lessonPack.featuresSettings, enabled)
-            setTeachers(lessonPack.lesson, lessonPack.featuresSettings, enabled)
-            setGroups(lessonPack.lesson, lessonPack.featuresSettings, enabled)
+            setLessonTitle(lessonPack.lesson, lessonPack.isEnabled)
+            setAuditoriums(lessonPack.lesson, lessonPack.featuresSettings, lessonPack.isEnabled)
+            setTeachers(lessonPack.lesson, lessonPack.featuresSettings, lessonPack.isEnabled)
+            setGroups(lessonPack.lesson, lessonPack.featuresSettings, lessonPack.isEnabled)
             setTags(lessonPack.tags)
-        }
-
-        private fun setBottomPadding(lastItemPosition: Int) {
-            var paddingBottom = 0
-            if (bindingAdapterPosition == lastItemPosition) {
-                val tv = TypedValue()
-                if (viewBinding.layoutLesson.context.theme.resolveAttribute(
-                        android.R.attr.actionBarSize,
-                        tv,
-                        true
-                    )
-                ) {
-                    val actionBarHeight = TypedValue.complexToDimensionPixelSize(
-                        tv.data,
-                        viewBinding.layoutLesson.context.resources.displayMetrics
-                    )
-                    paddingBottom = (actionBarHeight * 0.8).toInt()
-                }
-            }
-            val dp3 = 3.dp(itemView.context).toInt()
-            view.setPadding(view.paddingLeft, dp3, view.paddingRight, paddingBottom)
         }
 
         private fun setTags(tags: List<LessonTag>) {
@@ -181,18 +152,18 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        private fun getFeaturesString(features: List<LessonTag>): SpannableStringBuilder {
-            val iterator = features.iterator()
+        private fun getFeaturesString(tags: List<LessonTag>): SpannableStringBuilder {
+            val iterator = tags.iterator()
             val builder = SpannableStringBuilder()
             while (iterator.hasNext()) {
-                val feature = iterator.next()
-                val color = feature.getColor()
+                val tag = iterator.next()
+                val color = tag.getColor()
                 builder.append(
                     "\u00A0",
                     RoundedBackgroundSpan(
                         backgroundColor = itemView.context.getColor(color.colorId),
                         textColor = itemView.context.getColor(color.textColorId),
-                        text = feature.title,
+                        text = tag.title,
                         relativeTextSize = 0.65f
                     ),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -303,17 +274,10 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 viewBinding.textLessonAuditoriums.visibility = View.VISIBLE
                 viewBinding.textLessonAuditoriums.text =
                     lesson.auditoriums.joinToString(separator = ", ") {
-                        parseAuditoriumTitle(it.title)
+                        it.fullTitle
                     }
             }
         }
-
-        private fun parseAuditoriumTitle(title: String): String {
-            return SpannableString(
-                HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            ).toString()
-        }
-
 
         private fun setTeachers(
             lesson: Lesson,
@@ -357,11 +321,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val viewBinding by viewBinding(ItemLessonTimeBinding::bind)
 
         fun bind(lessonPlacePack: LessonPlacePack) {
-            setTime(lessonPlacePack.lessonPlace)
+            setTime(lessonPlacePack.lessonPlace.time)
         }
 
-        private fun setTime(lessonPlace: LessonPlace) {
-            val orderColor = when (lessonPlace.order) {
+        private fun setTime(time: LessonTime) {
+            val orderColor = when (time.order) {
                 0 -> R.color.lessonOrder1
                 1 -> R.color.lessonOrder2
                 2 -> R.color.lessonOrder3
@@ -375,7 +339,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 viewBinding.textLessonTime,
                 ColorStateList.valueOf(itemView.context.getColor(orderColor))
             )
-            val (timeStart, timeEnd) = lessonPlace.time
+            val (timeStart, timeEnd) = time.timeString
             viewBinding.textLessonTime.text =
                 "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
         }
@@ -388,14 +352,14 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(lessonWindow: LessonWindowPack) {
             setInfo(
-                lessonWindow.lessonWindow.previousLessonPlace,
-                lessonWindow.lessonWindow.nextLessonPlace
+                lessonWindow.lessonWindow.previousLessonTime,
+                lessonWindow.lessonWindow.nextLessonTime
             )
         }
 
         private fun setInfo(
-            prevLesson: LessonPlace,
-            nextLesson: LessonPlace
+            prevLesson: LessonTime,
+            nextLesson: LessonTime
         ) {
             val builderTitle = SpannableStringBuilder()
             var info: String

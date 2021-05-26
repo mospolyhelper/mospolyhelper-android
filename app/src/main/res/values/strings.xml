@@ -2,15 +2,23 @@
     <string name="app_name">mospolyhelper</string>
     <string name="nav_schedule">Расписание</string>
 
-    <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
-    <string name="null_schedule">Расписание не найдено</string>
-
     <string name="appearance">Внешний вид</string>
     <string name="night_mode">Тёмная тема</string>
 
-    <!--Schedule Preferences-->
+    <!-- Schedule -->
+    <string name="schedule_user_group">Группа %1$s</string>
+    <string name="schedule_choose_user">Выберите пользователя</string>
+    <string name="schedule_date">%1$s, %2$d-я неделя</string>
+    <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
+    <string name="null_schedule">Расписание не найдено</string>
 
-    <!--Schedule Filter-->
+
+    <!-- Schedule Lesson Info-->
+    <string name="schedule_lesson_info_edit_tags">Изменить метки</string>
+    <string name="schedule_lesson_info_auditoriums">Аудитории</string>
+    <string name="schedule_lesson_info_teachers">Преподаватели</string>
+    <string name="schedule_lesson_info_groups">Группы</string>
+
 
     <!--Other-->
     <string name="click_back_again">Нажмите НАЗАД ещё раз, чтобы выйти</string>

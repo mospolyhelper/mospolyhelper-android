@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
 import com.mospolytech.mospolyhelper.domain.account.marks.repository.MarksRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +32,7 @@ class MarksRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Marks>>{
+    override suspend fun getLocalInfo(): Flow<Result2<Marks>>{
         val marks = localDataSource.getJson()
         return flow {
                 if (marks.isNotEmpty()) emit(localDataSource.get(marks))

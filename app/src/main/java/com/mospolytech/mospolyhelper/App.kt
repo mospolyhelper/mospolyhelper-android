@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.AssetManager
+import android.database.CursorWindow
 import android.os.Build
 import com.mospolytech.mospolyhelper.di.account.*
 import com.mospolytech.mospolyhelper.di.addresses.addressesModule
@@ -21,6 +22,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import java.io.InputStream
 
+
 class App : Application() {
     companion object {
         var context: Context? = null
@@ -36,9 +38,20 @@ class App : Application() {
         }
     }
 
+    fun fix() {
+        // TODO: Fix
+        try {
+            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
+            field.isAccessible = true
+            field.set(null, 102400 * 1024) //the 102400 is the new size added
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
-
+        fix()
         val modules = listOf(
             appModule,
             coreModule,

@@ -1,16 +1,8 @@
 package com.mospolytech.mospolyhelper.data.schedule.api
 
-import android.util.Log
-import com.mospolytech.mospolyhelper.BuildConfig
-import com.mospolytech.mospolyhelper.utils.TAG
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.features.cookies.ConstantCookiesStorage
-import io.ktor.client.features.cookies.CookiesStorage
-import io.ktor.client.features.cookies.HttpCookies
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.parameter
+import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
@@ -22,8 +14,8 @@ class ScheduleClient(
         private const val BASE_URL = "https://rasp.dmami.ru"
         private const val GET_SCHEDULE = "$BASE_URL/site/group"
 
-        private const val GET_SCHEDULES_ALL = "https://rasp.dmami.ru" + BuildConfig.URL_SCHEDULES_ALL
-        private const val GET_SCHEDULES_SESSION_ALL = "https://rasp.dmami.ru" + BuildConfig.URL_SCHEDULES_SESSION_ALL
+        private const val GET_SCHEDULES_ALL = "https://rasp.dmami.ru/semester.json"
+        private const val GET_SCHEDULES_SESSION_ALL = "https://rasp.dmami.ru/session.json"
 
         private const val BASE_URL_TEACHER = "https://kaf.dmami.ru"
         private const val GET_SCHEDULE_TEACHER = "https://kaf.dmami.ru/lessons/teacher-html"

@@ -1,21 +1,30 @@
 package com.mospolytech.mospolyhelper.data.schedule.repository
 
-import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
+import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleDao
+import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleDb
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
+import com.mospolytech.mospolyhelper.data.utils.toLessonWithFeaturesDb
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.getOrDefault
-import com.mospolytech.mospolyhelper.utils.getOrNull
+import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
+import kotlinx.coroutines.flow.flowOn
+import java.time.DayOfWeek
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduleRepositoryImpl(
-    private val localDataSource: ScheduleLocalDataSource,
-    private val remoteDataSource: ScheduleRemoteDataSource
+    private val remoteDataSource: ScheduleRemoteDataSource,
+    private val scheduleDao: ScheduleDao,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ScheduleRepository {
     companion object {
         fun allDataFromSchedule(schedule: Schedule): SchedulePack {
@@ -49,79 +58,77 @@ class ScheduleRepositoryImpl(
         }
     }
 
-    private val scheduleCounter = AtomicInteger(0)
+    private val changesFlow = MutableSharedFlow<Schedule?>(extraBufferCapacity = 64)
 
     override fun getSchedule(
-        user: UserSchedule?,
-        refresh: Boolean
+        user: UserSchedule?
     ) = flow {
         if (user == null) {
             emit(null)
         } else {
-            val schedule = if (refresh) {
-                refresh(user).getOrNull() ?: localDataSource.get(user)
-            } else {
-                localDataSource.get(user) ?: refresh(user).getOrNull()
+            val scheduleDb = scheduleDao.getScheduleByUser(user)
+            when {
+                user is AdvancedSearchSchedule -> emit(scheduleDb?.schedule?.filter(user.filters))
+                scheduleDb?.schedule == null ||
+                        scheduleDb.downloadingDateTime
+                            .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1 -> {
+                    emit(refresh(user).getOrNull())
+                }
+                else -> {
+                    emit(scheduleDb.schedule)
+                }
             }
-            emit(schedule)
+        }
+        emitAll(changesFlow)
+    }.flowOn(ioDispatcher)
+
+    override suspend fun updateSchedule(user: UserSchedule?) = withContext(ioDispatcher) {
+        if (user != null && user !is AdvancedSearchSchedule) {
+            changesFlow.emit(refresh(user).getOrNull())
         }
     }
 
-    private suspend fun refresh(user: UserSchedule): Result2<Schedule> {
+
+    private suspend fun refresh(user: UserSchedule): Result2<Schedule> = coroutineScope {
         val schedule = when (user) {
             is StudentSchedule -> remoteDataSource.getByGroup(user.id)
             is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
-            is AuditoriumSchedule -> Result2.Failure(Exception())
+            else -> Result2.failure<Schedule>(Exception())
+        }.onSuccess {
+            runBlocking {
+                scheduleDao.setSchedule(ScheduleDb(user.idGlobal, it, ZonedDateTime.now()))
+            }
         }
-        if (schedule is Result2.Success) {
-            localDataSource.set(schedule.value, user)
-        }
-        return schedule
+        schedule
     }
 
-
     override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
-        scheduleCounter.set(0)
+        var counter1 = 0f
+        var counter2 = 0f
 
-        val schedules = remoteDataSource
-            .getAll(false, onProgressChanged)
-            .getOrDefault(emptySequence()) +
-                remoteDataSource
-                    .getAll(true, onProgressChanged)
-                    .getOrDefault(emptySequence())
-
-        val scheduleList = mutableListOf<Schedule>()
-        val lessonTitles = mutableSetOf<String>()
-        val lessonTeachers = mutableSetOf<String>()
-        val lessonGroups = mutableSetOf<String>()
-        val lessonAuditoriums = mutableSetOf<String>()
-        val lessonTypes = mutableSetOf<String>()
+        val lessonTitles = HashSet<String>(2000)
+        val lessonTypes = HashSet<String>(30)
+        val lessonTeachers = HashSet<String>(1000)
+        val lessonGroups = HashSet<String>(500)
+        val lessonAuditoriums = HashSet<String>(600)
 
 
-        for (schedule in schedules) {
-            scheduleList.add(schedule)
-            for (dailySchedule in schedule.dailySchedules) {
-                for (lessonPlace in dailySchedule) {
-                    for (lesson in lessonPlace.lessons) {
-                        lessonTitles.add(lesson.title)
-                        for (teacher in lesson.teachers) {
-                            lessonTeachers.add(teacher.name)
-                        }
-                        for (group in lesson.groups) {
-                            lessonGroups.add(group.title)
-                        }
-                        for (auditorium in lesson.auditoriums) {
-                            lessonAuditoriums.add(auditorium.title)
-                        }
-                        lessonTypes.add(lesson.type)
-                    }
-                }
-            }
-
+        val schedule = withContext(ioDispatcher) {
+            remoteDataSource
+                .getAll(
+                    lessonTitles,
+                    lessonTypes,
+                    lessonTeachers,
+                    lessonGroups,
+                    lessonAuditoriums)  {
+                    counter2 = it
+                    onProgressChanged((counter1 + counter2) / 2)
+                }.getOrNull()
         }
-        onProgressChanged(1f)
+        val downloadDateTime = ZonedDateTime.now()
+
+        scheduleDao.setSchedule(ScheduleDb(UserSchedule.PREFIX_ADVANCED_SEARCH, schedule, downloadDateTime))
         return@coroutineScope SchedulePackList(
-            scheduleList,
             lessonTitles.sorted(),
             lessonTypes.sorted(),
             lessonTeachers.sorted(),

@@ -24,10 +24,10 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
     var items: List<DialogModel> = emptyList()
     set(value) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(DialogsDiffCallback(field, value), true)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogViewHolder {

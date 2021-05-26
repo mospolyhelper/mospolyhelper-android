@@ -7,20 +7,20 @@ import androidx.room.Relation
 data class LessonWithFeaturesDb(
     @Embedded val lesson: LessonDb,
     @Relation(
-        parentColumn = "lesson_id",
-        entityColumn = "teacher_id",
+        parentColumn = "lessonId",
+        entityColumn = "teacherName",
         associateBy = Junction(LessonTeacherCrossRef::class)
     )
     val teachers: List<TeacherDb>,
     @Relation(
-        parentColumn = "lesson_id",
-        entityColumn = "group_id",
+        parentColumn = "lessonId",
+        entityColumn = "groupTitle",
         associateBy = Junction(LessonGroupCrossRef::class)
     )
     val groups: List<GroupDb>,
     @Relation(
-        parentColumn = "lesson_id",
-        entityColumn = "auditorium_id",
+        parentColumn = "lessonId",
+        entityColumn = "auditoriumId",
         associateBy = Junction(LessonAuditoriumCrossRef::class)
     )
     val auditoriums: List<AuditoriumDb>

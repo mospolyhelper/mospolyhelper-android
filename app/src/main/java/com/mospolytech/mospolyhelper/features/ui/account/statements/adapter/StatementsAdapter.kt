@@ -24,10 +24,10 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
 
     var items : List<Statement> = emptyList()
     set(value) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(StatementsDiffCallback(field, value), true)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderStatements {

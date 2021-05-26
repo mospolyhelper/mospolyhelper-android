@@ -1,8 +1,6 @@
 package com.mospolytech.mospolyhelper.domain.account.messaging.model
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessageSend(

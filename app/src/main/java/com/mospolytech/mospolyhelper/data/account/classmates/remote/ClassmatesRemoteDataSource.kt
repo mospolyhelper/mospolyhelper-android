@@ -1,21 +1,20 @@
 package com.mospolytech.mospolyhelper.data.account.classmates.remote
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.account.classmates.api.ClassmatesHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
-import com.mospolytech.mospolyhelper.utils.Result
-import java.io.StringReader
+import com.mospolytech.mospolyhelper.utils.Result2
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class ClassmatesRemoteDataSource(
     private val client: ClassmatesHerokuClient
 ) {
-    suspend fun get(sessionId: String): Result<List<Classmate>> {
+    suspend fun get(sessionId: String): Result2<List<Classmate>> {
         return try {
             val res = client.getInfo(sessionId)
-            Result.success(Json.decodeFromString(res))
+            Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 }

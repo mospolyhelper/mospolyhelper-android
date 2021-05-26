@@ -5,7 +5,7 @@ import com.mospolytech.mospolyhelper.domain.account.messaging.usecase.MessagingU
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
@@ -15,7 +15,7 @@ class MessagingViewModel(
     private val useCase: MessagingUseCase
 ) : ViewModelBase(mediator, MessagingViewModel::class.java.simpleName), KoinComponent {
 
-    val dialog = MutableStateFlow<Result<List<Message>>>(Result.loading())
+    val dialog = MutableStateFlow<Result2<List<Message>>>(Result2.loading())
 
     suspend fun downloadDialog(dialogId: String) {
         useCase.getDialog(dialogId).collect {

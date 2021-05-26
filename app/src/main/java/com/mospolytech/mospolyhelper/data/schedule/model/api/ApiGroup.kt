@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.data.schedule.model
+package com.mospolytech.mospolyhelper.data.schedule.model.api
 
 import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
 import kotlinx.serialization.Serializable

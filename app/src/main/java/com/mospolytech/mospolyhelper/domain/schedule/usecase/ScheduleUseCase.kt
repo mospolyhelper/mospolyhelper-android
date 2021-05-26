@@ -5,10 +5,7 @@ import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.data.utils.setAsJson
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.*
@@ -16,6 +13,7 @@ import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 data class ScheduleTagsDeadline(
     val schedule: Schedule?,
@@ -33,20 +31,22 @@ class ScheduleUseCase(
     val preferences: PreferencesRepository
 ) {
     fun getSchedule(
-        user: UserSchedule?,
-        refresh: Boolean
-    ) = scheduleRepository.getSchedule(user, refresh)
+        user: UserSchedule?
+    ) = scheduleRepository.getSchedule(user)
+
+    suspend fun updateSchedule(
+        user: UserSchedule?
+    ) = scheduleRepository.updateSchedule(user)
 
     fun getScheduleWithFeatures(
-        user: UserSchedule?,
-        refresh: Boolean
+        user: UserSchedule?
     ): Flow<ScheduleTagsDeadline> {
         return combine(
-            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user, refresh),
-            tagRepository.getAll(),
+            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user),
+            if (user is AdvancedSearchSchedule) flowOf(Result2.success(emptyList())) else tagRepository.getAll(),
             flowOf(mapOf<String, List<Deadline>>())
         ) { schedule, tags, deadlines ->
-            ScheduleTagsDeadline(schedule, (tags as Result2.Success).value, deadlines)
+            ScheduleTagsDeadline(schedule, tags.getOrThrow(), deadlines)
         }
     }
 
@@ -69,7 +69,7 @@ class ScheduleUseCase(
         savedIdsRepository.setSavedIds(savedIds)
     }
 
-    fun getSelectedSavedId(): UserSchedule? {
+    fun getUserSchedule(): UserSchedule? {
         return preferences.getFromJson(PreferenceKeys.ScheduleUser)
     }
 

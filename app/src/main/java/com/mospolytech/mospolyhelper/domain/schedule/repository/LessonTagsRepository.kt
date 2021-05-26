@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.domain.schedule.repository
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.utils.Result2
+
 import kotlinx.coroutines.flow.Flow
 
 interface LessonTagsRepository {

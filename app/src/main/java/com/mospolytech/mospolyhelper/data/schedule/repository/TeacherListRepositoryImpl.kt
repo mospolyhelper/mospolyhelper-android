@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.schedule.repository
 
-import com.mospolytech.mospolyhelper.data.schedule.local.GroupListLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.local.TeacherListLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.TeacherListRemoteDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.repository.TeacherListRepository

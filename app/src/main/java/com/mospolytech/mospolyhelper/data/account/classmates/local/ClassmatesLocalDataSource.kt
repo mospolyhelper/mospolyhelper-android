@@ -3,17 +3,17 @@ package com.mospolytech.mospolyhelper.data.account.classmates.local
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class ClassmatesLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
-    fun get(classmates: String): Result<List<Classmate>> {
+    fun get(classmates: String): Result2<List<Classmate>> {
         return try {
-            Result.success(Json.decodeFromString(classmates))
+            Result2.success(Json.decodeFromString(classmates))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 

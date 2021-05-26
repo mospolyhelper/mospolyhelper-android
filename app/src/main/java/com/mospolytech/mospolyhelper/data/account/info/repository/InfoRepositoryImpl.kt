@@ -8,7 +8,7 @@ import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.getAvatar
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,7 @@ class InfoRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Info>>{
+    override suspend fun getLocalInfo(): Flow<Result2<Info>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))

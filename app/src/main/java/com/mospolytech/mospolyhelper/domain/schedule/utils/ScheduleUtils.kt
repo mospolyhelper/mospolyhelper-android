@@ -11,12 +11,12 @@ object ScheduleUtils {
         var prevOrder = lessonPlaces.first()
         for (i in 1 until lessonPlaces.size) {
             val lessonPlace = lessonPlaces[i]
-            val lessonWindow = lessonPlace.order - prevOrder.order - 1
-            if (lessonWindow > 0 || prevOrder.order == 2) {
+            val lessonWindow = lessonPlace.time.order - prevOrder.time.order - 1
+            if (lessonWindow > 0 || prevOrder.time.order == 2) {
                 resList.add(
                     LessonWindow(
-                        prevOrder.copy(lessons = emptyList()),
-                        lessonPlace.copy(lessons = emptyList())
+                        prevOrder.copy(lessons = emptyList()).time,
+                        lessonPlace.copy(lessons = emptyList()).time
                     )
                 )
             }
@@ -28,17 +28,17 @@ object ScheduleUtils {
 
     fun getEmptyPairsDecorator(lessonPlaces: List<LessonPlace>): List<LessonPlace> {
         if (lessonPlaces.isEmpty()) return lessonPlaces
-        val lastOrder = lessonPlaces.last().order
+        val lastOrder = lessonPlaces.last().time.order
         val resList = mutableListOf<LessonPlace>()
 
         for (i in 0..lastOrder) {
             var notFound = true
             for (lessonPlace in lessonPlaces) {
-                if (lessonPlace.order == i) {
+                if (lessonPlace.time.order == i) {
                     notFound = false
                     resList.add(lessonPlace)
-                } else if (lessonPlace.order > i && notFound) {
-                    resList.add(LessonPlace(emptyList(), i, false))
+                } else if (lessonPlace.time.order > i && notFound) {
+                    resList.add(LessonPlace(emptyList(), LessonTime(i, false)))
                 }
             }
         }
@@ -51,7 +51,7 @@ object ScheduleUtils {
         val map = mutableMapOf<Int, Boolean>()
         for (lessonPlace in this) {
             if (lessonPlace.lessons.isNotEmpty()) {
-                map[lessonPlace.order] = true
+                map[lessonPlace.time.order] = true
             }
         }
         for (i in 0..6) {
@@ -77,7 +77,7 @@ fun merge(lessonPlace1: LessonPlace, lessonPlace2: LessonPlace): LessonPlace {
         }
     }
 
-    return LessonPlace(newList, lessonPlace1.order, lessonPlace1.isEvening)
+    return LessonPlace(newList, LessonTime(lessonPlace1.time.order, lessonPlace1.time.isEvening))
 }
 
 fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
@@ -86,7 +86,7 @@ fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
     val resList = schedule1.dailySchedules.map { it.toMutableList() }
     for (day in schedule2.dailySchedules.withIndex()) {
         for (lessonPlace in day.value) {
-            val index = resList[day.index].indexOfFirst { it.order == lessonPlace.order && it.isEvening == lessonPlace.isEvening }
+            val index = resList[day.index].indexOfFirst { it.time.order == lessonPlace.time.order && it.time.isEvening == lessonPlace.time.isEvening }
             if (index == -1) {
                 resList[day.index] += lessonPlace
             } else {
@@ -95,7 +95,7 @@ fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
         }
     }
 
-    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
+    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sortedBy { it.time } })
 }
 
 fun Schedule.getAllTypes(): Set<String> {
@@ -137,13 +137,42 @@ fun Schedule.filter(
                         (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
 
                 },
-                it.order,
-                it.isEvening
+                LessonTime(it.time.order, it.time.isEvening)
             )
         }
     }
 
-    return Schedule.from(tempList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
+    return Schedule.from(tempList.map { it.filter{ it.lessons.isNotEmpty() }.sortedBy { it.time } })
+}
+
+fun Schedule.filter(
+    filters: ScheduleFilters
+): Schedule {
+    val filterTitles = filters.titles.isEmpty()
+    val filterTypes = filters.types.isEmpty()
+    val filterAuditoriums = filters.auditoriums.isEmpty()
+    val filterTeachers = filters.teachers.isEmpty()
+    val filterGroups = filters.groups.isEmpty()
+
+    val tempList = MutableList(7) { emptyList<LessonPlace>() }
+
+    for (i in dailySchedules.indices) {
+        tempList[i] = dailySchedules[i].map {
+            LessonPlace(
+                it.lessons.filter { lesson ->
+                    (filterTitles || checkFilter(filters.titles, lesson.title)) &&
+                            (filterTypes || checkFilter(filters.types, lesson.type)) &&
+                            (filterTeachers || checkFilter(filters.teachers, lesson.teachers.map { it.name })) &&
+                            (filterGroups || checkFilter(filters.groups, lesson.groups.map { it.title })) &&
+                            (filterAuditoriums || checkFilter(filters.auditoriums, lesson.auditoriums.map { it.title }))
+
+                },
+                LessonTime(it.time.order, it.time.isEvening)
+            )
+        }
+    }
+
+    return Schedule.from(tempList.map { it.filter{ it.lessons.isNotEmpty() }.sortedBy { it.time } })
 }
 
 fun Iterable<Schedule?>.filter(
@@ -179,8 +208,7 @@ fun Iterable<Schedule?>.filter(
                 } else {
                     LessonPlace(
                         lessons,
-                        it.order,
-                        it.isEvening
+                        it.time
                     )
                 }
 
@@ -193,7 +221,7 @@ fun Iterable<Schedule?>.filter(
 
     for (day in tempList.withIndex()) {
         for (lessonPlace in day.value) {
-            val index = resList[day.index].indexOfFirst { it.order == lessonPlace.order && it.isEvening == lessonPlace.isEvening }
+            val index = resList[day.index].indexOfFirst { it.time.order == lessonPlace.time.order && it.time.isEvening == lessonPlace.time.isEvening }
             if (index == -1) {
                 resList[day.index] += lessonPlace
             } else {
@@ -202,7 +230,7 @@ fun Iterable<Schedule?>.filter(
         }
     }
 
-    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sorted() })
+    return Schedule.from(resList.map { it.filter{ it.lessons.isNotEmpty() }.sortedBy { it.time } })
 }
 
 fun filterByDate(
@@ -229,8 +257,7 @@ fun filterByDate(
 
                 return@filter true
             },
-            it.order,
-            it.isEvening
+            LessonTime(it.time.order, it.time.isEvening)
         )
     }.filter{ it.lessons.isNotEmpty() }
 }

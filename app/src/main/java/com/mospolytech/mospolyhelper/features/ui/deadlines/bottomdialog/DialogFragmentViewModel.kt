@@ -3,10 +3,9 @@ package com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
+import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
@@ -14,8 +13,8 @@ import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Action1
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.Event1
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,8 +80,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
             } else {
                 // TODO: Fix isStudentConstant
                 scheduleRepository.getSchedule(
-                    user,
-                    downloadNew
+                    user
                 ).collect {
                     withContext(Dispatchers.Main) {
                         this@DialogFragmentViewModel.schedule.value = it

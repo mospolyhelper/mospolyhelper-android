@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.domain.account.classmates.repository.ClassmatesRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +33,7 @@ class ClassmatesRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<List<Classmate>>>{
+    override suspend fun getLocalInfo(): Flow<Result2<List<Classmate>>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))

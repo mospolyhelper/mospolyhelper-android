@@ -1,11 +1,7 @@
 package com.mospolytech.mospolyhelper.data.account.students.api
 
-import android.util.Log
-import com.mospolytech.mospolyhelper.utils.TAG
 import io.ktor.client.*
-import io.ktor.client.features.cookies.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 
 class StudentsHerokuClient(
     private val client: HttpClient

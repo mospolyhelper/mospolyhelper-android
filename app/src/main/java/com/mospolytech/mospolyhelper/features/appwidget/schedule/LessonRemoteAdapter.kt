@@ -18,6 +18,7 @@ import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
+import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.TAG
@@ -103,7 +104,7 @@ class LessonRemoteAdapter(
         }
 
         fun getAuditoriums(lesson: Lesson): CharSequence {
-            return lesson.auditoriums.joinToString { parseAuditoriumTitle(it.title) }
+            return lesson.auditoriums.joinToString { parseAuditoriumTitle(it.fullTitle) }
         }
 
         private fun parseAuditoriumTitle(title: String): String {
@@ -151,7 +152,7 @@ class LessonRemoteAdapter(
             return
         }
         dailySchedule = schedule.getLessons(LocalDate.now()).flatMap { lessonPlace ->
-            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
+            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.time.order, lessonPlace.time.isEvening)) }
         }
         showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", false)
         showStartTime = prefs.getBoolean("ScheduleAppwidgetShowStartTime", true)
@@ -172,6 +173,7 @@ class LessonRemoteAdapter(
             remoteView.setTextViewText(R.id.textview_lesson_title, "Расписание не найдено")
             remoteView.setViewVisibility(R.id.text_lesson_time, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
+            remoteView.setViewVisibility(R.id.textview_groups, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)
             return remoteView
         }

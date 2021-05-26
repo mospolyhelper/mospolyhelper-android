@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.data.schedule.converter
 
 import android.util.Log
+import com.mospolytech.mospolyhelper.data.utils.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import com.mospolytech.mospolyhelper.utils.TAG
@@ -8,6 +9,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.*
 
 class ScheduleRemoteConverter {
     companion object {
@@ -35,6 +38,7 @@ class ScheduleRemoteConverter {
         private const val LESSON_TYPE_KEY = "type"
         private const val LESSON_WEBINAR_LINK_KEY = "wl"
         private const val LESSON_WEEK_KEY = "week"
+        private const val LESSON_URL = "el"
 
         private const val FIRST_MODULE_KEY = "fm"
         private const val SECOND_MODULE_KEY = "sm"
@@ -48,12 +52,6 @@ class ScheduleRemoteConverter {
         // endregion
 
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
-
-        private val regex1 = Regex("""(\p{L}|\))\(""")
-        private val regex2 = Regex("""\)(\p{L}|\()""")
-        private val regex3 = Regex("""(\p{L})-(\p{L})""")
-        private val regex4 = Regex(""" -\S""")
-        private val regex5 = Regex("""\S- """)
     }
 
     fun parseSchedules(schedulesString: String): Sequence<Schedule> {
@@ -71,26 +69,27 @@ class ScheduleRemoteConverter {
 
     fun parse(scheduleString: String): Schedule {
         val json = Json.parseToJsonElement(scheduleString)
-        val status = json.jsonObject[STATUS_KEY]?.jsonPrimitive?.content
+        val status = json.string(STATUS_KEY)
         if (status == STATUS_ERROR) {
-            val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
+            val message = json.string(MESSAGE_KEY)
             throw SerializationException(
                 "Schedule was returned with error status. " +
                         "Message: \"${message ?: ""}\""
             )
         } else if (status != STATUS_OK) {
-            val message = json.jsonObject[MESSAGE_KEY]?.jsonPrimitive?.content
+            val message = json.string(MESSAGE_KEY)
 //            Log.w(
 //                TAG, "Schedule does not have status \"$STATUS_OK\" both \"$STATUS_ERROR\". " +
 //                        "Message: \"${message ?: ""}\""
 //            )
         }
         val isByDate =
-            json.jsonObject[IS_SESSION]?.jsonPrimitive?.boolean
+            json.boolean(IS_SESSION)
                 ?: throw SerializationException("Key \"$IS_SESSION\" not found")
 
         val groupInfo = parseGroup(json.jsonObject[GROUP_KEY])
-        val dailySchedules = parseDailySchedules(json.jsonObject[SCHEDULE_GRID_KEY], groupInfo.group, isByDate)
+        val dailySchedules =
+            parseDailySchedules(json.jsonObject[SCHEDULE_GRID_KEY], groupInfo.group, isByDate)
 
         return Schedule.from(dailySchedules)
     }
@@ -101,22 +100,22 @@ class ScheduleRemoteConverter {
             return GroupInfo.empty
         }
 
-        val title = json.jsonObject[GROUP_TITLE_KEY]?.jsonPrimitive?.content ?: "".apply {
+        val title = json.string(GROUP_TITLE_KEY) ?: "".apply {
             Log.w(TAG, "GROUP_TITLE_KEY \"$GROUP_TITLE_KEY\" not found")
         }
 
-        val course = json.jsonObject[GROUP_COURSE_KEY]?.jsonPrimitive?.int ?: 0.apply {
+        val course = json.int(GROUP_COURSE_KEY) ?: 0.apply {
             Log.w(TAG, "GROUP_COURSE_KEY \"$GROUP_COURSE_KEY\" not found")
         }
 
-        val dateFrom = parseGroupDateFrom(json.jsonObject[GROUP_DATE_FROM_KEY]?.jsonPrimitive?.content)
-        val dateTo = parseGroupDateTo(json.jsonObject[GROUP_DATE_TO_KEY]?.jsonPrimitive?.content)
+        val dateFrom = parseDate(json.string(GROUP_DATE_FROM_KEY), LocalDate.MIN)
+        val dateTo = parseDate(json.string(GROUP_DATE_TO_KEY), LocalDate.MAX)
 
-        val isEvening = json.jsonObject[GROUP_EVENING_KEY]?.jsonPrimitive?.int ?: 0.apply {
+        val isEvening = json.int(GROUP_EVENING_KEY) ?: 0.apply {
             Log.w(TAG, "GROUP_EVENING_KEY \"$GROUP_EVENING_KEY\" not found")
         }
 
-        val comment = json.jsonObject[GROUP_COMMENT_KEY]?.jsonPrimitive?.content ?: "".apply {
+        val comment = json.string(GROUP_COMMENT_KEY) ?: "".apply {
             Log.w(TAG, "GROUP_COMMENT_KEY \"$GROUP_COMMENT_KEY\" not found")
         }
 
@@ -129,34 +128,6 @@ class ScheduleRemoteConverter {
         )
     }
 
-    private fun parseGroupDateFrom(json: String?): LocalDate {
-        return if (json == null) {
-            Log.w(TAG, "GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\" not found")
-            LocalDate.MIN
-        } else try {
-            LocalDate.parse(json,
-                dateFormatter
-            )
-        } catch (e: Exception) {
-            Log.w(TAG, "Can not parse value of GROUP_DATE_FROM_KEY \"$GROUP_DATE_FROM_KEY\"")
-            LocalDate.MIN
-        }
-    }
-
-    private fun parseGroupDateTo(json: String?): LocalDate {
-        return if (json == null) {
-            Log.w(TAG, "GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\" not found")
-            LocalDate.MAX
-        } else try {
-            LocalDate.parse(json,
-                dateFormatter
-            )
-        } catch (e: Exception) {
-            Log.w(TAG, "Can not parse value of GROUP_DATE_TO_KEY \"$GROUP_DATE_TO_KEY\"")
-            LocalDate.MAX
-        }
-    }
-
     private fun parseDailySchedules(
         json: JsonElement?,
         group: Group,
@@ -167,14 +138,14 @@ class ScheduleRemoteConverter {
         }
         val tempList = List(7) { mutableListOf<LessonPlace>() }
         for ((day, dailySchedule) in json.jsonObject) {
-            // TODO: Is empty not suitable
             if (dailySchedule !is JsonObject || dailySchedule.isEmpty()) continue
 
             var parsedDay: Int
             var date = LocalDate.now()
 
             if (isByDate) {
-                date = LocalDate.parse(day,
+                date = LocalDate.parse(
+                    day,
                     dateFormatter
                 ) ?: continue
                 parsedDay = date.dayOfWeek.value
@@ -199,9 +170,14 @@ class ScheduleRemoteConverter {
                     lessons.add(parsedLesson)
                 }
                 lessons.sort()
-                tempList[parsedDay].add(LessonPlace(lessons, parsedOrder, group.isEvening))
+                tempList[parsedDay].add(
+                    LessonPlace(
+                        lessons,
+                        LessonTime(parsedOrder, group.isEvening)
+                    )
+                )
             }
-            tempList[parsedDay].sort()
+            tempList[parsedDay].sortBy { it.time }
         }
         return tempList
     }
@@ -212,13 +188,17 @@ class ScheduleRemoteConverter {
         isByDate: Boolean,
         date: LocalDate
     ): Lesson {
-        val title = processTitle(json.jsonObject[LESSON_TITLE_KEY]?.jsonPrimitive?.content
-            ?: "Не найден ключ названия занятия. Возможно, структура расписания была обновлена: $json")
+        val title = processTitle(
+            json.string(LESSON_TITLE_KEY)
+                ?: "Не найден ключ названия занятия. Возможно, структура расписания была обновлена: $json"
+        )
 
-        val teachers = parseTeachers(json.jsonObject[LESSON_TEACHER_KEY]?.jsonPrimitive?.content)
+        val teachers = json.string(LESSON_TEACHER_KEY)?.let { parseTeachers(it) } ?: emptyList()
 
-        var dateFrom = if (isByDate) date else parseDateFrom(json.jsonObject[LESSON_DATE_FROM_KEY]?.jsonPrimitive?.content)
-        var dateTo = if (isByDate) date else parseDateTo(json.jsonObject[LESSON_DATE_TO_KEY]?.jsonPrimitive?.content)
+        var dateFrom =
+            if (isByDate) date else parseDate(json.string(LESSON_DATE_FROM_KEY), LocalDate.MIN)
+        var dateTo =
+            if (isByDate) date else parseDate(json.string(LESSON_DATE_TO_KEY), LocalDate.MAX)
 
         if (dateTo < dateFrom) {
             val buf = dateTo
@@ -226,9 +206,12 @@ class ScheduleRemoteConverter {
             dateFrom = buf
         }
 
-        val auditoriums = parseAuditoriums(json.jsonObject[LESSON_AUDITORIUMS_KEY]?.jsonArray)
+        val auditoriums = parseAuditoriums(
+            json.array(LESSON_AUDITORIUMS_KEY),
+            json.stringOrNull(LESSON_URL) ?: ""
+        )
 
-        val type = json.jsonObject[LESSON_TYPE_KEY]?.jsonPrimitive?.content ?: "".apply {
+        val type = json.string(LESSON_TYPE_KEY) ?: "".apply {
             Log.w(TAG, "LESSON_TYPE_KEY \"$LESSON_TYPE_KEY\" not found")
         }
 
@@ -246,72 +229,22 @@ class ScheduleRemoteConverter {
         )
     }
 
-    private fun processTitle(rawTitle: String): String {
-        return rawTitle
-            .trim()
-            .replace(regex1, "\$1 (")
-            .replace(regex2, ") \$1")
-            .replace(regex3, "\$1\u200b-\u200b\$2")
-            .capitalize()
-    }
-
-    private fun parseDateFrom(json: String?): LocalDate {
-        return if (json == null) {
-            Log.w(TAG, "LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\" not found")
-            LocalDate.MIN
+    private fun parseDate(date: String?, default: LocalDate): LocalDate {
+        return if (date == null) {
+            default
         } else try {
-            LocalDate.parse(json,
-                dateFormatter
-            )
-        } catch (e: Exception) {
-            Log.w(TAG, "Can not parse value of LESSON_DATE_FROM_KEY \"$LESSON_DATE_FROM_KEY\"")
-            LocalDate.MIN
+            LocalDate.parse(date, dateFormatter)
+        } catch (e: DateTimeParseException) {
+            Log.w(TAG, "Can not parse value LocalDate", e)
+            default
         }
     }
 
-    private fun parseDateTo(json: String?): LocalDate {
-        return if (json == null) {
-            Log.w(TAG, "LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\" not found")
-            LocalDate.MAX
-        } else try {
-            LocalDate.parse(json,
-                dateFormatter
-            )
-        } catch (e: Exception) {
-            Log.w(TAG, "Can not parse value of LESSON_DATE_TO_KEY \"$LESSON_DATE_TO_KEY\"")
-            LocalDate.MAX
-        }
-    }
 
-    private fun parseTeachers(json: String?) = json?.run {
-        trim()
-            .capitalize()
-            .split(',')
-            .filter { it.isNotEmpty() }
-            .map {
-                Teacher(
-                    it.replace(regex4, " - ")
-                        .replace(regex5, " - ")
-                        .replace("  ", " ")
-                )
-            }
-    } ?: emptyList()
-
-
-    private fun parseAuditoriums(json: JsonArray?): List<Auditorium> {
-        if (json == null || json.isEmpty()) return listOf()
-
-        val tempList = mutableListOf<Auditorium>()
-        for (auditorium in json) {
-            var name = auditorium.jsonObject[AUDITORIUM_TITLE_KEY]?.jsonPrimitive?.content?.trim()?.capitalize() ?: continue
-            name = Auditorium.parseEmoji(name)
-
-            val color = auditorium.jsonObject[AUDITORIUM_COLOR_KEY]?.jsonPrimitive?.content ?: ""
-            tempList.add((Auditorium(
-                name,
-                color
-            )))
-        }
-        return tempList
-    }
+    private fun parseAuditoriums(json: JsonArray?, url: String): List<Auditorium> =
+        json?.mapNotNull {
+            val title = it.string(AUDITORIUM_TITLE_KEY) ?: return@mapNotNull null
+            val color = it.string(AUDITORIUM_COLOR_KEY) ?: ""
+            processAuditorium(title, color, url)
+        } ?: emptyList()
 }

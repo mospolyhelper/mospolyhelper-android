@@ -1,7 +1,9 @@
 package com.mospolytech.mospolyhelper.di.schedule
 
+import com.mospolytech.mospolyhelper.data.core.local.AppDatabase
 import com.mospolytech.mospolyhelper.data.schedule.api.*
 import com.mospolytech.mospolyhelper.data.schedule.converter.GroupListRemoteConverter
+import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleFullRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.local.*
@@ -29,11 +31,12 @@ val scheduleModule = module {
 
     // Converters
     single { ScheduleRemoteConverter() }
+    single { ScheduleFullRemoteConverter() }
     single { ScheduleTeacherRemoteConverter() }
     single { GroupListRemoteConverter() }
 
     // DataSources
-    single { ScheduleRemoteDataSource(get(), get(), get()) }
+    single { ScheduleRemoteDataSource(get(), get(), get(), get()) }
     single { ScheduleLocalDataSource() }
     single { GroupListLocalDataSource() }
     single { GroupListRemoteDataSource(get(), get()) }
@@ -47,7 +50,7 @@ val scheduleModule = module {
 
     // Repositories
     single<ScheduleRepository> {
-        ScheduleRepositoryImpl(get(), get())
+        ScheduleRepositoryImpl(get(), get<AppDatabase>().getScheduleDao())
     }
     single<LessonTagsRepository> {
         LessonTagsRepositoryImpl(get())

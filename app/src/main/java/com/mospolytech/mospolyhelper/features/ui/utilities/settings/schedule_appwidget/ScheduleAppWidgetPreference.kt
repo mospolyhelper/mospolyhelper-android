@@ -164,9 +164,9 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         private val group2 = Group("181-722", false)
         private val group3 = Group("181-725", false)
 
-        private val auditorium1 = Auditorium("Пр ВЦ 3 (2555)", "")
-        private val auditorium2 = Auditorium("Пк214", "")
-        private val auditorium3 = Auditorium("В165", "")
+        private val auditorium1 = Auditorium("Пр ВЦ 3 (2555)", "", "", "")
+        private val auditorium2 = Auditorium("Пк214", "", "", "")
+        private val auditorium3 = Auditorium("В165", "", "", "")
 
         private val lessons = listOf(
             LessonPlace(
@@ -181,8 +181,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         LocalDate.MAX
                     )
                 ),
-                2,
-                false
+                LessonTime(2, false)
             ),
             LessonPlace(
                 listOf(
@@ -196,8 +195,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         LocalDate.MAX
                     )
                 ),
-                3,
-                false
+                LessonTime(3, false)
             ),
             LessonPlace(
                 listOf(
@@ -211,11 +209,10 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
                         LocalDate.MAX
                     )
                 ),
-                4,
-                false
+                LessonTime(4, false)
             )
         ).flatMap { lessonPlace ->
-            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
+            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.time.order, lessonPlace.time.isEvening)) }
         }
 
         override fun getCount() = lessons.size
