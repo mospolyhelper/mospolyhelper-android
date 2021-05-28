@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/shape_widget"
     android:orientation="vertical">
 
@@ -13,28 +14,29 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:maxLines="2"
-        android:minHeight="30dp"
         android:paddingHorizontal="4dp"
-        android:paddingStart="11dp"
-        android:paddingTop="3dp"
-        android:paddingEnd="11dp"
-        android:paddingBottom="5dp"
+        android:paddingStart="10dp"
+        android:paddingTop="3.5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5.0dp"
         android:textAlignment="center"
         android:textColor="@color/widgetTitleText"
-        android:textSize="14sp" />
+        android:textSize="12.7dp"
+        tools:text="Вт, 18 мая | 181-721" />
 
     <ListView
         android:id="@+id/list_schedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="5dp"
         android:clickable="false"
         android:divider="@color/widgetDivider"
-        android:dividerHeight="0.5dp"
+        android:dividerHeight="0.6dp"
         android:overScrollMode="never"
         android:scrollbarSize="4dp"
-        android:scrollbarThumbVertical="@drawable/shape_scrollbar" />
+        android:scrollbarThumbVertical="@drawable/shape_scrollbar"
+        tools:listitem="@layout/item_schedule_appwidget" />
 
 </LinearLayout>

@@ -145,123 +145,11 @@ internal fun createFailure(exception: Throwable): Any =
 internal fun getLoading(): Any = Result.Loading
 
 /**
- * Throws exception if the result is failure. This internal function minimizes
- * /*inline*/d bytecode for [getOrThrow] and makes sure that in the future we can
- * add some exception-augmenting logic here (if needed).
- */
-@PublishedApi
-@SinceKotlin("1.3")
-internal fun Result<*>.throwOnFailure() {
-    if (value is Result.Failure) throw value.exception
-}
-
-/**
- * Calls the specified function [block] and returns its encapsulated result if invocation was successful,
- * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
- */
-@SinceKotlin("1.3")
-public /*inline*/ fun <R> runCatching(block: () -> R): Result<R> {
-    return try {
-        Result.success(block())
-    } catch (e: Throwable) {
-        Result.failure(e)
-    }
-}
-
-/**
- * Calls the specified function [block] with `this` value as its receiver and returns its encapsulated result if invocation was successful,
- * catching any [Throwable] exception that was thrown from the [block] function execution and encapsulating it as a failure.
- */
-@SinceKotlin("1.3")
-public /*inline*/ fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
-    return try {
-        Result.success(block())
-    } catch (e: Throwable) {
-        Result.failure(e)
-    }
-}
-
-// -- extensions ---
-
-/**
- * Returns the encapsulated value if this instance represents [success][Result.isSuccess] or throws the encapsulated [Throwable] exception
- * if it is [failure][Result.isFailure].
- *
- * This function is a shorthand for `getOrElse { throw it }` (see [getOrElse]).
- */
-@SinceKotlin("1.3")
-/*inline*/ fun <T> Result<T>.getOrThrow(): T {
-    throwOnFailure()
-    return value as T
-}
-
-/**
- * Returns the encapsulated value if this instance represents [success][Result.isSuccess] or the
- * result of [onFailure] function for the encapsulated [Throwable] exception if it is [failure][Result.isFailure].
- *
- * Note, that this function rethrows any [Throwable] exception thrown by [onFailure] function.
- *
- * This function is a shorthand for `fold(onSuccess = { it }, onFailure = onFailure)` (see [fold]).
- */
-@ExperimentalContracts
-@SinceKotlin("1.3")
-/*inline*/ fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
-    contract {
-        callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
-    }
-    return when (val exception = exceptionOrNull()) {
-        null -> value as T
-        else -> onFailure(exception)
-    }
-}
-
-/**
- * Returns the encapsulated value if this instance represents [success][Result.isSuccess] or the
- * [defaultValue] if it is [failure][Result.isFailure].
- *
- * This function is a shorthand for `getOrElse { defaultValue }` (see [getOrElse]).
- */
-@SinceKotlin("1.3")
-public /*inline*/ fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
-    if (isFailure || isLoading) return defaultValue
-    return value as T
-}
-
-/**
- * Returns the result of [onSuccess] for the encapsulated value if this instance represents [success][Result.isSuccess]
- * or the result of [onFailure] function for the encapsulated [Throwable] exception if it is [failure][Result.isFailure].
- *
- * Note, that this function rethrows any [Throwable] exception thrown by [onSuccess] or by [onFailure] function.
- */
-@ExperimentalContracts
-@SinceKotlin("1.3")
-/*inline*/ fun <R, T> Result<T>.fold(
-    onSuccess: (value: T) -> R,
-    onFailure: (exception: Throwable) -> R,
-    onLoading: () -> R
-): R {
-    contract {
-        callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(onLoading, InvocationKind.AT_MOST_ONCE)
-    }
-    val exception = exceptionOrNull()
-    return when {
-        exception == null && isLoading -> onLoading()
-        exception == null -> onSuccess(value as T)
-        else -> onFailure(exception)
-    }
-}
-
-// transformation
-
-/**
  * Returns the encapsulated result of the given [transform] function applied to the encapsulated value
  * if this instance represents [success][Result.isSuccess] or the
  * original encapsulated [Throwable] exception if it is [failure][Result.isFailure].
  *
  * Note, that this function rethrows any [Throwable] exception thrown by [transform] function.
- * See [mapCatching] for an alternative that encapsulates exceptions.
  */
 @ExperimentalContracts
 @SinceKotlin("1.3")
@@ -274,61 +162,6 @@ public /*inline*/ fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
         else -> Result(value)
     }
 }
-
-/**
- * Returns the encapsulated result of the given [transform] function applied to the encapsulated value
- * if this instance represents [success][Result.isSuccess] or the
- * original encapsulated [Throwable] exception if it is [failure][Result.isFailure].
- *
- * This function catches any [Throwable] exception thrown by [transform] function and encapsulates it as a failure.
- * See [map] for an alternative that rethrows exceptions from `transform` function.
- */
-@SinceKotlin("1.3")
-public /*inline*/ fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
-    return when {
-        isSuccess -> runCatching { transform(value as T) }
-        else -> Result(value)
-    }
-}
-
-/**
- * Returns the encapsulated result of the given [transform] function applied to the encapsulated [Throwable] exception
- * if this instance represents [failure][Result.isFailure] or the
- * original encapsulated value if it is [success][Result.isSuccess].
- *
- * Note, that this function rethrows any [Throwable] exception thrown by [transform] function.
- * See [recoverCatching] for an alternative that encapsulates exceptions.
- */
-@ExperimentalContracts
-@SinceKotlin("1.3")
-/*inline*/ fun <R, T : R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
-    contract {
-        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
-    }
-    return when (val exception = exceptionOrNull()) {
-        null -> this
-        else -> Result.success(transform(exception))
-    }
-}
-
-/**
- * Returns the encapsulated result of the given [transform] function applied to the encapsulated [Throwable] exception
- * if this instance represents [failure][Result.isFailure] or the
- * original encapsulated value if it is [success][Result.isSuccess].
- *
- * This function catches any [Throwable] exception thrown by [transform] function and encapsulates it as a failure.
- * See [recover] for an alternative that rethrows exceptions.
- */
-@SinceKotlin("1.3")
-public /*inline*/ fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
-    val value = value // workaround for /*inline*/ classes BE bug
-    return when (val exception = exceptionOrNull()) {
-        null -> this
-        else -> runCatching { transform(exception) }
-    }
-}
-
-// "peek" onto value/exception and pipe
 
 /**
  * Performs the given [action] on the encapsulated [Throwable] exception if this instance represents [failure][Result.isFailure].
@@ -371,5 +204,3 @@ public /*inline*/ fun <R, T : R> Result<T>.recoverCatching(transform: (exception
     if (isLoading) action()
     return this
 }
-
-// -------------------

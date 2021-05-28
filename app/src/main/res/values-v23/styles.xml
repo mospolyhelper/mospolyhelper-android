@@ -20,11 +20,7 @@
     <item name="background">@color/colorPrimaryLight</item>
   </style>
 
-  <style name="AppTheme.NavigationMenu">
-    <item name="colorPrimary">@color/colorSecondary</item>
-  </style>
-
-  <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+    <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
     <item name="android:layout">@layout/fragment_settings</item>
   </style>
 
@@ -107,17 +103,7 @@
     <item name="colorPrimary">@color/textColorPrimary</item>
   </style>
 
-  <style name="ScheduleToolbarText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-    <item name="android:textSize">30sp</item>
-    <item name="android:fontFamily">@font/ubuntu</item>
-  </style>
-
-  <style name="ScheduleToolbarSubtitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-    <item name="android:textSize">13sp</item>
-    <item name="android:fontFamily">@font/ubuntu_medium</item>
-  </style>
-
-  <style name="TabLayoutAddresses" parent="Widget.Design.TabLayout">
+    <style name="TabLayoutAddresses" parent="Widget.Design.TabLayout">
     <item name="tabIndicatorHeight">32dp</item>
     <item name="tabIndicatorGravity">center</item>
     <item name="tabBackground">@null</item>
@@ -136,21 +122,7 @@
     <item name="android:textColor">@color/addresses_tab_selector</item>
   </style>
 
-  <style name="TabLayoutWeekText">
-    <item name="android:textSize">11dp</item>
-    <item name="android:textAlignment">center</item>
-    <item name="android:fontFamily">@font/ubuntu_medium</item>
-    <item name="android:textColor">#bbbbbb</item>
-  </style>
-
-  <style name="TabLayoutDayText">
-    <item name="android:textSize">15dp</item>
-    <item name="fontFamily">@font/ubuntu_medium</item>
-    <item name="android:textAlignment">center</item>
-    <item name="android:gravity">center_vertical</item>
-  </style>
-
-  <style name="TabLayoutSchedule" parent="Widget.Design.TabLayout">
+    <style name="TabLayoutSchedule" parent="Widget.Design.TabLayout">
     <item name="tabIndicatorGravity">center</item>
     <item name="tabIndicatorHeight">@dimen/schedule_tab_indicator_height</item>
     <item name="tabBackground">@drawable/background_tab_schedule</item>
@@ -166,27 +138,9 @@
     <item name="fontFamily">@font/ubuntu_medium</item>
     <item name="android:textAllCaps">false</item>
   </style>
-  <style name="TabLayoutScheduleType" parent="Widget.Design.TabLayout">
-    <item name="tabIndicatorHeight">32dp</item>
-    <item name="tabIndicatorGravity">center</item>
-    <item name="tabBackground">@null</item>
-    <item name="tabRippleColor">#00000000</item>
-    <item name="tabIndicatorColor">@color/colorLevelThree</item>
-    <item name="tabIndicator">@drawable/background_tab_indicator_schedule_type</item>
-    <item name="tabPaddingStart">15dp</item>
-    <item name="tabPaddingEnd">15dp</item>
-    <item name="tabTextAppearance">@style/TabLayoutScheduleTypeTextAppearance</item>
-  </style>
 
-  <style name="TabLayoutScheduleTypeTextAppearance" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">15dp</item>
-    <item name="fontFamily">@font/ubuntu_medium</item>
-    <item name="android:textAllCaps">false</item>
-    <item name="android:textColor">@color/addresses_tab_selector</item>
-  </style>
-
-  <style name="ScheduleLessonTitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">17.8sp</item>
+    <style name="ScheduleLessonTitle" parent="TextAppearance.AppCompat">
+    <item name="android:textSize">17.2sp</item>
     <item name="android:fontFamily">@font/ubuntu</item>
     <item name="android:textColor">@color/accent_text_color</item>
     <item name="android:breakStrategy">simple</item>
@@ -194,7 +148,7 @@
   </style>
 
   <style name="ScheduleLessonSubtitle" parent="TextAppearance.AppCompat">
-    <item name="android:textSize">14.7sp</item>
+    <item name="android:textSize">14.3sp</item>
     <item name="android:fontFamily">@font/ubuntu</item>
     <item name="android:textColor">@color/secondary_text_color</item>
     <item name="android:drawableTint">@color/secondary_text_color</item>

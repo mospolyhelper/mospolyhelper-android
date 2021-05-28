@@ -8,19 +8,20 @@ object ScheduleUtils {
         if (lessonPlaces.isEmpty()) return lessonPlaces
         val resList = mutableListOf<ScheduleItem>(lessonPlaces.first())
 
-        var prevOrder = lessonPlaces.first().order
+        var prevOrder = lessonPlaces.first()
         for (i in 1 until lessonPlaces.size) {
             val lessonPlace = lessonPlaces[i]
-            val lessonWindow = lessonPlace.order - prevOrder - 1
-            if (lessonWindow <= 0) {
-                if (prevOrder == 2 && lessonPlace.order == 3) {
-                    resList.add(LessonWindow(0))
-                }
-            } else {
-                resList.add(LessonWindow(lessonWindow))
+            val lessonWindow = lessonPlace.order - prevOrder.order - 1
+            if (lessonWindow > 0 || prevOrder.order == 2) {
+                resList.add(
+                    LessonWindow(
+                        prevOrder.copy(lessons = emptyList()),
+                        lessonPlace.copy(lessons = emptyList())
+                    )
+                )
             }
             resList.add(lessonPlace)
-            prevOrder = lessonPlace.order
+            prevOrder = lessonPlace
         }
         return resList
     }
@@ -79,9 +80,7 @@ fun merge(lessonPlace1: LessonPlace, lessonPlace2: LessonPlace): LessonPlace {
     return LessonPlace(newList, lessonPlace1.order, lessonPlace1.isEvening)
 }
 
-fun combine(schedule1: Schedule?, schedule2: Schedule?): Schedule? {
-    if (schedule1 == null) return schedule2
-    if (schedule2 == null) return schedule1
+fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
     if (schedule1 == schedule2) return schedule1
 
     val resList = schedule1.dailySchedules.map { it.toMutableList() }

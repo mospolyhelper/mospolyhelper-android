@@ -43,8 +43,7 @@ class ScheduleTeacherRemoteConverter {
         private val regex5 = Regex("""\S- """)
     }
 
-    fun parse(scheduleString: String): Schedule? {
-        if (scheduleString.isEmpty()) return null
+    fun parse(scheduleString: String): Schedule {
         val parser = Jsoup.parse(scheduleString)
 
         val teacher = Teacher(

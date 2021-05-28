@@ -10,19 +10,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.temporal.ChronoUnit
 
-class CalendarFragment : DialogFragment() {
+class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
 
     private val viewModel by sharedViewModel<ScheduleViewModel>()
-
-    private lateinit var buttonGroup: MaterialButtonToggleGroup
+    private val viewBinding by viewBinding(FragmentScheduleCalendarBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +32,6 @@ class CalendarFragment : DialogFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_schedule_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,16 +46,8 @@ class CalendarFragment : DialogFragment() {
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_schedule_day)
-        buttonGroup = view.findViewById(R.id.btngroup_schedule_calendar)
-        val colorTitle = requireContext().getColor(R.color.calendarTitle)
-        val colorCurrentTitle = requireContext().getColor(R.color.calendarCurrentTitle)
         val recyclerAdapter = CalendarThreeAdapter(
-            viewModel.filteredSchedule.value.getOrNull()?.schedule,
-            viewModel.isAdvancedSearch,
-            requireContext().getColor(R.color.calendarParagraph),
-            requireContext().getColor(R.color.calendarTimeBackground),
-            colorTitle,
-            colorCurrentTitle
+            viewModel.filteredSchedule.value.getOrNull()?.schedule
         )
         recyclerAdapter.dayClick += { date ->
             viewModel.date.value = date
@@ -76,7 +62,7 @@ class CalendarFragment : DialogFragment() {
             recyclerAdapter.firstPosDate.until(viewModel.date.value, ChronoUnit.DAYS).toInt()
         )
 
-        buttonGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (!isChecked) {
                 return@addOnButtonCheckedListener
             }
@@ -84,10 +70,7 @@ class CalendarFragment : DialogFragment() {
                 R.id.btn_schedule_calendar_one -> {
                     recyclerView.layoutManager = LinearLayoutManager(context)
                     val recyclerAdapter = CalendarOneAdapter(
-                        viewModel.filteredSchedule.value.getOrNull()?.schedule,
-                        viewModel.isAdvancedSearch,
-                        colorTitle,
-                        colorCurrentTitle
+                        viewModel.filteredSchedule.value.getOrNull()?.schedule
                     )
                     recyclerView.adapter = recyclerAdapter
                     recyclerAdapter.dayClick += { date ->
@@ -98,12 +81,7 @@ class CalendarFragment : DialogFragment() {
                 R.id.btn_schedule_calendar_three -> {
                     recyclerView.layoutManager = GridLayoutManager(context, 3)
                     val recyclerAdapter = CalendarThreeAdapter(
-                        viewModel.filteredSchedule.value.getOrNull()?.schedule,
-                        viewModel.isAdvancedSearch,
-                        requireContext().getColor(R.color.calendarParagraph),
-                        requireContext().getColor(R.color.calendarTimeBackground),
-                        colorTitle,
-                        colorCurrentTitle
+                        viewModel.filteredSchedule.value.getOrNull()?.schedule
                     )
                     recyclerView.adapter = recyclerAdapter
                     recyclerAdapter.dayClick += { date ->
@@ -114,12 +92,7 @@ class CalendarFragment : DialogFragment() {
                 R.id.btn_schedule_calendar_seven -> {
                     recyclerView.layoutManager = GridLayoutManager(context, 7)
                     val recyclerAdapter = CalendarSevenAdapter(
-                        viewModel.filteredSchedule.value.getOrNull()?.schedule,
-                        viewModel.isAdvancedSearch,
-                        requireContext().getColor(R.color.calendarParagraph),
-                        requireContext().getColor(R.color.calendarTimeBackground),
-                        colorTitle,
-                        colorCurrentTitle
+                        viewModel.filteredSchedule.value.getOrNull()?.schedule
                     )
                     recyclerView.adapter = recyclerAdapter
                     recyclerAdapter.dayClick += { date ->

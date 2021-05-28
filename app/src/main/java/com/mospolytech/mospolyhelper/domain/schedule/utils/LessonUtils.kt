@@ -7,7 +7,8 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 private const val minCriticalTitleLength = 10
 private const val minCriticalWordLength = 5
 
-private const val vowels = "аеёиоуыэюя"
+private const val vowels = "аеёиоуыэьъюя"
+private const val specChars = "ьъ"
 
 fun cutTitle(title: String): String {
     if (title.length <= minCriticalTitleLength) {
@@ -31,9 +32,10 @@ private fun cutWord(word: String): String {
         return word
     }
     for (i in vowelIndex + 1 until word.length) {
-        if (vowels.contains(word[i], ignoreCase = true)) {
-            // if two vowels are near
-            if (i == vowelIndex + 1) {
+        // TODO: Fix for spec chars
+        if (vowels.contains(word[i], ignoreCase = true) && !specChars.contains(word[i], ignoreCase = true)) {
+            // if two vowels are near or shorted word will be too short
+            if (i == vowelIndex + 1 || i < 3) {
                 continue
             }
             return word.substring(0, i) + '.'

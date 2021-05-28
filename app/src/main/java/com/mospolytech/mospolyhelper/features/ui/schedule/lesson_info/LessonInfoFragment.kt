@@ -73,15 +73,16 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
 
-        (activity as MainActivity).setSupportActionBar(toolbar)
-        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
-        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+//        (activity as MainActivity).setSupportActionBar(toolbar)
+//        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//        (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
+//        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        viewModel.lessonPlace = args.lesson
+        viewModel.lessonTime = args.lessonTime
+        viewModel.lesson = args.lesson
         viewModel.date = args.date
 
-        if (viewModel.lessonPlace.lessons.isEmpty()) {
+        if (viewModel.lesson.isEmpty) {
             //lessonTitleTextView.text = "Нет занятия"
             setTime()
         } else {
@@ -107,15 +108,15 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     private fun setTitle() {
         with(viewBinding) {
-            textScheduleTitle.text = viewModel.lesson.title
+            textviewLessonTitle.text = viewModel.lesson.title
         }
     }
 
     private fun setTime() {
-        val (startTime, endTime) = viewModel.lessonPlace.time
+        val (startTime, endTime) = viewModel.lessonTime.time
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
         with(viewBinding) {
-            this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonPlace.order + 1})"
+            this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonTime.order + 1})"
         }
     }
 
@@ -263,7 +264,14 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     private fun setLabels() {
         viewBinding.buttonAddLabel.setOnClickListener {
-            findNavController().safe { navigate(LessonInfoFragmentDirections.actionLessonInfoFragmentToLessonTagFragment(lesson = viewModel.lesson)) }
+            findNavController().safe { navigate(
+                LessonInfoFragmentDirections
+                    .actionLessonInfoFragmentToLessonTagFragment(
+                        lesson = viewModel.lesson,
+                        dayOfWeek = viewModel.date.dayOfWeek,
+                        order = viewModel.lessonTime.order
+                    )
+            ) }
         }
         //lessonLabelOneDateTextView.text = "Только на ${viewModel.date.format(lessonLabelOneDateFormatter)}"
 

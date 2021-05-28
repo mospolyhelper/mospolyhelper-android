@@ -1,9 +1,9 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info
 
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.LessonTagsRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -18,9 +18,8 @@ class LessonInfoViewModel(
     companion object {
         const val LessonInfo = "LessonInfo"
     }
-    var lessonPlace: LessonPlace = LessonPlace(emptyList(), 0, false)
-    val lesson: Lesson
-        get() = lessonPlace.lessons.firstOrNull() ?: Lesson.getEmpty()
+    var lessonTime: LessonTime = LessonTime(0, false)
+    var lesson: Lesson = Lesson.getEmpty()
     var date: LocalDate = LocalDate.now()
 
     fun getSubjectDeadlines(subjectTitle: String) {

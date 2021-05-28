@@ -8,9 +8,19 @@ import java.time.DayOfWeek
 
 @Parcelize
 @Serializable
-class LessonTagKey(val value: String) : Parcelable {
+data class LessonTagKey(
+    val lessonTitle: String,
+    val lessonType: String,
+    val dayOfWeek: DayOfWeek,
+    val lessonOrder: Int
+    ) : Parcelable {
     companion object {
         fun fromLesson(lesson: Lesson, dayOfWeek: DayOfWeek, order: Int) =
-            LessonTagKey(lesson.title + "/\\" + lesson.type  + "/\\" + dayOfWeek.value.toString()  + "/\\" +  order.toString())
+            LessonTagKey(
+                lesson.title,
+                lesson.type,
+                dayOfWeek,
+                order
+            )
     }
 }

@@ -139,6 +139,8 @@ Github: https://github.com/tipapro\n\n
 VK: https://vk.com/alexandr_dyndin\n
 Github: https://github.com/IIOPHYIIIE4KA
     </string>
+    <string name="lesson_tag_example">Пример</string>
+    <string name="create_new_tag">Создать новую метку</string>
 
     <!-- Account -->
     <string name="auth">Авторизация</string>
@@ -148,10 +150,18 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="Students">Студенты</string>
     <string name="teachers">Преподаватели</string>
     <string name="classmates">Одногруппники</string>
-    <string name="statements">Ведомости</string>
+    <string name="statements">Электронная зачетная книжка</string>
     <string name="account">Аккаунт</string>
     <string name="nav_dialogs">Диалоги</string>
     <string name="nothing_found">Ничего не найдено</string>
     <string name="Dialog">Диалог</string>
     <string name="delete_message">Удалить сообщение</string>
+    <string name="menu_schedule_advanced_search">Продвинутый поиск</string>
+    <string name="menu_schedule_filters">Фильтры</string>
+    <string name="menu_schedule_calendar">Календарь</string>
+    <string name="menu_schedule_user_choosing">Выбор пользователя</string>
+    <string name="settings">Настройки</string>
+    <string name="addresses">Адреса</string>
+    <string name="pass">Пропуск</string>
+    <string name="menu_about_app">О приложении</string>
 </resources>
