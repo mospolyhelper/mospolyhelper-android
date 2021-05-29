@@ -45,8 +45,6 @@ class InfoFragment : Fragment(R.layout.fragment_account_info) {
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
                 result?.onSuccess {
-//                    viewBinding.progressLoading.gone()
-//                    viewBinding.infoSwipe.isRefreshing = false
                     lifecycleScope.launch {
                         viewModel.downloadInfo()
                     }
