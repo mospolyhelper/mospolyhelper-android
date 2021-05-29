@@ -18,6 +18,7 @@ import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import java.net.UnknownHostException
 
 class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
 
@@ -66,17 +67,25 @@ class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
                     fillData(it)
                     deadlines = it
                     viewBinding.deadlineSwipe.isRefreshing = false
-                }.onFailure {
+                }.onFailure { error ->
                     viewBinding.loadingSpinner.gone()
                     viewBinding.deadlineSwipe.isRefreshing = false
-                    if (it is ClientRequestException) {
-                        if (it.response.status.value == 401) {
-                            lifecycleScope.launch {
-                                viewModel.refresh()
+                    when (error) {
+                        is ClientRequestException -> {
+                            when (error.response.status.value) {
+                                401 ->  {
+                                    lifecycleScope.launch {
+                                        viewModel.refresh()
+                                    }
+                                }
+                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
                             }
                         }
-                    } else
-                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                        is UnknownHostException -> {
+                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                        }
+                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
                 }.onLoading {
                     if (!viewBinding.deadlineSwipe.isRefreshing)
                         viewBinding.loadingSpinner.show()

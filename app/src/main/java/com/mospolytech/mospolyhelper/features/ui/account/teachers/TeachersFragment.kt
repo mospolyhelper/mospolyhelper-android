@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 import kotlin.coroutines.CoroutineContext
 
 
@@ -123,19 +124,21 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
                         viewBinding.textEmpty.hide()
                         viewBinding.progressFirstLoading.hide()
                         viewBinding.swipeTeachers.isRefreshing = false
-                        val error = (loadStates.refresh as LoadState.Error).error
-                        if (error is ClientRequestException) {
-                            if (error.response.status.value == 401) {
-                                lifecycleScope.launch {
-                                    viewModel.refresh()
+                        when (val error = (loadStates.refresh as LoadState.Error).error) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
                                 }
                             }
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                error.localizedMessage,
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
                         }
                     }
                     is LoadState.NotLoading -> {

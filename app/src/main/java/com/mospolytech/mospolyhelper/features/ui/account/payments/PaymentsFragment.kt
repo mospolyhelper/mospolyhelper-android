@@ -17,6 +17,7 @@ import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 
 class PaymentsFragment: Fragment(R.layout.fragment_account_payments) {
 
@@ -71,17 +72,25 @@ class PaymentsFragment: Fragment(R.layout.fragment_account_payments) {
                     viewBinding.paymentsSwipe.show()
                     fillData(it)
                     viewBinding.paymentsSwipe.isRefreshing = false
-                }.onFailure {
+                }.onFailure { error ->
                     viewBinding.progressLoading.gone()
                     viewBinding.paymentsSwipe.isRefreshing = false
-                    if (it is ClientRequestException) {
-                        if (it.response.status.value == 401) {
-                            lifecycleScope.launch {
-                                viewModel.refresh()
+                    when (error) {
+                        is ClientRequestException -> {
+                            when (error.response.status.value) {
+                                401 ->  {
+                                    lifecycleScope.launch {
+                                        viewModel.refresh()
+                                    }
+                                }
+                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
                             }
                         }
-                    } else
-                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                        is UnknownHostException -> {
+                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                        }
+                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
                 }.onLoading {
                     if (!viewBinding.paymentsSwipe.isRefreshing)
                         viewBinding.progressLoading.show()

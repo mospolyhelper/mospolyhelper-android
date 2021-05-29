@@ -171,4 +171,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="nickname">Логин</string>
     <string name="password">Пароль</string>
     <string name="avatar">avatar</string>
+    <string name="not_authorized">Неверный логин или пароль</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="check_connection">Проверьте подключение к интернету</string>
 </resources>

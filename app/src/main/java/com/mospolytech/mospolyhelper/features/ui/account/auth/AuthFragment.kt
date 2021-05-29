@@ -11,8 +11,11 @@ import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountAuthBinding
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 
 class AuthFragment : Fragment(R.layout.fragment_account_auth) {
 
@@ -51,10 +54,22 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
                         progressAuth.hide()
                         logInButton.show()
                         createLayout()
-                    }.onFailure {
+                    }.onFailure { error ->
                         progressAuth.hide()
                         logInButton.show()
-                        Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
+                        when (error) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 -> Toast.makeText(context, R.string.not_authorized, Toast.LENGTH_LONG).show()
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+
                     }.onLoading {
                         progressAuth.show()
                         logInButton.hide()
