@@ -164,4 +164,5 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="addresses">Адреса</string>
     <string name="pass">Пропуск</string>
     <string name="menu_about_app">О приложении</string>
+    <string name="share">Поделиться</string>
 </resources>
