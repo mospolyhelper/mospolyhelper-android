@@ -16,6 +16,7 @@ import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.features.ui.account.classmates.adapter.ClassmatesAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -64,6 +65,23 @@ class ClassmatesFragment : Fragment(R.layout.fragment_account_classmates) {
         }
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.swipeClassmates.isRefreshing = false
+                    viewBinding.progressLoading.gone()
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.swipeClassmates.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.classmates.collect { result ->
                 result.onSuccess {
                     viewBinding.swipeClassmates.isRefreshing = false
@@ -79,8 +97,15 @@ class ClassmatesFragment : Fragment(R.layout.fragment_account_classmates) {
                     }
                 }.onFailure {
                     viewBinding.swipeClassmates.isRefreshing = false
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.progressLoading.gone()
+                    if (it is ClientRequestException) {
+                        if (it.response.status.value == 401) {
+                            lifecycleScope.launch {
+                                viewModel.refresh()
+                            }
+                        }
+                    } else
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
                 }.onLoading {
                     if (!viewBinding.swipeClassmates.isRefreshing)
                         viewBinding.progressLoading.show()

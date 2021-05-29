@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.info
 
+import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.usecase.InfoUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
@@ -12,10 +13,12 @@ import org.koin.core.KoinComponent
 
 class InfoViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val useCase: InfoUseCase
+    private val useCase: InfoUseCase,
+    private val authUseCase: AuthUseCase
 ) : ViewModelBase(mediator, InfoViewModel::class.java.simpleName), KoinComponent {
 
     val info = MutableStateFlow<Result<Info>>(Result.loading())
+    val auth = MutableStateFlow<Result<String>?>(null)
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {
@@ -23,6 +26,11 @@ class InfoViewModel(
         }
     }
 
+    suspend fun refresh() {
+        authUseCase.refresh().collect {
+            auth.value = it
+        }
+    }
 
     suspend fun getInfo() {
         useCase.getLocalInfo().collect {

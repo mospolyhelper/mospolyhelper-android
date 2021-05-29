@@ -31,9 +31,9 @@ class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GlobalScope.launch(Dispatchers.Main) {
-            viewModel.refresh().collect()
-        }
+//        GlobalScope.launch(Dispatchers.Main) {
+//            viewModel.refresh().collect()
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

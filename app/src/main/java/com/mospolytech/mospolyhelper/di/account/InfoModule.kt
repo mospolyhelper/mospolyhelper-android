@@ -17,5 +17,5 @@ val infoModule = module {
     single { InfoLocalDataSource(get()) }
     single<InfoRepository> { InfoRepositoryImpl(get(), get(), get(), get()) }
     single { InfoUseCase(get()) }
-    viewModel { InfoViewModel(get(), get()) }
+    viewModel { InfoViewModel(get(), get(), get()) }
 }

@@ -28,5 +28,5 @@ val teachersModule = module {
     single { TeachersHerokuClient(get(named("accountHerokuClient"))) }
     single<TeachersRepository> { TeachersRepositoryImpl(get(), get()) }
     single { TeachersUseCase(get()) }
-    viewModel { TeachersViewModel(get(), get()) }
+    viewModel { TeachersViewModel(get(), get(), get()) }
 }

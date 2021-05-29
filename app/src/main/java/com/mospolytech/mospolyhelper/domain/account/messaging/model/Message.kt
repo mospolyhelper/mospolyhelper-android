@@ -8,6 +8,7 @@ data class Message(
     val avatarUrl: String,
     val authorName: String,
     val message: String,
+    val dateTime: String,
     val attachments: List<Attachment>,
     val removeUrl: String
 ) {
@@ -21,6 +22,7 @@ data class Message(
         if (avatarUrl != other.avatarUrl) return false
         if (authorName != other.authorName) return false
         if (message != other.message) return false
+        if (dateTime != other.dateTime) return false
         if (attachments != other.attachments) return false
         if (removeUrl != other.removeUrl) return false
 
@@ -32,8 +34,10 @@ data class Message(
         result = 31 * result + avatarUrl.hashCode()
         result = 31 * result + authorName.hashCode()
         result = 31 * result + message.hashCode()
+        result = 31 * result + dateTime.hashCode()
         result = 31 * result + attachments.hashCode()
         result = 31 * result + removeUrl.hashCode()
         return result
     }
+
 }

@@ -14,6 +14,7 @@ import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.features.ui.account.deadlines.DeadlinesBottomSheetFragment.Companion.DEADLINES
 import com.mospolytech.mospolyhelper.features.ui.account.deadlines.adapter.DeadlinesAdapter
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -41,7 +42,24 @@ class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
             }
         }
 
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.loadingSpinner.gone()
+                    viewBinding.deadlineSwipe.isRefreshing = false
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.deadlineSwipe.isRefreshing)
+                        viewBinding.loadingSpinner.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.deadlines.collect { result ->
                 result.onSuccess {
                     viewBinding.loadingSpinner.gone()
@@ -49,9 +67,16 @@ class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
                     deadlines = it
                     viewBinding.deadlineSwipe.isRefreshing = false
                 }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.loadingSpinner.gone()
                     viewBinding.deadlineSwipe.isRefreshing = false
+                    if (it is ClientRequestException) {
+                        if (it.response.status.value == 401) {
+                            lifecycleScope.launch {
+                                viewModel.refresh()
+                            }
+                        }
+                    } else
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
                 }.onLoading {
                     if (!viewBinding.deadlineSwipe.isRefreshing)
                         viewBinding.loadingSpinner.show()

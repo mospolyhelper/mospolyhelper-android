@@ -13,6 +13,7 @@ import com.mospolytech.mospolyhelper.databinding.FragmentAccountPaymentsBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
 import com.mospolytech.mospolyhelper.features.ui.account.payments.adapter.PagerAdapter
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -47,6 +48,23 @@ class PaymentsFragment: Fragment(R.layout.fragment_account_payments) {
         })
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.progressLoading.gone()
+                    viewBinding.paymentsSwipe.isRefreshing = false
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.paymentsSwipe.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.payments.collect { result ->
                 result.onSuccess {
                     viewBinding.progressLoading.gone()
@@ -54,9 +72,16 @@ class PaymentsFragment: Fragment(R.layout.fragment_account_payments) {
                     fillData(it)
                     viewBinding.paymentsSwipe.isRefreshing = false
                 }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.progressLoading.gone()
                     viewBinding.paymentsSwipe.isRefreshing = false
+                    if (it is ClientRequestException) {
+                        if (it.response.status.value == 401) {
+                            lifecycleScope.launch {
+                                viewModel.refresh()
+                            }
+                        }
+                    } else
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
                 }.onLoading {
                     if (!viewBinding.paymentsSwipe.isRefreshing)
                         viewBinding.progressLoading.show()

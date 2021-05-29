@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.messaging
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
 import com.mospolytech.mospolyhelper.domain.account.classmates.usecase.ClassmatesUseCase
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
@@ -20,12 +21,19 @@ import org.koin.core.KoinComponent
 
 class MessagingViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val useCase: MessagingUseCase
+    private val useCase: MessagingUseCase,
+    private val authUseCase: AuthUseCase
 ) : ViewModelBase(mediator, MessagingViewModel::class.java.simpleName), KoinComponent {
 
     val dialog = MutableStateFlow<Result<List<Message>>>(Result.loading())
-
     val update = MutableStateFlow<Result<List<Message>>>(Result.loading())
+    val auth = MutableStateFlow<Result<String>?>(null)
+
+    suspend fun refresh() {
+        authUseCase.refresh().collect {
+            auth.value = it
+        }
+    }
 
     suspend fun downloadDialog(dialogId: String) {
         useCase.getDialog(dialogId).collect {

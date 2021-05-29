@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.deadlines
 import androidx.lifecycle.MutableLiveData
 import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
 import com.mospolytech.mospolyhelper.domain.account.applications.usecase.ApplicationsUseCase
+import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.domain.account.deadlines.usecase.DeadlinesUseCase
 import com.mospolytech.mospolyhelper.features.ui.account.applications.ApplicationsViewModel
@@ -16,10 +17,18 @@ import org.koin.core.KoinComponent
 
 class DeadlinesViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val useCase: DeadlinesUseCase
+    private val useCase: DeadlinesUseCase,
+    private val authUseCase: AuthUseCase,
 ) : ViewModelBase(mediator, DeadlinesViewModel::class.java.simpleName), KoinComponent {
 
     val deadlines = MutableStateFlow<Result<List<Deadline>>>(Result.loading())
+    val auth = MutableStateFlow<Result<String>?>(null)
+
+    suspend fun refresh() {
+        authUseCase.refresh().collect {
+            auth.value = it
+        }
+    }
 
     val deadline: MutableLiveData<Deadline> by lazy {
         MutableLiveData()

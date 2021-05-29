@@ -14,6 +14,7 @@ import com.mospolytech.mospolyhelper.databinding.FragmentAccountDialogsBinding
 import com.mospolytech.mospolyhelper.features.ui.account.dialogs.adapter.DialogAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,6 +46,23 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         viewBinding.recyclerDialogs.itemAnimator = null
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.progressLoading.gone()
+                    viewBinding.swipeDialogs.isRefreshing = false
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.swipeDialogs.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.dialogs.collect { result ->
                 result.onSuccess {
                     viewBinding.progressLoading.gone()
@@ -53,8 +71,14 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
                 }.onFailure {
                     viewBinding.progressLoading.gone()
                     viewBinding.swipeDialogs.isRefreshing = false
-                    Toast.makeText(requireContext(), it.localizedMessage ?: "", Toast.LENGTH_LONG).show()
-                    Log.e("json", it.message ?: "")
+                    if (it is ClientRequestException) {
+                        if (it.response.status.value == 401) {
+                            lifecycleScope.launch {
+                                viewModel.refresh()
+                            }
+                        }
+                    } else
+                        Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
                 }.onLoading {
                     if (!viewBinding.swipeDialogs.isRefreshing)
                         viewBinding.progressLoading.show()

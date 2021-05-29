@@ -71,8 +71,8 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                         message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     }
                 }
-
-                var time = item.date
+                //fixme говнокод
+                var time = item.dateTime
                 val hour = if (time.hour<10) "0${time.hour}" else time.hour.toString()
                 val minute = if (time.minute<10) "0${time.minute}" else time.minute.toString()
                 val day = if (time.dayOfMonth<10) "0${time.dayOfMonth}" else time.dayOfMonth.toString()
@@ -81,9 +81,9 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
                 time = LocalDateTime.now()
 
-                if (item.date.year == time.year && item.date.dayOfYear == time.dayOfYear) {
+                if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
                     dateMessage.text = "${hour}:${minute}"
-                } else if (item.date.year == time.year) {
+                } else if (item.dateTime.year == time.year) {
                     dateMessage.text = "${day}.${month}"
                 } else {
                     dateMessage.text = "${day}.${month}.${year}"
