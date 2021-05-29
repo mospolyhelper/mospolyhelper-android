@@ -7,6 +7,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountAuthBinding
 import com.mospolytech.mospolyhelper.utils.*
@@ -17,11 +18,13 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
 
     private lateinit var loginText: TextView
     private lateinit var passwordText: TextView
-    private lateinit var saveLoginCheckBox: CheckBox
-    private lateinit var savePasswordCheckBox: CheckBox
     private lateinit var logInButton: Button
     private lateinit var logOutButton: Button
     private lateinit var progressAuth: ProgressBar
+    private lateinit var authLayout: FrameLayout
+    private lateinit var loginLayout: LinearLayout
+    private lateinit var fioStudent: TextView
+    private lateinit var avatarUser: ImageView
 
     private val viewBinding by viewBinding(FragmentAccountAuthBinding::bind)
     private val viewModel by viewModel<AuthViewModel>()
@@ -31,48 +34,30 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
 
         loginText = viewBinding.textLogin
         passwordText = viewBinding.textPassword
-        saveLoginCheckBox = viewBinding.checkboxSaveLogin
-        savePasswordCheckBox = viewBinding.checkboxSavePassword
         logInButton = viewBinding.btnLogin
         logOutButton = viewBinding.btnLogout
         progressAuth = viewBinding.progressAuth
+        authLayout = viewBinding.authLayout
+        loginLayout = viewBinding.loginLayout
+        fioStudent = viewBinding.fioStudent
+        avatarUser = viewBinding.avatarUser
 
-        loginText.text = viewModel.login.value
-        passwordText.text = viewModel.password.value
-        saveLoginCheckBox.isChecked = viewModel.saveLogin.value
-        savePasswordCheckBox.isChecked = viewModel.savePassword.value
-
-        loginText.addTextChangedListener {
-            viewModel.login.value = it.toString()
-        }
-        passwordText.addTextChangedListener {
-            viewModel.password.value = it.toString()
-        }
-        saveLoginCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.saveLogin.value = isChecked
-        }
-        savePasswordCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.savePassword.value = isChecked
-        }
+        createLayout()
 
         logInButton.setOnClickListener {
             lifecycleScope.launchWhenResumed {
-                viewModel.logIn().collect {
+                viewModel.logIn(loginText.text.toString(), passwordText.text.toString()).collect {
                     it.onSuccess {
-                        logOutButton.show()
                         progressAuth.hide()
                         logInButton.show()
-                        Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
+                        createLayout()
                     }.onFailure {
                         progressAuth.hide()
                         logInButton.show()
-                        logOutButton.hide()
                         Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     }.onLoading {
                         progressAuth.show()
                         logInButton.hide()
-                        logOutButton.hide()
-                        Toast.makeText(context, "Loading", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -80,8 +65,26 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
 
         logOutButton.setOnClickListener {
             viewModel.logOut()
+            createLayout()
+        }
+
+    }
+
+    private fun createLayout() {
+        viewModel.getName()?.let {
+            authLayout.show()
+            loginLayout.hide()
+            fioStudent.text = it
+            Glide.with(this).load(viewModel.getAvatar()).into(avatarUser)
+        } ?: let {
+            authLayout.hide()
+            loginLayout.show()
         }
     }
 
+    override fun onDestroyView() {
+        Glide.with(this).clear(avatarUser)
+        super.onDestroyView()
+    }
 
 }

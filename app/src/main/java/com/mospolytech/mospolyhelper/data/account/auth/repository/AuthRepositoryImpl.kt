@@ -45,11 +45,11 @@ class AuthRepositoryImpl(
         }
     }
 
-    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar() ?: ""
+    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar()
 
     override fun getPermissions() = authJwtLocalDataSource.get()?.getPermissions() ?: emptyList()
 
-    override fun getFio() = authJwtLocalDataSource.get()?.getName() ?: ""
+    override fun getFio() = authJwtLocalDataSource.get()?.getName()
 
     override fun logOut() {
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)

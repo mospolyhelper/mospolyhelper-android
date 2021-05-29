@@ -39,13 +39,13 @@ class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val name = viewModel.getName()
-        if (name.isNotEmpty()) {
-            viewBinding.textFio.text = name
-        } else {
+        name?.let {
+            viewBinding.textFio.text = it
+            Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarUser)
+        } ?: let {
             viewBinding.textFio.text = requireContext().getText(R.string.account)
         }
-        viewBinding.avatarUser.isVisible = viewModel.getAvatar().isNotEmpty()
-        Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarUser)
+        viewBinding.avatarUser.isVisible = viewModel.getAvatar()?.isNotEmpty() == true
         menuList = viewBinding.listMenu
 
         setMenu(viewModel.getPermissions())

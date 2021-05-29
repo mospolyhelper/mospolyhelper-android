@@ -133,7 +133,7 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
                         } else {
                             Toast.makeText(
                                 requireContext(),
-                                (loadStates.refresh as LoadState.Error).error.localizedMessage,
+                                error.localizedMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

@@ -165,4 +165,10 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="pass">Пропуск</string>
     <string name="menu_about_app">О приложении</string>
     <string name="share">Поделиться</string>
+    <string name="logout">Выйти</string>
+    <string name="hello_msg">Здравствуйте, вы вошли как</string>
+    <string name="login">Войти</string>
+    <string name="nickname">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="avatar">avatar</string>
 </resources>
