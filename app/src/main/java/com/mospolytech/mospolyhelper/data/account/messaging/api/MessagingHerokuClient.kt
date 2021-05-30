@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.account.messaging.api
 
-import com.mospolytech.mospolyhelper.data.account.auth.api.AuthHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
 import io.ktor.client.*
 import io.ktor.client.request.*

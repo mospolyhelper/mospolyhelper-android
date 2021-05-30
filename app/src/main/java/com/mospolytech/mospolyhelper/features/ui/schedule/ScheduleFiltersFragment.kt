@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleFiltersBinding
 import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
+import com.mospolytech.mospolyhelper.utils.onReady
 import com.mospolytech.mospolyhelper.utils.onSuccess
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ScheduleFiltersFragment: BottomSheetDialogFragment() {
@@ -28,57 +31,40 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        viewModel.originalSchedule.value.onSuccess {
-            if (it.schedule == null) {
-                return@onSuccess
-            }
-            for (type in it.schedule.getAllTypes()) {
-                viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
+        lifecycleScope.launchWhenResumed {
+            viewModel.allLessonTypes.collect {
+                for (type in it) {
+                    viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
+                }
             }
         }
 
-        if (viewModel.showEndedLessons.value) {
+        if (viewModel.lessonDateFilter.value.showEndedLessons) {
             viewBinding.chipLessonDatesEnded.isChecked = true
         }
-        if (viewModel.showCurrentLessons.value) {
+        if (viewModel.lessonDateFilter.value.showCurrentLessons) {
             viewBinding.chipLessonDatesCurrent.isChecked = true
         }
-        if (viewModel.showNotStartedLessons.value) {
+        if (viewModel.lessonDateFilter.value.showNotStartedLessons) {
             viewBinding.chipLessonDatesNotStarted.isChecked = true
         }
 
-        if (viewModel.showImportantLessons.value) {
-            viewBinding.chipLessonLabelsImportant.isChecked = true
-        }
-        if (viewModel.showAverageLessons.value) {
-            viewBinding.chipLessonLabelsAverage.isChecked = true
-        }
-        if (viewModel.showNotImportantLessons.value) {
-            viewBinding.chipLessonLabelsNotImportant.isChecked = true
-        }
 
 
-
-        viewBinding.chipLessonDatesEnded.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showEndedLessons.value = isChecked
+        viewBinding.chipLessonDatesEnded.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.lessonDateFilter.value =
+                viewModel.lessonDateFilter.value
+                    .copy(showEndedLessons = isChecked)
         }
-        viewBinding.chipLessonDatesCurrent.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showCurrentLessons.value = isChecked
+        viewBinding.chipLessonDatesCurrent.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.lessonDateFilter.value =
+                viewModel.lessonDateFilter.value
+                    .copy(showCurrentLessons = isChecked)
         }
-        viewBinding.chipLessonDatesNotStarted.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showNotStartedLessons.value = isChecked
-        }
-
-
-        viewBinding.chipLessonLabelsImportant.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showImportantLessons.value = isChecked
-        }
-        viewBinding.chipLessonLabelsAverage.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showAverageLessons.value = isChecked
-        }
-        viewBinding.chipLessonLabelsNotImportant.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.showNotImportantLessons.value = isChecked
+        viewBinding.chipLessonDatesNotStarted.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.lessonDateFilter.value =
+                viewModel.lessonDateFilter.value
+                    .copy(showNotStartedLessons = isChecked)
         }
     }
 

@@ -48,15 +48,16 @@ class DailySchedulePack(
             return DailySchedulePack(
                 dailySchedule.flatMap { scheduleItem ->
                     return@flatMap when (scheduleItem) {
-                        is LessonPlace -> listOf<ScheduleItemPacked>(LessonPlacePack(scheduleItem)) +
+                        is LessonPlace -> listOf<ScheduleItemPacked>(LessonTimePack(scheduleItem.time)) +
                                 scheduleItem.lessons.map {
                                     LessonPack(
                                         it,
-                                        LessonTime.fromLessonPlace(scheduleItem),
-                                        lessonTagProvider(it, date.dayOfWeek, scheduleItem.order),
+                                        scheduleItem.time,
+                                        lessonTagProvider(it, date.dayOfWeek, scheduleItem.time.order),
                                         lessonDeadlineProvider(it),
                                         dateFilter,
-                                        featuresSettings
+                                        featuresSettings,
+                                        date in it.dateFrom..it.dateTo
                                     )
                                 }
                         is LessonWindow -> listOf<ScheduleItemPacked>(LessonWindowPack(scheduleItem))

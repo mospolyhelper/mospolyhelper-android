@@ -1,10 +1,10 @@
 package com.mospolytech.mospolyhelper.data.account.auth.api
 
 import io.ktor.client.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 class AuthHerokuClient(
     private val client: HttpClient

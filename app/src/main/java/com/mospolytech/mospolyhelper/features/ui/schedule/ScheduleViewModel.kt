@@ -1,23 +1,22 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.component.KoinComponent
 import java.time.LocalDate
+import java.time.LocalTime
 
 
 class ScheduleViewModel(
@@ -28,33 +27,48 @@ class ScheduleViewModel(
     companion object {
         const val MessageChangeDate = "ChangeDate"
         const val MessageSetAdvancedSearchSchedule = "SetAdvancedSearchSchedule"
-        const val MessageAddScheduleId = "AddScheduleId"
     }
-
-    var isAdvancedSearch = false
-    private var firstLoading = true
-
-    val date = MutableStateFlow(LocalDate.now())
-    //val currentLessonOrder: MutableStateFlow<Pair<Lesson.CurrentLesson, Lesson.CurrentLesson>>
+    val date = MutableStateFlow<LocalDate>(LocalDate.now())
+    val currentLessonTimes: MutableStateFlow<Pair<List<LessonTime>, LocalTime>> =
+        MutableStateFlow(Pair(emptyList(), LocalTime.now()))
 
 
-    val savedIds: MutableStateFlow<Set<UserSchedule>>
+    private val _advancedSearchUser = MutableStateFlow<UserSchedule?>(null)
 
-    val showEndedLessons: MutableStateFlow<Boolean>
-    val showCurrentLessons: MutableStateFlow<Boolean>
-    val showNotStartedLessons: MutableStateFlow<Boolean>
-    val filterTypes: MutableStateFlow<Set<String>>
-    val showImportantLessons: MutableStateFlow<Boolean>
-    val showAverageLessons: MutableStateFlow<Boolean>
-    val showNotImportantLessons: MutableStateFlow<Boolean>
+    val savedUsers = useCase.getSavedUsers()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val user = useCase.getCurrentUser()
+        .combine(_advancedSearchUser) { user, advancedSearchUser ->
+            advancedSearchUser ?: user
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
+
+    private val originalSchedule = user.transform { value ->
+        emit(ResultState.Loading)
+        val q = useCase.getScheduleWithFeatures(value).map { Result2.success(it).toState() }
+        emit(q.first())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ResultState.Loading)
+
+    val allLessonTypes = originalSchedule.map {
+        (it as? ResultState.Ready)?.result?.getOrNull()?.schedule?.getAllTypes() ?: emptySet()
+    }.stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+
+    val filterTypes = MutableStateFlow<Set<String>>(emptySet())
+
+    val filteredSchedule = originalSchedule.combine(filterTypes) { state, filterTypes ->
+        state.onReady {
+            it.onSuccess {
+                Result2.success(
+                    it.copy(schedule = it.schedule?.filter(types = filterTypes))
+                ).toState()
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ResultState.Loading)
 
 
-
-    val filteredSchedule = MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
-
-    val originalSchedule =  MutableStateFlow<Result<ScheduleTagsDeadline>>(Result.loading())
-    val id: MutableStateFlow<UserSchedule?>
-    val showEmptyLessons: MutableStateFlow<Boolean>
+    val showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
 
     val onMessage: Event1<String> = Action1()
 
@@ -62,97 +76,40 @@ class ScheduleViewModel(
         subscribe(::handleMessage)
         launchTimer()
 
-        showEndedLessons = MutableStateFlow(useCase.getShowEndedLessons())
-        showCurrentLessons = MutableStateFlow(useCase.getShowCurrentLessons())
-        showNotStartedLessons = MutableStateFlow(useCase.getShowNotStartedLessons())
-        filterTypes = MutableStateFlow(useCase.getFilterTypes())
-        showImportantLessons = MutableStateFlow(PreferenceDefaults.ShowImportantLessons)
-        showAverageLessons = MutableStateFlow(PreferenceDefaults.ShowAverageLessons)
-        showNotImportantLessons = MutableStateFlow(PreferenceDefaults.ShowNotImportantLessons)
-
-        viewModelScope.async {
-            showEndedLessons.collect {
-                useCase.setShowEndedLessons(it)
-            }
-        }
-
-        viewModelScope.async {
-            showCurrentLessons.collect {
-                useCase.setShowCurrentLessons(it)
-            }
-        }
-
-        viewModelScope.async {
-            showNotStartedLessons.collect {
-                useCase.setShowNotStartedLessons(it)
-            }
-        }
-
-        viewModelScope.async(Dispatchers.IO) {
-            filterTypes.collect { filters ->
-                useCase.setFilterTypes(filters)
-                originalSchedule.value.onSuccess {
-                    filteredSchedule.value = Result.success(it.copy(schedule = it.schedule?.filter(types = filters)))
+        viewModelScope.launch {
+            originalSchedule.collect {
+                it.onReady {
+                    it.onSuccess {
+                        it.schedule?.let {
+                            filterTypes.value = filterTypes.value.intersect(it.getAllTypes())
+                        }
+                    }
                 }
             }
         }
 
-        savedIds = MutableStateFlow(
-            useCase.getSavedIds()
-        )
-
-        viewModelScope.async {
-            savedIds.collect {
-                useCase.setSavedIds(it)
+        viewModelScope.launch {
+            user.collect {
+                Log.d(TAG, "5" + it.toString())
             }
         }
 
-
-        id = MutableStateFlow(
-            useCase.getSelectedSavedId()
-        )
-
-        showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
-
-        viewModelScope.async {
-            id.collect {
-                isAdvancedSearch = false
-                useCase.setSelectedSavedId(it)
-                setUpSchedule(it, !firstLoading)
-                firstLoading = false
+        viewModelScope.launch {
+            lessonDateFilter.collect {
+                useCase.setLessonDateFilter(it)
             }
         }
 
-        viewModelScope.async {
+        viewModelScope.launch {
             showEmptyLessons.collect {
                 useCase.setShowEmptyLessons(it)
             }
         }
 
-        viewModelScope.async {
-            savedIds.value = useCase.getSavedIds()
-        }
-        viewModelScope.async {
-            originalSchedule.collect { result ->
-                result.onSuccess {
-                    filteredSchedule.value =
-                        Result.success(
-                            it.copy(
-                                schedule = it.schedule?.filter(types = filterTypes.value)
-                            )
-                        )
-                    val schedule = it.schedule
-                    if (schedule != null) {
-                        filterTypes.value = filterTypes.value.intersect(schedule.getAllTypes())
-                    }
-                }
-                result.onLoading {
-                    filteredSchedule.value = Result.loading()
-                }
+        viewModelScope.launch {
+            filteredSchedule.collect {
+                setCurrentTimes()
             }
-        }
-        if (savedIds.value.isEmpty() && id.value != null) {
-            id.value = null
         }
     }
 
@@ -163,77 +120,48 @@ class ScheduleViewModel(
                 date.value = message.content[0] as LocalDate
             }
             MessageSetAdvancedSearchSchedule -> {
-                isAdvancedSearch = true
-                val sch = message.content[0]
-                if (sch == null) {
-                    originalSchedule.value = Result.loading()
-                } else {
-                    originalSchedule.value = Result.success(ScheduleTagsDeadline(sch as Schedule, emptyList(), emptyMap()))
+                viewModelScope.launch {
+                    _advancedSearchUser.value = AdvancedSearchSchedule(
+                        message.content[0] as ScheduleFilters
+                    )
                 }
             }
-            MessageAddScheduleId -> {
-                val pair = message.content[0] as UserSchedule
-                savedIds.value += pair
-            }
         }
     }
 
-    fun updateSchedule() {
-        isAdvancedSearch = false
-        setUpSchedule(
-            id.value,
-            true
-        )
+    suspend fun setUser(user: UserSchedule?) {
+        _advancedSearchUser.value = null
+        useCase.setCurrentUser(user)
     }
 
-    fun removeId(user: UserSchedule) {
-        savedIds.value -= user
-        val currUser = id.value
-        if (currUser is StudentSchedule && user is StudentSchedule
-            && user.title.contains(currUser.title)
-        ) {
-            id.value = null
-        }
+    suspend fun updateSchedule() {
+        _advancedSearchUser.value = null
+        useCase.updateSchedule(user.value)
+    }
+
+    suspend fun removeUser(user: UserSchedule) {
+        useCase.removeSavedScheduleUser(user)
     }
 
     private fun launchTimer() {
-//        viewModelScope.async {
-//            while (isActive) {
-//                viewModelScope.async {
-//                    currentLessonOrder.value = Pair(
-//                        LessonTimeUtils.getOrder(LocalTime.now(), false),
-//                        LessonTimeUtils.getOrder(LocalTime.now(), true)
-//                    )
-//                }
-//                delay((60L - LocalTime.now().second) * 1000L)
-//            }
-//        }
-    }
-
-
-    private fun setUpSchedule(user: UserSchedule?, refresh: Boolean) {
-        viewModelScope.async {
-            this@ScheduleViewModel.originalSchedule.value = Result.loading()
-            useCase.getScheduleWithFeatures(
-                user,
-                refresh
-            ).collect {
-                this@ScheduleViewModel.originalSchedule.value = Result.success(it)
+        viewModelScope.launch {
+            while (isActive) {
+                setCurrentTimes()
+                delay((60L - LocalTime.now().second) * 1000L)
             }
         }
     }
 
-    fun goHome() {
-        date.value = LocalDate.now()
+    private fun setCurrentTimes() {
+        val times = (filteredSchedule.value as? ResultState.Ready)
+            ?.result?.getOrNull()?.schedule
+            ?.getLessons(LocalDate.now())?.map { it.time } ?: emptyList()
+        currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(LocalTime.now(), times), LocalTime.now())
     }
 
-    fun openLessonInfo(lesson: Lesson, date: LocalDate) {
-        send(
-            LessonInfoViewModel::class.java.simpleName,
-            LessonInfoViewModel.LessonInfo,
-            lesson,
-            date
-        )
+
+    fun setTodayDate() {
+        date.value = LocalDate.now()
     }
 }
 

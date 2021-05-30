@@ -1,21 +1,17 @@
 package com.mospolytech.mospolyhelper.data.core.local
 
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.mospolytech.mospolyhelper.data.core.model.DataVersion
 
-class DataVersionDataSource(
-    private val dataSource: SharedPreferencesDataSource
-) {
-    companion object {
-        private const val PREFIX = "__VERSION"
-    }
-    fun set(key: String, date: ZonedDateTime) {
-        dataSource.set(PREFIX + key, date.toInstant().toEpochMilli())
-    }
+@Dao
+abstract class DataVersionDataSource() {
 
-    fun get(key: String): ZonedDateTime {
-        val milliseconds = dataSource.get(PREFIX + key, Long.MIN_VALUE)
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.UTC)
-    }
+    @Query("SELECT * FROM DataVersion WHERE `key` = :key")
+    abstract fun getVersion(key: String): DataVersion
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun setVersion(version: DataVersion)
 }

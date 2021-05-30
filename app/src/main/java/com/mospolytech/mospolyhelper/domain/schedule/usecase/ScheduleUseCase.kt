@@ -1,21 +1,17 @@
 package com.mospolytech.mospolyhelper.domain.schedule.usecase
 
+import android.util.Log
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.data.utils.setAsJson
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.*
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
 
 data class ScheduleTagsDeadline(
     val schedule: Schedule?,
@@ -25,56 +21,67 @@ data class ScheduleTagsDeadline(
 
 class ScheduleUseCase(
     private val scheduleRepository: ScheduleRepository,
-    private val groupListRepository: GroupListRepository,
-    private val teacherListRepository: TeacherListRepository,
-    private val savedIdsRepository: SavedIdsRepository,
+    private val scheduleUsersRepository: ScheduleUsersRepository,
     private val tagRepository: LessonTagsRepository,
     private val deadlineRepository: DeadlinesRepository,
-    val preferences: PreferencesRepository
+    private val preferences: PreferencesRepository
 ) {
     fun getSchedule(
-        user: UserSchedule?,
-        refresh: Boolean
-    ) = scheduleRepository.getSchedule(user, refresh)
+        user: UserSchedule?
+    ) = scheduleRepository.getSchedule(user)
+
+    suspend fun updateSchedule(
+        user: UserSchedule?
+    ) = scheduleRepository.updateSchedule(user)
 
     fun getScheduleWithFeatures(
-        user: UserSchedule?,
-        refresh: Boolean
+        user: UserSchedule?
     ): Flow<ScheduleTagsDeadline> {
         return combine(
-            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user, refresh),
-            tagRepository.getAll(),
+            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user),
+            if (user is AdvancedSearchSchedule) flowOf(Result2.success(emptyList())) else tagRepository.getAll(),
             flowOf(mapOf<String, List<Deadline>>())
         ) { schedule, tags, deadlines ->
-            ScheduleTagsDeadline(schedule, (tags as Result2.Success).value, deadlines)
+            ScheduleTagsDeadline(schedule, tags.getOrThrow(), deadlines)
+        }.catch {
+            Log.e(TAG, "Flow exception", it)
         }
     }
 
-    suspend fun getIdSet(
-        messageBlock: (String) -> Unit = { }
-    ): Set<UserSchedule> {
-        val groupList = groupListRepository.getGroupList().map { StudentSchedule(it, it) } +
-                teacherListRepository.getTeacherList().map { TeacherSchedule(it.key, it.value) }.sortedBy { it.title + it.id }
-        if (groupList.isEmpty()) {
-            messageBlock(StringProvider.getString(StringId.GroupListWasntFounded))
+    fun getAllUsers(): Flow<List<UserSchedule>> =
+        scheduleUsersRepository.getScheduleUsers()
+            .catch { Log.e(TAG, "Flow exception", it) }
+
+
+    fun getSavedUsers() = scheduleUsersRepository.getSavedUsers()
+        .onEach {
+            if (it.isEmpty() && getCurrentUser().first() != null) {
+                setCurrentUser(null)
+            }
         }
-        return groupList.toSet()
+        .catch { Log.e(TAG, "Flow exception", it) }
+
+    suspend fun setSavedUsers(users: List<UserSchedule>) {
+        scheduleUsersRepository.setSavedUsers(users)
     }
 
-    fun getSavedIds(): Set<UserSchedule> {
-        return savedIdsRepository.getSavedIds().toSortedSet()
+    suspend fun addSavedScheduleUser(user: UserSchedule) {
+        scheduleUsersRepository.addSavedUser(user)
     }
 
-    fun setSavedIds(savedIds: Set<UserSchedule>) {
-        savedIdsRepository.setSavedIds(savedIds)
+    suspend fun removeSavedScheduleUser(user: UserSchedule) {
+        scheduleUsersRepository.removeSavedUser(user)
+        if (getCurrentUser().first() == user) {
+            setCurrentUser(null)
+        }
     }
 
-    fun getSelectedSavedId(): UserSchedule? {
-        return preferences.getFromJson(PreferenceKeys.ScheduleUser)
-    }
+    fun getCurrentUser() =
+        scheduleUsersRepository.getCurrentUser()
+            .catch { Log.e(TAG, "Flow exception", it) }
 
-    fun setSelectedSavedId(savedId: UserSchedule?) {
-        preferences.setAsJson(PreferenceKeys.ScheduleUser, savedId)
+    suspend fun setCurrentUser(user: UserSchedule?) {
+        scheduleUsersRepository.setCurrentUser(user)
     }
 
 
@@ -84,7 +91,6 @@ class ScheduleUseCase(
             PreferenceDefaults.ScheduleShowEmptyLessons
         )
     }
-
     fun setShowEmptyLessons(showEmptyLessons: Boolean) {
         return preferences.set(
             PreferenceKeys.ScheduleShowEmptyLessons,
@@ -92,62 +98,36 @@ class ScheduleUseCase(
         )
     }
 
-    fun getShowEndedLessons(): Boolean {
-        return preferences.get(
-            PreferenceKeys.ShowEndedLessons,
-            PreferenceDefaults.ShowEndedLessons
+    fun getLessonDateFilter(): LessonDateFilter {
+        return LessonDateFilter(
+            preferences.get(
+                PreferenceKeys.ShowEndedLessons,
+                PreferenceDefaults.ShowEndedLessons
+            ),
+            preferences.get(
+                PreferenceKeys.ShowCurrentLessons,
+                PreferenceDefaults.ShowCurrentLessons
+            ),
+            preferences.get(
+                PreferenceKeys.ShowNotStartedLessons,
+                PreferenceDefaults.ShowNotStartedLessons
+            )
         )
     }
-
-    fun setShowEndedLessons(showEndedLessons: Boolean) {
+    fun setLessonDateFilter(lessonDateFilter: LessonDateFilter) {
         preferences.set(
             PreferenceKeys.ShowEndedLessons,
-            showEndedLessons
+            lessonDateFilter.showEndedLessons
         )
-    }
-
-    fun getShowCurrentLessons(): Boolean {
-        return preferences.get(
-            PreferenceKeys.ShowCurrentLessons,
-            PreferenceDefaults.ShowCurrentLessons
-        )
-    }
-
-    fun setShowCurrentLessons(showCurrentLessons: Boolean) {
         preferences.set(
             PreferenceKeys.ShowCurrentLessons,
-            showCurrentLessons
+            lessonDateFilter.showCurrentLessons
         )
-    }
-
-    fun getShowNotStartedLessons(): Boolean {
-        return preferences.get(
-            PreferenceKeys.ShowNotStartedLessons,
-            PreferenceDefaults.ShowNotStartedLessons
-        )
-    }
-
-    fun setShowNotStartedLessons(showNotStartedLessons: Boolean) {
         preferences.set(
             PreferenceKeys.ShowNotStartedLessons,
-            showNotStartedLessons
+            lessonDateFilter.showNotStartedLessons
         )
     }
-
-    fun getFilterTypes(): Set<String> {
-        return preferences.get(
-            PreferenceKeys.FilterTypes,
-            PreferenceDefaults.FilterTypes
-        )
-    }
-
-    fun setFilterTypes(filterTypes: Set<String>) {
-        preferences.set(
-            PreferenceKeys.FilterTypes,
-            filterTypes
-        )
-    }
-
 
     fun getAllTags() =
         tagRepository.getAll()

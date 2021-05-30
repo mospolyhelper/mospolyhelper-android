@@ -13,7 +13,7 @@
   <color name="colorLevelOne">#121212</color>
   <color name="colorLevelTwo">#202124</color>
   <color name="colorLevelThree">#303136</color>
-  <color name="colorLevelFour">#3c3e44</color>
+  <color name="colorLevelFour">#41434A</color>
   <color name="colorLevelFive">#484a51</color>
   <color name="colorLevelSix">#6c6f7a</color>
 
@@ -21,7 +21,7 @@
   <!--  Common  -->
   <color name="layerZero">@color/colorLevelTwo</color>
   <color name="layerOne">@color/colorLevelThree</color>
-  <color name="layerOneActivated">@color/colorLevelFive</color>
+  <color name="layerOneActivated">@color/colorLevelFour</color>
   <color name="layerTwo">@color/colorLevelFive</color>
   <color name="layerTwoActivated">@color/colorLevelSix</color>
   <color name="iconColor">#BEBEBE</color>

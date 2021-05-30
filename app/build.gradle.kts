@@ -18,6 +18,12 @@ android {
         targetSdkVersion(30)
         versionCode = 4
         versionName = "0.3.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
+            }
+        }
+
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -25,18 +31,6 @@ android {
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        applicationVariants.all {
-            buildConfigField(
-                "String",
-                "URL_SCHEDULES_ALL",
-                "\"" + getProp("URL_SCHEDULES_ALL") + "\""
-            )
-            buildConfigField(
-                "String",
-                "URL_SCHEDULES_SESSION_ALL",
-                "\"" + getProp("URL_SCHEDULES_SESSION_ALL") + "\""
-            )
         }
     }
     compileOptions {
@@ -50,15 +44,6 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
-    }
-}
-
-fun getProp(key: String): Any {
-    val props = loadProperties(rootDir.absolutePath + "\\secrets.properties")
-    return if (props.containsKey(key)) {
-        props.getProperty(key)
-    } else {
-        ""
     }
 }
 
@@ -88,7 +73,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.124") {
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.125") {
         exclude(module = "unspecified")
     }
 

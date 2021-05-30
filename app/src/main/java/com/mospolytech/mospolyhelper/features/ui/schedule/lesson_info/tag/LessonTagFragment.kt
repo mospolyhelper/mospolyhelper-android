@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag
 import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -14,8 +13,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetLessonTagBinding
@@ -23,8 +20,10 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagException
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.ResultState
 import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
+import com.mospolytech.mospolyhelper.utils.onFailure
+import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -217,18 +216,16 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.tags.collect {
-                when (it) {
-                    is Result2.Success -> {
+                if (it is ResultState.Ready) {
+                    it.result.onSuccess {
                         switchViews(true)
-                        setTagList(it.value)
-                    }
-                    is Result2.Failure -> {
-                        val ex = it.exception
-                        if (ex is LessonTagException) {
-                            when (ex.resultMessage) {
-                                LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
-                                LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
-                                else -> viewBinding.textviewMessage.text = ex.resultMessage.toString()
+                        setTagList(it)
+                    }.onFailure {
+                        if (it is LessonTagException) {
+                            when (it.resultMessage) {
+                                LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = it.resultMessage.toString()
+                                LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = it.resultMessage.toString()
+                                else -> viewBinding.textviewMessage.text = it.resultMessage.toString()
                             }
                             viewBinding.textviewMessage.visibility = View.VISIBLE
                         } else {

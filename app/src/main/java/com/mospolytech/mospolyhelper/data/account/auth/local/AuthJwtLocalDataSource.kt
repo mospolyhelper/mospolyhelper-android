@@ -3,12 +3,7 @@ package com.mospolytech.mospolyhelper.data.account.auth.local
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import java.lang.reflect.TypeVariable
 
 class AuthJwtLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 

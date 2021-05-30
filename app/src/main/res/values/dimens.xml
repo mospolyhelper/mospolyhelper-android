@@ -35,11 +35,12 @@
     <dimen name="schedule_tab_indicator_height">44dp</dimen>
     <dimen name="schedule_tab_indicator_half_height">22dp</dimen>
 
-    <dimen name="schedule_day_height">69dp</dimen>
-    <dimen name="schedule_day_width">58dp</dimen>
+    <dimen name="schedule_day_height">65dp</dimen>
+    <dimen name="schedule_day_width">55dp</dimen>
+    <dimen name="schedule_day_height_with_padding">83dp</dimen>
 
-    <dimen name="schedule_day_indicator_height">4.2dp</dimen>
-    <dimen name="schedule_day_indicator_width">4.2dp</dimen>
-    <dimen name="schedule_day_indicator_margin_start">1.7dp</dimen>
-    <dimen name="schedule_day_indicator_margin_end">1.7dp</dimen>
+    <dimen name="schedule_day_indicator_height">3.7dp</dimen>
+    <dimen name="schedule_day_indicator_width">3.7dp</dimen>
+    <dimen name="schedule_day_indicator_margin_start">1.4dp</dimen>
+    <dimen name="schedule_day_indicator_margin_end">1.4dp</dimen>
 </resources>

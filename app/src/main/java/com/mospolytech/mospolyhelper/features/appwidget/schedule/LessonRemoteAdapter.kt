@@ -13,14 +13,19 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
+import androidx.room.Room
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.data.core.local.AppDatabase
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
+import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.TAG
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
@@ -47,7 +52,7 @@ class LessonRemoteAdapter(
 
         fun getTime(
             lesson: Lesson,
-            time: Pair<String, String>,
+            time: LessonTimeUtils.LessonTimesStr,
             order: Int,
             showOrder: Boolean,
             showStartTime: Boolean,
@@ -103,7 +108,7 @@ class LessonRemoteAdapter(
         }
 
         fun getAuditoriums(lesson: Lesson): CharSequence {
-            return lesson.auditoriums.joinToString { parseAuditoriumTitle(it.title) }
+            return lesson.auditoriums.joinToString { parseAuditoriumTitle(it.fullTitle) }
         }
 
         private fun parseAuditoriumTitle(title: String): String {
@@ -113,7 +118,7 @@ class LessonRemoteAdapter(
         }
     }
 
-    private var dailySchedule: List<Pair<Lesson, Pair<Int, Boolean>>>? = null
+    private var dailySchedule: List<Pair<Lesson, LessonTime>>? = null
 
     private var showStartTime = true
     private var showEndTime = false
@@ -133,8 +138,7 @@ class LessonRemoteAdapter(
     override fun getItemId(position: Int) = position.toLong()
 
     override fun onDataSetChanged() {
-        val localDataSource =
-            ScheduleLocalDataSource()
+        val localDataSource = ScheduleLocalDataSource(context.applicationContext)
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val user = try {
             Json.decodeFromString<UserSchedule>(prefs.getString(
@@ -145,13 +149,13 @@ class LessonRemoteAdapter(
             dailySchedule = null
             return
         }
-        val schedule = localDataSource.get(user)
+        val schedule = runBlocking { localDataSource.get(user) }
         if (schedule == null) {
             dailySchedule = null
             return
         }
         dailySchedule = schedule.getLessons(LocalDate.now()).flatMap { lessonPlace ->
-            lessonPlace.lessons.map { Pair(it, Pair(lessonPlace.order, lessonPlace.isEvening)) }
+            lessonPlace.lessons.map { Pair(it, lessonPlace.time) }
         }
         showOrder = prefs.getBoolean("ScheduleAppwidgetShowOrder", false)
         showStartTime = prefs.getBoolean("ScheduleAppwidgetShowStartTime", true)
@@ -172,6 +176,7 @@ class LessonRemoteAdapter(
             remoteView.setTextViewText(R.id.textview_lesson_title, "Расписание не найдено")
             remoteView.setViewVisibility(R.id.text_lesson_time, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_teachers, View.GONE)
+            remoteView.setViewVisibility(R.id.textview_groups, View.GONE)
             remoteView.setViewVisibility(R.id.text_lesson_auditoriums, View.GONE)
             return remoteView
         }
@@ -206,12 +211,12 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setTime(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+    private fun setTime(view: RemoteViews, lesson: Pair<Lesson, LessonTime>) {
         if (showStartTime || showEndTime || showOrder || showType) {
             val time = getTime(
                 lesson.first,
-                LessonTimeUtils.getTime(lesson.second.first, lesson.second.second),
-                lesson.second.first,
+                lesson.second.timeString,
+                lesson.second.order,
                 showOrder,
                 showStartTime,
                 showEndTime,
@@ -224,11 +229,11 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setTitle(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+    private fun setTitle(view: RemoteViews, lesson: Pair<Lesson, LessonTime>) {
         view.setTextViewText(R.id.textview_lesson_title, getTitle(lesson.first).toString())
     }
 
-    private fun setTeachers(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+    private fun setTeachers(view: RemoteViews, lesson: Pair<Lesson, LessonTime>) {
         if (showTeachers) {
             view.setTextViewText(R.id.text_lesson_teachers, getTeachers(lesson.first))
             view.setViewVisibility(R.id.text_lesson_teachers, View.VISIBLE)
@@ -237,7 +242,7 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setGroups(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+    private fun setGroups(view: RemoteViews, lesson: Pair<Lesson, LessonTime>) {
         if (showGroups) {
             view.setTextViewText(R.id.textview_groups, getGroups(lesson.first))
             view.setViewVisibility(R.id.textview_groups, View.VISIBLE)
@@ -246,7 +251,7 @@ class LessonRemoteAdapter(
         }
     }
 
-    private fun setAuditoriums(view: RemoteViews, lesson: Pair<Lesson, Pair<Int, Boolean>>) {
+    private fun setAuditoriums(view: RemoteViews, lesson: Pair<Lesson, LessonTime>) {
         if (showAuditoriums) {
             view.setTextViewText(R.id.text_lesson_auditoriums, getAuditoriums(lesson.first))
             view.setViewVisibility(R.id.text_lesson_auditoriums, View.VISIBLE)

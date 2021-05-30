@@ -1,26 +1,26 @@
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    android:background="@color/lessonInfoBackground"
-    android:scrollbars="none">
-
-    <LinearLayout
-        android:id="@+id/lesson_layout"
+    android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/lessonInfoBackground"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:background="@color/layerTwo">
+            android:layout_height="wrap_content">
 
-            <include
-                android:id="@+id/include"
-                layout="@layout/toolbar_lesson_info"
+            <View
+                android:id="@+id/view4"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:background="@drawable/shape_round_lower"
+                android:backgroundTint="@color/layerTwo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -29,32 +29,35 @@
                 android:id="@+id/text_schedule_type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="@font/ubuntu_medium"
                 android:textIsSelectable="true"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/textview_lesson_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Лекционное занятие" />
+                tools:text="Лекция" />
 
             <TextView
                 android:id="@+id/textview_lesson_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
-                android:fontFamily="@font/ubuntu_medium"
+                android:fontFamily="@font/ubuntu"
                 android:hyphenationFrequency="none"
+                android:lineSpacingMultiplier="@dimen/text_line_spacing"
                 android:textColor="@color/textColorPrimary"
                 android:textIsSelectable="true"
                 android:textSize="21sp"
-                android:transitionName="lessonInfoTitle"
                 app:layout_constraintBottom_toTopOf="@+id/text_lesson_dates"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Объектно-ориентированное программирование" />
 
@@ -62,228 +65,268 @@
                 android:id="@+id/text_lesson_dates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-                android:fontFamily="@font/ubuntu_medium"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/ubuntu_bold"
                 android:textAlignment="textEnd"
                 android:textColor="@color/lessonInfoText"
                 android:textIsSelectable="true"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/view4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="21 февраля - 14 июня" />
 
+            <LinearLayout
+                android:id="@+id/linearlayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view4">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_lesson_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ubuntu_bold"
+                        android:text="09:00 - 10:30"
+                        android:textColor="@color/lessonInfoText"
+                        android:textIsSelectable="true"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/ubuntu_medium"
+                        android:text="Время"
+                        android:textColor="@color/lessonInfoText"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp"
+                    android:background="@color/layerTwo" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_lesson_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ubuntu_bold"
+                        android:text="7 декабря 2021"
+                        android:textColor="@color/lessonInfoText"
+                        android:textIsSelectable="true"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/ubuntu_medium"
+                        android:text="Дата"
+                        android:textColor="@color/lessonInfoText"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textview_tags"
+                style="@style/TextFeaturesStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="28.0sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearlayout1"
+                tools:text="Всё сдано" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_add_label"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:text="@string/schedule_lesson_info_edit_tags"
+                android:textColor="#2894FE"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textview_tags" />
+
+            <TextView
+                android:id="@+id/text_lesson_auditoriums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/ubuntu_medium"
+                android:gravity="center_vertical"
+                android:text="@string/schedule_lesson_info_auditoriums"
+                android:textColor="@color/lessonInfoText"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_add_label" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_auditoriums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_lesson_auditoriums"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_lesson_info_object">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/text_lesson_teachers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/ubuntu_medium"
+                android:gravity="center_vertical"
+                android:text="@string/schedule_lesson_info_teachers"
+                android:textColor="@color/lessonInfoText"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerview_auditoriums" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_teachers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_lesson_teachers"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_lesson_info_object">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/ubuntu_medium"
+                android:gravity="center_vertical"
+                android:text="@string/schedule_lesson_info_groups"
+                android:textColor="@color/lessonInfoText"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerview_teachers" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_lesson_info_object" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:drawablePadding="@dimen/lesson_info_drawable_padding"
+                android:fontFamily="@font/ubuntu_medium"
+                android:text="Дедлайны (Скоро)"
+                android:textColor="@color/lessonInfoText"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerview_groups" />
+
+            <TextView
+                android:id="@+id/text_schedule_deadlines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:selectableItemBackground"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_round_arrow_forward_ios_24"
+                android:drawablePadding="@dimen/lesson_info_drawable_padding"
+                android:focusable="true"
+                android:fontFamily="sans-serif"
+                android:text="Всего 4 дедлайна:\n• 2 выполнено\n• до конца 1 менее недели\n• до конца 1 менее 3 дней"
+                android:textColor="@color/lessonInfoText"
+                android:textSize="17sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <LinearLayout
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="0.8"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/text_lesson_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/ubuntu_bold"
-                    android:text="09:00 - 10:30"
-                    android:textColor="@color/lessonInfoText"
-                    android:textIsSelectable="true"
-                    android:textSize="15sp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/ubuntu_medium"
-                    android:layout_marginTop="4dp"
-                    android:text="Время"
-                    android:textColor="@color/lessonInfoText"
-                    android:textSize="13sp" />
-            </LinearLayout>
-            <View
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:background="@color/layerTwo"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"/>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/text_lesson_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/ubuntu_bold"
-                    android:text="7 декабря 2021"
-                    android:textColor="@color/lessonInfoText"
-                    android:textIsSelectable="true"
-                    android:textSize="15sp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/ubuntu_medium"
-                    android:layout_marginTop="4dp"
-                    android:text="Дата"
-                    android:textColor="@color/lessonInfoText"
-                    android:textSize="13sp" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textview_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextFeaturesStyle"
-            android:textSize="28.0sp"
-            android:visibility="gone" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_add_label"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:text="Add label"
-            android:textColor="#2894FE"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerview_colors" />
-
-
-        <TextView
-            android:id="@+id/text_lesson_auditoriums"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:fontFamily="@font/ubuntu_bold"
-            android:gravity="center_vertical"
-            android:text="Аудитории"
-            android:textColor="@color/lessonInfoText"
-            android:textIsSelectable="true"
-            android:textSize="15sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_auditoriums"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
-            tools:itemCount="2"
-            tools:listitem="@layout/item_lesson_info_object" />
-
-
-        <TextView
-            android:id="@+id/text_lesson_teachers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:fontFamily="@font/ubuntu_medium"
-            android:gravity="center_vertical"
-            android:text="ПРЕПОДАВАТЕЛИ"
-            android:textColor="@color/lessonInfoText"
-            android:textIsSelectable="true"
-            android:textSize="13sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_teachers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
-            tools:itemCount="2"
-            tools:listitem="@layout/item_lesson_info_object" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:fontFamily="@font/ubuntu_medium"
-            android:gravity="center_vertical"
-            android:text="ГРУППЫ"
-            android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_groups"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_tag_title"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_lesson_info_object" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="@dimen/lesson_info_margin_vertical"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:drawableStart="@drawable/ic_lesson_deadlines"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
-            android:drawableTint="@color/iconColor"
-            android:fontFamily="@font/ubuntu_medium"
-            android:gravity="center_vertical"
-            android:text="Дедлайны (Скоро)"
-            android:textColor="@color/lessonInfoText"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/text_schedule_deadlines"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="@dimen/lesson_info_margin_horizontal"
-            android:layout_marginBottom="@dimen/lesson_info_margin_vertical"
-            android:background="?android:selectableItemBackground"
-            android:clickable="true"
-            android:drawableEnd="@drawable/ic_round_arrow_forward_ios_24"
-            android:drawablePadding="@dimen/lesson_info_drawable_padding"
-            android:focusable="true"
-            android:fontFamily="sans-serif"
-            android:text="Всего 4 дедлайна:\n• 2 выполнено\n• до конца 1 менее недели\n• до конца 1 менее 3 дней"
-            android:textColor="@color/lessonInfoText"
-            android:textSize="17sp"
-            android:visibility="gone" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+    <androidx.appcompat.widget.Toolbar
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back"
+        app:elevation="0dp" />
+</FrameLayout>

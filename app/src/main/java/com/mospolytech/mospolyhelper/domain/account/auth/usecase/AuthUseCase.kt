@@ -1,18 +1,18 @@
 package com.mospolytech.mospolyhelper.domain.account.auth.usecase
 
 import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
-import com.mospolytech.mospolyhelper.utils.Result
-import kotlinx.coroutines.flow.*
+import com.mospolytech.mospolyhelper.utils.Result2
+import kotlinx.coroutines.flow.onStart
 
 class AuthUseCase(
     private val repository: AuthRepository
 ) {
     suspend fun logIn(login: String, password: String) =
         repository.logIn(login, password).onStart {
-            emit(Result.loading())
+            emit(Result2.loading())
         }
 
-    suspend fun refresh() = repository.refresh().onStart { emit(Result.loading()) }
+    suspend fun refresh() = repository.refresh().onStart { emit(Result2.loading()) }
 
     fun logOut() {
         repository.logOut()

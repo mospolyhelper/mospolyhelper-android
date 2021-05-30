@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.domain.schedule.model
 import android.os.Parcelable
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
@@ -40,7 +40,7 @@ data class Lesson(
         get() = title.isNotEmpty() || type.isNotEmpty()
 
     val isImportant
-        get() = LessonTypeUtils.typeImportant(type)
+        get() = LessonTypeUtils.isTypeImportant(type)
 
     val groupIsEvening: Boolean
         get() = groups.firstOrNull()?.isEvening ?: false

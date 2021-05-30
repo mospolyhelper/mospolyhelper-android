@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.account.students.other
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class FilterEntity(val courses: List<String>, val form: List<String>, val type: List<String>): Parcelable {

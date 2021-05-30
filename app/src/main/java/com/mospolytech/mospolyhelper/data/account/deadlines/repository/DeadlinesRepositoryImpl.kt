@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.domain.account.deadlines.repository.DeadlinesRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class DeadlinesRepositoryImpl(
     }.flowOn(ioDispatcher)
 
 
-    override suspend fun getLocalInfo(): Flow<Result<List<Deadline>>>{
+    override suspend fun getLocalInfo(): Flow<Result2<List<Deadline>>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))
