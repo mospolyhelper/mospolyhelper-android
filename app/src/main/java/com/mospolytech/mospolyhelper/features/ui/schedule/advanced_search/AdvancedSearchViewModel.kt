@@ -1,25 +1,19 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search
 
 import androidx.databinding.ObservableArrayList
-import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
-import com.mospolytech.mospolyhelper.domain.schedule.repository.GroupListRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AdvancedSearchViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val scheduleRepository: ScheduleRepository,
-    private val groupListRepository: GroupListRepository
+    private val scheduleRepository: ScheduleRepository
 ) :
     ViewModelBase(
         mediator,
@@ -35,12 +29,6 @@ class AdvancedSearchViewModel(
     var lessonAuditoriums = emptyList<String>()
     var lessonTypes = emptyList<String>()
     var lessonGroups = emptyList<String>()
-
-    init {
-        viewModelScope.launch {
-            lessonGroups = groupListRepository.getGroupList()
-        }
-    }
 
     suspend fun getAdvancedSearchData(
         onProgressChanged: (Float) -> Unit

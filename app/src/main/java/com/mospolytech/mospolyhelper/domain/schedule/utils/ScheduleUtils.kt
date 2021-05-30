@@ -77,7 +77,7 @@ fun merge(lessonPlace1: LessonPlace, lessonPlace2: LessonPlace): LessonPlace {
         }
     }
 
-    return LessonPlace(newList, LessonTime(lessonPlace1.time.order, lessonPlace1.time.isEvening))
+    return LessonPlace(newList, lessonPlace1.time)
 }
 
 fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
@@ -86,7 +86,7 @@ fun combine(schedule1: Schedule, schedule2: Schedule): Schedule {
     val resList = schedule1.dailySchedules.map { it.toMutableList() }
     for (day in schedule2.dailySchedules.withIndex()) {
         for (lessonPlace in day.value) {
-            val index = resList[day.index].indexOfFirst { it.time.order == lessonPlace.time.order && it.time.isEvening == lessonPlace.time.isEvening }
+            val index = resList[day.index].indexOfFirst { it.time == lessonPlace.time }
             if (index == -1) {
                 resList[day.index] += lessonPlace
             } else {
@@ -137,7 +137,7 @@ fun Schedule.filter(
                         (filterAuditoriums || checkFilter(auditoriums!!, lesson.auditoriums.map { it.title }))
 
                 },
-                LessonTime(it.time.order, it.time.isEvening)
+                it.time
             )
         }
     }
@@ -167,7 +167,7 @@ fun Schedule.filter(
                             (filterAuditoriums || checkFilter(filters.auditoriums, lesson.auditoriums.map { it.title }))
 
                 },
-                LessonTime(it.time.order, it.time.isEvening)
+                it.time
             )
         }
     }
@@ -221,7 +221,7 @@ fun Iterable<Schedule?>.filter(
 
     for (day in tempList.withIndex()) {
         for (lessonPlace in day.value) {
-            val index = resList[day.index].indexOfFirst { it.time.order == lessonPlace.time.order && it.time.isEvening == lessonPlace.time.isEvening }
+            val index = resList[day.index].indexOfFirst { it.time == lessonPlace.time }
             if (index == -1) {
                 resList[day.index] += lessonPlace
             } else {
@@ -257,7 +257,7 @@ fun filterByDate(
 
                 return@filter true
             },
-            LessonTime(it.time.order, it.time.isEvening)
+            it.time
         )
     }.filter{ it.lessons.isNotEmpty() }
 }

@@ -48,7 +48,7 @@ class DailySchedulePack(
             return DailySchedulePack(
                 dailySchedule.flatMap { scheduleItem ->
                     return@flatMap when (scheduleItem) {
-                        is LessonPlace -> listOf<ScheduleItemPacked>(LessonPlacePack(scheduleItem)) +
+                        is LessonPlace -> listOf<ScheduleItemPacked>(LessonTimePack(scheduleItem.time)) +
                                 scheduleItem.lessons.map {
                                     LessonPack(
                                         it,

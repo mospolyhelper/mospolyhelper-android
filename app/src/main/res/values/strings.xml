@@ -13,6 +13,14 @@
     <string name="null_schedule">Расписание не найдено</string>
 
 
+    <string name="schedule_lesson_time">%1$s - %2$s</string>
+
+    <string name="schedule_info_break_title">Большой перерыв</string>
+    <string name="schedule_info_break_description">У тебя будет 40 минут, чтобы перекусить или отдохнуть</string>
+    <string name="schedule_info_window_title">Окно между занятиями</string>
+    <string name="schedule_info_window_description">У тебя будет %1$s, чтобы перекусить или отдохнуть</string>
+
+
     <!-- Schedule Lesson Info-->
     <string name="schedule_lesson_info_edit_tags">Изменить метки</string>
     <string name="schedule_lesson_info_auditoriums">Аудитории</string>

@@ -28,6 +28,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
+import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.collect
@@ -62,10 +63,9 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(viewBinding.include.toolbar)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        (activity as AppCompatActivity).supportActionBar!!.setHomeButtonEnabled(true)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        viewBinding.toolbar.setNavigationOnClickListener {
+            findNavController().safe { navigateUp() }
+        }
 
         viewModel.lessonTime = args.lessonTime
         viewModel.lesson = args.lesson
@@ -192,20 +192,28 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                 object : LessonInfoObject {
                     override val title = it.fullTitle
                     override val description = it.description
-                    override val avatar = R.drawable.ic_fluent_building_24_regular
-
+                    override val avatar = if (it.isOnline) {
+                        R.drawable.ic_fluent_desktop_24_regular
+                    } else {
+                        R.drawable.ic_fluent_building_24_regular
+                    }
+                    override val onClickListener: () -> Unit = {
+                        if (it.url.isNotEmpty()) {
+                            AlertDialog.Builder(context)
+                                .setTitle("Открыть ссылку?")
+                                .setMessage(it.url)
+                                .setPositiveButton("Да") { _, _ ->
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(it.url)
+                                        )
+                                    )
+                                }.setNegativeButton("Нет") { _, _ -> }.create().show()
+                        }
+                    }
                 }
-            }) {
-                viewModel.lesson.auditoriums.firstOrNull()?.let {
-                    if (it.url.isEmpty()) return@let
-                    AlertDialog.Builder(context)
-                        .setTitle("Открыть ссылку?")
-                        .setMessage(it.url)
-                        .setPositiveButton("Да") { _, _ ->
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.url)))
-                        }.setNegativeButton("Нет") { _, _ -> }.create().show()
-                }
-            }
+            })
         }
     }
 
@@ -249,7 +257,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                     override val title = it.name
                     override val description = ""
                     override val avatar = R.drawable.ic_fluent_hat_graduation_20_regular
-
+                    override val onClickListener: () -> Unit = { }
                 }
             })
         }
@@ -276,14 +284,15 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                     override val title = it.title
                     override val description = if (it.isEvening) "Вечерняя" else ""
                     override val avatar = R.drawable.ic_fluent_people_20_regular
+                    override val onClickListener: () -> Unit = {
+                        findNavController().safe {
+                            navigate(
+                                LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it.title)
+                            )
+                        }
+                    }
                 }
-            }) {
-                findNavController().safe {
-                    navigate(
-                        LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it)
-                    )
-                }
-            }
+            })
         }
     }
 

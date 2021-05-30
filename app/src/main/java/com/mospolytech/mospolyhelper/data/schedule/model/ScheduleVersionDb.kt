@@ -6,9 +6,9 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import java.time.ZonedDateTime
 
 @Entity
-data class ScheduleDb(
+data class ScheduleVersionDb(
     @PrimaryKey
     val userScheduleId: String,
-    val schedule: Schedule?,
     val downloadingDateTime: ZonedDateTime
 )
+

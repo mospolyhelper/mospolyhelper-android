@@ -37,41 +37,32 @@ val scheduleModule = module {
 
     // DataSources
     single { ScheduleRemoteDataSource(get(), get(), get(), get()) }
-    single { ScheduleLocalDataSource() }
-    single { GroupListLocalDataSource() }
+    single { ScheduleLocalDataSource(get()) }
     single { GroupListRemoteDataSource(get(), get()) }
-    single { TeacherListLocalDataSource() }
     single { TeacherListRemoteDataSource() }
     single { LessonTagsLocalDataSource(get()) }
-    single { SavedIdsLocalDataSource(get()) }
     single { GroupInfoRemoteDataSource(get()) }
     single { TeacherInfoRemoteDataSource(get()) }
     single { AuditoriumInfoRemoteDataSource(get()) }
 
     // Repositories
     single<ScheduleRepository> {
-        ScheduleRepositoryImpl(get(), get<AppDatabase>().getScheduleDao())
+        ScheduleRepositoryImpl(get(), get(), get<AppDatabase>().getScheduleDao())
     }
     single<LessonTagsRepository> {
         LessonTagsRepositoryImpl(get())
     }
-    single<GroupListRepository> {
-        GroupListRepositoryImpl(get(), get())
-    }
-    single<TeacherListRepository> {
-        TeacherListRepositoryImpl(get(), get())
-    }
-    single<SavedIdsRepository> {
-        SavedIdsRepositoryImpl(get())
+    single<ScheduleUsersRepository> {
+        ScheduleUsersRepositoryImpl(get(), get(), get())
     }
 
     // UseCases
-    single { ScheduleUseCase(get(), get(), get(), get(), get(), get(), get()) }
+    single { ScheduleUseCase(get(), get(), get(), get(), get()) }
 
     // ViewModels
-    viewModel<ScheduleViewModel> { ScheduleViewModel(get(), get()) }
-    viewModel<AdvancedSearchViewModel> { AdvancedSearchViewModel(get(), get(), get()) }
-    viewModel<LessonInfoViewModel> { LessonInfoViewModel(get(), get(), get()) }
+    viewModel { ScheduleViewModel(get(), get()) }
+    viewModel { AdvancedSearchViewModel(get(), get()) }
+    viewModel { LessonInfoViewModel(get(), get(), get()) }
     viewModel { LessonTagViewModel(get()) }
-    viewModel { ScheduleIdsViewModel(get(), get()) }
+    viewModel { ScheduleIdsViewModel(get()) }
 }

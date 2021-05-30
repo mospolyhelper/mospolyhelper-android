@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 
-class DateAdapter : RecyclerView.Adapter<DateAdapter.ViewHolder>() {
+class WeekAdapter : RecyclerView.Adapter<WeekAdapter.ViewHolder>() {
     companion object {
         fun getMondayOfWeek(date: LocalDate): LocalDate {
             return date.plusDays(-date.dayOfWeek.value + 1L)

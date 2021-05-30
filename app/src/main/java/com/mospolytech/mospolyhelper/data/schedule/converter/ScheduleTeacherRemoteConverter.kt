@@ -83,11 +83,16 @@ class ScheduleTeacherRemoteConverter {
             .select(">b")
             .map { parseEmoji(it.text()) }
 
+        val url = element
+            .select(">a")
+            .map { it.attr("href") }
+            .firstOrNull { it.isNotEmpty() } ?: ""
+
         val auditoriums = element
             .getElementsByClass("lesson__auditory")
             .mapIndexed { index, element ->
                 val em = if (index >= emoji.size) emoji.lastOrNull() ?: Pair("", "") else emoji[index]
-                Auditorium(element.text(), em.second, "", "")
+                Auditorium(element.text(), em.second, "", url)
             }
 
         val (dateFrom, dateTo) = parseDates(element)

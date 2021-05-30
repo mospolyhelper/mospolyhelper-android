@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.core.local
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -15,17 +14,8 @@ import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
     version = 2,
     entities = [
         Deadline::class,
-        LessonDb::class,
-        TeacherDb::class,
-        GroupDb::class,
-        AuditoriumDb::class,
-        LessonTeacherCrossRef::class,
-        LessonGroupCrossRef::class,
-        LessonAuditoriumCrossRef::class,
-        ScheduleDb::class,
-        DataVersion::class
-    ],
-            exportSchema = false
+        ScheduleVersionDb::class
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

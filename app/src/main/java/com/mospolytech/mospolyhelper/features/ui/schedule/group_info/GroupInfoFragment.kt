@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.AppBarLayout
@@ -25,8 +26,8 @@ class GroupInfoFragment : Fragment(R.layout.fragment_group_info) {
         super.onViewCreated(view, savedInstanceState)
 
         with(viewBinding) {
-            runBlocking {
-
+            lifecycleScope.launchWhenResumed {
+                // TODO: Remove
                 GroupInfoRemoteDataSource(GroupInfoApi(HttpClient())).get().onSuccess {
                     var isShow = true
                     var scrollRange = -1

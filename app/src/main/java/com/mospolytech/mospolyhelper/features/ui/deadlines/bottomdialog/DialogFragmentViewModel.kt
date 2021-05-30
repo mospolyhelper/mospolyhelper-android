@@ -65,9 +65,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         }
         setUpSchedule(user)
         return this@DialogFragmentViewModel.schedule.value?.let {
-            ScheduleRepositoryImpl.allDataFromSchedule(
-                it
-            ).lessonTitles
+            it.dailySchedules.flatMap { it.flatMap { it.lessons.map { it.title } } }.toSortedSet()
         }
     }
 

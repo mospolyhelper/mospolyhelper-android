@@ -38,20 +38,8 @@ class App : Application() {
         }
     }
 
-    fun fix() {
-        // TODO: Fix
-        try {
-            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
-            field.isAccessible = true
-            field.set(null, 102400 * 1024) //the 102400 is the new size added
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
-        fix()
         val modules = listOf(
             appModule,
             coreModule,

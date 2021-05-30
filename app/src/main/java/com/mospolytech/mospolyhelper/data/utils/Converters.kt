@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.data.utils
 
 import androidx.room.TypeConverter
+import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import kotlinx.serialization.decodeFromString
@@ -18,6 +19,20 @@ class Converters {
             Json.decodeFromString(json)
         } catch (e: Exception) {
             null
+        }
+    }
+
+    @TypeConverter
+    fun lessonToString(lesson: Lesson): String {
+        return Json.encodeToString(lesson)
+    }
+
+    @TypeConverter
+    fun stringToLesson(json: String): Lesson {
+        return try {
+            Json.decodeFromString(json)
+        } catch (e: Exception) {
+            Lesson.getEmpty()
         }
     }
 

@@ -9,6 +9,7 @@ private const val minCriticalWordLength = 5
 private const val vowels = "аеёиоуыэьъюя"
 private const val specChars = "ьъ"
 
+// TODO: Fix ьъ
 fun cutTitle(title: String): String {
     if (title.length <= minCriticalTitleLength) {
         return title

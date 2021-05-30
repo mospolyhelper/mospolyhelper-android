@@ -52,12 +52,12 @@ class ScheduleFullRemoteConverter {
         teacherCollection: MutableCollection<String>,
         groupCollection: MutableCollection<String>,
         auditoriumCollection: MutableCollection<String>
-    ): Schedule? {
+    ): Schedule {
         val tempList = List(7) { mutableMapOf<LessonTime, MutableList<Lesson>>() }
 
         val json0 = Json.parseToJsonElement(semester)
-        val contents0 = json0.array("contents") ?: return null
-        contents0.forEach {
+        val contents0 = json0.array("contents")
+        contents0?.forEach {
             parse(
                 it,
                 tempList,
@@ -69,8 +69,8 @@ class ScheduleFullRemoteConverter {
             )
         }
         val json1 = Json.parseToJsonElement(session)
-        val contents1 = json1.array("contents") ?: return null
-        contents1.forEach {
+        val contents1 = json1.array("contents")
+        contents1?.forEach {
             parse(
                 it,
                 tempList,
@@ -82,9 +82,10 @@ class ScheduleFullRemoteConverter {
             )
         }
 
-
-        val d = tempList.map { it.map { LessonPlace(it.value.apply { sort() }, it.key) }.sortedBy { it.time } }
-        return Schedule.from(d)
+        val dailySchedules = tempList
+            .map { it.map { LessonPlace(it.value.apply { sort() }, it.key) }
+            .sortedBy { it.time } }
+        return Schedule.from(dailySchedules)
     }
 
     private fun parse(
@@ -242,17 +243,18 @@ class ScheduleFullRemoteConverter {
             auditoriumCollection
         )
 
-        val type = json.string(LESSON_TYPE_KEY) ?: "".apply {
+        var type = json.string(LESSON_TYPE_KEY) ?: "".apply {
             Log.w(TAG, "LESSON_TYPE_KEY \"$LESSON_TYPE_KEY\" not found")
         }
+        type = LessonTypeUtils.fixType(
+            type,
+            title
+        )
         typeCollection.add(type)
 
         return Lesson(
             title,
-            LessonTypeUtils.fixType(
-                type,
-                title
-            ),
+            type,
             teachers,
             auditoriums,
             listOf(group),

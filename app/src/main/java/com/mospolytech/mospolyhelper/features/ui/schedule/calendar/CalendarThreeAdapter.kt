@@ -16,6 +16,7 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleCalendarThreeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.cutTitle
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
@@ -176,12 +177,12 @@ class CalendarThreeAdapter(
 
             if (dailySchedule.isNotEmpty()) {
                 var title: String
-                var time: Pair<String, String>
+                var time: LessonTimeUtils.LessonTimesStr
                 var lessonPlace = dailySchedule[0]
                 time = lessonPlace.time.timeString
                 spansAppend(
                     res,
-                    (lessonPlace.time.order + 1).toString() + ") " + time.first + "-" + time.second,
+                    (lessonPlace.time.order + 1).toString() + ") " + time.start + "-" + time.end,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                     TypefaceSpan("sans-serif-medium")
                 )
@@ -208,7 +209,7 @@ class CalendarThreeAdapter(
                     time = lessonPlace.time.timeString
                     spansAppend(
                         res,
-                        "\n" + (lessonPlace.time.order + 1) + ") " + time.first + "-" + time.second,
+                        "\n" + (lessonPlace.time.order + 1) + ") " + time.start + "-" + time.end,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
                         TypefaceSpan("sans-serif-medium")
                     )

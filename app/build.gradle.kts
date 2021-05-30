@@ -18,6 +18,12 @@ android {
         targetSdkVersion(30)
         versionCode = 4
         versionName = "0.3.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
+            }
+        }
+
 //        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -68,7 +74,7 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("com.budiyev.android:circular-progress-bar:1.2.2")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.124") {
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.125") {
         exclude(module = "unspecified")
     }
 

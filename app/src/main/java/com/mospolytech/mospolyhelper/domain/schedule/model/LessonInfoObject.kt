@@ -4,4 +4,5 @@ interface LessonInfoObject {
     val title: String
     val description: String
     val avatar: Int
+    val onClickListener: () -> Unit
 }

@@ -11,15 +11,14 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
 
 
 class LessonInfoObjectAdapter(
-    private val lessonInfoObjects: List<LessonInfoObject>,
-    private val onItemClick: (group: String) -> Unit = { }
+    private val lessonInfoObjects: List<LessonInfoObject>
 ) : RecyclerView.Adapter<LessonInfoObjectAdapter.LessonInfoObjectViewHolder>() {
 
     override fun getItemCount() = lessonInfoObjects.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonInfoObjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_lesson_info_object, parent, false)
-        return LessonInfoObjectViewHolder(view, onItemClick)
+        return LessonInfoObjectViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: LessonInfoObjectViewHolder, position: Int) {
@@ -27,13 +26,13 @@ class LessonInfoObjectAdapter(
     }
 
 
-    class LessonInfoObjectViewHolder(itemView: View, private val onItemClick: (group: String) -> Unit = { }) : RecyclerView.ViewHolder(itemView) {
+    class LessonInfoObjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val viewBinding by viewBinding(ItemLessonInfoObjectBinding::bind)
 
         fun bind(lessonInfoObject: LessonInfoObject) {
             with(viewBinding) {
                 viewBinding.root.setOnClickListener {
-                    onItemClick(lessonInfoObject.title)
+                    lessonInfoObject.onClickListener()
                 }
                 textviewObjectName.text = lessonInfoObject.title
                 textviewObjectDescription.text = lessonInfoObject.description

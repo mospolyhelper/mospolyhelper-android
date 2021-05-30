@@ -5,12 +5,15 @@ import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleFullRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
+import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
 import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import java.time.DayOfWeek
 
 
 class ScheduleRemoteDataSource(
@@ -66,11 +69,24 @@ class ScheduleRemoteDataSource(
         teacherCollection: MutableCollection<String>,
         groupCollection: MutableCollection<String>,
         auditoriumCollection: MutableCollection<String>,
-        onProgress: (Float) -> Unit = { }
-    ): Result2<Schedule?> = coroutineScope {
+        onProgress: (Float) -> Unit
+    ): Result2<Schedule> = coroutineScope {
         try {
-            val semesterDeferred = async { client.getSchedules(false, onProgress) }
-            val sessionDeferred = async { client.getSchedules(false, onProgress) }
+            var counter1 = 0f
+            var counter2 = 0f
+
+            val semesterDeferred = async {
+                client.getSchedules(false) {
+                    counter1 = it
+                    onProgress((counter1 + counter2) / 2)
+                }
+            }
+            val sessionDeferred = async {
+                client.getSchedules(true)  {
+                    counter2 = it
+                    onProgress((counter1 + counter2) / 2)
+                }
+            }
 
             Result2.success(
                 scheduleFullParser.parseSchedules(

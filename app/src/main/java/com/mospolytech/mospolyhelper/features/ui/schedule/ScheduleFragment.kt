@@ -11,12 +11,12 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
-import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,9 +30,7 @@ import com.mospolytech.mospolyhelper.databinding.FragmentScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
-import com.mospolytech.mospolyhelper.utils.dp
-import com.mospolytech.mospolyhelper.utils.onSuccess
-import com.mospolytech.mospolyhelper.utils.safe
+import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -40,7 +38,6 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.coroutines.CoroutineContext
 
 
 class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
@@ -67,9 +64,9 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
         viewBinding.textDayOfWeek.setOnClickListener {
             if (viewBinding.scrollIds.visibility == View.VISIBLE) {
-                viewBinding.scrollIds.visibility = View.GONE
+                viewBinding.scrollIds.gone()
             } else {
-                viewBinding.scrollIds.visibility = View.VISIBLE
+                viewBinding.scrollIds.show()
             }
         }
 
@@ -78,45 +75,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
     }
 
-    private fun onLessonClick(lessonTime: LessonTime, lesson: Lesson, date: LocalDate) {
-        findNavController().safe {
-            navigate(
-                ScheduleFragmentDirections
-                    .actionScheduleFragmentToLessonInfoFragment(
-                        lessonTime = lessonTime,
-                        lesson = lesson,
-                        date = date
-                    )
-            )
-        }
-    }
-
-    private fun setSchedule(
-        scheduleTagsDeadline: ScheduleTagsDeadline,
-        user: UserSchedule,
-        showEmptyLessons: Boolean,
-        dateFilter: LessonDateFilter
-    ) {
-        val oldAdapter = viewBinding.viewpager.adapter
-        val newAdapter = ScheduleAdapter(
-            scheduleTagsDeadline.schedule,
-            scheduleTagsDeadline.tags,
-            scheduleTagsDeadline.deadlines,
-            dateFilter,
-            showEmptyLessons,
-            LessonFeaturesSettings.fromUserSchedule(user)
-        )
-        //newAdapter.setHasStableIds(true)
-        val toPosition = if (oldAdapter is ScheduleAdapter) {
-            newAdapter.from.until(oldAdapter.from, ChronoUnit.DAYS) + viewBinding.viewpager.currentItem
-        } else {
-            newAdapter.from.until(LocalDate.now(), ChronoUnit.DAYS)
-        }
-        viewBinding.viewpager.adapter = newAdapter
-        newAdapter.lessonClick = ::onLessonClick
-        viewBinding.viewpager.adapter?.notifyDataSetChanged()
-        viewBinding.viewpager.setCurrentItem(toPosition.toInt(), false)
-    }
 
     @SuppressLint("RestrictedApi")
     private fun openMenu(context: Context?) {
@@ -141,6 +99,50 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         optionsMenu.show()
     }
 
+    private fun setSchedule(
+        scheduleTagsDeadline: ScheduleTagsDeadline,
+        user: UserSchedule?,
+        showEmptyLessons: Boolean,
+        dateFilter: LessonDateFilter
+    ) {
+        val oldAdapter = viewBinding.viewpagerSchedule.adapter
+        val newAdapter = ScheduleAdapter(
+            scheduleTagsDeadline.schedule,
+            scheduleTagsDeadline.tags,
+            scheduleTagsDeadline.deadlines,
+            dateFilter,
+            showEmptyLessons,
+            if (user != null)
+                LessonFeaturesSettings.fromUserSchedule(user)
+            else
+                LessonFeaturesSettings(true, true, true),
+            viewModel.currentLessonTimes.value.first
+        )
+        //newAdapter.setHasStableIds(true)
+        val toPosition = if (oldAdapter is ScheduleAdapter) {
+            newAdapter.from.until(oldAdapter.from, ChronoUnit.DAYS) + viewBinding.viewpagerSchedule.currentItem
+        } else {
+            newAdapter.from.until(LocalDate.now(), ChronoUnit.DAYS)
+        }
+        viewBinding.viewpagerSchedule.adapter = newAdapter
+        newAdapter.lessonClick = ::onLessonClick
+        viewBinding.viewpagerSchedule.adapter?.notifyDataSetChanged()
+        viewBinding.viewpagerSchedule.setCurrentItem(toPosition.toInt(), false)
+    }
+
+    private fun onLessonClick(lessonTime: LessonTime, lesson: Lesson, date: LocalDate) {
+        findNavController().safe {
+            navigate(
+                ScheduleFragmentDirections
+                    .actionScheduleFragmentToLessonInfoFragment(
+                        lessonTime = lessonTime,
+                        lesson = lesson,
+                        date = date
+                    )
+            )
+        }
+    }
+
     private fun setScheduleViews() {
         viewBinding.refreshSchedule.setProgressBackgroundColorSchemeResource(R.color.colorLevelThree)
         viewBinding.refreshSchedule.setColorSchemeResources(R.color.colorSecondary)
@@ -150,29 +152,29 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
 
-        viewBinding.viewpager.offscreenPageLimit = 2
-        viewBinding.viewpager.registerOnPageChangeCallback(TabLayoutOnPageChangeCallback())
+        viewBinding.viewpagerSchedule.offscreenPageLimit = 2
+        viewBinding.viewpagerSchedule.registerOnPageChangeCallback(TabLayoutOnPageChangeCallback())
 
         viewBinding.buttonHome.setOnClickListener { viewModel.setTodayDate() }
 
-        viewBinding.viewpagerDates.adapter = DateAdapter()
-        viewBinding.viewpagerDates.isUserInputEnabled = false
-        viewBinding.viewpagerDates.offscreenPageLimit = 2
+        viewBinding.viewpagerWeeks.adapter = WeekAdapter()
+        viewBinding.viewpagerWeeks.isUserInputEnabled = false
+        viewBinding.viewpagerWeeks.offscreenPageLimit = 2
     }
 
-    private fun setLoading(flag: Boolean) {
-        if (flag) {
+    private fun setLoading(isLoading: Boolean) {
+        if (isLoading) {
             if (!viewBinding.refreshSchedule.isRefreshing) {
-                viewBinding.progressbarSchedule.visibility = View.VISIBLE
+                viewBinding.progressbarSchedule.show()
             }
         } else {
-            viewBinding.progressbarSchedule.visibility = View.GONE
+            viewBinding.progressbarSchedule.gone()
         }
     }
 
     private fun createAddButton(): ImageButton {
         val addBtn = ImageButton(context)
-        addBtn.setImageDrawable(requireContext().getDrawable(R.drawable.ic_round_add_24))
+        addBtn.setImageDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.ic_round_add_24))
         addBtn.setOnClickListener {
             findNavController().safe { navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleIdsFragment()) }
         }
@@ -219,14 +221,18 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         )
         chip.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                viewModel.user.value = user
+                lifecycleScope.launchWhenResumed {
+                    viewModel.setUser(user)
+                }
             }
         }
-        chip.setOnCreateContextMenuListener { menu, v, menuInfo ->
+        chip.setOnCreateContextMenuListener { menu, _, _ ->
             menu.add("Удалить").setOnMenuItemClickListener {
                 if (it.title == "Удалить") {
                     viewBinding.chipgroupIds.removeView(chip)
-                    viewModel.removeId(user)
+                    lifecycleScope.launchWhenResumed {
+                        viewModel.removeUser(user)
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 false
@@ -235,163 +241,172 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         return chip
     }
 
+    private fun setUserTitle(user: UserSchedule?) {
+        viewBinding.textDayOfWeek.text = when (user) {
+            null -> getString(R.string.schedule_choose_user)
+            is StudentSchedule ->
+                getString(R.string.schedule_user_group, user.title)
+            else -> user.title
+        }
+    }
+
+    private fun setDate(date: LocalDate) {
+        val scheduleAdapter = viewBinding.viewpagerSchedule.adapter
+        if (scheduleAdapter is ScheduleAdapter) {
+            if (date != scheduleAdapter.from.plusDays(viewBinding.viewpagerSchedule.currentItem.toLong()))
+                viewBinding.viewpagerSchedule.setCurrentItem(
+                    scheduleAdapter.from.until(date, ChronoUnit.DAYS).toInt(),
+                    false
+                )
+        }
+
+        val weekAdapter = viewBinding.viewpagerWeeks.adapter
+        if (weekAdapter is WeekAdapter) {
+            val newPos = weekAdapter.getPositionFromDate(date)
+            if (viewBinding.viewpagerWeeks.currentItem != newPos) {
+                viewBinding.viewpagerWeeks.setCurrentItem(newPos, true)
+            }
+            weekAdapter.updateSelectedDay(date)
+            viewBinding.textviewDateAndWeek.text =
+                getString(R.string.schedule_date, date.format(dateFormatter), newPos + 1)
+        }
+    }
+
+    private fun setSavedUsers(users: List<UserSchedule>) {
+        var checkedChip: Chip? = null
+        // TODO: Inefficient
+        viewBinding.chipgroupIds.removeAllViews()
+        for (user in users) {
+            val chip = createChip(user)
+
+            var viewId: Int? = null
+            if (users.size == 1 || (viewModel.user.value == user)) {
+                viewId = View.generateViewId()
+                chip.id = viewId
+                checkedChip = chip
+            }
+            viewBinding.chipgroupIds.addView(chip)
+            if (viewId != null) {
+                viewBinding.chipgroupIds.check(viewId)
+            }
+        }
+        viewBinding.chipgroupIds.addView(createAddButton())
+        if (users.isEmpty()) {
+            viewBinding.chipgroupIds.addView(createAddUserText())
+        }
+        viewBinding.chipgroupIds.post {
+            if (checkedChip != null) {
+                (viewBinding.chipgroupIds.parent as HorizontalScrollView)
+                    .smoothScrollTo(
+                        checkedChip.left - checkedChip.paddingLeft,
+                        checkedChip.top
+                    )
+            }
+        }
+    }
+
+    private fun setSchedule(
+        schedule: ResultState<ScheduleTagsDeadline>,
+        showEmptyLessons: Boolean,
+        lessonDateFilter: LessonDateFilter
+    ) {
+        if (schedule is ResultState.Ready) {
+            schedule.result.onSuccess {
+                val user = viewModel.user.value
+                setSchedule(
+                    it,
+                    user,
+                    showEmptyLessons,
+                    lessonDateFilter
+                )
+                val weekAdapter = viewBinding.viewpagerWeeks.adapter
+                if (weekAdapter is WeekAdapter) {
+                    val newPos = weekAdapter.getPositionFromDate(viewModel.date.value)
+                    if (viewBinding.viewpagerWeeks.currentItem != newPos) {
+                        viewBinding.viewpagerWeeks.setCurrentItem(newPos, true)
+                    }
+                    viewBinding.textviewDateAndWeek.text = getString(
+                        R.string.schedule_date,
+                        dateFormatter.format(viewModel.date.value),
+                        newPos + 1)
+                }
+
+
+                with(viewBinding.viewpagerWeeks.adapter as WeekAdapter) {
+                    val scheduleAdapter = viewBinding.viewpagerSchedule.adapter as ScheduleAdapter
+                    update(
+                        scheduleAdapter.from,
+                        scheduleAdapter.from.plusDays(scheduleAdapter.itemCount.toLong()),
+                        viewModel.date.value,
+                        it.schedule
+                    )
+                }
+
+                viewBinding.refreshSchedule.isRefreshing = false
+            }
+        }
+        setLoading(schedule is ResultState.Loading)
+    }
+
+    private fun setCurrentLessonTimes(lessonTimes: List<LessonTime>) {
+        (viewBinding.viewpagerSchedule.adapter as? ScheduleAdapter)
+            ?.setCurrentLessonTimes(lessonTimes)
+
+    }
+
+    private fun updateAppWidget() {
+        val intent = Intent(context, ScheduleAppWidgetProvider::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        val ids = AppWidgetManager.getInstance(context)
+            .getAppWidgetIds(
+                ComponentName(
+                    requireContext(),
+                    ScheduleAppWidgetProvider::class.java
+                )
+            )
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        context?.sendBroadcast(intent)
+    }
+
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
             combine(
                 viewModel.filteredSchedule,
                 viewModel.showEmptyLessons,
-                viewModel.showEndedLessons,
-                viewModel.showCurrentLessons,
-                viewModel.showNotStartedLessons
-            ) { schedule,
-                showEmptyLessons,
-                showEndedLessons,
-                showCurrentLessons,
-                showNotStartedLessons ->
-                schedule.onSuccess {
-                    val user = viewModel.user.value
-                    if (user != null) {
-                        setSchedule(
-                            it,
-                            user,
-                            showEmptyLessons,
-                            LessonDateFilter(
-                                showEndedLessons,
-                                showCurrentLessons,
-                                showNotStartedLessons
-                            )
-                        )
-                        val dateAdapter = viewBinding.viewpagerDates.adapter
-                        if (dateAdapter is DateAdapter) {
-                            val newPos = dateAdapter.getPositionFromDate(viewModel.date.value)
-                            if (viewBinding.viewpagerDates.currentItem != newPos) {
-                                viewBinding.viewpagerDates.setCurrentItem(newPos, true)
-                            }
-                            viewBinding.textviewDateAndWeek.text = dateFormatter.format(viewModel.date.value) +
-                                    ", ${newPos + 1}-я неделя"
-                        }
-
-
-                        with(viewBinding.viewpagerDates.adapter as DateAdapter) {
-                            val scheduleAdapter = viewBinding.viewpager.adapter as ScheduleAdapter
-                            update(
-                                scheduleAdapter.from, scheduleAdapter.from.plusDays(
-                                    scheduleAdapter.itemCount.toLong()
-                                ),
-                                viewModel.date.value,
-                                it.schedule
-                            )
-                        }
-
-                        viewBinding.refreshSchedule.isRefreshing = false
-                    }
-                }
-                setLoading(schedule.isLoading)
-
+                viewModel.lessonDateFilter
+            ) { schedule, showEmptyLessons, lessonDateFilter ->
+                setSchedule(schedule, showEmptyLessons, lessonDateFilter)
             }.collect()
         }
         lifecycleScope.launchWhenResumed {
-            viewModel.savedIds.collect { s ->
-                val set = s.sortedWith(Comparator { o1, o2 ->
-                    return@Comparator o1.title.compareTo(o2.title)
-                })
-                var checkedChip: Chip? = null
-                // TODO: Inefficient
-                viewBinding.chipgroupIds.removeAllViews()
-                for (user in set) {
-                    val chip = createChip(user)
-
-                    var viewId: Int? = null
-                    if (set.size == 1 || (viewModel.user.value == user)) {
-                        viewId = View.generateViewId()
-                        chip.id = viewId
-                        checkedChip = chip
-                    }
-                    viewBinding.chipgroupIds.addView(chip)
-                    if (viewId != null) {
-                        viewBinding.chipgroupIds.check(viewId)
-                    }
-                }
-                viewBinding.chipgroupIds.addView(createAddButton())
-                if (set.isEmpty()) {
-                    viewBinding.chipgroupIds.addView(createAddUserText())
-                }
-                viewBinding.chipgroupIds.post {
-                    if (checkedChip != null) {
-                        (viewBinding.chipgroupIds.parent as HorizontalScrollView)
-                            .smoothScrollTo(
-                                checkedChip.left - checkedChip.paddingLeft,
-                                checkedChip.top
-                            )
-                    }
-                }
+            viewModel.savedUsers.collect {
+                setSavedUsers(it)
             }
         }
-
-
-
         lifecycleScope.launchWhenResumed {
             viewModel.date.collect {
-                val adapter = viewBinding.viewpager.adapter
-                if (adapter is ScheduleAdapter) {
-                    if (it != adapter.from.plusDays(viewBinding.viewpager.currentItem.toLong()))
-                        viewBinding.viewpager.setCurrentItem(
-                            adapter.from.until(it, ChronoUnit.DAYS).toInt(),
-                            false
-                        )
-                }
-                val dateAdapter = viewBinding.viewpagerDates.adapter
-                if (dateAdapter is DateAdapter) {
-                    val newPos = dateAdapter.getPositionFromDate(it)
-                    if (viewBinding.viewpagerDates.currentItem != newPos) {
-                        viewBinding.viewpagerDates.setCurrentItem(newPos, true)
-                    }
-                    dateAdapter.updateSelectedDay(it)
-                    viewBinding.textviewDateAndWeek.text =
-                        getString(R.string.schedule_date, dateFormatter.format(it), newPos + 1)
-                }
+                setDate(it)
             }
         }
-
+        lifecycleScope.launchWhenResumed {
+            viewModel.currentLessonTimes.collect {
+                setCurrentLessonTimes(it.first)
+            }
+        }
         lifecycleScope.launchWhenResumed {
             viewModel.user.collect {
-                viewBinding.textDayOfWeek.text = when (it) {
-                    null -> getString(R.string.schedule_choose_user)
-                    is StudentSchedule ->
-                        getString(R.string.schedule_user_group, it.title)
-                    else -> it.title
-                }
+                setUserTitle(it)
             }
         }
-
         lifecycleScope.launch {
             viewModel.user.collect {
-                if (it is AdvancedSearchSchedule) {
-                    return@collect
+                if (it !is AdvancedSearchSchedule) {
+                    updateAppWidget()
                 }
-                val intent = Intent(context, ScheduleAppWidgetProvider::class.java)
-                intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-                // since it seems the onUpdate() is only fired on that:
-                // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-                // since it seems the onUpdate() is only fired on that:
-                val ids = AppWidgetManager.getInstance(context)
-                    .getAppWidgetIds(
-                        ComponentName(
-                            requireContext(),
-                            ScheduleAppWidgetProvider::class.java
-                        )
-                    )
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-                context?.sendBroadcast(intent)
             }
         }
-
-//        lifecycleScope.launchWhenResumed {
-//            viewModel.currentLessonOrder.collect {
-//                (viewBinding.viewpager.adapter as? ScheduleAdapter)?.updateCurrentLesson(it)
-//            }
-//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -426,14 +441,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         return true
     }
 
-    override fun onStart() {
-        super.onStart()
-        setHasOptionsMenu(true)
-        requireActivity().invalidateOptionsMenu()
-    }
-
-    private inner class TabLayoutOnPageChangeCallback(
-    ) : OnPageChangeCallback() {
+    private inner class TabLayoutOnPageChangeCallback : OnPageChangeCallback() {
         private var previousScrollState = 0
         private var scrollState = 0
 
@@ -461,7 +469,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
             val dayOffset = if (positionOffset < 0.5) 0L else 1L
             val date =
-                (viewBinding.viewpager.adapter as ScheduleAdapter).from.plusDays(position + dayOffset)
+                (viewBinding.viewpagerSchedule.adapter as ScheduleAdapter).from.plusDays(position + dayOffset)
             if (updateText) {
                 if (LocalDate.now() == date) {
                     viewBinding.buttonHome.hide()
@@ -473,7 +481,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
         override fun onPageSelected(position: Int) {
             viewModel.date.value =
-                (viewBinding.viewpager.adapter as ScheduleAdapter).from.plusDays(position.toLong())
+                (viewBinding.viewpagerSchedule.adapter as ScheduleAdapter).from.plusDays(position.toLong())
         }
 
         fun reset() {

@@ -2,13 +2,11 @@ package com.mospolytech.mospolyhelper.features.ui.schedule
 
 import android.content.res.ColorStateList
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.text.HtmlCompat
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -19,14 +17,15 @@ import com.mospolytech.mospolyhelper.databinding.ItemLessonTimeBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
+import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPlacePack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonTimePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonWindowPack
-import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.setSafeOnClickListener
+import com.mospolytech.mospolyhelper.utils.*
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
@@ -34,7 +33,6 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     companion object {
         const val VIEW_TYPE_LESSON = 0
         const val VIEW_TYPE_LESSON_EMPTY = 1
@@ -53,21 +51,34 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             showAuditoriums = false
         )
     )
+    private var currentTimes: List<LessonTime> = emptyList()
+    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder> = WeakMutableSet()
 
 
     var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
 
     override fun getItemCount() = dailySchedule.lessons.size
 
-    fun submitList(dailySchedule: DailySchedulePack) {
+    fun submitList(dailySchedule: DailySchedulePack, currentTimes: List<LessonTime>) {
         this.dailySchedule = dailySchedule
+        this.currentTimes = currentTimes
         notifyDataSetChanged()
+    }
+
+    fun setCurrentLessonTimes(currentTimes: List<LessonTime>) {
+        this.currentTimes = currentTimes
+        for (holder in activeViewHolders) {
+            if (holder is ViewHolderTime) {
+                val lessonTimePack = dailySchedule.lessons[holder.bindingAdapterPosition] as LessonTimePack
+                holder.setTime(lessonTimePack, lessonTimePack.time in currentTimes)
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (val scheduleItem = dailySchedule.lessons[position]) {
             is LessonWindowPack -> VIEW_TYPE_INFO
-            is LessonPlacePack -> VIEW_TYPE_TIME
+            is LessonTimePack -> VIEW_TYPE_TIME
             is LessonPack ->
                 if (scheduleItem.lesson.isEmpty) VIEW_TYPE_LESSON_EMPTY else VIEW_TYPE_LESSON
             else -> VIEW_TYPE_LESSON_EMPTY
@@ -97,9 +108,12 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        activeViewHolders.add(holder)
         when (holder) {
-            is ViewHolderTime ->
-                holder.bind(dailySchedule.lessons[position] as LessonPlacePack)
+            is ViewHolderTime -> {
+                val lessonTimePack = dailySchedule.lessons[position] as LessonTimePack
+                holder.bind(lessonTimePack, lessonTimePack.time in currentTimes)
+            }
             is ViewHolderLesson ->
                 holder.bind(
                     dailySchedule.lessons[position] as LessonPack
@@ -111,10 +125,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class ViewHolderLesson(
-        val view: View
-    ) : RecyclerView.ViewHolder(view) {
-        private val disabledColor = view.context.getColor(R.color.textSecondaryDisabled)
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        activeViewHolders.remove(holder)
+    }
+
+    class ViewHolderLesson(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonBinding::bind)
 
         fun bind(
@@ -178,11 +193,11 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private fun setLessonType(lesson: Lesson, enabled: Boolean) {
             val colorType = if (enabled) {
                 (if (lesson.isImportant)
-                    view.context.getColor(R.color.lessonTypeImportant)
+                    itemView.context.getColor(R.color.lessonTypeImportant)
                 else
-                    view.context.getColor(R.color.lessonTypeNotImportant))
+                    itemView.context.getColor(R.color.lessonTypeNotImportant))
             } else {
-                disabledColor
+                itemView.context.getColor(R.color.textSecondaryDisabled)
             }
             val colorTextType = if (enabled) {
                 (if (lesson.isImportant)
@@ -212,46 +227,49 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private fun getDuration(lesson: Lesson): String {
             val expectedValueOfDaysInMonth = 30.44f
 
-            val dayDuration = (lesson.dateFrom.until(lesson.dateTo, ChronoUnit.DAYS) + 1)
+            val days = (lesson.dateFrom.until(lesson.dateTo, ChronoUnit.DAYS) + 1)
+            val months = days / expectedValueOfDaysInMonth
 
-            val monthDuration = dayDuration / expectedValueOfDaysInMonth
-
-            val monthDurationRounded: Float
-
-            val floorDuration0 = floor(monthDuration)
+            val floorDuration0 = floor(months)
             val floorDuration1 = floorDuration0 + 0.5f
             val floorDuration2 = floorDuration0 + 1f
 
-            val decimalPlaces: Int
-            monthDurationRounded = when {
-                (monthDuration - floorDuration0) < abs(monthDuration - floorDuration1) -> {
-                    decimalPlaces = 0
+            val decimalsAfterDot: Int
+            // Reason of this - it's supposed that for student it's better to
+            // overestimate own time than underestimate own one.
+            // That why we round down months in such way
+            val monthDurationRounded = when {
+                // x.0 until x.5 become x
+                (months - floorDuration0) < abs(months - floorDuration1) -> {
+                    decimalsAfterDot = 0
                     floorDuration0
                 }
-                abs(monthDuration - floorDuration1) < abs(floorDuration2 - monthDuration) -> {
-                    decimalPlaces = 1
+                // x.5 until x + 1 become x.5
+                abs(months - floorDuration1) < abs(floorDuration2 - months) -> {
+                    decimalsAfterDot = 1
                     floorDuration1
                 }
+                // else become x.5
                 else -> {
-                    decimalPlaces = 0
+                    decimalsAfterDot = 0
                     floorDuration2
                 }
             }
 
             return if (monthDurationRounded == 0f) {
-                if (dayDuration == 1L) {
-                    dateFormatter.format(lesson.dateFrom)
+                if (days == 1L) {
+                    lesson.dateFrom.format(dateFormatter)
                 } else {
-                    "$dayDuration ${getEnding(dayDuration)}"
+                    "$days ${getDaysText(days)}"
                 }
             } else if (monthDurationRounded < 1f) {
-                (dayDuration / 7f).roundToInt().toString() + " нед."
+                (days / 7f).roundToInt().toString() + " нед."
             } else {
-                "%.${decimalPlaces}f мес.".format(monthDurationRounded)
+                "%.${decimalsAfterDot}f мес.".format(monthDurationRounded)
             }
         }
 
-        private fun getEnding(days: Long): String {
+        private fun getDaysText(days: Long): String {
             // *1 день .. *2, *3, *4 дня .. *5, *6, *7, *8, *9, *0 дней .. искл. - 11 - 14
             val lastNumberOfDays = days % 10L
             return when {
@@ -271,11 +289,20 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             if (!featuresSettings.showAuditoriums || lesson.auditoriums.isEmpty()) {
                 viewBinding.textLessonAuditoriums.visibility = View.GONE
             } else {
-                viewBinding.textLessonAuditoriums.visibility = View.VISIBLE
+                val iconRes = if (lesson.auditoriums.any { it.isOnline }) {
+                    R.drawable.ic_fluent_desktop_20_regular
+                } else {
+                    R.drawable.ic_fluent_location_20_regular
+                }
+                viewBinding.textLessonAuditoriums
+                    .setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        iconRes, 0, 0, 0
+                    )
                 viewBinding.textLessonAuditoriums.text =
                     lesson.auditoriums.joinToString(separator = ", ") {
                         it.fullTitle
                     }
+                viewBinding.textLessonAuditoriums.visibility = View.VISIBLE
             }
         }
 
@@ -303,7 +330,6 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             featuresSettings: LessonFeaturesSettings,
             enabled: Boolean
         ) {
-
             val groupsText = Group.getShort(lesson.groups)
 
             if (!featuresSettings.showGroups || groupsText.isEmpty()) {
@@ -314,17 +340,54 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 viewBinding.textLessonGroups.visibility = View.VISIBLE
             }
         }
-
     }
 
     class ViewHolderTime(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonTimeBinding::bind)
 
-        fun bind(lessonPlacePack: LessonPlacePack) {
-            setTime(lessonPlacePack.lessonPlace.time)
+        fun bind(lessonTimePack: LessonTimePack, isCurrent: Boolean) {
+            setTime(lessonTimePack, isCurrent)
         }
 
-        private fun setTime(time: LessonTime) {
+        fun setTime(lessonTimePack: LessonTimePack, isCurrent: Boolean) {
+            if (isCurrent) {
+                setCurrentTime(lessonTimePack.time)
+            } else {
+                setLessonTime(lessonTimePack.time)
+            }
+        }
+
+        private fun setCurrentTime(time: LessonTime) {
+            val (timeStart, timeEnd) = time.timeString
+            val totalMinutes = LocalTime.now().until(
+                time.localTime.start, ChronoUnit.MINUTES
+            )
+            val formattedTime = getTimeText(abs(totalMinutes))
+            val resultTime = when {
+                totalMinutes > 0L -> "Начало в $timeStart - через $formattedTime"
+                totalMinutes == 0L -> "До начала $formattedTime"
+                else -> "Идёт $formattedTime, конец в $timeEnd"
+            }
+            viewBinding.textLessonTime.text = resultTime
+            viewBinding.textLessonTime.setTextColor(0xffFF7200.toInt())
+            if (totalMinutes > 0L) {
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    viewBinding.textLessonTime,
+                    R.drawable.ic_fluent_alert_20_regular, 0, 0, 0
+                )
+            } else {
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    viewBinding.textLessonTime,
+                    R.drawable.ic_fluent_alert_20_filled, 0, 0, 0
+                )
+            }
+            TextViewCompat.setCompoundDrawableTintList(
+                viewBinding.textLessonTime,
+                ColorStateList.valueOf(0xffFF7200.toInt())
+            )
+        }
+
+        private fun setLessonTime(time: LessonTime) {
             val orderColor = when (time.order) {
                 0 -> R.color.lessonOrder1
                 1 -> R.color.lessonOrder2
@@ -334,20 +397,48 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 5 -> R.color.lessonOrder6
                 else -> R.color.lessonOrder7
             }
-
+            TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                viewBinding.textLessonTime,
+                R.drawable.ring, 0, 0, 0
+            )
             TextViewCompat.setCompoundDrawableTintList(
                 viewBinding.textLessonTime,
                 ColorStateList.valueOf(itemView.context.getColor(orderColor))
             )
             val (timeStart, timeEnd) = time.timeString
-            viewBinding.textLessonTime.text =
-                "$timeStart - $timeEnd" //+ ", ${lessonPlace.order + 1}-я пара"
+            viewBinding.textLessonTime.text = itemView.context.getString(
+                R.string.schedule_lesson_time,
+                timeStart,
+                timeEnd
+            )
+            viewBinding.textLessonTime.setTextColor(0xff9E9EA6.toInt())
+        }
+
+        private fun getTimeText(totalMinutes: Long): String {
+            val resTime = StringBuilder()
+            val windowTimeHours = totalMinutes / 60L
+            val windowTimeMinutes = totalMinutes % 60
+            if (windowTimeHours != 0L) {
+                resTime.append("$windowTimeHours ч.")
+            }
+            if (windowTimeMinutes != 0L) {
+                if (windowTimeHours != 0L) {
+                    resTime.append(" ")
+                }
+                resTime.append("$windowTimeMinutes мин.")
+            }
+
+            if (totalMinutes == 0L) {
+                resTime.append("менее минуты")
+            }
+
+            return resTime.toString()
         }
     }
 
     class ViewHolderEmptyLesson(view: View) : RecyclerView.ViewHolder(view)
 
-    class ViewHolderInfo(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolderInfo(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemLessonInfoBinding::bind)
 
         fun bind(lessonWindow: LessonWindowPack) {
@@ -361,91 +452,59 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             prevLesson: LessonTime,
             nextLesson: LessonTime
         ) {
-            val builderTitle = SpannableStringBuilder()
-            var info: String
+            val title: String
+            val info: String
             val iconId: Int
 
             if (prevLesson.order == 2 && nextLesson.order - prevLesson.order == 1) {
-                builderTitle.append("Большой перерыв")
-//                builderTitle.appendAny(", ${prevLesson.time.second} - ${nextLesson.time.first}",
-//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                    RelativeSizeSpan(0.8f),
-//                    ForegroundColorSpan(view.context.getColor(R.color.textSecondary)))
-
-                info = "У тебя будет 40 минут, чтобы перекусить или отдохнуть"
+                title = itemView.context.getString(R.string.schedule_info_break_title)
+                info = itemView.context.getString(R.string.schedule_info_break_description)
                 iconId = R.drawable.ic_fluent_drink_coffee_20_regular
             } else {
-                val totalMinutes = prevLesson.localTime.second.until(
-                    nextLesson.localTime.first, ChronoUnit.MINUTES
+                val totalMinutes = prevLesson.localTime.end.until(
+                    nextLesson.localTime.start, ChronoUnit.MINUTES
                 )
-                val windowTimeHours = totalMinutes / 60L
-                val windowTimeMinutes = totalMinutes % 60
-                // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14
-                val lastNumberOfHours = windowTimeHours % 10
-                val endingHours = when {
-                    windowTimeHours in 11L..14L -> "ов"
-                    lastNumberOfHours == 1L -> ""
-                    lastNumberOfHours in 2L..4L -> "а"
-                    else -> "ов"
-                }
-                builderTitle.append("Окно между занятиями")
-//                builderTitle.appendAny(", ${prevLesson.time.second} - ${nextLesson.time.first}",
-//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-//                    RelativeSizeSpan(0.8f),
-//                    ForegroundColorSpan(view.context.getColor(R.color.textSecondary)))
-                info = "У тебя будет $windowTimeHours час$endingHours"
-                if (windowTimeMinutes != 0L) {
-                    // *1 минута .. *2, *3, *4 минуты .. *5, *6, *7, *8, *9, *0 минут .. искл. - 11 - 14
-                    val lastNumberOfMinutes = windowTimeMinutes % 10
-                    val endingMinutes = when {
-                        windowTimeMinutes in 11L..14L -> ""
-                        lastNumberOfMinutes == 1L -> "а"
-                        lastNumberOfMinutes in 2L..4L -> "ы"
-                        else -> ""
-                    }
-                    info += " $windowTimeMinutes минут$endingMinutes"
-                }
-                info += ", чтобы перекусить или отдохнуть"
+                title = itemView.context.getString(R.string.schedule_info_window_title)
+                info = itemView.context.getString(
+                    R.string.schedule_info_window_description,
+                    getTimeText(totalMinutes)
+                )
                 iconId = when {
                     totalMinutes < 180 -> R.drawable.ic_fluent_food_pizza_20_regular
-                    totalMinutes < 270 -> R.drawable.ic_fluent_games_20_regular
+                    totalMinutes < 270 -> R.drawable.ic_fluent2_games_20_regular
                     else -> R.drawable.ic_fluent_book_20_regular
                 }
             }
-            //viewBinding.imageviewInfo.setImageResource(iconId)
             viewBinding.textTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(iconId, 0, 0, 0)
-            viewBinding.textTitle.text = builderTitle
+            viewBinding.textTitle.text = title
             viewBinding.textInfo.text = info
         }
-    }
-}
 
-fun getTime(totalMinutes: Long, isGenitive: Boolean): String {
-    val timeLeft = StringBuilder()
-    val windowTimeHours = totalMinutes / 60L
-    val windowTimeMinutes = totalMinutes % 60
-    if (windowTimeHours != 0L) {
-        timeLeft.append("$windowTimeHours ч.")
-    }
-    if (windowTimeMinutes != 0L) {
-        if (windowTimeHours != 0L) {
-            timeLeft.append(" ")
+        private fun getTimeText(totalMinutes: Long): String {
+            val windowTimeHours = totalMinutes / 60L
+            val windowTimeMinutes = totalMinutes % 60
+            // *1 час .. *2, *3, *4 часа .. *5, *6, *7, *8, *9, *0 часов .. искл. - 11 - 14
+            val lastNumberOfHours = windowTimeHours % 10
+            val endingHours = when {
+                windowTimeHours in 11L..14L -> "ов"
+                lastNumberOfHours == 1L -> ""
+                lastNumberOfHours in 2L..4L -> "а"
+                else -> "ов"
+            }
+            var resTime = "$windowTimeHours час$endingHours"
+            if (windowTimeMinutes != 0L) {
+                // *1 минута .. *2, *3, *4 минуты .. *5, *6, *7, *8, *9, *0 минут .. искл. - 11 - 14
+                val lastNumberOfMinutes = windowTimeMinutes % 10
+                val endingMinutes = when {
+                    windowTimeMinutes in 11L..14L -> ""
+                    lastNumberOfMinutes == 1L -> "а"
+                    lastNumberOfMinutes in 2L..4L -> "ы"
+                    else -> ""
+                }
+                resTime += " $windowTimeMinutes минут$endingMinutes"
+            }
+
+            return resTime
         }
-        timeLeft.append("$windowTimeMinutes мин.")
-    }
-
-    if (windowTimeHours == 0L && windowTimeMinutes == 0L) {
-        timeLeft.append("менее минуты")
-    }
-
-    return timeLeft.toString()
-}
-
-private fun SpannableStringBuilder.appendAny(text: String, flags: Int, vararg spans: Any) {
-    val start = length
-    append(text)
-    val length = length
-    for (span in spans) {
-        setSpan(span, start, length, flags)
     }
 }

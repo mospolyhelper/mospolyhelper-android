@@ -40,7 +40,7 @@ data class Lesson(
         get() = title.isNotEmpty() || type.isNotEmpty()
 
     val isImportant
-        get() = LessonTypeUtils.typeImportant(type)
+        get() = LessonTypeUtils.isTypeImportant(type)
 
     val groupIsEvening: Boolean
         get() = groups.firstOrNull()?.isEvening ?: false
