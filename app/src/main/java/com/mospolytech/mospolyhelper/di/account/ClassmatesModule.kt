@@ -17,5 +17,5 @@ val classmatesModule = module {
     single { ClassmatesLocalDataSource(get()) }
     single<ClassmatesRepository> { ClassmatesRepositoryImpl(get(), get(), get()) }
     single { ClassmatesUseCase(get()) }
-    viewModel { ClassmatesViewModel(get(), get(), get()) }
+    viewModel { ClassmatesViewModel(get(), get()) }
 }

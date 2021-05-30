@@ -17,5 +17,5 @@ val statementsModule = module {
     single { StatementsLocalDataSource(get()) }
     single<StatementsRepository> { StatementsRepositoryImpl(get(), get(), get()) }
     single { StatementsUseCase(get()) }
-    viewModel { StatementsViewModel(get(), get(), get()) }
+    viewModel { StatementsViewModel(get(), get()) }
 }
