@@ -15,6 +15,8 @@ import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
@@ -60,33 +62,25 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                         } else {
                             item.senderName.replaceBefore(" ", "").replace(" ", "")
                         }
-                        var avatar = item.senderImageUrl.replace("img/", "")
-                        avatar = avatar.replace("photos/thumb_", "")
                         message.text = "${name}: ${HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)}"
                     }
                     item.senderImageUrl.isNotEmpty() -> {
-                        message.text = "Вы: ${HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)}"
+                        message.text = itemView.context.getString(R.string.your_message,
+                            HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT))
                     }
                     else -> {
                         message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     }
                 }
 
-                var time = item.date
-                val hour = if (time.hour<10) "0${time.hour}" else time.hour.toString()
-                val minute = if (time.minute<10) "0${time.minute}" else time.minute.toString()
-                val day = if (time.dayOfMonth<10) "0${time.dayOfMonth}" else time.dayOfMonth.toString()
-                val month = if (time.monthValue<10) "0${time.monthValue}" else time.monthValue.toString()
-                val year = time.year.toString()
+                val time = LocalDateTime.now()
 
-                time = LocalDateTime.now()
-
-                if (item.date.year == time.year && item.date.dayOfYear == time.dayOfYear) {
-                    dateMessage.text = "${hour}:${minute}"
-                } else if (item.date.year == time.year) {
-                    dateMessage.text = "${day}.${month}"
+                if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
+                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("HH:mm").withLocale(Locale("ru")))
+                } else if (item.dateTime.year == time.year) {
+                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd MMMM").withLocale(Locale("ru")))
                 } else {
-                    dateMessage.text = "${day}.${month}.${year}"
+                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(Locale("ru")))
                 }
 
                 if (item.authorName.isNotEmpty()) {

@@ -1,8 +1,11 @@
 package com.mospolytech.mospolyhelper.data.account.auth.repository
 
+import com.auth0.android.jwt.JWT
 import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthJwtRemoteDataSource
+import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.domain.account.auth.model.JwtModel
 import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.Flow
@@ -27,8 +30,8 @@ class AuthRepositoryImpl(
         })
     }
 
-    @ExperimentalContracts
-    override suspend fun refresh(): Flow<Result2<String>> = flow {
+
+    override suspend fun refresh(): Flow<Result<String>> = flow {
         if (authJwtLocalDataSource.get()?.isExpired() == true) {
             val oldToken = prefDataSource.get(PreferenceKeys.AccessToken, "")
             val refresh = prefDataSource.get(PreferenceKeys.RefreshToken, "")
@@ -38,22 +41,15 @@ class AuthRepositoryImpl(
                 val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
                 prefDataSource.set(PreferenceKeys.SessionId, sessionId)
             }
-//            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//            prefDataSource.set(PreferenceKeys.SessionId, sessionId)
-//            emit(newToken.map {
-//                authJwtLocalDataSource.set(it)
-//                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//                prefDataSource.set(PreferenceKeys.SessionId, sessionId)
-//                return@map sessionId
-//            })
+            emit(newToken)
         }
     }
 
-    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar() ?: ""
+    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar()
 
     override fun getPermissions() = authJwtLocalDataSource.get()?.getPermissions() ?: emptyList()
 
-    override fun getFio() = authJwtLocalDataSource.get()?.getName() ?: ""
+    override fun getFio() = authJwtLocalDataSource.get()?.getName()
 
     override fun logOut() {
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)

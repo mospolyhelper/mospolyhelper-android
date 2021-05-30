@@ -22,8 +22,7 @@ class MessagingRepositoryImplementation(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun getDialog(dialogKey: String): Flow<Result2<List<Message>>> = flow {
+    override suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
@@ -35,14 +34,14 @@ class MessagingRepositoryImplementation(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalDialog(dialogKey: String): Flow<Result2<List<Message>>>{
+    override suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>>{
         val dialog = localDataSource.getJson(dialogKey)
         return flow {
             if (dialog.isNotEmpty()) emit(localDataSource.getDialog(dialog))
         }.flowOn(ioDispatcher)
     }
 
-    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result2<List<Message>>> = flow {
+    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
@@ -53,6 +52,19 @@ class MessagingRepositoryImplementation(
         }
         emit(res)
     }.flowOn(ioDispatcher)
+
+    override suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result<List<Message>>>  = flow {
+        val sessionId = prefDataSource.get(
+            PreferenceKeys.SessionId,
+            PreferenceDefaults.SessionId
+        )
+        val res = remoteDataSource.deleteMessage(sessionId, removeKey)
+        res.onSuccess {
+            localDataSource.setDialog(it, dialogKey)
+        }
+        emit(res)
+    }.flowOn(ioDispatcher)
+
 
     override fun getName() = jwtLocalDataSource.get()?.getName() ?: ""
 

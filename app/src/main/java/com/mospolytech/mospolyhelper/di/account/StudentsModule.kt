@@ -15,5 +15,5 @@ val studentsModule = module {
     single { StudentsRemoteDataSource(get(), "") }
     single<StudentsRepository> { StudentsRepositoryImpl(get(), get()) }
     single { StudentsUseCase(get()) }
-    viewModel { StudentsViewModel(get(), get()) }
+    viewModel { StudentsViewModel(get()) }
 }

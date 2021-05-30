@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.info
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -11,9 +12,11 @@ import com.mospolytech.mospolyhelper.databinding.FragmentAccountInfoBinding
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.features.ui.account.info.adapter.OrderAdapter
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 import java.util.*
 
 class InfoFragment : Fragment(R.layout.fragment_account_info) {
@@ -41,15 +44,48 @@ class InfoFragment : Fragment(R.layout.fragment_account_info) {
         Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarStudent)
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.progressLoading.gone()
+                    viewBinding.infoSwipe.isRefreshing = false
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.infoSwipe.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.info.collect { result ->
                 result.onSuccess {
                     viewBinding.progressLoading.gone()
                     viewBinding.infoLayout.show()
                     fillData(it)
                     viewBinding.infoSwipe.isRefreshing = false
-                }.onFailure {
+                }.onFailure { error ->
                     viewBinding.progressLoading.gone()
                     viewBinding.infoSwipe.isRefreshing = false
+                    when (error) {
+                        is ClientRequestException -> {
+                            when (error.response.status.value) {
+                                401 ->  {
+                                    lifecycleScope.launch {
+                                        viewModel.refresh()
+                                    }
+                                }
+                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        is UnknownHostException -> {
+                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                        }
+                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
                 }.onLoading {
                     if (!viewBinding.infoSwipe.isRefreshing)
                         viewBinding.progressLoading.show()

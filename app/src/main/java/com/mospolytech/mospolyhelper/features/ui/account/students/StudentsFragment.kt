@@ -95,15 +95,16 @@ class StudentsFragment : Fragment(R.layout.fragment_account_students), Coroutine
             } else false
         }
 
-        lifecycleScope.launch {
-            if (job.isCancelled) return@launch
+        lifecycleScope.launchWhenResumed {
+            if (job.isCancelled) return@launchWhenResumed
             adapter.loadStateFlow.collectLatest { loadStates ->
                 when(loadStates.refresh) {
                     is LoadState.Loading -> {
                         viewBinding.textEmpty.hide()
-                        if (adapter.itemCount == 0)
+                        if (adapter.itemCount == 0) {
                             if (!viewBinding.swipeStudents.isRefreshing)
                                 viewBinding.progressFirstLoading.show()
+                        }
                     }
                     is LoadState.Error -> {
                         viewBinding.progressFirstLoading.hide()
@@ -122,6 +123,7 @@ class StudentsFragment : Fragment(R.layout.fragment_account_students), Coroutine
                                     viewBinding.editSearchStudent.text.isNotEmpty()) {
                             viewBinding.textEmpty.show()
                         }
+                        viewBinding.fabStudents.isVisible = adapter.itemCount > 0
                     }
                 }
             }

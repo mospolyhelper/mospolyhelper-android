@@ -35,10 +35,10 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
 
         private val viewBinding by viewBinding(ItemPaymentsBinding::bind)
 
-        val recycler: RecyclerView = viewBinding.recyclerDormitory
-        val info: TextView = viewBinding.paymentInfo
-        val all: TextView = viewBinding.paymentAll
-        val current: TextView = viewBinding.paymentCurrent
+        private val recycler: RecyclerView = viewBinding.recyclerDormitory
+        private val info: TextView = viewBinding.paymentInfo
+        private val all: TextView = viewBinding.paymentAll
+        private val current: TextView = viewBinding.paymentCurrent
         private val sberQr: ImageView = viewBinding.imageSber
 
         fun bind(contract: Contract) {
@@ -68,7 +68,6 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
                     ContextCompat.startActivity(itemView.context, browserIntent, null)
                     true
                 }
-
             }
         }
     }

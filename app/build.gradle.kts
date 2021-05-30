@@ -73,7 +73,6 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation("com.budiyev.android:circular-progress-bar:1.2.2")
     implementation ("com.microsoft.design:fluent-system-icons:1.1.125") {
         exclude(module = "unspecified")
     }

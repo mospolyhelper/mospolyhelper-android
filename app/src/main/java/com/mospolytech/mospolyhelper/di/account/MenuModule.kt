@@ -13,12 +13,11 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val menuModule = module {
-    //single { AuthHerokuClient(get(named("accountHerokuClient"))) }
     single { AuthJwtHerokuClient(get(named("accountHerokuClient"))) }
     single { AuthJwtRemoteDataSource(get()) }
     single { AuthJwtLocalDataSource(get()) }
     single { AuthRemoteDataSource(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
     single { AuthUseCase(get()) }
-    viewModel { MenuViewModel(get(), get()) }
+    viewModel { MenuViewModel(get()) }
 }

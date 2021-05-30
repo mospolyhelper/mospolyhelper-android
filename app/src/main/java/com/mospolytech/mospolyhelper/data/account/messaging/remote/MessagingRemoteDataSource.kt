@@ -21,11 +21,19 @@ class MessagingRemoteDataSource(
 
     suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result2<List<Message>> {
         return try {
-            //val json = Json.encodeToString(MessageSend(dialogKey, message, fileNames))
             val res = client.sendMessage(sessionId, MessageSend(dialogKey, message, fileNames))
             Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
             Result2.failure(e)
+        }
+    }
+
+    suspend fun deleteMessage(sessionId: String, removeKey: String): Result<List<Message>> {
+        return try {
+            val res = client.deleteMessage(sessionId, removeKey)
+            Result.success(Json.decodeFromString(res))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

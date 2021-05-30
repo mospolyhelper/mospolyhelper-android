@@ -8,14 +8,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.budiyev.android.circularprogressbar.CircularProgressBar
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemMarkBinding
 import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
 import java.util.*
 
-class MarksAdapter(): RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
+class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
 
     var items : List<MarkInfo> = emptyList()
     set(value) {
@@ -43,12 +42,11 @@ class MarksAdapter(): RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
 
         private val viewBinding by viewBinding(ItemMarkBinding::bind)
 
-        val name: TextView = viewBinding.titlePredmet
-        val type: Chip = viewBinding.chipType
-        val mark: TextView = viewBinding.mark
-        val progress: CircularProgressBar = viewBinding.progressBar
-        val course: Chip = viewBinding.chipCourse
-        val semester: Chip = viewBinding.chipSemester
+        private val name: TextView = viewBinding.titlePredmet
+        private val type: Chip = viewBinding.chipType
+        private val mark: TextView = viewBinding.mark
+        private val course: Chip = viewBinding.chipCourse
+        private val semester: Chip = viewBinding.chipSemester
 
         fun bind(item: MarkInfo) {
             type.text = item.loadType
@@ -57,43 +55,35 @@ class MarksAdapter(): RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
             when (item.mark.toLowerCase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
-                    progress.progress = -100f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorLow)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
                 }
                 "хорошо" -> {
                     mark ="4"
-                    progress.progress = -75f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorLow)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
                 }
                 "удовлетворительно" -> {
                     mark ="3"
-                    progress.progress = -50f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorMedium)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorMedium))
                 }
                 "неудовлетворительно" -> {
                     mark ="2"
-                    progress.progress = -25f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorHigh)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "не явился" -> {
                     mark ="2"
-                    progress.progress = -25f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorHigh)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "зачтено" -> {
                     mark ="Зач"
-                    progress.progress = -100f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorLow)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
                 }
                 "незачтено" -> {
                     mark ="Нез"
-                    progress.progress = -25f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorHigh)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "не зачтено" -> {
                     mark ="Нез"
-                    progress.progress = -25f
-                    progress.foregroundStrokeColor = ContextCompat.getColor(itemView.context, R.color.colorHigh)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 else -> item.mark.substring(0, 2)
             }

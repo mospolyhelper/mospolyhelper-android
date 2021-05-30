@@ -7,9 +7,9 @@ interface AuthRepository {
     suspend fun logIn(login: String, password: String): Flow<Result2<String>>
     suspend fun refresh(): Flow<Result2<String>>
 
-    fun getAvatar(): String
+    fun getAvatar(): String?
     fun getPermissions(): List<String>
-    fun getFio(): String
+    fun getFio(): String?
 
     fun logOut()
 
