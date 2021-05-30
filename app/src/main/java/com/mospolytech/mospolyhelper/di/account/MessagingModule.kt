@@ -44,5 +44,5 @@ val messagingModule = module {
     single { MessagingLocalDataSource(get()) }
     single<MessagingRepository> { MessagingRepositoryImplementation(get(), get(), get(), get()) }
     single { MessagingUseCase(get()) }
-    viewModel { MessagingViewModel(get(), get()) }
+    viewModel { MessagingViewModel(get(), get(), get()) }
 }

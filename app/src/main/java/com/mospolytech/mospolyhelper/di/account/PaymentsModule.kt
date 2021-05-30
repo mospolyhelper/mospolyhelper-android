@@ -24,5 +24,5 @@ val paymentsModule = module {
     single { PaymentsLocalDataSource(get()) }
     single<PaymentsRepository> { PaymentsRepositoryImpl(get(), get(), get()) }
     single { PaymentsUseCase(get()) }
-    viewModel { PaymentsViewModel(get(), get()) }
+    viewModel { PaymentsViewModel(get(), get(), get()) }
 }

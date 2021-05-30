@@ -17,5 +17,5 @@ val applicationsModule = module {
     single { ApplicationsLocalDataSource(get()) }
     single<ApplicationsRepository> { ApplicationsRepositoryImpl(get(), get(), get()) }
     single { ApplicationsUseCase(get()) }
-    viewModel { ApplicationsViewModel(get(), get()) }
+    viewModel { ApplicationsViewModel(get(), get(), get()) }
 }

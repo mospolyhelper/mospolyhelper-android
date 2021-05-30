@@ -13,7 +13,7 @@ data class DialogModel(val id: Int,
                        val avatarUrl: String,
                        val message: String,
                        @Serializable(with = MessageDateSerializer::class)
-                       val date: LocalDateTime,
+                       val dateTime: LocalDateTime,
                        val senderGroup: String,
                        val senderImageUrl: String,
                        val senderName: String,
@@ -32,7 +32,7 @@ data class DialogModel(val id: Int,
         if (authorGroup != other.authorGroup) return false
         if (avatarUrl != other.avatarUrl) return false
         if (message != other.message) return false
-        if (date != other.date) return false
+        if (dateTime != other.dateTime) return false
         if (senderImageUrl != other.senderImageUrl) return false
         if (senderName != other.senderName) return false
         if (hasAttachments != other.hasAttachments) return false
@@ -48,7 +48,7 @@ data class DialogModel(val id: Int,
         result = 31 * result + authorGroup.hashCode()
         result = 31 * result + avatarUrl.hashCode()
         result = 31 * result + message.hashCode()
-        result = 31 * result + date.hashCode()
+        result = 31 * result + dateTime.hashCode()
         result = 31 * result + senderImageUrl.hashCode()
         result = 31 * result + senderName.hashCode()
         result = 31 * result + hasAttachments.hashCode()

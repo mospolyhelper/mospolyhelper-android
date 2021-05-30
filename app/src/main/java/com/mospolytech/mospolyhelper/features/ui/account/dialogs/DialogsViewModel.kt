@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.dialogs
 
+import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.domain.account.dialogs.usecase.DialogsUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
@@ -11,10 +12,19 @@ import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class DialogsViewModel(mediator: Mediator<String, ViewModelMessage>,
-                       private val useCase: DialogsUseCase): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
+                       private val useCase: DialogsUseCase,
+                       private val authUseCase: AuthUseCase
+                       ): ViewModelBase(mediator, DialogsViewModel::class.java.simpleName),
     KoinComponent {
 
     val dialogs = MutableStateFlow<Result<List<DialogModel>>>(Result.loading())
+    val auth = MutableStateFlow<Result<String>?>(null)
+
+    suspend fun refresh() {
+        authUseCase.refresh().collect {
+            auth.value = it
+        }
+    }
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {

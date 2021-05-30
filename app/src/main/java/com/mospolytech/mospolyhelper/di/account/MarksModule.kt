@@ -17,5 +17,5 @@ val marksModule = module {
     single { MarksLocalDataSource(get()) }
     single<MarksRepository> { MarksRepositoryImpl(get(), get(), get()) }
     single { MarksUseCase(get()) }
-    viewModel { MarksViewModel(get(), get()) }
+    viewModel { MarksViewModel(get(), get(), get()) }
 }

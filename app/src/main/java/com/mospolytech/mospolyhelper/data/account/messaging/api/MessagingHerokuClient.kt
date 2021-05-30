@@ -30,4 +30,11 @@ class MessagingHerokuClient(
             body = message
         }
     }
+
+    suspend fun deleteMessage(sessionId: String, removeKey: String): String {
+        return client.delete(SEND_MESSAGE) {
+            header("sessionId", sessionId)
+            parameter("removeKey", removeKey)
+        }
+    }
 }

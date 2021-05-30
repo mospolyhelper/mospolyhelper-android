@@ -24,5 +24,5 @@ val deadlinesModule = module {
     single { DeadlinesLocalDataSource(get()) }
     single<DeadlinesRepository> { DeadlinesRepositoryImpl(get(), get(), get()) }
     single { DeadlinesUseCase(get()) }
-    viewModel { DeadlinesViewModel(get(), get()) }
+    viewModel { DeadlinesViewModel(get(), get(), get()) }
 }

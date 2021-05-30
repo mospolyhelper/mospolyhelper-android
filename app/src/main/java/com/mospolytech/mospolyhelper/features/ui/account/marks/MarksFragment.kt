@@ -16,9 +16,11 @@ import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
 import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
 import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 
 class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnItemSelectedListener {
 
@@ -58,6 +60,23 @@ class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnI
         }
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadInfo()
+                    }
+                }?.onFailure {
+                    viewBinding.swipeMarks.isRefreshing = false
+                    viewBinding.progressLoading.gone()
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    if (!viewBinding.swipeMarks.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
                 result.onSuccess {
                     viewBinding.swipeMarks.isRefreshing = false
@@ -66,10 +85,25 @@ class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnI
                     setSemesters(it.marks)
                     viewBinding.buttonSearch.isEnabled = true
                     fillData()
-                }.onFailure {
+                }.onFailure { error ->
                     viewBinding.swipeMarks.isRefreshing = false
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
                     viewBinding.progressLoading.gone()
+                    when (error) {
+                        is ClientRequestException -> {
+                            when (error.response.status.value) {
+                                401 ->  {
+                                    lifecycleScope.launch {
+                                        viewModel.refresh()
+                                    }
+                                }
+                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        is UnknownHostException -> {
+                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                        }
+                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
                 }.onLoading {
                     if (!viewBinding.swipeMarks.isRefreshing)
                         viewBinding.progressLoading.show()

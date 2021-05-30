@@ -23,6 +23,11 @@ class MessagingUseCase(
             emit(Result.loading())
         }
 
+    suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result<List<Message>>> =
+        repository.deleteMessage(dialogKey, removeKey).onStart {
+            emit(Result.loading())
+        }
+
     fun getName(): String {
         val name = repository.getName().substringBeforeLast(" ", "")
         return "${name.substringAfter(" ")} ${name.substringBefore(" ")}"

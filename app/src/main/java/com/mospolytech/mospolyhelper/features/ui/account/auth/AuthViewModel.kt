@@ -17,60 +17,15 @@ class AuthViewModel(
     private val useCase: AuthUseCase
 ) : ViewModelBase(mediator, AuthViewModel::class.java.simpleName), KoinComponent {
 
-    val login: MutableStateFlow<String>
-    val password: MutableStateFlow<String>
-    val saveLogin: MutableStateFlow<Boolean>
-    val savePassword: MutableStateFlow<Boolean>
-
-    init {
-
-        login = MutableStateFlow(useCase.getLogin())
-        password = MutableStateFlow(useCase.getPassword())
-        saveLogin = MutableStateFlow(useCase.getSaveLogin())
-        savePassword = MutableStateFlow(useCase.getSavePassword())
-
-
-        viewModelScope.async {
-            login.collect {
-                if (saveLogin.value) {
-                    useCase.setLogin(it)
-                }
-            }
-        }
-        viewModelScope.async {
-            password.collect {
-                if (savePassword.value) {
-                    useCase.setPassword(it)
-                }
-            }
-        }
-        viewModelScope.async {
-            saveLogin.collect {
-                useCase.setSaveLogin(it)
-                if (it) {
-                    useCase.setLogin(login.value)
-                } else {
-                    useCase.setLogin("")
-                }
-            }
-        }
-        viewModelScope.async {
-            savePassword.collect {
-                useCase.setSavePassword(it)
-                if (it) {
-                    useCase.setPassword(password.value)
-                } else {
-                    useCase.setPassword("")
-                }
-            }
-        }
-    }
-
-    suspend fun logIn(): Flow<Result<String>> {
-        return useCase.logIn(login.value, password.value)
+    suspend fun logIn(login: String, password: String): Flow<Result<String>> {
+        return useCase.logIn(login, password)
     }
 
     fun logOut() {
         useCase.logOut()
     }
+
+    fun getName() = useCase.getName()
+
+    fun getAvatar() = useCase.getAvatar()
 }
