@@ -1,25 +1,32 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging
 
+import androidx.lifecycle.ViewModel
+import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
 import com.mospolytech.mospolyhelper.domain.account.messaging.usecase.MessagingUseCase
-import com.mospolytech.mospolyhelper.features.ui.common.Mediator
-import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
-import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class MessagingViewModel(
-    mediator: Mediator<String, ViewModelMessage>,
-    private val useCase: MessagingUseCase
-) : ViewModelBase(mediator, MessagingViewModel::class.java.simpleName), KoinComponent {
+    private val useCase: MessagingUseCase,
+    private val authUseCase: AuthUseCase
+    ) : ViewModel(), KoinComponent {
 
     val dialog = MutableStateFlow<Result<List<Message>>>(Result.loading())
+    val update = MutableStateFlow<Result<List<Message>>>(Result.loading())
+    val auth = MutableStateFlow<Result<String>?>(null)
+
+    suspend fun refresh() {
+        authUseCase.refresh().collect {
+            auth.value = it
+        }
+    }
 
     suspend fun downloadDialog(dialogId: String) {
         useCase.getDialog(dialogId).collect {
-            dialog.value = it
+            update.value = it
         }
     }
 
@@ -35,6 +42,12 @@ class MessagingViewModel(
     suspend fun sendMessage(dialogId: String, message: String, fileNames: List<String> = emptyList()) {
         useCase.sendMessage(dialogId, message, fileNames).collect {
             this.dialog.value = it
+        }
+    }
+
+    suspend fun deleteMessage(dialogId: String, removeKey: String) {
+        useCase.deleteMessage(dialogId, removeKey).collect {
+            this.update.value = it
         }
     }
 

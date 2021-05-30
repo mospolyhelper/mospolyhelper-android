@@ -4,12 +4,11 @@ import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSou
 import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
-import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
-import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
-import com.mospolytech.mospolyhelper.utils.getAvatar
+import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +30,9 @@ class InfoRepositoryImpl(
             PreferenceDefaults.SessionId
         )
         val res = dataSource.get(sessionId)
-        if (res.isSuccess) localDataSource.set(res.value as Info)
+        res.onSuccess { info ->
+            localDataSource.set(info)
+        }
         emit(res)
     }.flowOn(ioDispatcher)
 

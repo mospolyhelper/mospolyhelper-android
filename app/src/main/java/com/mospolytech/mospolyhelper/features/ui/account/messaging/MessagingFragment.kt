@@ -11,9 +11,11 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountMessagingBinding
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter.MessagesAdapter
 import com.mospolytech.mospolyhelper.utils.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.UnknownHostException
 
 class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
@@ -35,6 +37,12 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
         MessagesAdapter.MY_NAME = viewModel.getName()
 
         dialogId = arguments?.getString(DIALOG_ID).orEmpty()
+
+        MessagesAdapter.deleteMessageClickListener = {
+            lifecycleScope.launch {
+                viewModel.deleteMessage(dialogId, it)
+            }
+        }
 
         lifecycleScope.launch {
             viewModel.getDialog(dialogId)
@@ -61,6 +69,24 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
         }
 
         lifecycleScope.launchWhenResumed {
+            viewModel.auth.collect { result ->
+                result?.onSuccess {
+                    lifecycleScope.launch {
+                        viewModel.downloadDialog(dialogId)
+                    }
+                }?.onFailure {
+                    viewBinding.progressLoading.gone()
+                    viewBinding.swipeMessaging.isRefreshing = false
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+                }?.onLoading {
+                    viewBinding.sendMessage.hide()
+                    if (!viewBinding.swipeMessaging.isRefreshing)
+                        viewBinding.progressLoading.show()
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
             viewModel.dialog.collect { result ->
                 result.onSuccess {
                     viewBinding.sendMessage.show()
@@ -68,6 +94,42 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
                     adapter.items = it
                     viewBinding.recyclerMessaging.scrollToPosition(0)
                     viewBinding.editMessage.text.clear()
+                    viewBinding.swipeMessaging.isRefreshing = false
+                }.onFailure { error ->
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    viewBinding.swipeMessaging.isRefreshing = false
+                    when (error) {
+                        is ClientRequestException -> {
+                            when (error.response.status.value) {
+                                401 ->  {
+                                    lifecycleScope.launch {
+                                        viewModel.refresh()
+                                    }
+                                }
+                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        is UnknownHostException -> {
+                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                        }
+                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                }.onLoading {
+                    viewBinding.sendMessage.hide()
+                    if (!viewBinding.swipeMessaging.isRefreshing) {
+                        viewBinding.progressLoading.show()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.update.collect { result ->
+                result.onSuccess {
+                    viewBinding.sendMessage.show()
+                    viewBinding.progressLoading.gone()
+                    adapter.items = it
                     viewBinding.swipeMessaging.isRefreshing = false
                 }.onFailure {
                     Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
@@ -83,5 +145,10 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
             }
         }
 
+    }
+
+    override fun onDestroy() {
+        MessagesAdapter.deleteMessageClickListener = null
+        super.onDestroy()
     }
 }

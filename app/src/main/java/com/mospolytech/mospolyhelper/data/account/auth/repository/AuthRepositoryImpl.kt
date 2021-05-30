@@ -30,7 +30,7 @@ class AuthRepositoryImpl(
         })
     }
 
-    @ExperimentalContracts
+
     override suspend fun refresh(): Flow<Result<String>> = flow {
         if (authJwtLocalDataSource.get()?.isExpired() == true) {
             val oldToken = prefDataSource.get(PreferenceKeys.AccessToken, "")
@@ -41,22 +41,15 @@ class AuthRepositoryImpl(
                 val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
                 prefDataSource.set(PreferenceKeys.SessionId, sessionId)
             }
-//            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//            prefDataSource.set(PreferenceKeys.SessionId, sessionId)
-//            emit(newToken.map {
-//                authJwtLocalDataSource.set(it)
-//                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
-//                prefDataSource.set(PreferenceKeys.SessionId, sessionId)
-//                return@map sessionId
-//            })
+            emit(newToken)
         }
     }
 
-    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar() ?: ""
+    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar()
 
     override fun getPermissions() = authJwtLocalDataSource.get()?.getPermissions() ?: emptyList()
 
-    override fun getFio() = authJwtLocalDataSource.get()?.getName() ?: ""
+    override fun getFio() = authJwtLocalDataSource.get()?.getName()
 
     override fun logOut() {
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)

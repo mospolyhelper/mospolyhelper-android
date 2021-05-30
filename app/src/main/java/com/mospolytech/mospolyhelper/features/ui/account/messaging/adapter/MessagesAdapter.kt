@@ -23,6 +23,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val OTHER_MESSAGE_VIEW_TYPE = 321
         var MY_NAME = ""
         var MY_AVATAR = ""
+        var deleteMessageClickListener: ((String) -> Unit)? = null
     }
 
     var items: List<Message> = emptyList()
@@ -82,11 +83,19 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val message: TextView = viewBinding.message
         val avatar: ImageView = viewBinding.avatarStudent
         val card: CardView = viewBinding.card
+        val recycler = viewBinding.recyclerFiles
 
         fun bind(item: Message) {
             name.text = item.authorName
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            recycler.adapter = FilesAdapter(item.attachments)
+            itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(itemView.context.getString(R.string.delete_message)).setOnMenuItemClickListener {
+                    deleteMessageClickListener?.invoke(item.removeUrl)
+                    true
+                }
+            }
         }
 
         fun recycle() {
@@ -109,6 +118,12 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
+            itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(itemView.context.getString(R.string.delete_message)).setOnMenuItemClickListener {
+                    deleteMessageClickListener?.invoke(item.removeUrl)
+                    true
+                }
+            }
         }
 
         fun recycle() {
@@ -130,4 +145,5 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             oldList[oldItemPosition] == newList[newItemPosition]
 
     }
+
 }

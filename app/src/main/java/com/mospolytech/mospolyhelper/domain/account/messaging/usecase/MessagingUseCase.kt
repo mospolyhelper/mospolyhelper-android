@@ -15,11 +15,15 @@ class MessagingUseCase(
         }
     suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>> =
         repository.getLocalDialog(dialogKey).onStart {
-            //emit(Result.loading())
         }
 
     suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>> =
         repository.sendMessage(dialogKey, message, fileNames).onStart {
+            emit(Result.loading())
+        }
+
+    suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result<List<Message>>> =
+        repository.deleteMessage(dialogKey, removeKey).onStart {
             emit(Result.loading())
         }
 
