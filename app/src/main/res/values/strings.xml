@@ -175,4 +175,6 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="tuition">Обучение</string>
     <string name="ed_form">%1$s %2$s форма обучения</string>
     <string name="ed_year">%1$s год набора</string>
+    <string name="student">СТУДЕНТ</string>
+    <string name="apartment">Общежитие №%1$s, комната %2$s</string>
 </resources>

@@ -21,7 +21,7 @@ import java.util.*
 class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
 
     companion object {
-        var dialogClickListener: ((dialogId: String) -> Unit)? = null
+        var dialogClickListener: ((String, String) -> Unit)? = null
     }
 
     var items: List<DialogModel> = emptyList()
@@ -78,7 +78,7 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                 if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
                     dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("HH:mm").withLocale(Locale("ru")))
                 } else if (item.dateTime.year == time.year) {
-                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd MMMM").withLocale(Locale("ru")))
+                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("d MMMM").withLocale(Locale("ru")))
                 } else {
                     dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(Locale("ru")))
                 }
@@ -103,7 +103,7 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                 }
 
                 dialogContainer.setOnClickListener {
-                    dialogClickListener?.invoke(item.dialogKey)
+                    dialogClickListener?.invoke(item.dialogKey, item.authorName)
                 }
                 if (item.hasRead) {
                     unreadMessage.gone()

@@ -21,7 +21,7 @@ class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.Applications
 
     var items: List<Application> = emptyList()
     set(value) {
-        val diffResult = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), true)
+        val diffResult = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), false)
         field = value
         diffResult.dispatchUpdatesTo(this)
     }
@@ -54,7 +54,7 @@ class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.Applications
         fun bind(application: Application) {
             itemView.setOnClickListener {
                 application.isShown = !application.isShown
-                notifyItemChanged(layoutPosition)
+                notifyItemChanged(this.layoutPosition)
             }
 
             title.text = application.name

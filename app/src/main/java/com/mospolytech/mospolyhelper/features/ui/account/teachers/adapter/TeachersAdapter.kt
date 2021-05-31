@@ -22,7 +22,7 @@ class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diff
             override fun areItemsTheSame(oldItem: Teacher, newItem: Teacher) = oldItem.id == newItem.id
             override fun areContentsTheSame(oldItem: Teacher, newItem: Teacher) = oldItem == newItem
         }
-        var teacherClickListener: ((String) -> Unit)? = null
+        var teacherClickListener: ((String, String) -> Unit)? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -67,7 +67,7 @@ class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diff
                     status.setBackgroundResource(R.drawable.round_offline)
                 }
             }
-            itemView.setOnClickListener { teacherClickListener?.invoke(item.dialogKey) }
+            itemView.setOnClickListener { teacherClickListener?.invoke(item.dialogKey, item.name) }
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
         }
 

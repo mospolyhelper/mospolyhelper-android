@@ -6,9 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
-    android:layout_marginBottom="3dp"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginTop="3dp"
     app:cardCornerRadius="10dp"
     app:cardBackgroundColor="@color/colorPrimary">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,10 +20,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             tools:text="заявление"
-            android:textColor="@color/predmetcolor"
+            android:textColor="@color/accent_text_color"
             android:textStyle="bold"
             android:layout_marginEnd="5dp"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/ubuntu_bold"
             android:textSize="18sp"
             android:layout_marginStart="@dimen/marginCard"
             android:ellipsize="end"
@@ -42,7 +41,8 @@
             android:layout_marginBottom="@dimen/marginCard"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/ubuntu"
+            android:textColor="@color/secondary_text_color"
             tools:text="23.01.1999"
             android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/title_application"
@@ -57,7 +57,7 @@
             android:ellipsize="end"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/ubuntu"
             tools:text="В работе"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -73,7 +73,8 @@
                 android:id="@+id/reg_application"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/ubuntu"
+                android:textColor="@color/secondary_text_color"
                 android:textSize="15sp"
                 android:text="@string/reg_application"/>
             <TextView
@@ -81,7 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/ubuntu"
+                android:textColor="@color/secondary_text_color"
                 android:textSize="15sp"
                 android:text="@string/applic_adress"/>
             <TextView
@@ -89,7 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/ubuntu"
+                android:textColor="@color/secondary_text_color"
                 android:textSize="15sp"
                 android:text="@string/prim"/>
         </LinearLayout>

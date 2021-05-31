@@ -42,4 +42,5 @@ data class Application(
         result = 31 * result + isShown.hashCode()
         return result
     }
+
 }

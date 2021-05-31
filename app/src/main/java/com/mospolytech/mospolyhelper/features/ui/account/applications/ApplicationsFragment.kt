@@ -64,6 +64,7 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
                 result.onSuccess {
                     viewBinding.progressLoading.gone()
                     viewBinding.applicationsSwipe.isRefreshing = false
+                    adapter.items = emptyList()
                     adapter.items = it
                 }.onFailure { error ->
                     viewBinding.progressLoading.gone()
