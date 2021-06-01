@@ -17,14 +17,16 @@ import com.mospolytech.mospolyhelper.domain.account.applications.model.Applicati
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
 
-class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.ApplicationsViewHolder>() {
-
+class ApplicationsAdapter(
     var items: List<Application> = emptyList()
-    set(value) {
-        val diffResult = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), false)
-        field = value
-        diffResult.dispatchUpdatesTo(this)
-    }
+): RecyclerView.Adapter<ApplicationsAdapter.ApplicationsViewHolder>() {
+
+//    var items: List<Application> = emptyList()
+//    set(value) {
+//        val diffResult = DiffUtil.calculateDiff(ApplicationsDiffCallback(field, value), false)
+//        field = value
+//        diffResult.dispatchUpdatesTo(this)
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApplicationsViewHolder {
         return ApplicationsViewHolder(
@@ -55,6 +57,7 @@ class ApplicationsAdapter: RecyclerView.Adapter<ApplicationsAdapter.Applications
             itemView.setOnClickListener {
                 application.isShown = !application.isShown
                 notifyItemChanged(this.layoutPosition)
+                //notifyDataSetChanged()
             }
 
             title.text = application.name

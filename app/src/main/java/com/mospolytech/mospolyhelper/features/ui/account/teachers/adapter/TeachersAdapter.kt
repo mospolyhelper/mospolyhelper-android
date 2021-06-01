@@ -57,14 +57,14 @@ class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diff
             name.text = item.name
             information.text = item.info
             when {
-                item.status.contains("Пользователь не на сайте", true) -> {
-                    status.setBackgroundResource(R.drawable.round_offline)
-                }
-                item.status.contains("Пользователь не сайте", true) -> {
+//                item.status.contains("Пользователь не на сайте", true) -> {
+//                    status.setBackgroundResource(R.drawable.round_offline)
+//                }
+                item.status.contains("Пользователь на сайте", true) -> {
                     status.setBackgroundResource(R.drawable.round_online)
                 }
                 else -> {
-                    status.setBackgroundResource(R.drawable.round_offline)
+                    status.setBackgroundColor(itemView.context.getColor(android.R.color.transparent))
                 }
             }
             itemView.setOnClickListener { teacherClickListener?.invoke(item.dialogKey, item.name) }

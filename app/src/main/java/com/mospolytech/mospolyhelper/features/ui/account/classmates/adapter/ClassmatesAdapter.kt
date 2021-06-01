@@ -61,7 +61,7 @@ class ClassmatesAdapter:RecyclerView.Adapter<ClassmatesAdapter.ClassmatesViewHol
 //                item.status.contains("Пользователь не на сайте", true) -> {
 //                    status.setBackgroundResource(R.drawable.round_offline)
 //                }
-                item.status.contains("Пользователь не сайте", true) -> {
+                item.status.contains("Пользователь на сайте", true) -> {
                     status.setBackgroundResource(R.drawable.round_online)
                 }
                 else -> {

@@ -21,7 +21,7 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
     private val viewBinding by viewBinding(FragmentAccountApplicationsBinding::bind)
     private val viewModel by viewModel<ApplicationsViewModel>()
 
-    private val adapter = ApplicationsAdapter()
+    //private val adapter = ApplicationsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
             }
         }
 
-        viewBinding.applications.adapter = adapter
+        //viewBinding.applications.adapter = adapter
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
@@ -64,8 +64,9 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
                 result.onSuccess {
                     viewBinding.progressLoading.gone()
                     viewBinding.applicationsSwipe.isRefreshing = false
-                    adapter.items = emptyList()
-                    adapter.items = it
+                    //adapter.items = emptyList()
+                    //adapter.items = it
+                    viewBinding.applications.adapter = ApplicationsAdapter(it)
                 }.onFailure { error ->
                     viewBinding.progressLoading.gone()
                     viewBinding.applicationsSwipe.isRefreshing = false
