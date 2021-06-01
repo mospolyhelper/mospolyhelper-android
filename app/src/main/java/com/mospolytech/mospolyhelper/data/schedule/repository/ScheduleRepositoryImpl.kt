@@ -7,13 +7,11 @@ import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSour
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
+import com.mospolytech.mospolyhelper.utils.map
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -23,28 +21,29 @@ class ScheduleRepositoryImpl(
     private val scheduleDao: ScheduleDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ScheduleRepository {
-    private val changesFlow = MutableSharedFlow<Schedule?>(extraBufferCapacity = 64)
+
+    private val dataLastUpdatedFlow = MutableSharedFlow<ZonedDateTime>(replay = 1)
+    override val dataLastUpdatedObservable: Flow<ZonedDateTime> = dataLastUpdatedFlow
 
     override fun getSchedule(
         user: UserSchedule?
-    ) = flow {
+    ) = flow<Result0<Schedule>> {
         if (user == null) {
-            emit(null)
+            emit(Result0.Failure(IllegalArgumentException()))
         } else {
-            val scheduleVersion = scheduleDao.getScheduleVersion(user)
-            when {
-                user is AdvancedSearchSchedule -> emit(localDataSource.get(user)?.filter(user.filters))
-                scheduleVersion == null ||
-                        scheduleVersion.downloadingDateTime
-                            .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1 -> {
-                    emit(refresh(user).getOrNull())
-                }
-                else -> {
+            if (user is AdvancedSearchSchedule) {
+                emit(localDataSource.get(user).map { it.filter(user.filters) })
+            } else {
+                val version = scheduleDao.getScheduleVersion(user)
+                if (version == null ||
+                    version.downloadingDateTime
+                        .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1) {
+                    emit(refresh(user))
+                } else {
                     emit(localDataSource.get(user))
                 }
             }
         }
-        emitAll(changesFlow)
     }.flowOn(ioDispatcher)
 
     override suspend fun getScheduleVersion(user: UserSchedule): ScheduleVersionDb? {
@@ -53,20 +52,19 @@ class ScheduleRepositoryImpl(
 
     override suspend fun updateSchedule(user: UserSchedule?) = withContext(ioDispatcher) {
         if (user != null && user !is AdvancedSearchSchedule) {
-            changesFlow.emit(refresh(user).getOrNull())
+            refresh(user)
+            dataLastUpdatedFlow.emit(ZonedDateTime.now())
         }
     }
 
-    private suspend fun refresh(user: UserSchedule): Result2<Schedule> = coroutineScope {
+    private suspend fun refresh(user: UserSchedule): Result0<Schedule> = coroutineScope {
         val schedule = when (user) {
             is StudentSchedule -> remoteDataSource.getByGroup(user.id)
             is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
-            else -> Result2.failure(Exception())
+            else -> Result0.Failure(Exception())
         }.onSuccess {
-            this.launch {
-                scheduleDao.setScheduleVersion(ScheduleVersionDb(user.idGlobal, ZonedDateTime.now()))
-                localDataSource.set(it, user.idGlobal)
-            }
+            scheduleDao.setScheduleVersion(ScheduleVersionDb(user.idGlobal, ZonedDateTime.now()))
+            localDataSource.set(it, user.idGlobal)
         }
         schedule
     }

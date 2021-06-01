@@ -226,7 +226,7 @@ class AddBottomSheetDialogFragment(ctx: Context)
         val descr = viewBinding.editDescription.text.toString()
         if (descr.isEmpty()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Toast.makeText(App.context, R.string.predmetError, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.predmetError, Toast.LENGTH_SHORT).show()
             } else {
                 viewBinding.editDescription.error = resources.getString(R.string.predmetError)
             }

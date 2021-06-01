@@ -113,7 +113,7 @@ class DeadlinesBottomSheetFragment(): BottomSheetDialogFragment(), CoroutineScop
                 val isPinned = viewBinding.imgPinned.contentDescription == getString(R.string.pin)
                 if (viewBinding.editDescription.text.isEmpty()) {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                        Toast.makeText(App.context, R.string.predmetError, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.predmetError, Toast.LENGTH_SHORT).show()
                     } else {
                         viewBinding.editDescription.error = resources.getString(R.string.predmetError)
                     }

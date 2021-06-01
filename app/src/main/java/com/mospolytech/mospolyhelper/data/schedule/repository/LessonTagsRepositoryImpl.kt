@@ -4,7 +4,7 @@ import com.mospolytech.mospolyhelper.data.schedule.local.LessonTagsLocalDataSour
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ class LessonTagsRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     ) : LessonTagsRepository {
 
-    private val changesFlow = MutableSharedFlow<Result2<List<LessonTag>>>(extraBufferCapacity = 64)
+    private val changesFlow = MutableSharedFlow<Result0<List<LessonTag>>>(extraBufferCapacity = 64)
 
     override fun getAll() = flow {
         emit(dataSource.getAll())

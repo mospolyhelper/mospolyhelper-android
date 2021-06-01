@@ -1,8 +1,9 @@
 package com.mospolytech.mospolyhelper.data.utilities.addresses.repository
 
-import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalAssetsDataSource
+import com.mospolytech.mospolyhelper.data.core.local.AssetsDataSource
 import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalStorageDataSource
 import com.mospolytech.mospolyhelper.data.utilities.addresses.remote.AddressesRemoteDataSource
+import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
 import com.mospolytech.mospolyhelper.domain.addresses.repository.AddressesRepository
 import kotlinx.coroutines.flow.flow
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 class AddressesRepositoryImpl(
     private val remoteDataSource: AddressesRemoteDataSource,
     private val localStorageDataSource: AddressesLocalStorageDataSource,
-    private val localAssetsDataSource: AddressesLocalAssetsDataSource
+    private val assetsDataSource: AssetsDataSource
 ): AddressesRepository {
 
     override fun getAddresses(refresh: Boolean) = flow<AddressMap?> {
@@ -25,7 +26,7 @@ class AddressesRepositoryImpl(
                 localStorageDataSource.set(addressMap)
             }
         } else {
-            addressMap = localStorageDataSource.get() ?: localAssetsDataSource.get()
+            addressMap = localStorageDataSource.get() ?: assetsDataSource.getFromJson("addresses.json")
         }
         return addressMap
     }

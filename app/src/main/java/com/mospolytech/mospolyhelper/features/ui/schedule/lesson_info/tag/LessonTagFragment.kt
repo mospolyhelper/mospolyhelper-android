@@ -20,7 +20,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagException
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
-import com.mospolytech.mospolyhelper.utils.ResultState
 import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
 import com.mospolytech.mospolyhelper.utils.onFailure
 import com.mospolytech.mospolyhelper.utils.onSuccess
@@ -216,22 +215,20 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.tags.collect {
-                if (it is ResultState.Ready) {
-                    it.result.onSuccess {
-                        switchViews(true)
-                        setTagList(it)
-                    }.onFailure {
-                        if (it is LessonTagException) {
-                            when (it.resultMessage) {
-                                LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                                LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                                else -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                            }
-                            viewBinding.textviewMessage.visibility = View.VISIBLE
-                        } else {
-                            viewBinding.textviewMessage.text = ""
-                            viewBinding.textviewMessage.visibility = View.GONE
+                it.onSuccess {
+                    switchViews(true)
+                    setTagList(it)
+                }.onFailure {
+                    if (it is LessonTagException) {
+                        when (it.resultMessage) {
+                            LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = it.resultMessage.toString()
+                            LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = it.resultMessage.toString()
+                            else -> viewBinding.textviewMessage.text = it.resultMessage.toString()
                         }
+                        viewBinding.textviewMessage.visibility = View.VISIBLE
+                    } else {
+                        viewBinding.textviewMessage.text = ""
+                        viewBinding.textviewMessage.visibility = View.GONE
                     }
                 }
             }

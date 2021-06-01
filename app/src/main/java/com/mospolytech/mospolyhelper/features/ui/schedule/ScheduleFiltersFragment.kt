@@ -10,9 +10,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleFiltersBinding
-import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
-import com.mospolytech.mospolyhelper.utils.onReady
-import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -74,9 +71,9 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
         chip.isChecked = filter in viewModel.filterTypes.value
         chip.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                viewModel.filterTypes.value += filter
+                viewModel.addTypeFilter(filter)
             } else {
-                viewModel.filterTypes.value -= filter
+                viewModel.removeTypeFilter(filter)
             }
         }
         return chip

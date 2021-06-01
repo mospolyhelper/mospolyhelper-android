@@ -1,6 +1,5 @@
-package com.mospolytech.mospolyhelper.di.addresses
+package com.mospolytech.mospolyhelper.di.utilities.addresses
 
-import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalAssetsDataSource
 import com.mospolytech.mospolyhelper.data.utilities.addresses.local.AddressesLocalStorageDataSource
 import com.mospolytech.mospolyhelper.data.utilities.addresses.remote.AddressesRemoteDataSource
 import com.mospolytech.mospolyhelper.data.utilities.addresses.repository.AddressesRepositoryImpl
@@ -12,8 +11,7 @@ import org.koin.dsl.module
 
 val addressesModule = module {
     single { AddressesRemoteDataSource() }
-    single { AddressesLocalStorageDataSource() }
-    single { AddressesLocalAssetsDataSource() }
+    single { AddressesLocalStorageDataSource(get()) }
 
     single<AddressesRepository> { AddressesRepositoryImpl(get(), get(), get()) }
 

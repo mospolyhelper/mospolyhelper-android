@@ -50,7 +50,7 @@ android {
 dependencies {
     val navVersion = "2.3.5"
     val koinVersion = "3.0.2"
-    val ktorVersion = "1.5.4"
+    val ktorVersion = "1.6.0"
     val roomVersion = "2.3.0"
     val logbackVersion = "1.2.3"
 
@@ -73,7 +73,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.125") {
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.127") {
         exclude(module = "unspecified")
     }
 
@@ -146,4 +146,8 @@ dependencies {
         // Excludes the support library because it"s already included by Glide.
         isTransitive = false
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 }

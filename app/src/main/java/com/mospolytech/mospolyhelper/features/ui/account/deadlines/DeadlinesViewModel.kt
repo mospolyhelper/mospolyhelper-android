@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.domain.account.deadlines.usecase.DeadlinesUseCase
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
@@ -15,8 +15,8 @@ class DeadlinesViewModel(
     private val authUseCase: AuthUseCase,
     ) : ViewModel(), KoinComponent {
 
-    val deadlines = MutableStateFlow<Result<List<Deadline>>>(Result.loading())
-    val auth = MutableStateFlow<Result<String>?>(null)
+    val deadlines = MutableStateFlow<Result2<List<Deadline>>>(Result2.loading())
+    val auth = MutableStateFlow<Result2<String>?>(null)
 
     suspend fun refresh() {
         authUseCase.refresh().collect {

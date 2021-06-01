@@ -10,11 +10,10 @@ import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsReposi
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.map
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 class LessonInfoViewModel(
@@ -27,7 +26,7 @@ class LessonInfoViewModel(
     var lesson: Lesson = Lesson.getEmpty()
     var date: LocalDate = LocalDate.now()
 
-    val tags = MutableStateFlow(Result2.failure<List<LessonTag>>(Exception()))
+    val tags = MutableStateFlow<Result0<List<LessonTag>>>(Result0.Failure(Exception()))
 
     fun setTags() {
         viewModelScope.launch {

@@ -13,7 +13,5 @@ class RelevantViewModel(
     mediator: Mediator<String, ViewModelMessage>,
     private val useCase: ScheduleUseCase
 ) : ViewModelBase(mediator, RelevantViewModel::class.java.simpleName), KoinComponent {
-    fun getSchedule(): Flow<Schedule?> {
-        return useCase.getSchedule(StudentSchedule("181-721", "181-721"))
-    }
+    fun getSchedule() = useCase.getSchedule(StudentSchedule("181-721", "181-721"))
 }

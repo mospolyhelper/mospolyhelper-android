@@ -12,7 +12,6 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
-import com.mospolytech.mospolyhelper.utils.ResultState
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.temporal.ChronoUnit
@@ -42,7 +41,7 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
         (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         val recyclerAdapter = CalendarThreeAdapter(
-            (viewModel.filteredSchedule.value as? ResultState.Ready)?.result?.getOrNull()?.schedule
+            viewModel.filteredSchedule.value.getOrNull()
         )
         recyclerAdapter.dayClick += { date ->
             viewModel.date.value = date
@@ -65,7 +64,7 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
                 R.id.btn_schedule_calendar_three -> {
                     viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
                     val recyclerAdapter = CalendarThreeAdapter(
-                        (viewModel.filteredSchedule.value as? ResultState.Ready)?.result?.getOrNull()?.schedule
+                        viewModel.filteredSchedule.value.getOrNull()
                     )
                     viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
                     recyclerAdapter.dayClick += { date ->

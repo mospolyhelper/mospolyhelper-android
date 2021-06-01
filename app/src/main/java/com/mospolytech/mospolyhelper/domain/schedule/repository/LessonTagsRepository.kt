@@ -2,12 +2,12 @@ package com.mospolytech.mospolyhelper.domain.schedule.repository
 
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 
 import kotlinx.coroutines.flow.Flow
 
 interface LessonTagsRepository {
-    fun getAll(): Flow<Result2<List<LessonTag>>>
+    fun getAll(): Flow<Result0<List<LessonTag>>>
 
     suspend fun addTag(tag: LessonTag)
 

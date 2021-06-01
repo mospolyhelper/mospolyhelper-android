@@ -14,7 +14,7 @@
         android:title="@string/nav_deadlines" />
     <item
         android:id="@+id/nav_university_pass"
-        android:icon="@drawable/ic_round_contactless_24"
+        android:icon="@drawable/ic_outline_contactless_24"
         android:title="@string/pass" />
     <item
         android:id="@+id/nav_about_app"

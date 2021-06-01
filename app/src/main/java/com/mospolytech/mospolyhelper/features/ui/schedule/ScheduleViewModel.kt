@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.features.ui.schedule
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
-import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
@@ -11,6 +10,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -32,6 +32,16 @@ class ScheduleViewModel(
     val currentLessonTimes: MutableStateFlow<Pair<List<LessonTime>, LocalTime>> =
         MutableStateFlow(Pair(emptyList(), LocalTime.now()))
 
+    // Used to re-run flows on command
+    private val refreshSignal = MutableSharedFlow<Unit>()
+    // Used to run flows on init and also on command
+    private val loadDataSignal: Flow<Unit> = flow {
+        emit(Unit)
+        emitAll(refreshSignal)
+    }
+
+    private val _isRefreshing = MutableStateFlow<Boolean>(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     private val _advancedSearchUser = MutableStateFlow<UserSchedule?>(null)
 
@@ -45,52 +55,67 @@ class ScheduleViewModel(
 
     val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
 
-    private val originalSchedule = user.transform { value ->
-        emit(ResultState.Loading)
-        val q = useCase.getScheduleWithFeatures(value).map { Result2.success(it).toState() }
-        emit(q.first())
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, ResultState.Loading)
+    private val scheduleLoadSignal = combine(loadDataSignal, user) { _, user -> user}
+        .shareIn(viewModelScope, SharingStarted.Lazily)
 
-    val allLessonTypes = originalSchedule.map {
-        (it as? ResultState.Ready)?.result?.getOrNull()?.schedule?.getAllTypes() ?: emptySet()
-    }.stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+    // Refresh schedule when needed and when the user changes
+    private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
+        .onEach { _isRefreshing.value = false }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
 
-    val filterTypes = MutableStateFlow<Set<String>>(emptySet())
+    private val tags = useCase.getAllTags()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
 
-    val filteredSchedule = originalSchedule.combine(filterTypes) { state, filterTypes ->
-        state.onReady {
-            it.onSuccess {
-                Result2.success(
-                    it.copy(schedule = it.schedule?.filter(types = filterTypes))
-                ).toState()
-            }
+    private val deadlines = useCase.getAllDeadlines()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
+
+    val scheduleUiData = combine(schedule, tags, deadlines) {
+            schedule, tags, deadlines ->
+        if (schedule.isLoading || tags.isLoading || deadlines.isLoading) {
+            Result0.Loading
+        } else {
+            Result0.Success(
+                ScheduleUiData(
+                    schedule.getOrNull(),
+                    tags.getOrDefault(emptyList()),
+                    deadlines.getOrDefault(emptyMap())
+                )
+            )
         }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, ResultState.Loading)
+    }
 
+    val isLoading: StateFlow<Boolean> = schedule.mapLatest { it.isLoading }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+
+    private val _filterTypes = MutableStateFlow<Set<String>>(emptySet())
+    val filterTypes: StateFlow<Set<String>> = _filterTypes
+
+    val filteredSchedule = schedule.combine(filterTypes) { schedule, filterTypes ->
+        schedule.map { it.filter(types = filterTypes) }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
 
     val showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
-
-    val onMessage: Event1<String> = Action1()
 
     init {
         subscribe(::handleMessage)
         launchTimer()
 
         viewModelScope.launch {
-            originalSchedule.collect {
-                it.onReady {
-                    it.onSuccess {
-                        it.schedule?.let {
-                            filterTypes.value = filterTypes.value.intersect(it.getAllTypes())
-                        }
-                    }
-                }
+            useCase.scheduleUpdates.collect {
+                refreshSignal.tryEmit(Unit)
             }
         }
 
         viewModelScope.launch {
-            user.collect {
-                Log.d(TAG, "5" + it.toString())
+            schedule.collect {
+                it.onSuccess {
+                    _filterTypes.value = filterTypes.value.intersect(it.getAllTypes())
+                }.onFailure {
+                    _filterTypes.value = emptySet()
+                }
             }
         }
 
@@ -114,6 +139,7 @@ class ScheduleViewModel(
     }
 
 
+    // TODO: Remove
     private fun handleMessage(message: ViewModelMessage) {
         when (message.key) {
             MessageChangeDate -> {
@@ -134,7 +160,7 @@ class ScheduleViewModel(
         useCase.setCurrentUser(user)
     }
 
-    suspend fun updateSchedule() {
+    private suspend fun updateSchedule() {
         _advancedSearchUser.value = null
         useCase.updateSchedule(user.value)
     }
@@ -153,15 +179,28 @@ class ScheduleViewModel(
     }
 
     private fun setCurrentTimes() {
-        val times = (filteredSchedule.value as? ResultState.Ready)
-            ?.result?.getOrNull()?.schedule
-            ?.getLessons(LocalDate.now())?.map { it.time } ?: emptyList()
-        currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(LocalTime.now(), times), LocalTime.now())
+        val lessonTimes = filteredSchedule.value.getOrNull()
+            ?.getLessons(moscowLocalDate())?.map { it.time } ?: emptyList()
+        val time = moscowLocalTime()
+        currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(time, lessonTimes), time)
     }
 
+    suspend fun setRefreshing() {
+        _isRefreshing.emit(true)
+        updateSchedule()
+        _isRefreshing.emit(false)
+    }
 
     fun setTodayDate() {
         date.value = LocalDate.now()
+    }
+
+    fun addTypeFilter(filter: String) {
+        _filterTypes.value += filter
+    }
+
+    fun removeTypeFilter(filter: String) {
+        _filterTypes.value -= filter
     }
 }
 
