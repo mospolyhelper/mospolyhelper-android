@@ -106,8 +106,12 @@ class InfoFragment : Fragment(R.layout.fragment_account_info) {
         viewBinding.paymentStudent.text = String.format(resources.getString(R.string.ed_form), info.financingType,
             info.educationForm.toLowerCase(Locale.ROOT))
         viewBinding.yearStudent.text = String.format(resources.getString(R.string.ed_year), info.admissionYear)
+        if (info.dormitory.isNotEmpty()) {
+            viewBinding.apartmentStudent.text =
+                requireContext().getString(R.string.apartment, info.dormitory, info.dormitoryRoom)
+            viewBinding.apartmentStudent.show()
+        }
         viewBinding.orders.adapter = OrderAdapter(info.orders)
-        //infoText.text = information
     }
 
     override fun onDestroyView() {

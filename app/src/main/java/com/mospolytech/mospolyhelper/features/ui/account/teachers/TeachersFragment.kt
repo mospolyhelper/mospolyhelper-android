@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.teachers
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -15,6 +14,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountTeachersBinding
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
+import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.Name
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.teachers.adapter.TeachersAdapter
 import com.mospolytech.mospolyhelper.utils.*
@@ -43,8 +43,8 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.newCoroutineContext(this@TeachersFragment.coroutineContext)
-        TeachersAdapter.teacherClickListener = {
-            val data = bundleOf(DIALOG_ID to it)
+        TeachersAdapter.teacherClickListener = { id, name ->
+            val data = bundleOf(DIALOG_ID to id, Name to name)
             findNavController().navigate(R.id.action_teachersFragment_to_messagingFragment, data)
         }
     }
@@ -160,12 +160,12 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
         super.onDestroy()
     }
 
-    fun calculateNoOfColumns(
-        context: Context,
-        columnWidthDp: Float
-    ): Int {
-        val displayMetrics = context.resources.displayMetrics
-        val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
-        return (screenWidthDp / columnWidthDp + 0.5).toInt()
-    }
+//    fun calculateNoOfColumns(
+//        context: Context,
+//        columnWidthDp: Float
+//    ): Int {
+//        val displayMetrics = context.resources.displayMetrics
+//        val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
+//        return (screenWidthDp / columnWidthDp + 0.5).toInt()
+//    }
 }

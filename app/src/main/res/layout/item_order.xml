@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
-    android:layout_marginBottom="3dp"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
-    app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="@color/colorPrimary">
+    android:layout_marginVertical="3dp"
+    app:cardCornerRadius="5dp"
+    app:cardBackgroundColor="@color/layerOne">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,11 +18,11 @@
             android:id="@+id/title_order"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/marks"
-            android:textColor="@color/predmetcolor"
+            tools:text="Приказ"
+            android:textColor="@color/accent_text_color"
             android:textStyle="bold"
             android:layout_marginEnd="5dp"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/ubuntu_bold"
             android:textSize="18sp"
             android:layout_marginStart="@dimen/marginCard"
             android:ellipsize="end"
@@ -42,21 +40,21 @@
             android:layout_marginBottom="@dimen/marginCard"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/marks"
+            android:fontFamily="@font/ubuntu"
+            tools:text="О чем"
             android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/title_order"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/date_order"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/marginCard"
             android:ellipsize="end"
             android:textSize="16sp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/marks"
+            android:fontFamily="@font/ubuntu"
+            tools:text="23.01.1999"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/title_order"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

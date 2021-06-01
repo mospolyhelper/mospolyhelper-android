@@ -5,27 +5,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
-    android:orientation="vertical"
-    android:layout_marginBottom="1dp"
-    app:cardCornerRadius="25dp"
     app:cardBackgroundColor="@color/layerOne"
-    android:elevation="3dp">
+    android:elevation="1dp"
+    android:layout_marginTop="1dp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/marginCard"
+        android:paddingVertical="7dp"
+        android:paddingEnd="7dp"
+        android:paddingStart="15dp"
         android:background="?android:selectableItemBackground">
         <androidx.cardview.widget.CardView
             android:id="@+id/image_corner"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="100dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             <ImageView
                 android:id="@+id/student_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:scaleType="centerCrop"/>
         </androidx.cardview.widget.CardView>
         <TextView
@@ -33,62 +33,66 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             tools:text="@string/fio"
-            android:textColor="@color/predmetcolor"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="20sp"
-            android:layout_marginStart="@dimen/marginCard"
+            android:textColor="@color/accent_text_color"
+            android:fontFamily="@font/ubuntu"
+            android:textSize="21sp"
+            android:layout_marginStart="10dp"
             android:ellipsize="end"
-            android:layout_marginBottom="@dimen/marginCard"
             app:layout_constraintStart_toEndOf="@id/image_corner"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chip_education"
-            app:layout_constraintBottom_toBottomOf="@+id/chip_education"/>
+            app:layout_constraintTop_toTopOf="parent"/>
         <TextView
-            android:id="@+id/dir_spec_student"
+            android:id="@+id/info_student"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="50dp"
-            android:layout_marginStart="@dimen/marginCard"
-            tools:text="Направление: \nПрофиль:"
-            android:layout_marginBottom="@dimen/marginCard"
+            android:minHeight="40dp"
+            tools:text="Инфо"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/textColorPrimary"
+            android:fontFamily="@font/ubuntu"
+            android:textColor="@color/accent_text_color"
+            android:layout_marginTop="3dp"
             android:textSize="15sp"
+            android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@id/image_corner"
-            app:layout_constraintTop_toBottomOf="@id/chip_education"
+            app:layout_constraintTop_toBottomOf="@id/title_student"
             app:layout_constraintEnd_toEndOf="parent"/>
-        <com.google.android.material.chip.ChipGroup
+        <LinearLayout
+            android:id="@+id/container_expand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dir_spec_student">
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_group"
-                tools:text="Группа"
-                app:chipIcon="@drawable/ic_id_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_course"
-                tools:text="Курс"
-                app:chipIcon="@drawable/ic_baseline_looks_3_24"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_form"
-                tools:text="Форма обучения"
-                app:chipIcon="@drawable/ic_id_teacher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.chip.ChipGroup>
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_education"
-            tools:text="Бакалавр"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="vertical"
+            android:paddingVertical="5dp"
+            app:layout_constraintTop_toBottomOf="@id/info_student">
+            <TextView
+                android:id="@+id/direction_student"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/ubuntu"
+                android:drawableStart="@drawable/ic_fluent_people_24_regular"
+                tools:text="Направление"
+                app:drawableTint="@color/iconColor"/>
+            <TextView
+                android:id="@+id/spec_student"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/ubuntu"
+                android:drawableStart="@drawable/ic_fluent_info_24_regular"
+                tools:text="Профиль"
+                app:drawableTint="@color/iconColor"/>
+            <TextView
+                android:id="@+id/form_student"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/ubuntu"
+                android:drawableStart="@drawable/ic_teacher_24"
+                tools:text="Форма: Очная"
+                app:drawableTint="@color/iconColor"/>
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

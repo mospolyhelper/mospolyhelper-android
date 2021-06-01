@@ -58,14 +58,14 @@ class ClassmatesAdapter:RecyclerView.Adapter<ClassmatesAdapter.ClassmatesViewHol
         fun bind(item: Classmate) {
             name.text = item.name
             when {
-                item.status.contains("Пользователь не на сайте", true) -> {
-                    status.setBackgroundResource(R.drawable.round_offline)
-                }
-                item.status.contains("Пользователь не сайте", true) -> {
+//                item.status.contains("Пользователь не на сайте", true) -> {
+//                    status.setBackgroundResource(R.drawable.round_offline)
+//                }
+                item.status.contains("Пользователь на сайте", true) -> {
                     status.setBackgroundResource(R.drawable.round_online)
                 }
                 else -> {
-                    status.setBackgroundResource(R.drawable.round_offline)
+                    status.setBackgroundColor(itemView.context.getColor(android.R.color.transparent))
                 }
             }
             card.setOnClickListener { classmatesClickListener?.invoke(item.dialogKey) }

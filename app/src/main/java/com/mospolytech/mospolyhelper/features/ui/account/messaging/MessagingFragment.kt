@@ -21,6 +21,7 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
     companion object {
         const val DIALOG_ID = "DialogID"
+        const val Name = "Name"
     }
 
     private val viewModel by viewModel<MessagingViewModel>()
@@ -55,6 +56,12 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
         viewBinding.recyclerMessaging.adapter = adapter
         viewBinding.recyclerMessaging.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL, true)
+
+        arguments?.getString(Name)?.let {
+            viewBinding.toolbarDialog.title = it
+        } ?: let {
+            viewBinding.toolbarDialog.title = requireContext().getString(R.string.Dialog)
+        }
 
         viewBinding.swipeMessaging.setOnRefreshListener {
             lifecycleScope.launch {

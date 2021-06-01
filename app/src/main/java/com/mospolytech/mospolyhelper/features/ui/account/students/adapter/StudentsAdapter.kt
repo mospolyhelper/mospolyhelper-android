@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.students.adapter
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStudentBinding
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
@@ -47,71 +49,81 @@ class StudentsAdapter: PagingDataAdapter<Student, RecyclerView.ViewHolder>(diffU
         }
     }
 
-    internal class StudentsViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    inner class StudentsViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(ItemStudentBinding::bind)
 
         private val name: TextView = viewBinding.titleStudent
-        private val group: Chip = viewBinding.chipGroup
-        private val course: Chip = viewBinding.chipCourse
-        private val educationForm: Chip = viewBinding.chipForm
-        private val directionSpecialization: TextView = viewBinding.dirSpecStudent
-        private val education: Chip = viewBinding.chipEducation
         private val avatar: ImageView = viewBinding.studentAvatar
+        private val direction = viewBinding.directionStudent
+        private val specialization = viewBinding.specStudent
+        private val form = viewBinding.formStudent
+        private val info = viewBinding.infoStudent
+        private val expander = viewBinding.containerExpand
 
         fun bind(item: Student) {
+            itemView.setOnClickListener {
+                item.isExpanded = !item.isExpanded
+                notifyItemChanged(layoutPosition)
+            }
             name.text = item.name
-            group.text = item.group
-            if (item.group.isNotEmpty()) group.show() else group.gone()
-            group.setOnClickListener { groupClickListener?.invoke(item.group) }
-            course.text = itemView.context.getString(R.string.course, item.course)//"${item.course} курс" Contex
-            if (item.course.isNotEmpty()) course.show() else course.gone()
-            educationForm.text = itemView.context.getString(R.string.education_form, item.educationForm)
-            if (item.course.isNotEmpty()) educationForm.show() else educationForm.gone()
-            if (item.direction.isNotEmpty())
-                directionSpecialization.text = itemView.context.getString(R.string.direction, item.direction)
-            if (item.specialization.isNotEmpty())
-                directionSpecialization.text = itemView.context.getString(R.string.specialization, item.specialization)
-            if (item.direction.isNotEmpty() && item.specialization.isNotEmpty())
-                directionSpecialization.text = itemView.context.getString(R.string.direction, item.direction) +
-            "\n" + itemView.context.getString(R.string.specialization, item.specialization)
-            if (item.direction.isEmpty() && item.specialization.isEmpty())
-                directionSpecialization.gone()
-            else
-                directionSpecialization.show()
+            form.text = itemView.context.getString(R.string.education_form, item.educationForm)
+            if (item.direction.isNotEmpty()) {
+                direction.text = itemView.context.getString(R.string.direction, item.direction)
+                direction.show()
+            } else {
+                direction.gone()
+            }
+            if (item.specialization.isNotEmpty()) {
+                specialization.text = itemView.context.getString(R.string.specialization, item.specialization)
+                specialization.show()
+            } else {
+                specialization.gone()
+            }
             val educationCode = item.direction
             var res = ""
             if (educationCode.contains(".02.", true)) {
-                res = "СПО"
+                res = itemView.context.getString(R.string.spo)
             }
             if (educationCode.contains(".03.", true)) {
-                res = "Бакалавриат"
+                res = itemView.context.getString(R.string.bak)
             }
             if (educationCode.contains(".04.", true)) {
-                res = "Магистратура"
+                res = itemView.context.getString(R.string.mag)
             }
             if (educationCode.contains(".05.", true)) {
-                res = "Специалитет"
+                res = itemView.context.getString(R.string.spec)
             }
             if (educationCode.contains(".06.", true)) {
-                res = "Аспирантура"
+                res = itemView.context.getString(R.string.aspirant)
             }
             if (res.isEmpty()) {
                 if (educationCode.contains("03", true)) {
-                    res = "Бакалавриат"
+                    res = itemView.context.getString(R.string.bak)
                 }
                 if (educationCode.contains("04", true)) {
-                    res = "Магистратура"
+                    res = itemView.context.getString(R.string.mag)
                 }
                 if (educationCode.contains("05", true)) {
-                    res = "Специалитет"
+                    res = itemView.context.getString(R.string.spec)
                 }
                 if (educationCode.contains("06", true)) {
-                    res = "Аспирантура"
+                    res = itemView.context.getString(R.string.aspirant)
                 }
             }
-            education.text = res
-            if (res.isNotEmpty()) education.show() else education.hide()
+            if (res.isEmpty()) {
+                res = itemView.context.getString(R.string.Student)
+            }
+            if (item.group.isNotEmpty()) {
+                info.text = itemView.context.getString(R.string.info_student, res, item.course, item.group)
+            } else {
+                info.text = itemView.context.getString(R.string.info_student_without_group, res, item.course)
+            }
+            if (item.isExpanded) {
+                expander.show()
+            } else {
+                expander.gone()
+            }
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
         }
 

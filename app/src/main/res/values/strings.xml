@@ -133,6 +133,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="applications">Справки</string>
     <string name="Payments">Оплата</string>
     <string name="Students">Студенты</string>
+    <string name="Student">Студент</string>
     <string name="teachers">Преподаватели</string>
     <string name="classmates">Одногруппники</string>
     <string name="statements">Электронная зачетная книжка</string>
@@ -171,9 +172,11 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="input_message">Введите сообщение</string>
     <string name="course">%1$s курс</string>
     <string name="semester">%1$s семестр</string>
-    <string name="education_form">%1$s форма обучения</string>
+    <string name="info_student">%1$s %2$s-го курса группы %3$s</string>
+    <string name="info_student_without_group">%1$s %2$s-го курса</string>
+    <string name="education_form">Форма обучения: %1$s</string>
     <string name="direction">Направление: %1$s</string>
-    <string name="specialization">Форма обучения: %1$s</string>
+    <string name="specialization">Специализация: %1$s</string>
     <string name="exam">Экзамен</string>
     <string name="reg_application">Регистрационный номер: %1$s</string>
     <string name="applic_adress">Структурное подразделение, адрес: %1$s</string>
@@ -193,4 +196,12 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="ed_year">%1$s год набора</string>
     <string name="menu_main_account">Личный кабинет</string>
     <string name="menu_main_utilities">Полезности</string>
+    <string name="student">СТУДЕНТ</string>
+    <string name="apartment">Общежитие №%1$s, комната %2$s</string>
+    <string name="aspirant">Аспирант</string>
+    <string name="spec">Специалист</string>
+    <string name="bak">Бакалавр</string>
+    <string name="spo">СПО</string>
+    <string name="mag">Магистр</string>
+
 </resources>

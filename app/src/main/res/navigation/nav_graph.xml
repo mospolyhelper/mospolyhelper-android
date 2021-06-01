@@ -240,6 +240,8 @@
         <argument
             android:name="DialogID"
             app:argType="string" />
+        <argument android:name="Name"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/applicationsFragment"
