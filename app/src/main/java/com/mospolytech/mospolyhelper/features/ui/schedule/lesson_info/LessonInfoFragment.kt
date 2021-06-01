@@ -4,21 +4,19 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.text.HtmlCompat
-import androidx.core.text.getSpans
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,10 +25,16 @@ import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
+import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
-import com.mospolytech.mospolyhelper.utils.safe
+import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
+import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
+import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
+import com.mospolytech.mospolyhelper.utils.*
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.format.DateTimeFormatter
+
 
 class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info) {
 
@@ -40,7 +44,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             0xff29b6f6.toInt()    // Other
         )
     }
-    private val lessonLabelOneDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EE, d MMM,")
     private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter2 = DateTimeFormatter.ofPattern("d MMMM yyyy (EE)")
@@ -50,38 +53,36 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     private val args: LessonInfoFragmentArgs by navArgs()
 
 
+    override fun getTheme(): Int  = R.style.LessonInfoDialogTheme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        (activity as MainActivity).setSupportActionBar(toolbar)
-//        (activity as MainActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-//        (activity as MainActivity).supportActionBar!!.setHomeButtonEnabled(true)
-//        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        viewBinding.toolbar.setNavigationOnClickListener {
+            findNavController().safe { navigateUp() }
+        }
 
         viewModel.lessonTime = args.lessonTime
         viewModel.lesson = args.lesson
         viewModel.date = args.date
+        viewModel.setTags()
 
         if (viewModel.lesson.isEmpty) {
             //lessonTitleTextView.text = "Нет занятия"
             setTime()
         } else {
+            lifecycleScope.launchWhenResumed {
+                viewModel.tags.collect {
+                    it.onSuccess {
+                        setTags(it)
+                    }
+                }
+            }
             setType()
             setTitle()
             setTime()
@@ -89,7 +90,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             setTeachers()
             setDate()
             setGroupInfo()
-            setLabels()
+            setTagButton()
             setDeadlines()
         }
 
@@ -109,11 +110,43 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     }
 
     private fun setTime() {
-        val (startTime, endTime) = viewModel.lessonTime.time
+        val (startTime, endTime) = viewModel.lessonTime.timeString
         val dateStr = viewModel.date.format(dateFormatter).capitalize()
         with(viewBinding) {
             this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonTime.order + 1})"
         }
+    }
+
+    private fun setTags(tags: List<LessonTag>) {
+        if (tags.isEmpty()) {
+            viewBinding.textviewTags.gone()
+        } else {
+            viewBinding.textviewTags.show()
+        }
+        viewBinding.textviewTags.text = getFeaturesString(tags)
+    }
+
+    private fun getFeaturesString(tags: List<LessonTag>): SpannableStringBuilder {
+        val iterator = tags.iterator()
+        val builder = SpannableStringBuilder()
+        while (iterator.hasNext()) {
+            val tag = iterator.next()
+            val color = tag.getColor()
+            builder.append(
+                "\u00A0",
+                RoundedBackgroundSpan(
+                    backgroundColor = requireContext().getColor(color.colorId),
+                    textColor = requireContext().getColor(color.textColorId),
+                    text = tag.title,
+                    relativeTextSize = 0.65f
+                ),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            if (iterator.hasNext()) {
+                builder.append(" ")
+            }
+        }
+        return builder
     }
 
     private fun setAuditoriums() {
@@ -123,11 +156,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
         val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
         for (auditorium in viewModel.lesson.auditoriums) {
-            val audTitle = HtmlCompat.fromHtml(
-                auditorium.title,
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
-            val url = audTitle.getSpans<URLSpan>().firstOrNull()
+            val audTitle = auditorium.fullTitle
             val color = convertColorFromString(auditorium.color, nightMode)
 
             val text = if (color != null) {
@@ -143,11 +172,11 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                 audTitle
             }
 
-            val onClickListener = if (url != null) {
+            val onClickListener = if (auditorium.url.isNotEmpty()) {
                 { it: View ->
                     AlertDialog.Builder(context).setTitle("Открыть ссылку?")
                         .setPositiveButton("Да") { _, _ ->
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.url)))
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(auditorium.url)))
                         }.setNegativeButton("Нет") { _, _ -> }.create().show()
 
                 }
@@ -161,13 +190,28 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             recyclerviewAuditoriums.layoutManager = LinearLayoutManager(context)
             recyclerviewAuditoriums.adapter = LessonInfoObjectAdapter(viewModel.lesson.auditoriums.map {
                 object : LessonInfoObject {
-                    override val title = HtmlCompat.fromHtml(
-                        it.title,
-                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                    ).toString()
+                    override val title = it.fullTitle
                     override val description = it.description
-                    override val avatar = R.drawable.ic_baseline_apartment_24
-
+                    override val avatar = if (it.isOnline) {
+                        R.drawable.ic_fluent_desktop_24_regular
+                    } else {
+                        R.drawable.ic_fluent_building_24_regular
+                    }
+                    override val onClickListener: () -> Unit = {
+                        if (it.url.isNotEmpty()) {
+                            AlertDialog.Builder(context)
+                                .setTitle("Открыть ссылку?")
+                                .setMessage(it.url)
+                                .setPositiveButton("Да") { _, _ ->
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(it.url)
+                                        )
+                                    )
+                                }.setNegativeButton("Нет") { _, _ -> }.create().show()
+                        }
+                    }
                 }
             })
         }
@@ -212,8 +256,8 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                 object : LessonInfoObject {
                     override val title = it.name
                     override val description = ""
-                    override val avatar = R.drawable.ic_round_person_24
-
+                    override val avatar = R.drawable.ic_fluent_hat_graduation_20_regular
+                    override val onClickListener: () -> Unit = { }
                 }
             })
         }
@@ -239,15 +283,16 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                 object : LessonInfoObject {
                     override val title = it.title
                     override val description = if (it.isEvening) "Вечерняя" else ""
-                    override val avatar = R.drawable.ic_group_24
+                    override val avatar = R.drawable.ic_fluent_people_20_regular
+                    override val onClickListener: () -> Unit = {
+                        findNavController().safe {
+                            navigate(
+                                LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it.title)
+                            )
+                        }
+                    }
                 }
-            }) {
-                findNavController().safe {
-                    navigate(
-                        LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it)
-                    )
-                }
-            }
+            })
         }
     }
 
@@ -258,7 +303,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
         return chip
     }
 
-    private fun setLabels() {
+    private fun setTagButton() {
         viewBinding.buttonAddLabel.setOnClickListener {
             findNavController().safe { navigate(
                 LessonInfoFragmentDirections

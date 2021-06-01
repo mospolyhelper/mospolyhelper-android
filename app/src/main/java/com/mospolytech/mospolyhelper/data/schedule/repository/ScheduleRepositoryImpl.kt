@@ -1,140 +1,108 @@
 package com.mospolytech.mospolyhelper.data.schedule.repository
 
+import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleDao
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
+import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
 import com.mospolytech.mospolyhelper.data.schedule.remote.ScheduleRemoteDataSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
+import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.utils.Result2
-import com.mospolytech.mospolyhelper.utils.getOrDefault
-import com.mospolytech.mospolyhelper.utils.getOrNull
+import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
-import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.flow.flowOn
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 class ScheduleRepositoryImpl(
+    private val remoteDataSource: ScheduleRemoteDataSource,
     private val localDataSource: ScheduleLocalDataSource,
-    private val remoteDataSource: ScheduleRemoteDataSource
+    private val scheduleDao: ScheduleDao,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ScheduleRepository {
-    companion object {
-        fun allDataFromSchedule(schedule: Schedule): SchedulePack {
-            val lessonTitles = HashSet<String>()
-            val lessonTeachers = HashSet<String>()
-            val lessonAuditoriums = HashSet<String>()
-            val lessonTypes = HashSet<String>()
-            for (dailySchedule in schedule.dailySchedules) {
-                for (lessonPlace in dailySchedule) {
-                    for (lesson in lessonPlace.lessons) {
-                        lessonTitles.add(lesson.title)
-                        for (teacher in lesson.teachers) {
-                            lessonTeachers.add(teacher.name)
-                        }
-                        if (lesson.auditoriums.isNotEmpty()) {
-                            for (auditorium in lesson.auditoriums) {
-                                lessonAuditoriums.add(auditorium.title)
-                            }
-                        }
-                        lessonTypes.add(lesson.type)
-                    }
-                }
-            }
-            return SchedulePack(
-                schedule,
-                lessonTitles,
-                lessonTeachers,
-                lessonAuditoriums,
-                lessonTypes
-            )
-        }
-    }
-
-    private val scheduleCounter = AtomicInteger(0)
+    private val changesFlow = MutableSharedFlow<Schedule?>(extraBufferCapacity = 64)
 
     override fun getSchedule(
-        user: UserSchedule?,
-        refresh: Boolean
+        user: UserSchedule?
     ) = flow {
         if (user == null) {
             emit(null)
         } else {
-            val schedule = if (refresh) {
-                refresh(user).getOrNull() ?: localDataSource.get(user)
-            } else {
-                localDataSource.get(user) ?: refresh(user).getOrNull()
+            val scheduleVersion = scheduleDao.getScheduleVersion(user)
+            when {
+                user is AdvancedSearchSchedule -> emit(localDataSource.get(user)?.filter(user.filters))
+                scheduleVersion == null ||
+                        scheduleVersion.downloadingDateTime
+                            .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1 -> {
+                    emit(refresh(user).getOrNull())
+                }
+                else -> {
+                    emit(localDataSource.get(user))
+                }
             }
-            emit(schedule)
+        }
+        emitAll(changesFlow)
+    }.flowOn(ioDispatcher)
+
+    override suspend fun getScheduleVersion(user: UserSchedule): ScheduleVersionDb? {
+        return scheduleDao.getScheduleVersion(user)
+    }
+
+    override suspend fun updateSchedule(user: UserSchedule?) = withContext(ioDispatcher) {
+        if (user != null && user !is AdvancedSearchSchedule) {
+            changesFlow.emit(refresh(user).getOrNull())
         }
     }
 
-    private suspend fun refresh(user: UserSchedule): Result2<Schedule> {
+    private suspend fun refresh(user: UserSchedule): Result2<Schedule> = coroutineScope {
         val schedule = when (user) {
             is StudentSchedule -> remoteDataSource.getByGroup(user.id)
             is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
-            is AuditoriumSchedule -> Result2.Failure(Exception())
-        }
-        if (schedule is Result2.Success) {
-            localDataSource.set(schedule.value, user)
-        }
-        return schedule
-    }
-
-
-    override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList = coroutineScope {
-        scheduleCounter.set(0)
-
-        val schedules = remoteDataSource
-            .getAll(false, onProgressChanged)
-            .getOrDefault(emptySequence()) +
-                remoteDataSource
-                    .getAll(true, onProgressChanged)
-                    .getOrDefault(emptySequence())
-
-        val scheduleList = mutableListOf<Schedule>()
-        val lessonTitles = mutableSetOf<String>()
-        val lessonTeachers = mutableSetOf<String>()
-        val lessonGroups = mutableSetOf<String>()
-        val lessonAuditoriums = mutableSetOf<String>()
-        val lessonTypes = mutableSetOf<String>()
-
-
-        for (schedule in schedules) {
-            scheduleList.add(schedule)
-            for (dailySchedule in schedule.dailySchedules) {
-                for (lessonPlace in dailySchedule) {
-                    for (lesson in lessonPlace.lessons) {
-                        lessonTitles.add(lesson.title)
-                        for (teacher in lesson.teachers) {
-                            lessonTeachers.add(teacher.name)
-                        }
-                        for (group in lesson.groups) {
-                            lessonGroups.add(group.title)
-                        }
-                        for (auditorium in lesson.auditoriums) {
-                            lessonAuditoriums.add(auditorium.title)
-                        }
-                        lessonTypes.add(lesson.type)
-                    }
-                }
+            else -> Result2.failure(Exception())
+        }.onSuccess {
+            this.launch {
+                scheduleDao.setScheduleVersion(ScheduleVersionDb(user.idGlobal, ZonedDateTime.now()))
+                localDataSource.set(it, user.idGlobal)
             }
-
         }
-        onProgressChanged(1f)
-        return@coroutineScope SchedulePackList(
-            scheduleList,
-            lessonTitles.sorted(),
-            lessonTypes.sorted(),
-            lessonTeachers.sorted(),
-            lessonGroups.sorted(),
-            lessonAuditoriums.sorted(),
-        )
+        schedule
     }
 
-    class SchedulePack(
-        val schedule: Schedule,
-        val lessonTitles: Set<String>,
-        val lessonTeachers: Set<String>,
-        val lessonAuditoriums: Set<String>,
-        val lessonTypes: Set<String>
-    )
+    override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList =
+        withContext(Dispatchers.Default) {
+            val lessonTitles = HashSet<String>(2000)
+            val lessonTypes = HashSet<String>(30)
+            val lessonTeachers = HashSet<String>(1000)
+            val lessonGroups = HashSet<String>(500)
+            val lessonAuditoriums = HashSet<String>(600)
+
+            val schedule = remoteDataSource
+                .getAll(
+                    lessonTitles,
+                    lessonTypes,
+                    lessonTeachers,
+                    lessonGroups,
+                    lessonAuditoriums,
+                    onProgressChanged
+                ).getOrNull()
+            val downloadDateTime = ZonedDateTime.now()
+
+            scheduleDao.setScheduleVersion(
+                ScheduleVersionDb(
+                    UserSchedule.PREFIX_ADVANCED_SEARCH,
+                    downloadDateTime
+                )
+            )
+            localDataSource.set(schedule, UserSchedule.PREFIX_ADVANCED_SEARCH)
+            SchedulePackList(
+                lessonTitles.sorted(),
+                lessonTypes.sorted(),
+                lessonTeachers.sorted(),
+                lessonGroups.sorted(),
+                lessonAuditoriums.sorted(),
+            )
+        }
 }

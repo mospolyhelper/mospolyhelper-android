@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginStart="@dimen/lesson_margin_start"
     android:layout_marginEnd="@dimen/lesson_margin_end"
     android:layout_marginTop="@dimen/lesson_margin_top"
@@ -11,7 +12,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:layout_marginBottom="1dp"
         android:id="@+id/text_title"
         style="@style/ScheduleLessonSubtitle"
         android:fontFamily="@font/ubuntu"
@@ -22,44 +22,17 @@
         android:layout_height="wrap_content"
         android:breakStrategy="simple"
         android:clickable="false"
-        android:text="Большой перерыв"
+        tools:text="Большой перерыв"
+        tools:drawableStart="@drawable/ic_fluent_drink_coffee_20_regular"
         app:drawableTint="#9E9EA6" />
 
-    <LinearLayout
-        android:layout_marginTop="4.5dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:visibility="gone"
-            android:layout_marginTop="1sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerCrop"
-                android:tintMode="multiply"
-                app:srcCompat="@drawable/ic_squircle_2"
-                app:tint="#292A2F" />
-
-            <ImageView
-                android:id="@+id/imageview_info"
-                android:layout_gravity="center"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:scaleType="centerCrop" />
-        </FrameLayout>
-
     <TextView
+        android:paddingStart="10dp"
+        android:paddingEnd="0dp"
+        android:layout_marginTop="5.5dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="@dimen/lesson_icon_size"
-        android:paddingStart="@dimen/lesson_drawable_padding"
+        android:layout_marginEnd="@dimen/lesson_margin_end"
         android:lineSpacingMultiplier="@dimen/text_line_spacing"
         android:id="@+id/text_info"
         style="@style/ScheduleLessonSubtitle"
@@ -68,6 +41,5 @@
         android:layout_height="wrap_content"
         android:breakStrategy="balanced"
         android:clickable="false"
-        android:text="окно в 1 час 50 минут" />
-    </LinearLayout>
+        tools:text="У тебя будет 40 минут, чтобы перекусить или отдохнуть" />
 </LinearLayout>

@@ -2,17 +2,18 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.domain.core.model.Message
 import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
-import com.mospolytech.mospolyhelper.utils.Result2
-import kotlinx.coroutines.async
+import com.mospolytech.mospolyhelper.utils.ResultState
+import com.mospolytech.mospolyhelper.utils.toState
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 
@@ -28,7 +29,7 @@ class LessonTagViewModel(
     val tag = MutableStateFlow<LessonTag?>(null)
     val title = MutableStateFlow("")
     val checkedColor = MutableStateFlow(LessonTagColors.ColorDefault)
-    val tags = MutableStateFlow<Result2<List<LessonTag>>>(Result2.Loading())
+    val tags = MutableStateFlow<ResultState<List<LessonTag>>>(ResultState.Loading)
 
     init {
         viewModelScope.launch {
@@ -47,7 +48,7 @@ class LessonTagViewModel(
 
         viewModelScope.launch {
             useCase.getAllTags().collect {
-                tags.value = it
+                tags.value = it.toState()
             }
         }
     }

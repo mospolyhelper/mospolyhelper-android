@@ -4,6 +4,8 @@
     android:id="@+id/recyclerview_lessons"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="45dp"
+    android:clipToPadding="false"
     android:clickable="false"
     android:focusable="false"
     android:overScrollMode="never"

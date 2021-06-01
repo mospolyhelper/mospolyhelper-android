@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.domain.account.statements.repository.StatementsRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ class StatementsRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Statements>>{
+    override suspend fun getLocalInfo(): Flow<Result2<Statements>>{
         val statements = localDataSource.getJson()
         return flow {
                 if (statements.isNotEmpty()) emit(localDataSource.get(statements))

@@ -1,30 +1,30 @@
 package com.mospolytech.mospolyhelper.data.account.messaging.remote
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import com.mospolytech.mospolyhelper.data.account.messaging.api.MessagingHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.MessageSend
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class MessagingRemoteDataSource(
     private val client: MessagingHerokuClient,
 ) {
-    suspend fun getMessages(sessionId: String, dialogKey: String): Result<List<Message>> {
+    suspend fun getMessages(sessionId: String, dialogKey: String): Result2<List<Message>> {
         return try {
             val res = client.getMessages(sessionId, dialogKey)
-            Result.success(Json.decodeFromString(res))
+            Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 
-    suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result<List<Message>> {
+    suspend fun sendMessage(sessionId: String, dialogKey: String, message: String, fileNames: List<String>): Result2<List<Message>> {
         return try {
             val res = client.sendMessage(sessionId, MessageSend(dialogKey, message, fileNames))
-            Result.success(Json.decodeFromString(res))
+            Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 

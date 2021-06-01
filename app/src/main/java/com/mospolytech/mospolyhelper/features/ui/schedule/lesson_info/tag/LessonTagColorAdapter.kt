@@ -58,6 +58,7 @@ class LessonTagColorAdapter : RecyclerView.Adapter<LessonTagColorAdapter.ViewHol
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val viewBinding by viewBinding(ItemColorPickerBinding::bind)
+
         private var isChecked = false
 
         fun bind(@ColorRes colorId: Int, isChecked: Boolean, onChecked: (position: Int) -> Unit = { }) {
@@ -95,13 +96,13 @@ class LessonTagColorAdapter : RecyclerView.Adapter<LessonTagColorAdapter.ViewHol
                     scaleTo = 1.0f
                 }
                 val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
-                colorAnimation.duration = 200 // milliseconds
+                colorAnimation.duration = 200
                 colorAnimation.addUpdateListener { animator ->
                     viewBinding.root.foregroundTintList = ColorStateList.valueOf(animator.animatedValue as Int)
                 }
 
                 val scaleAnimation = ValueAnimator.ofFloat(scaleFrom, scaleTo)
-                scaleAnimation.duration = 200 // milliseconds
+                scaleAnimation.duration = 200
                 scaleAnimation.addUpdateListener { animator ->
                     viewBinding.root.scaleX = animator.animatedValue as Float
                     viewBinding.root.scaleY = animator.animatedValue as Float

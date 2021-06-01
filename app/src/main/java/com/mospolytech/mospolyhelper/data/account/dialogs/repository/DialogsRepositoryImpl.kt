@@ -7,7 +7,7 @@ import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.domain.account.dialogs.repository.DialogsRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ class DialogsRepositoryImpl(private val localDataSource: DialogsLocalDataSource,
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    override suspend fun getDialogs(): Flow<Result<List<DialogModel>>> = flow {
+    override suspend fun getDialogs(): Flow<Result2<List<DialogModel>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
@@ -34,7 +34,7 @@ class DialogsRepositoryImpl(private val localDataSource: DialogsLocalDataSource,
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalDialogs(): Flow<Result<List<DialogModel>>> = flow {
+    override suspend fun getLocalDialogs(): Flow<Result2<List<DialogModel>>> = flow {
         emit(localDataSource.get())
     }.flowOn(ioDispatcher)
 

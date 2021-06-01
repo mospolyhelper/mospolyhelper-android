@@ -9,27 +9,20 @@ import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class ScheduleIdsViewModel(
-    mediator: Mediator<String, ViewModelMessage>,
     private val scheduleUseCase: ScheduleUseCase
-): ViewModelBase(mediator, ScheduleIdsViewModel::class.java.simpleName) {
-    val idSet = MutableStateFlow(emptySet<UserSchedule>())
+): ViewModelBase() {
+    val users = scheduleUseCase.getAllUsers()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val searchQuery = MutableStateFlow("")
     val filterMode = MutableStateFlow(FilterModes.All)
 
-    init {
-        getIdSet()
-    }
-
-    fun sendSelectedItem(item: UserSchedule) {
-        send(ScheduleViewModel::class.java.simpleName, ScheduleViewModel.MessageAddScheduleId, item)
-    }
-
-    private fun getIdSet() {
-        viewModelScope.async {
-            idSet.value = scheduleUseCase.getIdSet()
-        }
+    suspend fun addSavedScheduleUser(user: UserSchedule) {
+        scheduleUseCase.addSavedScheduleUser(user)
     }
 }
 

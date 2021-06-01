@@ -2,7 +2,6 @@ package com.mospolytech.mospolyhelper.domain.account.dialogs.model
 
 import com.mospolytech.mospolyhelper.utils.MessageDateSerializer
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable

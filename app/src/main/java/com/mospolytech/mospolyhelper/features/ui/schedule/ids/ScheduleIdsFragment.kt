@@ -90,7 +90,7 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
 
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
-            viewModel.idSet.collect {
+            viewModel.users.collect {
                 setAdapter(it.toList())
                 if (progressBarFlag) {
                     progressBarFlag = false
@@ -113,7 +113,9 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
             viewModel.searchQuery.value,
             viewModel.filterMode.value
         ) {
-            viewModel.sendSelectedItem(it)
+            lifecycleScope.launchWhenResumed {
+                viewModel.addSavedScheduleUser(it)
+            }
             findNavController().safe { navigateUp() }
         }
     }

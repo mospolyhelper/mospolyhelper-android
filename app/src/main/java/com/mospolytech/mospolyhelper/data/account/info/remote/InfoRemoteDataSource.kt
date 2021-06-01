@@ -2,19 +2,19 @@ package com.mospolytech.mospolyhelper.data.account.info.remote
 
 import com.mospolytech.mospolyhelper.data.account.info.api.InfoHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.utils.Result
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import com.mospolytech.mospolyhelper.utils.Result2
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 class InfoRemoteDataSource(
     private val client: InfoHerokuClient
 ) {
-    suspend fun get(sessionId: String): Result<Info> {
+    suspend fun get(sessionId: String): Result2<Info> {
         return try {
             val res = client.getInfo(sessionId)
-            Result.success(Json.decodeFromString(res))
+            Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 }

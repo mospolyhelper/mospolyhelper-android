@@ -68,9 +68,11 @@ class ScheduleIdsAdapter(
         fun bind(user: UserSchedule) {
             viewBinding.textviewId.text = user.title
             if (user is StudentSchedule) {
-                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_group, 0, 0, 0)
+                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    R.drawable.ic_fluent_people_24_regular, 0, 0, 0)
             } else {
-                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_id_teacher, 0, 0, 0)
+                viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    R.drawable.ic_fluent_hat_graduation_24_regular, 0, 0, 0)
             }
         }
     }

@@ -1,32 +1,23 @@
 package com.mospolytech.mospolyhelper.data.schedule.local
 
 import androidx.room.*
-import com.mospolytech.mospolyhelper.data.schedule.model.LessonWithFeaturesDb
-import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleDb
-import com.mospolytech.mospolyhelper.data.schedule.model.TeacherDb
+import com.mospolytech.mospolyhelper.data.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.*
 
 @Dao
 abstract class ScheduleDao {
-    @Transaction
-    @Query("SELECT * FROM LessonDb")
-    abstract fun getAllLessons(): List<LessonWithFeaturesDb>
-
-    @Query("SELECT * FROM ScheduleDb WHERE user = :user")
-    abstract fun getScheduleByUser(user: String): ScheduleDb
-
-    @Query("SELECT * FROM TeacherDb WHERE name = :name")
-    abstract fun getTeacherByName(name: String): List<TeacherDb>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertTeacher(teacher: TeacherDb)
+    @Query("SELECT * FROM ScheduleVersionDb WHERE userScheduleId = :userScheduleId")
+    abstract suspend fun getScheduleVersion(userScheduleId: String): ScheduleVersionDb?
 
     @Transaction
-    open fun insertOrUpdateTeachers(teachers: List<TeacherDb>) {
-        for (teacher in teachers) {
-            val foundTeachers = getTeacherByName(teacher.name)
-            if (foundTeachers.isEmpty()) {
-                insertTeacher(teacher)
-            }
+    open suspend fun getScheduleVersion(userSchedule: UserSchedule): ScheduleVersionDb? {
+        return try {
+            return getScheduleVersion(userSchedule.idGlobal)
+        } catch (e: Exception) {
+            null
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun setScheduleVersion(scheduleDb: ScheduleVersionDb)
 }

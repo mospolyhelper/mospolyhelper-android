@@ -1,142 +1,127 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
 import android.util.Log
+import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
 import com.mospolytech.mospolyhelper.utils.TAG
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 object LessonTimeUtils {
-    val firstPair = Pair(
-        LocalTime.of(9, 0),
-        LocalTime.of(10, 30)
-    )
-    val secondPair = Pair(
-        LocalTime.of(10, 40),
-        LocalTime.of(12, 10)
-    )
+    enum class LessonTimes(
+        val start: LocalTime,
+        val end: LocalTime
+    ) {
+        Pair1(
+            LocalTime.of(9, 0),
+            LocalTime.of(10, 30)
+        ),
+        Pair2(
+            LocalTime.of(10, 40),
+            LocalTime.of(12, 10)
+        ),
+        Pair3(
+            LocalTime.of(12, 20),
+            LocalTime.of(13, 50)
+        ),
+        Pair4(
+            LocalTime.of(14, 30),
+            LocalTime.of(16, 0)
+        ),
+        Pair5(
+            LocalTime.of(16, 10),
+            LocalTime.of(17, 40)
+        ),
+        Pair6(
+            LocalTime.of(17, 50),
+            LocalTime.of(19, 20)
+        ),
+        Pair6Evening(
+            LocalTime.of(18, 20),
+            LocalTime.of(19, 40)
+        ),
+        Pair7(
+            LocalTime.of(19, 30),
+            LocalTime.of(21, 0)
+        ),
+        Pair7Evening(
+            LocalTime.of(19, 50),
+            LocalTime.of(21, 10)
+        ),
+        Undefined(LocalTime.MIN, LocalTime.MAX)
+    }
 
-    val thirdPair = Pair(
-        LocalTime.of(12, 20),
-        LocalTime.of(13, 50)
-    )
+    enum class LessonTimesStr(
+        val start: String,
+        val end: String
+    ) {
+        Pair1("9:00", "10:30"),
+        Pair2("10:40", "12:10"),
+        Pair3("12:20", "13:50"),
+        Pair4("14:30", "16:00"),
+        Pair5("16:10", "17:40"),
+        Pair6("17:50", "19:20"),
+        Pair6Evening("18:20", "19:40"),
+        Pair7("19:30", "21:00"),
+        Pair7Evening("19:50", "21:10"),
+        Undefined("Ошибка", "номера занятия");
 
-    val fourthPair = Pair(
-        LocalTime.of(14, 30),
-        LocalTime.of(16, 0)
-    )
+        operator fun component1() = start
+        operator fun component2() = end
+    }
 
-    val fifthPair = Pair(
-        LocalTime.of(16, 10),
-        LocalTime.of(17, 40)
-    )
+    fun getCurrentTimes(time: LocalTime, lessonTimes: List<LessonTime>): List<LessonTime> {
+        val sortedLessonTimes = lessonTimes.sorted()
+        val resList = mutableListOf<LessonTime>()
+        var closestTime = sortedLessonTimes.firstOrNull()
 
-    val sixthPair = Pair(
-        LocalTime.of(17, 50),
-        LocalTime.of(19, 20)
-    )
-
-    val sixthPairEvening = Pair(
-        LocalTime.of(18, 20),
-        LocalTime.of(19, 40)
-    )
-
-    val seventhPair = Pair(
-        LocalTime.of(19, 30),
-        LocalTime.of(21, 0)
-    )
-
-    val seventhPairEvening = Pair(
-        LocalTime.of(19, 50),
-        LocalTime.of(21, 10)
-    )
-
-    val firstPairStr = "9:00" to "10:30"
-    val secondPairStr = "10:40" to "12:10"
-    val thirdPairStr = "12:20" to "13:50"
-    val fourthPairStr = "14:30" to "16:00"
-    val fifthPairStr = "16:10" to "17:40"
-    val sixthPairStr = "17:50" to "19:20"
-    val sixthPairEveningStr = "18:20" to "19:40"
-    val seventhPairStr = "19:30" to "21:00"
-    val seventhPairEveningStr = "19:50" to "21:10"
-
-//    fun getOrder(time: LocalTime, groupIsEvening: Boolean): Lesson.CurrentLesson =
-//        if (time > thirdPair.second) when {
-//            time <= fourthPair.second -> Lesson.CurrentLesson(
-//                3,
-//                time >= fourthPair.first,
-//                groupIsEvening
-//            )
-//            time <= fifthPair.second -> Lesson.CurrentLesson(
-//                4,
-//                time >= fifthPair.first,
-//                groupIsEvening
-//            )
-//            groupIsEvening -> when {
-//                time <= sixthPairEvening.second -> Lesson.CurrentLesson(
-//                    5,
-//                    time >= sixthPairEvening.first,
-//                    groupIsEvening
-//                )
-//                time <= seventhPairEvening.second -> Lesson.CurrentLesson(
-//                    6,
-//                    time >= seventhPairEvening.first,
-//                    groupIsEvening
-//                )
-//                else -> Lesson.CurrentLesson(8, false, groupIsEvening)
-//            }
-//            else -> when {
-//                time <=  sixthPair.second -> Lesson.CurrentLesson(
-//                    5,
-//                    time >= sixthPair.first,
-//                    groupIsEvening
-//                )
-//                time <=  seventhPair.second -> Lesson.CurrentLesson(
-//                    6,
-//                    time >= seventhPair.first,
-//                    groupIsEvening
-//                )
-//                else -> Lesson.CurrentLesson(8, false, groupIsEvening)
-//            }
-//        }
-//        else when {
-//            time >  secondPair.second -> Lesson.CurrentLesson(
-//                2,
-//                time >= thirdPair.first,
-//                groupIsEvening
-//            )
-//            time >  firstPair.second -> Lesson.CurrentLesson(
-//                1,
-//                time >= secondPair.first,
-//                groupIsEvening
-//            )
-//            else -> Lesson.CurrentLesson(0, time >=  firstPair.first, groupIsEvening)
-//        }
+        for (lessonTime in sortedLessonTimes) {
+            if (time in lessonTime) {
+                resList.add(lessonTime)
+            } else if (time <= lessonTime.localTime.end &&
+                resList.isEmpty() &&
+                closestTime != null
+            ) {
+                val timeSpan = time.until(lessonTime.localTime.end, ChronoUnit.SECONDS)
+                val closestTimeSpan = time.until(closestTime.localTime.end, ChronoUnit.SECONDS)
+                if (closestTimeSpan < 0 || timeSpan in 0 until closestTimeSpan) {
+                    closestTime = lessonTime
+                }
+            }
+        }
+        if (resList.isEmpty() && closestTime != null) {
+            val closestTimeSpan = time.until(closestTime.localTime.end, ChronoUnit.SECONDS)
+            if (closestTimeSpan >= 0) {
+                resList.add(closestTime)
+            }
+        }
+        return resList
+    }
 
     fun getTime(order: Int, groupIsEvening: Boolean) = when (order) {
-        0 -> firstPairStr
-        1 -> secondPairStr
-        2 -> thirdPairStr
-        3 -> fourthPairStr
-        4 -> fifthPairStr
-        5 -> if (groupIsEvening) sixthPairEveningStr else sixthPairStr
-        6 -> if (groupIsEvening) seventhPairEveningStr else seventhPairStr
+        0 -> LessonTimesStr.Pair1
+        1 -> LessonTimesStr.Pair2
+        2 -> LessonTimesStr.Pair3
+        3 -> LessonTimesStr.Pair4
+        4 -> LessonTimesStr.Pair5
+        5 -> if (groupIsEvening) LessonTimesStr.Pair6Evening else LessonTimesStr.Pair6
+        6 -> if (groupIsEvening) LessonTimesStr.Pair7Evening else LessonTimesStr.Pair7
         else -> {
             Log.e(TAG, "Wrong order number of lesson")
-            Pair("Ошибка", "номера занятия")
+            LessonTimesStr.Undefined
         }
     }
 
     fun getLocalTime(order: Int, groupIsEvening: Boolean) = when (order) {
-        0 -> firstPair
-        1 -> secondPair
-        2 -> thirdPair
-        3 -> fourthPair
-        4 -> fifthPair
-        5 -> if (groupIsEvening) sixthPairEvening else sixthPair
-        6 -> if (groupIsEvening) seventhPairEvening else seventhPair
+        0 -> LessonTimes.Pair1
+        1 -> LessonTimes.Pair2
+        2 -> LessonTimes.Pair3
+        3 -> LessonTimes.Pair4
+        4 -> LessonTimes.Pair5
+        5 -> if (groupIsEvening) LessonTimes.Pair6Evening else LessonTimes.Pair6
+        6 -> if (groupIsEvening) LessonTimes.Pair7Evening else LessonTimes.Pair7
         else -> {
             Log.e(TAG, "Wrong order number of lesson")
-            Pair(LocalTime.MIN, LocalTime.MAX)
+            LessonTimes.Undefined
         }
     }
 }

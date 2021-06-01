@@ -3,17 +3,17 @@ package com.mospolytech.mospolyhelper.data.account.statements.local
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class StatementsLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
-    fun get(statements: String): Result<Statements> {
+    fun get(statements: String): Result2<Statements> {
         return try {
-            Result.success(Json.decodeFromString<Statements>(statements))
+            Result2.success(Json.decodeFromString<Statements>(statements))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 

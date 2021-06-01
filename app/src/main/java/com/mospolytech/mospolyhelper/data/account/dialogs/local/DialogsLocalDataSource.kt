@@ -6,16 +6,16 @@ import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.data.utils.setAsJson
 import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 
 class DialogsLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 
-    fun get(): Result<List<DialogModel>> {
+    fun get(): Result2<List<DialogModel>> {
         return prefDataSource.getFromJson<List<DialogModel>>(PreferenceKeys.Dialogs)?.let {
-                Result.success(it)
+                Result2.success(it)
             } ?: let {
                 Log.e("JSON","Can't get local dialogs")
-                Result.success(emptyList())
+                Result2.success(emptyList())
             }
     }
 

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.AssetManager
+import android.database.CursorWindow
 import android.os.Build
 import com.mospolytech.mospolyhelper.di.account.*
 import com.mospolytech.mospolyhelper.di.addresses.addressesModule
@@ -20,6 +21,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import java.io.InputStream
+
 
 class App : Application() {
     companion object {
@@ -38,7 +40,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         val modules = listOf(
             appModule,
             coreModule,

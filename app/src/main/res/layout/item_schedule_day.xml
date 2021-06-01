@@ -2,9 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/schedule_day_width"
     android:layout_height="@dimen/schedule_day_height"
-    android:layout_marginStart="4.0dp"
-    android:layout_marginEnd="4.0dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginStart="4.5dp"
+    android:layout_marginEnd="4.5dp"
     android:background="@drawable/shape_schedule_day"
+    android:elevation="3dp"
+    android:layout_marginTop="9dp"
     android:orientation="vertical"
     android:paddingTop="8.5dp">
 
@@ -13,20 +16,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1.7dp"
-        android:fontFamily="@font/ubuntu_medium"
-        android:text="17"
+        android:fontFamily="@font/ubuntu_bold"
         android:textAlignment="center"
-        android:textSize="15.8dp" />
+        android:textSize="15.0dp"
+        tools:text="17" />
 
     <TextView
         android:id="@+id/textview_day_of_week"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8.7dp"
+        android:layout_marginBottom="7.8dp"
         android:fontFamily="@font/ubuntu_medium"
-        android:text="Пн"
         android:textAlignment="center"
-        android:textSize="11.5dp" />
+        android:textSize="11.2dp"
+        tools:text="Пн" />
 
     <LinearLayout
         android:id="@+id/linearlayout_order_indicators"

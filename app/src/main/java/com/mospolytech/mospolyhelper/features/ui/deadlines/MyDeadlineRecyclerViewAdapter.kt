@@ -2,13 +2,15 @@ package com.mospolytech.mospolyhelper.features.ui.deadlines
 
 
 import android.content.Context
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mospolytech.mospolyhelper.utils.DeadlinesDiffCallback
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
+import com.mospolytech.mospolyhelper.utils.DeadlinesDiffCallback
 
 
 class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
@@ -19,10 +21,10 @@ class MyDeadlineRecyclerViewAdapter (private var items : List<Deadline>,
     lateinit var context: Context
 
     fun updateBookList(newDeadlinesList: List<Deadline>) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(DeadlinesDiffCallback(items, newDeadlinesList), false)
         items = newDeadlinesList
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeadlinesViewHolder {

@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.data.account.deadlines.api
 
-import com.mospolytech.mospolyhelper.data.account.auth.api.AuthHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.MyPortfolio
 import io.ktor.client.*
 import io.ktor.client.request.*

@@ -2,29 +2,29 @@ package com.mospolytech.mospolyhelper.domain.schedule.model
 
 import android.os.Parcelable
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
 @Parcelize
+@Serializable
 data class LessonTime(
     val order: Int,
     val isEvening: Boolean
 ) : Comparable<LessonTime>, Parcelable {
-    companion object {
-        fun fromLessonPlace(lessonPlace: LessonPlace) =
-            LessonTime(lessonPlace.order, lessonPlace.isEvening)
-    }
-    val time: Pair<String, String>
+    val timeString: LessonTimeUtils.LessonTimesStr
         get() = LessonTimeUtils.getTime(order, isEvening)
 
-    val localTime: Pair<LocalTime, LocalTime>
+    val localTime: LessonTimeUtils.LessonTimes
         get() = LessonTimeUtils.getLocalTime(order, isEvening)
-
-    fun equalsTime(lessonPlace: LessonPlace) =
-        order == lessonPlace.order && isEvening == lessonPlace.isEvening
 
     override fun compareTo(other: LessonTime): Int {
         if (order != other.order) return order.compareTo(other.order)
         return isEvening.compareTo(other.isEvening)
+    }
+
+    operator fun contains(time: LocalTime): Boolean {
+        val localTime = localTime
+        return localTime.start <= time && time <= localTime.end
     }
 }

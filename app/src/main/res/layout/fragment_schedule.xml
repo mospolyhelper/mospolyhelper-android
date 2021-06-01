@@ -78,17 +78,17 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_round_more_vert_24"
-                        android:tint="#bbbbbb" />
+                        app:tint="#bbbbbb" />
                 </FrameLayout>
 
             </LinearLayout>
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewpager_dates"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="9.0dp"
+                android:id="@+id/viewpager_weeks"
+                android:layout_marginTop="4dp"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/schedule_day_height"/>
+                android:layout_height="@dimen/schedule_day_height_with_padding"/>
 
             <TextView
                 android:id="@+id/textview_date_and_week"
@@ -116,7 +116,7 @@
             android:layout_height="match_parent">
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewpager"
+                android:id="@+id/viewpager_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 

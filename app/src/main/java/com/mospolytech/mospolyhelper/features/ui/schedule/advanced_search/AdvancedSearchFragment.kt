@@ -84,7 +84,6 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
                     viewModel.lessonTeachers = pack.lessonTeachers.toList()
                     viewModel.lessonGroups = pack.lessonGroups.toList()
                     viewModel.lessonAuditoriums = pack.lessonAuditoriums.toList()
-                    viewModel.schedules = pack.schedules
 
                     Toast.makeText(context, "Расписания загружены", Toast.LENGTH_SHORT).show()
                     setFiltersVisibility(View.VISIBLE)
@@ -147,7 +146,7 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         }
 
         viewBinding.buttonApply.setOnClickListener {
-            async(Dispatchers.IO) {
+            lifecycleScope.launch {
                 viewModel.sendSchedule()
             }
             findNavController().safe { navigateUp() }

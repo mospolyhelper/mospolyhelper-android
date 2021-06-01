@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +13,11 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonTimePack
 import com.mospolytech.mospolyhelper.features.utils.RecyclerViewInViewPagerHelper
 import com.mospolytech.mospolyhelper.utils.Action2
 import com.mospolytech.mospolyhelper.utils.Event2
+import com.mospolytech.mospolyhelper.utils.WeakMutableSet
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -28,36 +29,27 @@ class ScheduleAdapter(
     private var deadlines: Map<String, List<Deadline>>,
     private var lessonDateFilter: LessonDateFilter,
     private var showEmptyLessons: Boolean,
-    private var lessonFeaturesSettings: LessonFeaturesSettings
+    private var lessonFeaturesSettings: LessonFeaturesSettings,
+    private var currentTimes: List<LessonTime>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val MAX_COUNT = 400
         private const val VIEW_TYPE_NULL = 0
         private const val VIEW_TYPE_NORMAL = 2
         private const val VIEW_TYPE_EMPTY = 3
-        private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, d MMMM")
-        private val dateFormatterWeek = DateTimeFormatter.ofPattern("EEEE")
     }
     var from: LocalDate = LocalDate.now()
     private var count = 0
     private val commonPool = RecyclerView.RecycledViewPool()
 
+    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder> = WeakMutableSet()
+
     var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
-    private val timerTick: Event2<List<CurrentLesson>, Boolean> = Action2()
 
     init {
         setCount()
         setFirstPosDate()
     }
-    var prevCurrentLesson = mutableListOf<CurrentLesson>()
-//    fun updateCurrentLesson(currentLessons: List<CurrentLesson>) {
-//        timerTick as Action2
-//        val updatePrev = prevCurrentLesson.any { it.order != }prevCurrentLesson.first.order != currentLessons.first.order ||
-//                prevCurrentLesson.second.order != currentLessons.second.order
-//        prevCurrentLesson = currentLessons
-//        timerTick.invoke(currentLessons, updatePrev)
-//    }
-
 
     fun submitData(
         schedule: Schedule?,
@@ -75,6 +67,15 @@ class ScheduleAdapter(
         this.lessonFeaturesSettings = lessonFeaturesSettings
         setCount()
         setFirstPosDate()
+    }
+
+    fun setCurrentLessonTimes(currentTimes: List<LessonTime>) {
+        this.currentTimes = currentTimes
+        for (holder in activeViewHolders) {
+            if (holder is ViewHolderDailySchedule) {
+                holder.setCurrentLessonTimes(currentTimes)
+            }
+        }
     }
 
     override fun getItemCount() = count
@@ -140,6 +141,7 @@ class ScheduleAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        activeViewHolders.add(holder)
         when (holder) {
             is ViewHolderDailySchedule -> {
                 val dailySchedule = DailySchedulePack.Builder()
@@ -159,22 +161,22 @@ class ScheduleAdapter(
                         }
                     )
 
-                holder.bind(dailySchedule)
+                holder.bind(dailySchedule, currentTimes)
             }
         }
     }
 
-    class ViewHolderSimple(view: View) : RecyclerView.ViewHolder(view)
-
-    class ViewHolderEmpty(view: View) : RecyclerView.ViewHolder(view)
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        activeViewHolders.remove(holder)
+    }
 
     class ViewHolderDailySchedule(
         view: View,
         recyclerViewPool: RecyclerView.RecycledViewPool,
         onItemClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
     ) : RecyclerView.ViewHolder(view) {
-
         private val viewBinding by viewBinding(PageScheduleBinding::bind)
+        private var dailySchedulePack: DailySchedulePack? = null
 
         init {
             with (viewBinding.recyclerviewLessons) {
@@ -191,10 +193,30 @@ class ScheduleAdapter(
             }
         }
 
-
-        fun bind(dailySchedule: DailySchedulePack) {
+        fun bind(dailySchedule: DailySchedulePack, currentTimes: List<LessonTime>) {
+            dailySchedulePack = dailySchedule
+            val currentTimesFixed = if (dailySchedulePack != null && LocalDate.now() == dailySchedule.date) {
+                currentTimes
+            } else {
+                emptyList()
+            }
             viewBinding.recyclerviewLessons.scrollToPosition(0)
-            (viewBinding.recyclerviewLessons.adapter as LessonAdapter).submitList(dailySchedule)
+            (viewBinding.recyclerviewLessons.adapter as LessonAdapter).submitList(dailySchedule, currentTimesFixed)
+        }
+
+        fun setCurrentLessonTimes(currentTimes: List<LessonTime>) {
+            val dailySchedulePack = dailySchedulePack
+            if (dailySchedulePack != null && LocalDate.now() == dailySchedulePack.date) {
+                (viewBinding.recyclerviewLessons.adapter as LessonAdapter)
+                    .setCurrentLessonTimes(currentTimes)
+            } else {
+                (viewBinding.recyclerviewLessons.adapter as LessonAdapter)
+                    .setCurrentLessonTimes(emptyList())
+            }
         }
     }
+
+    class ViewHolderSimple(view: View) : RecyclerView.ViewHolder(view)
+
+    class ViewHolderEmpty(view: View) : RecyclerView.ViewHolder(view)
 }

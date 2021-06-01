@@ -23,10 +23,10 @@ class ClassmatesAdapter:RecyclerView.Adapter<ClassmatesAdapter.ClassmatesViewHol
 
     var items : List<Classmate> = emptyList()
     set(value) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(ClassmatesDiffCallback(field, value), true)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassmatesViewHolder {

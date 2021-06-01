@@ -4,15 +4,31 @@
     <string name="nav_addresses">Адреса</string>
     <string name="nav_settings">Настройки</string>
 
-    <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
-    <string name="null_schedule">Расписание не найдено</string>
-
     <string name="appearance">Внешний вид</string>
     <string name="night_mode">Тёмная тема</string>
 
-    <!--Schedule Preferences-->
+    <!-- Schedule -->
+    <string name="schedule_user_group">Группа %1$s</string>
+    <string name="schedule_choose_user">Выберите пользователя</string>
+    <string name="schedule_date">%1$s, %2$d-я неделя</string>
+    <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
+    <string name="null_schedule">Расписание не найдено</string>
 
-    <!--Schedule Filter-->
+
+    <string name="schedule_lesson_time">%1$s - %2$s</string>
+
+    <string name="schedule_info_break_title">Большой перерыв</string>
+    <string name="schedule_info_break_description">У тебя будет 40 минут, чтобы перекусить или отдохнуть</string>
+    <string name="schedule_info_window_title">Окно между занятиями</string>
+    <string name="schedule_info_window_description">У тебя будет %1$s, чтобы перекусить или отдохнуть</string>
+
+
+    <!-- Schedule Lesson Info-->
+    <string name="schedule_lesson_info_edit_tags">Изменить метки</string>
+    <string name="schedule_lesson_info_auditoriums">Аудитории</string>
+    <string name="schedule_lesson_info_teachers">Преподаватели</string>
+    <string name="schedule_lesson_info_groups">Группы</string>
+
 
     <!--Other-->
     <string name="click_back_again">Нажмите НАЗАД ещё раз, чтобы выйти</string>

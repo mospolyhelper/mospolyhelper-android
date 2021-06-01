@@ -28,10 +28,10 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var items: List<Message> = emptyList()
     set(value) {
-        val diffResult =
+        val diffResult2 =
             DiffUtil.calculateDiff(MessagesDiffCallback(field, value), false)
         field = value
-        diffResult.dispatchUpdatesTo(this)
+        diffResult2.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

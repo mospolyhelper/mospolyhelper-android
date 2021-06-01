@@ -21,15 +21,15 @@
         android:paddingBottom="5.0dp"
         android:textAlignment="center"
         android:textColor="@color/widgetTitleText"
-        android:textSize="12.7dp"
+        android:textSize="12.6dp"
         tools:text="Вт, 18 мая | 181-721" />
 
     <ListView
         android:id="@+id/list_schedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
         android:layout_marginBottom="5dp"
         android:clickable="false"
         android:divider="@color/widgetDivider"

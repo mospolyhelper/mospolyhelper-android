@@ -3,14 +3,14 @@ package com.mospolytech.mospolyhelper.data.account.deadlines.local
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class DeadlinesLocalDataSource(private val prefDataSource: SharedPreferencesDataSource) {
 
-    fun get(deadlines: String): Result<List<Deadline>> {
+    fun get(deadlines: String): Result2<List<Deadline>> {
         return try {
             var res = Json.decodeFromString<List<Deadline>>(deadlines)
             res = res.sortedBy {
@@ -19,10 +19,10 @@ class DeadlinesLocalDataSource(private val prefDataSource: SharedPreferencesData
             res = res.sortedBy {
                 !it.completed
             }
-            Result.success(res)
+            Result2.success(res)
 
         } catch (e: Exception) {
-            Result.success(emptyList())
+            Result2.success(emptyList())
         }
     }
 

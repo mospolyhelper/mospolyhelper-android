@@ -1,11 +1,11 @@
 package com.mospolytech.mospolyhelper.domain.account.auth.repository
 
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.Flow
-import com.mospolytech.mospolyhelper.utils.Result
 
 interface AuthRepository {
-    suspend fun logIn(login: String, password: String): Flow<Result<String>>
-    suspend fun refresh(): Flow<Result<String>>
+    suspend fun logIn(login: String, password: String): Flow<Result2<String>>
+    suspend fun refresh(): Flow<Result2<String>>
 
     fun getAvatar(): String?
     fun getPermissions(): List<String>
