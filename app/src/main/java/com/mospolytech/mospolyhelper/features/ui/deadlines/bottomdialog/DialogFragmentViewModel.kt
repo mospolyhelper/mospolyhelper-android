@@ -5,6 +5,7 @@ import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
+import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
@@ -25,7 +26,8 @@ import kotlinx.serialization.json.Json
 
 class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
                               private val deadlinesRepository: DeadlinesRepository,
-                              private val scheduleRepository: ScheduleRepository
+                              private val scheduleRepository: ScheduleRepository,
+                              private val prefs: PreferencesRepository
 ) :
     ViewModelBase(mediator, DialogFragmentViewModel::class.java.simpleName) {
 
@@ -55,11 +57,10 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
     }
 
     fun getLessons(): Set<String>? {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(App.context)
         val user = try {
-            Json.decodeFromString<UserSchedule>(prefs.getString(
+            Json.decodeFromString<UserSchedule>(prefs.get(
                 PreferenceKeys.ScheduleUser,
-                PreferenceDefaults.ScheduleUser)!!)
+                PreferenceDefaults.ScheduleUser))
         } catch (e: Exception) {
             null
         }
@@ -81,7 +82,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
                     user
                 ).collect {
                     withContext(Dispatchers.Main) {
-                        this@DialogFragmentViewModel.schedule.value = it
+                        this@DialogFragmentViewModel.schedule.value = it.getOrNull()
                     }
                 }
             }

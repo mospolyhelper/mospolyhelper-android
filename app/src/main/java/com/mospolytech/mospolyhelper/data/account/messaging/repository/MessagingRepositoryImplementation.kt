@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlin.Result
 
 class MessagingRepositoryImplementation(
     private val remoteDataSource: MessagingRemoteDataSource,
@@ -22,7 +23,7 @@ class MessagingRepositoryImplementation(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    override suspend fun getDialog(dialogKey: String): Flow<Result<List<Message>>> = flow {
+    override suspend fun getDialog(dialogKey: String): Flow<Result2<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
@@ -34,14 +35,14 @@ class MessagingRepositoryImplementation(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalDialog(dialogKey: String): Flow<Result<List<Message>>>{
+    override suspend fun getLocalDialog(dialogKey: String): Flow<Result2<List<Message>>>{
         val dialog = localDataSource.getJson(dialogKey)
         return flow {
             if (dialog.isNotEmpty()) emit(localDataSource.getDialog(dialog))
         }.flowOn(ioDispatcher)
     }
 
-    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result<List<Message>>> = flow {
+    override suspend fun sendMessage(dialogKey: String, message: String, fileNames: List<String>): Flow<Result2<List<Message>>> = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId
@@ -53,7 +54,7 @@ class MessagingRepositoryImplementation(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result<List<Message>>>  = flow {
+    override suspend fun deleteMessage(dialogKey: String, removeKey: String): Flow<Result2<List<Message>>>  = flow {
         val sessionId = prefDataSource.get(
             PreferenceKeys.SessionId,
             PreferenceDefaults.SessionId

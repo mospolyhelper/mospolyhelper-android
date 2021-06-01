@@ -2,44 +2,42 @@ package com.mospolytech.mospolyhelper.data.schedule.local
 
 import android.content.Context
 import android.util.Log
-import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class ScheduleLocalDataSource(
-    private val applicationContext: Context
+    private val context: Context
 ) {
     companion object {
         const val SCHEDULE_FOLDER = "cached_schedules"
     }
 
-    fun get(user: UserSchedule): Schedule? {
-        val file = applicationContext.filesDir
+    fun get(user: UserSchedule): Result0<Schedule> {
+        val file = context.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(user.idGlobal)
 
         if (!file.exists()) {
-            return null
+            return Result0.Failure(Exception("Schedule not found"))
         }
         return try {
             val json = file.readText()
-            if (json.isEmpty()) return null
-            Json.decodeFromString<Schedule>(json)
+            if (json.isEmpty()) return Result0.Failure(Exception("Schedule not found"))
+            Result0.Success(Json.decodeFromString<Schedule>(json))
         } catch (e: Exception) {
             Log.e(TAG, "Schedule reading and converting exception", e)
-            null
+            Result0.Failure(e)
         }
     }
 
     fun set(schedule: Schedule?, userScheduleGlobalId: String) {
         Log.d(TAG, "Saving Schedule")
-        val file = applicationContext.filesDir
+        val file = context.filesDir
             .resolve(SCHEDULE_FOLDER)
             .resolve(userScheduleGlobalId)
         if (file.exists()) {

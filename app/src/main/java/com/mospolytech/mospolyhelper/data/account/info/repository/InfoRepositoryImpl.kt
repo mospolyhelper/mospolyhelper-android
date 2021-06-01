@@ -4,16 +4,15 @@ import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSou
 import com.mospolytech.mospolyhelper.data.account.info.local.InfoLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.info.remote.InfoRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.*
-import io.ktor.client.features.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlin.Result
 
 class InfoRepositoryImpl(
     private val dataSource: InfoRemoteDataSource,
@@ -36,7 +35,7 @@ class InfoRepositoryImpl(
         emit(res)
     }.flowOn(ioDispatcher)
 
-    override suspend fun getLocalInfo(): Flow<Result<Info>>{
+    override suspend fun getLocalInfo(): Flow<Result2<Info>>{
         val info = localDataSource.getJson()
         return flow {
                 if (info.isNotEmpty()) emit(localDataSource.get(info))

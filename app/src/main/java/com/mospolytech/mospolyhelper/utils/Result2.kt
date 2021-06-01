@@ -2,23 +2,23 @@
 
 package com.mospolytech.mospolyhelper.utils
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /*
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-
-
 /**
  * A discriminated union that encapsulates a successful outcome with a value of type [T]
  * or a failure with an arbitrary [Throwable] exception.
  */
+@Deprecated("Use Result0", ReplaceWith("Result0"))
 class Result2<out T> @PublishedApi internal constructor(
-    internal val value: Any?
+    val value: Any?
 ) {
     // discovery
 
@@ -38,7 +38,7 @@ class Result2<out T> @PublishedApi internal constructor(
      * Returns `true` if this instance represents a loading outcome.
      * In this case [isSuccess] returns `false`.
      */
-    @Deprecated("Use ResultState for loading state", ReplaceWith("ResultState.Loading"))
+    @Deprecated("Use Result0 for loading state", ReplaceWith("Result0.Loading"))
     public val isLoading: Boolean get() = value is Loading
 
     // value & exception retrieval
@@ -101,7 +101,7 @@ class Result2<out T> @PublishedApi internal constructor(
         /**
          * Returns an instance of loading.
          */
-        @Deprecated("Use ResultState for loading state", ReplaceWith("ResultState.Loading"))
+        @Deprecated("Use Result0 for loading state", ReplaceWith("Result0.Loading"))
         fun <T> loading(): Result2<T> =
             Result2(getLoading())
     }
@@ -115,7 +115,7 @@ class Result2<out T> @PublishedApi internal constructor(
         override fun toString(): String = "Failure($exception)"
     }
 
-    @Deprecated("Use ResultState for loading state", ReplaceWith("ResultState.Loading"))
+    @Deprecated("Use Result0 for loading state", ReplaceWith("Result0.Loading"))
     internal object Loading
 }
 
@@ -132,7 +132,7 @@ internal fun createFailure(exception: Throwable): Any =
  * Return an instance of internal marker Loading class to
  * make sure that this class is not exposed in ABI.
  */
-@Deprecated("Use ResultState for loading state", ReplaceWith("ResultState.Loading"))
+@Deprecated("Use Result0 for loading state", ReplaceWith("Result0.Loading"))
 internal fun getLoading(): Any = Result2.Loading
 
 /**
@@ -302,15 +302,20 @@ fun <T> Result2<T>.onFailure(action: (exception: Throwable) -> Unit): Result2<T>
 }
 
 /**
- * Performs the given [action] on the encapsulated value if this instance represents [success][Result2.isSuccess].
- * Returns the original `Result2` unchanged.
+ * Performs the given [action] on the encapsulated value if this instance represents [success][Result.isSuccess].
+ * Returns the original `Result` unchanged.
  */
-fun <T> Result2<T>.onSuccess(action: (value: T) -> Unit): Result2<T> {
+@OptIn(ExperimentalContracts::class)
+@SinceKotlin("1.3")
+inline fun <T> Result2<T>.onSuccess(action: (value: T) -> Unit): Result2<T> {
+    contract {
+        callsInPlace(action, InvocationKind.AT_MOST_ONCE)
+    }
     if (isSuccess) action(value as T)
     return this
 }
 
-@Deprecated("Use ResultState for loading state", ReplaceWith("ResultState.Loading"))
+@Deprecated("Use Result0 for loading state", ReplaceWith("Result0.Loading"))
 fun <T> Result2<T>.onLoading(action: () -> Unit): Result2<T> {
     if (isLoading) action()
     return this

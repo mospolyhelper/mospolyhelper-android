@@ -1,6 +1,6 @@
 //package com.mospolytech.mospolyhelper
 //
-//import com.mospolytech.mospolyhelper.di.addresses.addressesModule
+//import com.mospolytech.mospolyhelper.di.utilities.addresses.addressesModule
 //import com.mospolytech.mospolyhelper.di.appModule
 //import com.mospolytech.mospolyhelper.di.core.coreModule
 //import com.mospolytech.mospolyhelper.di.deadline.deadlineModule

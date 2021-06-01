@@ -10,5 +10,5 @@ val deadlineModule = module {
     single<DeadlinesRepository> { DeadlinesRepository(get()) }
 
     viewModel<DeadlineViewModel> { DeadlineViewModel(get(), get()) }
-    viewModel<DialogFragmentViewModel> { DialogFragmentViewModel(get(), get(), get()) }
+    viewModel<DialogFragmentViewModel> { DialogFragmentViewModel(get(), get(), get(), get()) }
 }

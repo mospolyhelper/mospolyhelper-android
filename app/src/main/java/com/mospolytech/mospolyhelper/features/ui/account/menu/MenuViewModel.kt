@@ -2,7 +2,7 @@ package com.mospolytech.mospolyhelper.features.ui.account.menu
 
 import androidx.lifecycle.ViewModel
 import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
-import com.mospolytech.mospolyhelper.utils.Result
+import com.mospolytech.mospolyhelper.utils.Result2
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 
@@ -10,7 +10,7 @@ class MenuViewModel(
     private val useCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
-    suspend fun refresh(): Flow<Result<String>> {
+    suspend fun refresh(): Flow<Result2<String>> {
         return useCase.refresh()
     }
 

@@ -28,8 +28,8 @@ import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
-import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleTagsDeadline
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -100,7 +100,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun setSchedule(
-        scheduleTagsDeadline: ScheduleTagsDeadline,
+        scheduleTagsDeadline: ScheduleUiData,
         user: UserSchedule?,
         showEmptyLessons: Boolean,
         dateFilter: LessonDateFilter
@@ -148,7 +148,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         viewBinding.refreshSchedule.setColorSchemeResources(R.color.colorSecondary)
         viewBinding.refreshSchedule.setOnRefreshListener {
             lifecycleScope.launchWhenResumed {
-                viewModel.updateSchedule()
+                viewModel.setRefreshing()
             }
         }
 
@@ -306,46 +306,39 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun setSchedule(
-        schedule: ResultState<ScheduleTagsDeadline>,
+        scheduleUiData: ScheduleUiData,
         showEmptyLessons: Boolean,
         lessonDateFilter: LessonDateFilter
     ) {
-        if (schedule is ResultState.Ready) {
-            schedule.result.onSuccess {
-                val user = viewModel.user.value
-                setSchedule(
-                    it,
-                    user,
-                    showEmptyLessons,
-                    lessonDateFilter
-                )
-                val weekAdapter = viewBinding.viewpagerWeeks.adapter
-                if (weekAdapter is WeekAdapter) {
-                    val newPos = weekAdapter.getPositionFromDate(viewModel.date.value)
-                    if (viewBinding.viewpagerWeeks.currentItem != newPos) {
-                        viewBinding.viewpagerWeeks.setCurrentItem(newPos, true)
-                    }
-                    viewBinding.textviewDateAndWeek.text = getString(
-                        R.string.schedule_date,
-                        dateFormatter.format(viewModel.date.value),
-                        newPos + 1)
-                }
-
-
-                with(viewBinding.viewpagerWeeks.adapter as WeekAdapter) {
-                    val scheduleAdapter = viewBinding.viewpagerSchedule.adapter as ScheduleAdapter
-                    update(
-                        scheduleAdapter.from,
-                        scheduleAdapter.from.plusDays(scheduleAdapter.itemCount.toLong()),
-                        viewModel.date.value,
-                        it.schedule
-                    )
-                }
-
-                viewBinding.refreshSchedule.isRefreshing = false
+        val user = viewModel.user.value
+        setSchedule(
+            scheduleUiData,
+            user,
+            showEmptyLessons,
+            lessonDateFilter
+        )
+        val weekAdapter = viewBinding.viewpagerWeeks.adapter
+        if (weekAdapter is WeekAdapter) {
+            val newPos = weekAdapter.getPositionFromDate(viewModel.date.value)
+            if (viewBinding.viewpagerWeeks.currentItem != newPos) {
+                viewBinding.viewpagerWeeks.setCurrentItem(newPos, true)
             }
+            viewBinding.textviewDateAndWeek.text = getString(
+                R.string.schedule_date,
+                dateFormatter.format(viewModel.date.value),
+                newPos + 1)
         }
-        setLoading(schedule is ResultState.Loading)
+
+
+        with(viewBinding.viewpagerWeeks.adapter as WeekAdapter) {
+            val scheduleAdapter = viewBinding.viewpagerSchedule.adapter as ScheduleAdapter
+            update(
+                scheduleAdapter.from,
+                scheduleAdapter.from.plusDays(scheduleAdapter.itemCount.toLong()),
+                viewModel.date.value,
+                scheduleUiData.schedule
+            )
+        }
     }
 
     private fun setCurrentLessonTimes(lessonTimes: List<LessonTime>) {
@@ -373,11 +366,13 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
             combine(
-                viewModel.filteredSchedule,
+                viewModel.scheduleUiData,
                 viewModel.showEmptyLessons,
                 viewModel.lessonDateFilter
             ) { schedule, showEmptyLessons, lessonDateFilter ->
-                setSchedule(schedule, showEmptyLessons, lessonDateFilter)
+                schedule.onSuccess {
+                    setSchedule(it, showEmptyLessons, lessonDateFilter)
+                }
             }.collect()
         }
         lifecycleScope.launchWhenResumed {
@@ -396,8 +391,20 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
         lifecycleScope.launchWhenResumed {
+            viewModel.isRefreshing.collect {
+                viewBinding.refreshSchedule.isRefreshing = it
+            }
+        }
+        lifecycleScope.launchWhenResumed {
             viewModel.user.collect {
                 setUserTitle(it)
+            }
+        }
+        lifecycleScope.launchWhenResumed {
+            viewModel.isLoading.collect {
+                if (!viewModel.isRefreshing.value) {
+                    setLoading(it)
+                }
             }
         }
         lifecycleScope.launch {

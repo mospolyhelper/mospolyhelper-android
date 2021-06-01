@@ -5,15 +5,12 @@ import com.mospolytech.mospolyhelper.data.schedule.api.ScheduleClient
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleFullRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleRemoteConverter
 import com.mospolytech.mospolyhelper.data.schedule.converter.ScheduleTeacherRemoteConverter
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.combine
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import java.time.DayOfWeek
 
 
 class ScheduleRemoteDataSource(
@@ -23,43 +20,43 @@ class ScheduleRemoteDataSource(
     private val scheduleTeacherParser: ScheduleTeacherRemoteConverter
 ) {
 
-    private suspend fun getByGroup(groupTitle: String, isSession: Boolean): Result2<Schedule> {
+    private suspend fun getByGroup(groupTitle: String, isSession: Boolean): Result0<Schedule> {
         return try {
             val scheduleString = client.getScheduleByGroup(groupTitle, isSession)
-            Result2.success(scheduleGroupParser.parse(scheduleString))
+            Result0.Success(scheduleGroupParser.parse(scheduleString))
         } catch (e: Exception) {
             Log.e(TAG, "Schedule downloading and parsing exception: groupTitle: $groupTitle, isSession: $isSession", e)
-            Result2.failure(e)
+            Result0.Failure(e)
         }
     }
 
-    suspend fun getByGroup(groupId: String): Result2<Schedule> = coroutineScope {
+    suspend fun getByGroup(groupId: String): Result0<Schedule> = coroutineScope {
         val regularDeferred = async { getByGroup(groupId, false).getOrNull() }
         val sessionDeferred = async { getByGroup(groupId, true).getOrNull() }
         val regular = regularDeferred.await()
         val session = sessionDeferred.await()
         return@coroutineScope if (regular != null) {
             if (session != null) {
-                Result2.success(combine(regular, session))
+                Result0.Success(combine(regular, session))
             } else {
-                Result2.success(regular)
+                Result0.Success(regular)
             }
         } else {
             if (session != null) {
-                Result2.success(session)
+                Result0.Success(session)
             } else {
-                Result2.failure(Exception())
+                Result0.Failure(Exception())
             }
         }
     }
 
-    suspend fun getByTeacher(teacherId: String): Result2<Schedule> {
+    suspend fun getByTeacher(teacherId: String): Result0<Schedule> {
         return try {
             val scheduleString = client.getScheduleByTeacher(teacherId)
-            Result2.success(scheduleTeacherParser.parse(scheduleString))
+            Result0.Success(scheduleTeacherParser.parse(scheduleString))
         } catch (e: Exception) {
             Log.e(TAG, "Schedule downloading and parsing error: teacherId: $teacherId", e)
-            Result2.failure(e)
+            Result0.Failure(e)
         }
     }
 
@@ -70,7 +67,7 @@ class ScheduleRemoteDataSource(
         groupCollection: MutableCollection<String>,
         auditoriumCollection: MutableCollection<String>,
         onProgress: (Float) -> Unit
-    ): Result2<Schedule> = coroutineScope {
+    ): Result0<Schedule> = coroutineScope {
         try {
             var counter1 = 0f
             var counter2 = 0f
@@ -88,7 +85,7 @@ class ScheduleRemoteDataSource(
                 }
             }
 
-            Result2.success(
+            Result0.Success(
                 scheduleFullParser.parseSchedules(
                     semesterDeferred.await(),
                     sessionDeferred.await(),
@@ -101,7 +98,7 @@ class ScheduleRemoteDataSource(
             )
         } catch (e: Exception) {
             Log.e(TAG, "Schedule downloading and parsing exception", e)
-            Result2.failure(e)
+            Result0.Failure(e)
         }
     }
 }

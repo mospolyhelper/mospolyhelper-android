@@ -28,12 +28,12 @@ class MessagingRemoteDataSource(
         }
     }
 
-    suspend fun deleteMessage(sessionId: String, removeKey: String): Result<List<Message>> {
+    suspend fun deleteMessage(sessionId: String, removeKey: String): Result2<List<Message>> {
         return try {
             val res = client.deleteMessage(sessionId, removeKey)
-            Result.success(Json.decodeFromString(res))
+            Result2.success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result.failure(e)
+            Result2.failure(e)
         }
     }
 }

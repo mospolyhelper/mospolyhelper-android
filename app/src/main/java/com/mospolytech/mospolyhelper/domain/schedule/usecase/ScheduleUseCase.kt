@@ -2,8 +2,6 @@ package com.mospolytech.mospolyhelper.domain.schedule.usecase
 
 import android.util.Log
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.utils.getFromJson
-import com.mospolytech.mospolyhelper.data.utils.setAsJson
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
@@ -13,12 +11,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.repository.*
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.*
 
-data class ScheduleTagsDeadline(
-    val schedule: Schedule?,
-    val tags: List<LessonTag>,
-    val deadlines: Map<String, List<Deadline>>
-)
-
 class ScheduleUseCase(
     private val scheduleRepository: ScheduleRepository,
     private val scheduleUsersRepository: ScheduleUsersRepository,
@@ -26,32 +18,18 @@ class ScheduleUseCase(
     private val deadlineRepository: DeadlinesRepository,
     private val preferences: PreferencesRepository
 ) {
-    fun getSchedule(
-        user: UserSchedule?
-    ) = scheduleRepository.getSchedule(user)
+    val scheduleUpdates = scheduleRepository.dataLastUpdatedObservable
 
-    suspend fun updateSchedule(
-        user: UserSchedule?
-    ) = scheduleRepository.updateSchedule(user)
+    fun getSchedule(user: UserSchedule?) =
+        scheduleRepository.getSchedule(user)
+            .onStart { emit(Result0.Loading) }
 
-    fun getScheduleWithFeatures(
-        user: UserSchedule?
-    ): Flow<ScheduleTagsDeadline> {
-        return combine(
-            if (user == null) flowOf(null) else scheduleRepository.getSchedule(user),
-            if (user is AdvancedSearchSchedule) flowOf(Result2.success(emptyList())) else tagRepository.getAll(),
-            flowOf(mapOf<String, List<Deadline>>())
-        ) { schedule, tags, deadlines ->
-            ScheduleTagsDeadline(schedule, tags.getOrThrow(), deadlines)
-        }.catch {
-            Log.e(TAG, "Flow exception", it)
-        }
-    }
+    suspend fun updateSchedule(user: UserSchedule?) =
+        scheduleRepository.updateSchedule(user)
 
     fun getAllUsers(): Flow<List<UserSchedule>> =
         scheduleUsersRepository.getScheduleUsers()
             .catch { Log.e(TAG, "Flow exception", it) }
-
 
     fun getSavedUsers() = scheduleUsersRepository.getSavedUsers()
         .onEach {
@@ -146,4 +124,8 @@ class ScheduleUseCase(
 
     suspend fun removeTagFromLesson(tagTitle: String, lesson: LessonTagKey) =
         tagRepository.removeTagFromLesson(tagTitle, lesson)
+
+    fun getAllDeadlines() = flow<Result0<Map<String, List<Deadline>>>> {
+        emit(Result0.Success(emptyMap()))
+    }
 }

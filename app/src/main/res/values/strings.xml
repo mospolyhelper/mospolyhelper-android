@@ -148,7 +148,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="menu_schedule_user_choosing">Выбор пользователя</string>
     <string name="settings">Настройки</string>
     <string name="addresses">Адреса</string>
-    <string name="pass">Пропуск</string>
+    <string name="pass">Пропуск\n(пока недоступно)</string>
     <string name="menu_about_app">О приложении</string>
     <string name="share">Поделиться</string>
     <string name="logout">Выйти</string>
@@ -194,6 +194,8 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="tuition">Обучение</string>
     <string name="ed_form">%1$s %2$s форма обучения</string>
     <string name="ed_year">%1$s год набора</string>
+    <string name="menu_main_account">Личный кабинет</string>
+    <string name="menu_main_utilities">Полезности</string>
     <string name="student">СТУДЕНТ</string>
     <string name="apartment">Общежитие №%1$s, комната %2$s</string>
     <string name="aspirant">Аспирант</string>

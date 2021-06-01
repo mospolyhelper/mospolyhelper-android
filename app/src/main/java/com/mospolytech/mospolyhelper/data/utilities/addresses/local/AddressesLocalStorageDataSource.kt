@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.data.utilities.addresses.local
 
+import android.content.Context
 import android.util.Log
 import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.domain.addresses.model.AddressMap
@@ -8,14 +9,16 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class AddressesLocalStorageDataSource {
+class AddressesLocalStorageDataSource(
+    val context: Context
+    ) {
     companion object {
         const val ADDRESSES_FOLDER = "addresses"
         const val ADDRESSES_FILE = "cached_addresses"
     }
 
     fun get(): AddressMap? {
-        val file = App.context!!.filesDir.resolve(ADDRESSES_FOLDER).resolve(ADDRESSES_FILE)  // TODO: Add directory
+        val file = context.filesDir.resolve(ADDRESSES_FOLDER).resolve(ADDRESSES_FILE)  // TODO: Add directory
         if (!file.exists()) {
             return null
         }
@@ -30,7 +33,7 @@ class AddressesLocalStorageDataSource {
 
 
     fun set(addressMap: AddressMap) {
-        val file = App.context!!.filesDir.resolve(ADDRESSES_FOLDER).resolve(ADDRESSES_FILE)
+        val file = context.filesDir.resolve(ADDRESSES_FOLDER).resolve(ADDRESSES_FILE)
 
         if (file.exists()) {
             file.deleteRecursively()

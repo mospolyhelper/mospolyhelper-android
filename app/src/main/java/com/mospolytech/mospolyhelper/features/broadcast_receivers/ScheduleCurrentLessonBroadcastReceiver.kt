@@ -13,7 +13,7 @@ import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {
 
-    private val dataSource = ScheduleLocalDataSource(App.context!!)
+    //private val dataSource = ScheduleLocalDataSource()
 
     override fun onReceive(context: Context, intent: Intent) {
         val notificationManager = context
