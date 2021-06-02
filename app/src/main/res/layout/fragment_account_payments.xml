@@ -19,6 +19,7 @@
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorHeight="2dp"
             app:tabPaddingBottom="6dp"
+            android:background="@color/layerZero"
             app:tabBackground="@color/layerOne"
             app:tabTextColor="@color/textAccentDisabled"
             app:tabSelectedTextColor="@color/textAccent"

@@ -32,7 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp"
+            android:paddingVertical="7dp"
+            android:minHeight="70dp"
             android:background="?attr/selectableItemBackground">
             <TextView
                 android:id="@+id/title_student"
@@ -40,8 +41,7 @@
                 android:layout_height="wrap_content"
                 tools:text="@string/fio"
                 android:textColor="@color/accent_text_color"
-                android:textStyle="bold"
-                android:fontFamily="@font/ubuntu_bold"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="18sp"
                 android:ellipsize="end"
                 android:maxLines="1"

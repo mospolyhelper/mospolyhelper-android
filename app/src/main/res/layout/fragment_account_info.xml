@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/layerZero"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="3dp"
@@ -46,9 +47,13 @@
                             android:id="@+id/fio_student"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:minHeight="51dp"
                             android:text="@string/fio"
-                            android:textStyle="bold"
-                            android:textSize="23sp"
+                            android:textSize="19dp"
+                            android:visibility="visible"
+                            app:autoSizeMaxTextSize="21dp"
+                            app:autoSizeMinTextSize="15dp"
+                            app:autoSizeTextType="uniform"
                             android:textColor="@color/accent_text_color"
                             android:fontFamily="@font/ubuntu_bold"
                             app:layout_constraintTop_toBottomOf="@+id/type_user"
@@ -63,7 +68,7 @@
                             android:layout_marginTop="5dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/avatar_student_circle"/>
+                            app:layout_constraintTop_toBottomOf="@id/fio_student"/>
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/avatar_student_circle"
@@ -75,10 +80,8 @@
 
                             <ImageView
                                 android:id="@+id/avatar_student"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:minWidth="75dp"
-                                android:minHeight="75dp"
+                                android:layout_width="75dp"
+                                android:layout_height="75dp"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_launcher_background" />
                         </androidx.cardview.widget.CardView>
@@ -152,7 +155,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_payment_24_regular"
+                            android:drawableStart="@drawable/ic_fluent_money_24_regular"
                             app:drawableTint="@color/iconColor"
                             tools:text="Оплата"
                             app:layout_constraintStart_toStartOf="parent"

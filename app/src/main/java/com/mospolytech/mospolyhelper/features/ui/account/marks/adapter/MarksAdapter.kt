@@ -51,8 +51,8 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
         fun bind(item: MarkInfo) {
             type.text = item.loadType
             name.text = item.subject
-            var mark = ""
-            when (item.mark.toLowerCase(Locale.getDefault())) {
+            val mark: String
+            when (item.mark.lowercase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
@@ -69,23 +69,23 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
                     mark ="2"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
-//                "не явился" -> {
-//                    mark ="2"
-//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-//                }
-//                "зачтено" -> {
-//                    mark ="Зач"
-//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
-//                }
-//                "незачтено" -> {
-//                    mark ="Нез"
-//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-//                }
-//                "не зачтено" -> {
-//                    mark ="Нез"
-//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-//                }
-                else -> mark = item.mark//.substring(0, 2)
+                "не явился" -> {
+                    mark = itemView.context.getString(R.string.missed)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+                }
+                "зачтено" -> {
+                    mark = itemView.context.getString(R.string.zach)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
+                }
+                "незачтено" -> {
+                    mark = itemView.context.getString(R.string.ne_zach)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+                }
+                "не зачтено" -> {
+                    mark = itemView.context.getString(R.string.ne_zach)
+                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+                }
+                else -> mark = item.mark
             }
             this.mark.text = mark
             course.text = String.format(itemView.context.getString(R.string.course), item.course)

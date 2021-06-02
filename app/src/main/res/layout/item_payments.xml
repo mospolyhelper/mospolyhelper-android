@@ -19,7 +19,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:padding="7dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
@@ -30,8 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:layout_marginHorizontal="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="10dp"
                     android:textStyle="bold"
                     android:fontFamily="@font/ubuntu_bold"
                     android:textColor="@color/accent_text_color"
@@ -48,26 +47,45 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:fontFamily="@font/ubuntu"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="5dp"
-                    android:drawableStart="@drawable/ic_baseline_payments_24"
+                    android:layout_marginBottom="5dp"
+                    android:drawableStart="@drawable/ic_fluent_money_24_regular"
                     android:drawablePadding="10dp"
-                    tools:text="@string/payment_left"/>
+                    tools:text="@string/payment_left"
+                    app:drawableTint="@color/iconColor"/>
                 <TextView
                     android:id="@+id/payment_current"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:layout_margin="5dp"
                     android:fontFamily="@font/ubuntu"
-                    android:drawableStart="@drawable/ic_round_info_24"
+                    android:drawableStart="@drawable/ic_fluent_info_24_regular"
+                    android:layout_marginBottom="5dp"
                     android:drawablePadding="10dp"
-                    tools:text="Переплата -650"/>
-                <ImageView
-                    android:id="@+id/image_sber"
+                    tools:text="Переплата -650"
+                    app:drawableTint="@color/iconColor"/>
+                <FrameLayout
+                    android:id="@+id/qr_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:src="@drawable/ic_launcher_background"/>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/sber_qr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/ubuntu"
+                        android:drawableStart="@drawable/ic_fluent_payment_24_regular"
+                        android:drawablePadding="10dp"
+                        android:text="@string/sber_qr"
+                        app:drawableTint="@color/iconColor"/>
+                    <TextView
+                        android:id="@+id/qr_help"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/qr_help"
+                        android:textColor="@color/secondary_text_color"
+                        android:layout_gravity="right|center_vertical"/>
+                </FrameLayout>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.recyclerview.widget.RecyclerView

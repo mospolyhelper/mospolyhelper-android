@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.dialogs
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -12,9 +11,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountDialogsBinding
 import com.mospolytech.mospolyhelper.features.ui.account.dialogs.adapter.DialogAdapter
-import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
-import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.Name
+import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.NAME
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
@@ -33,7 +31,7 @@ class DialogsFragment: Fragment(R.layout.fragment_account_dialogs) {
         super.onCreate(savedInstanceState)
 
         DialogAdapter.dialogClickListener = { id, name ->
-            val data = bundleOf(DIALOG_ID to id, Name to name)
+            val data = bundleOf(DIALOG_ID to id, NAME to name)
             findNavController().navigate(R.id.action_dialogsFragment_to_messagingFragment, data)
         }
 

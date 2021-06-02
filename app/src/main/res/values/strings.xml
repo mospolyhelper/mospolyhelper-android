@@ -151,7 +151,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="loading_error">Ошибка загрузки данных</string>
     <string name="fio">ФИО</string>
     <string name="search_student">Введите фамилию или группу</string>
-    <string name="search_teacher">Введите фио преподавателя</string>
+    <string name="search_teacher">Введите фамилию преподавателя</string>
     <string name="search_classmate">Введите ФИО</string>
     <string name="input_message">Введите сообщение</string>
     <string name="course">%1$s курс</string>
@@ -185,5 +185,10 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="bak">Бакалавр</string>
     <string name="spo">СПО</string>
     <string name="mag">Магистр</string>
-
+    <string name="zach">Зачет</string>
+    <string name="ne_zach">Незачет</string>
+    <string name="sber_qr">Sber QR</string>
+    <string name="qr_help">Как оплатить?</string>
+    <string name="help">Вы можете скачать QR-код на устройство и открыть его в мобильном приложении СберБанка:\nОплата по QR-коду -> Загрузить изображение</string>
+    <string name="missed">Неявка</string>
 </resources>

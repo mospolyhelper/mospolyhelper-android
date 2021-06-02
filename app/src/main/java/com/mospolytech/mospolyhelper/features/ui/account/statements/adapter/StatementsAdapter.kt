@@ -19,15 +19,15 @@ import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.show
 import java.util.*
 
-class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatements>() {
+class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView.Adapter<StatementsAdapter.ViewHolderStatements>() {
 
-    var items : List<Statement> = emptyList()
-    set(value) {
-        val diffResult =
-            DiffUtil.calculateDiff(StatementsDiffCallback(field, value), true)
-        field = value
-        diffResult.dispatchUpdatesTo(this)
-    }
+//    var items : List<Statement> = emptyList()
+//    set(value) {
+//        val diffResult =
+//            DiffUtil.calculateDiff(StatementsDiffCallback(field, value), true)
+//        field = value
+//        diffResult.dispatchUpdatesTo(this)
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderStatements {
         return ViewHolderStatements(
@@ -43,7 +43,7 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
         return items.size
     }
 
-    class ViewHolderStatements(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolderStatements(val view: View) : RecyclerView.ViewHolder(view) {
 
         private val viewBinding by viewBinding(ItemStatementBinding::bind)
 
@@ -53,11 +53,19 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
         private val date: Chip = viewBinding.chipDate
 
         fun bind(statement: Statement) {
+            itemView.setOnClickListener {
+                statement.isExpanded = !statement.isExpanded
+                notifyItemChanged(layoutPosition)
+            }
+            val subject = statement.subject.replaceAfter("\r", "")
             type.text = statement.loadType
-            name.text = statement.subject
-            viewBinding.markLayout.show()
-            var mark = ""
-            when (statement.grade.toLowerCase(Locale.getDefault())) {
+            if (statement.isExpanded) {
+                name.text = statement.subject
+            } else {
+                name.text = subject
+            }
+            val mark: String
+            when (statement.grade.lowercase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
@@ -75,32 +83,34 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "не явился" -> {
-                    mark ="2"
+                    mark = itemView.context.getString(R.string.missed)
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "зачтено" -> {
-                    mark ="Зач"
+                    mark = itemView.context.getString(R.string.zach)
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
                 }
                 "незачтено" -> {
-                    mark ="Нез"
+                    mark = itemView.context.getString(R.string.ne_zach)
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
                 "не зачтено" -> {
-                    mark ="Нез"
+                    mark = itemView.context.getString(R.string.ne_zach)
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
-                "" -> viewBinding.markLayout.gone()
-                else -> statement.grade.substring(0, 2)
+                else -> mark = statement.grade
             }
+
             this.mark.text = mark
+
             if (statement.appraisalsDate.isNotEmpty()) {
                 date.show()
                 date.text = statement.appraisalsDate
             } else {
                 date.hide()
             }
-            view.setOnCreateContextMenuListener { menu, view, contextMenuInfo ->
+
+            itemView.setOnCreateContextMenuListener { menu, _, _ ->
                 menu.add(itemView.context.getString(R.string.download_statement)).setOnMenuItemClickListener {
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.mospolytech.ru/assets/stats_marks.php?s=${statement.id}"))
                     ContextCompat.startActivity(itemView.context, browserIntent, null)
@@ -110,19 +120,19 @@ class StatementsAdapter: RecyclerView.Adapter<StatementsAdapter.ViewHolderStatem
         }
     }
 
-    inner class StatementsDiffCallback(private val oldList: List<Statement>,
-                                       private val newList: List<Statement>) : DiffUtil.Callback() {
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldList[oldItemPosition].number == newList[newItemPosition].number
-
-        override fun getOldListSize() = oldList.size
-
-        override fun getNewListSize() = newList.size
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldList[oldItemPosition] == newList[newItemPosition]
-
-    }
+//    inner class StatementsDiffCallback(private val oldList: List<Statement>,
+//                                       private val newList: List<Statement>) : DiffUtil.Callback() {
+//
+//        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+//            oldList[oldItemPosition].number == newList[newItemPosition].number
+//
+//        override fun getOldListSize() = oldList.size
+//
+//        override fun getNewListSize() = newList.size
+//
+//        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+//            oldList[oldItemPosition] == newList[newItemPosition]
+//
+//    }
 
 }
