@@ -12,22 +12,23 @@
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingEnd="5dp"
+            android:paddingStart="0dp">
             <TextView
                 android:id="@+id/text_fio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="Дындин Александр Владимирович"
                 android:textColor="@color/accent_text_color"
-                android:fontFamily="@font/ubuntu_bold"
+                android:fontFamily="@font/ubuntu"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="20sp"
-                app:autoSizeMaxTextSize="30sp"
-                app:autoSizeMinTextSize="15sp"
+                android:textSize="19dp"
+                android:visibility="visible"
+                app:autoSizeMaxTextSize="21dp"
+                app:autoSizeMinTextSize="15dp"
                 app:autoSizeTextType="uniform"
-                android:layout_marginEnd="5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/avatar_teacher_circle"

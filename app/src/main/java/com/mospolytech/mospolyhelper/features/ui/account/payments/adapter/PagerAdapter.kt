@@ -1,19 +1,26 @@
 package com.mospolytech.mospolyhelper.features.ui.account.payments.adapter
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentsBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Contract
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.show
 
 class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<PagerAdapter.PagerViewHolder>() {
 
@@ -39,8 +46,11 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
         private val info: TextView = viewBinding.paymentInfo
         private val all: TextView = viewBinding.paymentAll
         private val current: TextView = viewBinding.paymentCurrent
-        private val sberQr: ImageView = viewBinding.imageSber
+        private val sberQr: TextView = viewBinding.sberQr
+        private val qrHelp: TextView = viewBinding.qrHelp
+        private val qrContainer: FrameLayout = viewBinding.qrContainer
 
+        @SuppressLint("SetTextI18n")
         fun bind(contract: Contract) {
             recycler.adapter = PaymentsAdapter(contract.payments)
             info.text = contract.name
@@ -60,15 +70,18 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
                         contract.debt, contract.debtDate)
                 }
             }
-            val url = "https://e.mospolytech.ru/qr.php?data=${contract.sberQR}"
-            Glide.with(itemView.context).load(url).into(sberQr)
-            sberQr.setOnCreateContextMenuListener { menu, _, _ ->
-                menu.add(itemView.context.getString(R.string.open_browser)).setOnMenuItemClickListener {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    ContextCompat.startActivity(itemView.context, browserIntent, null)
-                    true
-                }
+
+            if (contract.sberQR.isNotEmpty()) {
+                sberQr.text = HtmlCompat.fromHtml(
+                    "<a href=\"https://e.mospolytech.ru/qr.php?data=${contract.sberQR}\">Sber QR</a>",
+                    HtmlCompat.FROM_HTML_MODE_COMPACT)
+                sberQr.movementMethod = LinkMovementMethod.getInstance()
+                qrContainer.show()
+            } else {
+                qrContainer.gone()
             }
+
+            qrHelp.setOnClickListener { Toast.makeText(itemView.context, R.string.help, Toast.LENGTH_LONG).show() }
         }
     }
 

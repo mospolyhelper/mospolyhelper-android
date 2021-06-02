@@ -3,11 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/layerZero"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/layerZero">
                 <androidx.appcompat.widget.Toolbar
                     app:title="Справки, заявления"
                     android:layout_width="match_parent"
@@ -16,7 +18,6 @@
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/applications_swipe"
-            android:background="@color/scheduleBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">

@@ -44,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/ubuntu"
                 android:textColor="@color/accent_text_color"
+                android:textAlignment="center"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
                 android:maxLines="1"

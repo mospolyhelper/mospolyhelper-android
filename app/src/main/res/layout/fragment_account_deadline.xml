@@ -3,14 +3,14 @@
     android:id="@+id/deadline_swipe"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="@color/layerZero"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/scheduleBackground">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/deadlines_recycler"
