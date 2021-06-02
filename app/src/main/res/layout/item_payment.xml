@@ -12,8 +12,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/marginCard"
-        android:minHeight="50dp"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        android:minHeight="40dp"
         android:background="?android:selectableItemBackground">
         <TextView
             android:id="@+id/date_payment"
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             tools:text="23.01.1999"
             android:fontFamily="@font/ubuntu"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:ellipsize="end"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/ubuntu"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:ellipsize="end"
             tools:text="1488"
             app:layout_constraintEnd_toEndOf="parent"

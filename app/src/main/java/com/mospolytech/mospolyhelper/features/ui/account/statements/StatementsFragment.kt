@@ -24,7 +24,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     private val viewBinding by viewBinding(FragmentAccountStatementsBinding::bind)
     private val viewModel by viewModel<StatementsViewModel>()
     
-    private val adapter = StatementsAdapter()
+    //private val adapter = StatementsAdapter()
     
     private var currentSemester: Int = -1
     private var semesters: List<String> = emptyList()
@@ -40,7 +40,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        viewBinding.recyclerMarks.adapter = adapter
+        //viewBinding.recyclerMarks.adapter = adapter
 
         viewBinding.swipeMarks.setOnRefreshListener {
             lifecycleScope.launch {
@@ -110,7 +110,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             semesters = statements.semesterList
         }
 
-        adapter.items = statements.sheets
+        viewBinding.recyclerMarks.adapter = StatementsAdapter(statements.sheets)
         viewBinding.semestersSpinner.onItemSelectedListener = this
     }
 
@@ -119,7 +119,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
         if (currentSemester == -1) {
             currentSemester = p2
         } else {
-            adapter.items = emptyList()
+            viewBinding.recyclerMarks.adapter = StatementsAdapter(emptyList())
             lifecycleScope.launch {
                 viewModel.downloadInfo(semesters[p2])
             }
@@ -127,7 +127,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        adapter.items = emptyList()
+        viewBinding.recyclerMarks.adapter = StatementsAdapter(emptyList())
         lifecycleScope.launch {
             viewModel.downloadInfo(viewBinding.semestersSpinner.selectedItem.toString())
         }

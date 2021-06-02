@@ -14,7 +14,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountTeachersBinding
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
-import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.Name
+import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.NAME
 import com.mospolytech.mospolyhelper.features.ui.account.students.adapter.PagingLoadingAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.teachers.adapter.TeachersAdapter
 import com.mospolytech.mospolyhelper.utils.*
@@ -44,7 +44,7 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
         super.onCreate(savedInstanceState)
         lifecycleScope.newCoroutineContext(this@TeachersFragment.coroutineContext)
         TeachersAdapter.teacherClickListener = { id, name ->
-            val data = bundleOf(DIALOG_ID to id, Name to name)
+            val data = bundleOf(DIALOG_ID to id, NAME to name)
             findNavController().navigate(R.id.action_teachersFragment_to_messagingFragment, data)
         }
     }
