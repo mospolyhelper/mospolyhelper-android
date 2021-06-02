@@ -60,7 +60,6 @@ class ScheduleViewModel(
 
     // Refresh schedule when needed and when the user changes
     private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
-        .onEach { _isRefreshing.value = false }
         .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
 
     private val tags = useCase.getAllTags()
