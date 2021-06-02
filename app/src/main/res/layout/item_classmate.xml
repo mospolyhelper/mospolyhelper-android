@@ -41,7 +41,7 @@
             android:textColor="@color/accent_text_color"
             android:textStyle="bold"
             android:fontFamily="@font/ubuntu"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:layout_marginStart="10dp"
             android:ellipsize="end"
             app:layout_constraintStart_toEndOf="@+id/avatar_classmate_circle"

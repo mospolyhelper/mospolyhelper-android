@@ -69,23 +69,23 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
                     mark ="2"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
-                "не явился" -> {
-                    mark ="2"
-                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-                }
-                "зачтено" -> {
-                    mark ="Зач"
-                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
-                }
-                "незачтено" -> {
-                    mark ="Нез"
-                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-                }
-                "не зачтено" -> {
-                    mark ="Нез"
-                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
-                }
-                else -> item.mark.substring(0, 2)
+//                "не явился" -> {
+//                    mark ="2"
+//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+//                }
+//                "зачтено" -> {
+//                    mark ="Зач"
+//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
+//                }
+//                "незачтено" -> {
+//                    mark ="Нез"
+//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+//                }
+//                "не зачтено" -> {
+//                    mark ="Нез"
+//                    this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
+//                }
+                else -> mark = item.mark//.substring(0, 2)
             }
             this.mark.text = mark
             course.text = String.format(itemView.context.getString(R.string.course), item.course)
