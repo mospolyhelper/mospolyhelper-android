@@ -28,6 +28,7 @@ android {
     }
     buildTypes {
         getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
             isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -73,9 +74,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.127") {
-        exclude(module = "unspecified")
-    }
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.127@aar")
 
 
     // Coroutines

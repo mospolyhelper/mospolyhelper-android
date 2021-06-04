@@ -11,10 +11,8 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,12 +22,13 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
+import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel

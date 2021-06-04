@@ -10,6 +10,7 @@ import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys

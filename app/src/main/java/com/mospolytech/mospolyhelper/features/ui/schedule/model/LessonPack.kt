@@ -1,10 +1,9 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.model
 
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonDateFilter
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonFeaturesSettings
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 
 data class LessonPack(

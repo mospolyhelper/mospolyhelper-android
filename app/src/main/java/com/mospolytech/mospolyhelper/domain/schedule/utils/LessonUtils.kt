@@ -1,7 +1,8 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
 import androidx.core.text.HtmlCompat
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 
 private const val minCriticalTitleLength = 10
 private const val minCriticalWordLength = 5

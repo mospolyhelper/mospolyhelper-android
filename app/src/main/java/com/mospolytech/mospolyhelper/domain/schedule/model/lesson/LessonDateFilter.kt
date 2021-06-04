@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.domain.schedule.model.lesson
 
 data class LessonDateFilter(
     val showEndedLessons: Boolean,

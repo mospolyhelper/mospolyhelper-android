@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleCalendarThreeBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonPlace
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.cutTitle

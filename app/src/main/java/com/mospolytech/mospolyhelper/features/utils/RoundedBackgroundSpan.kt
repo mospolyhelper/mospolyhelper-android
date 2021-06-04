@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.utils
+package com.mospolytech.mospolyhelper.features.utils
 
 import android.graphics.Canvas
 import android.graphics.Paint

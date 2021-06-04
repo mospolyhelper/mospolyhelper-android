@@ -2,8 +2,8 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info
 
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository

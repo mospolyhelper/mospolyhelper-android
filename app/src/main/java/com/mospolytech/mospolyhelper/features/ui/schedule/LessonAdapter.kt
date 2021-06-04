@@ -14,15 +14,15 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemLessonBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonInfoBinding
 import com.mospolytech.mospolyhelper.databinding.ItemLessonTimeBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonPack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonTimePack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonWindowPack
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.*
+import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
 import com.mospolytech.mospolyhelper.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -364,9 +364,15 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             )
             val formattedTime = getTimeText(abs(totalMinutes))
             val resultTime = when {
-                totalMinutes > 0L -> "Начало в $timeStart - через $formattedTime"
-                totalMinutes == 0L -> "До начала $formattedTime"
-                else -> "Идёт $formattedTime, конец в $timeEnd"
+                totalMinutes > 0L -> itemView.context.getString(
+                    R.string.schedule_lesson_time_not_started, timeStart, formattedTime
+                )
+                totalMinutes == 0L -> itemView.context.getString(
+                    R.string.schedule_lesson_time_almost_started, formattedTime
+                )
+                else -> itemView.context.getString(
+                    R.string.schedule_lesson_time_current, formattedTime, timeEnd
+                )
             }
             viewBinding.textLessonTime.text = resultTime
             viewBinding.textLessonTime.setTextColor(0xffFF7200.toInt())

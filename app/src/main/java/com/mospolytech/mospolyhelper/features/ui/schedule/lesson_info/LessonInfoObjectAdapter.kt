@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemLessonInfoObjectBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonInfoObject
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonInfoObject
 
 
 class LessonInfoObjectAdapter(

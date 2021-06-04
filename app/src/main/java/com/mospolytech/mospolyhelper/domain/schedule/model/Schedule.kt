@@ -1,5 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model
 
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filterByDate
 import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
 import kotlinx.serialization.Serializable

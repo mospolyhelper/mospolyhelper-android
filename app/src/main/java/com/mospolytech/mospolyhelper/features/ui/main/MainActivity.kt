@@ -14,19 +14,21 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.databinding.ActivityMainBinding
+import com.mospolytech.mospolyhelper.features.utils.PermissionRequestCodes
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.lang.ClassCastException
 
 
-class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSharedPreferenceChangeListener {
-    companion object {
-        const val launchCode = 0
-    }
+class MainActivity : AppCompatActivity(), KoinComponent {
     private var doubleBackToExitPressedOnce = false
+
+    private val clearVersion = 1
 
     private val viewModel by inject<MainViewModel>()
     private val viewBinding by viewBinding(ActivityMainBinding::bind)
@@ -38,23 +40,23 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
     override fun onCreate(savedInstanceState: Bundle?) {
 
         if (savedInstanceState == null) {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            val prefs = SharedPreferencesDataSource(
+                PreferenceManager.getDefaultSharedPreferences(this)
+            )
             AppCompatDelegate.setDefaultNightMode(
-                if (prefs.getBoolean(PreferenceKeys.NightMode, false))
+                if (prefs.get(PreferenceKeys.NightMode, false))
                     AppCompatDelegate.MODE_NIGHT_YES
                 else
                     AppCompatDelegate.MODE_NIGHT_NO
             )
-            val firstLaunch = try {
-                prefs.getInt(PreferenceKeys.FirstLaunch,
-                    launchCode
-                )
-            } catch (e: Exception) {
-                launchCode
+            val clearedVersion = try {
+                prefs.get(PreferenceKeys.FirstLaunch, 0)
+            } catch (e: ClassCastException) {
+                0
             }
-            if (firstLaunch == launchCode) {
-                prefs.edit().clear().apply()
-                prefs.edit().putInt(PreferenceKeys.FirstLaunch, launchCode + 1).apply()
+            if (clearedVersion < clearVersion) {
+                prefs.clear()
+                prefs.set(PreferenceKeys.FirstLaunch, clearVersion)
             }
         }
         setTheme(R.style.AppTheme_NoActionBar)
@@ -66,38 +68,29 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         } else {
             viewModel.currentFragmentNavId.value = savedInstanceState.getInt("menuItemId", R.id.nav_schedule)
         }
-        // TODO: check event subscription
         if (viewModel.currentFragmentNavId.value != -1) {
             viewBinding.navView.selectedItemId = viewModel.currentFragmentNavId.value
         }
         viewBinding.navView.setOnNavigationItemSelectedListener {
             val action = navController.graph.getAction(it.itemId)
             val currentDestination = navController.currentBackStackEntry?.destination
-            if (action != null && currentDestination!= null && action.destinationId != currentDestination.id) {
+            if (action != null && currentDestination != null && action.destinationId != currentDestination.id) {
                 viewModel.currentFragmentNavId.value = it.itemId
                 navController.navigate(it.itemId)
             }
             true
         }
 
-
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.INTERNET),
-            123
-        )
-
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     onBackPressedCustom()
                 }
-
             })
 
         doubleBackToExitPressedOnce = false
         PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener(this)
+            .registerOnSharedPreferenceChangeListener(::onSharedPreferenceChanged)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -105,7 +98,7 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         outState.putInt("menuItemId", viewModel.currentFragmentNavId.value)
     }
 
-    fun onBackPressedCustom() {
+    private fun onBackPressedCustom() {
         if (navController.previousBackStackEntry == null) {
             if (doubleBackToExitPressedOnce) {
                 finish()
@@ -123,7 +116,7 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    private fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             PreferenceKeys.NightMode -> {
                 AppCompatDelegate.setDefaultNightMode(
@@ -149,7 +142,7 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
 
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this)
-            .unregisterOnSharedPreferenceChangeListener(this)
+            .unregisterOnSharedPreferenceChangeListener(::onSharedPreferenceChanged)
         super.onDestroy()
     }
 }

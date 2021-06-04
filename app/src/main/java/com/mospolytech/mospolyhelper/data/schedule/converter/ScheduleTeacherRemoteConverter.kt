@@ -1,6 +1,12 @@
 package com.mospolytech.mospolyhelper.data.schedule.converter
 
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element

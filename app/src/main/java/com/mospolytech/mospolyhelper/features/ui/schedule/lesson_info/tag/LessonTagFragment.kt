@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -20,9 +21,8 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagException
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
-import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.onFailure
-import com.mospolytech.mospolyhelper.utils.onSuccess
+import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
+import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -36,11 +36,7 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel.lesson.value = args.lesson
-        viewModel.dayOfWeek.value = args.dayOfWeek
-        viewModel.order.value = args.order
-        viewModel.tag.value = args.tag
+        viewModel.setArgs(args.lesson, args.dayOfWeek, args.order)
     }
 
     override fun onCreateView(
@@ -68,15 +64,18 @@ class LessonTagFragment : BottomSheetDialogFragment() {
     }
 
     private fun setTagList(tags: List<LessonTag>) {
+        viewBinding.textviewTagListMessage.text = if (tags.isEmpty())
+            getString(R.string.schedule_lesson_tags_empty)
+        else
+            getString(R.string.schedule_lesson_tags_select)
+
         viewBinding.recyclerviewTags.adapter = LessonTagAdapter().apply {
             onTagCheckedListener = { tag: LessonTag, lesson: LessonTagKey, isChecked: Boolean ->
                 lifecycleScope.launchWhenResumed {
                     viewModel.lessonTagCheckedChanged(tag, lesson, isChecked)
                 }
             }
-            onTagEditListener = {
-                // TODO: set edit tag views
-            }
+            onTagEditListener = { }
             onTagRemoveListener = {
                 lifecycleScope.launchWhenResumed {
                     viewModel.removeTag(it.title)
@@ -99,27 +98,30 @@ class LessonTagFragment : BottomSheetDialogFragment() {
     private fun setTagCreationViews() {
         viewBinding.recyclerviewColors.adapter = LessonTagColorAdapter().apply {
             onItemChecked = {
-                viewModel.checkedColor.value = LessonTagColors.values()[it]
+                viewModel.onColorChecked(LessonTagColors.values()[it])
             }
         }
         viewBinding.edittextTagTitle.addTextChangedListener {
-            viewModel.title.value = it?.toString() ?: ""
+            viewModel.onTitleChanged(it?.toString() ?: "")
         }
         viewBinding.buttonApply.setOnClickListener {
             lifecycleScope.launchWhenResumed {
                 viewModel.createTag()
             }
         }
-        viewBinding.textviewTitle.text = "Create tag"
+        viewBinding.buttonCancel.setOnClickListener {
+            switchViews(true)
+        }
+        viewBinding.textviewTitle.text = getString(R.string.create_tag)
     }
 
     private fun switchViews(toTagList: Boolean) {
         if (toTagList) {
-            viewBinding.linearlayoutTags.visibility = View.VISIBLE
-            viewBinding.constraintlayoutEditTag.visibility = View.GONE
+            viewBinding.linearlayoutTags.show()
+            viewBinding.constraintlayoutEditTag.gone()
         } else {
-            viewBinding.linearlayoutTags.visibility = View.GONE
-            viewBinding.constraintlayoutEditTag.visibility = View.VISIBLE
+            viewBinding.linearlayoutTags.gone()
+            viewBinding.constraintlayoutEditTag.show()
         }
     }
 
@@ -137,14 +139,14 @@ class LessonTagFragment : BottomSheetDialogFragment() {
         return builder
     }
 
-    private var prevColor = LessonTagColors.ColorDefault
-    private var currentTextColor = 0xffaaaaaa.toInt()
-    private var currentColor = 0xffaaaaaa.toInt()
-
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
             viewModel.title.collect {
-                viewBinding.textviewTagPreview.text = getFeaturesString(if (it.isEmpty()) getString(R.string.lesson_tag_example) else it, currentColor, currentTextColor)
+                viewBinding.textviewTagPreview.text =
+                    getFeaturesString(if (it.isEmpty()) getString(R.string.schedule_lesson_tag_example) else it, currentColor, currentTextColor)
+                if (viewBinding.edittextTagTitle.text.toString() != it) {
+                    viewBinding.edittextTagTitle.setText(it)
+                }
             }
         }
 
@@ -153,63 +155,26 @@ class LessonTagFragment : BottomSheetDialogFragment() {
                 with(viewBinding.recyclerviewColors.adapter as LessonTagColorAdapter) {
                     setChecked(it.ordinal)
                 }
-//                val colorAnimation1 = ValueAnimator.ofObject(
-//                    ArgbEvaluator(),
-//                    viewBinding.edittextTagTitle.hintTextColors?.defaultColor ?: 0xffaaaaaa.toInt(),
-//                    requireContext().getColor(it.textColorId)
-//                )
-//                colorAnimation1.duration = 200 // milliseconds
-//                colorAnimation1.addUpdateListener { animator ->
-//                    viewBinding.edittextTagTitle.setHintTextColor(animator.animatedValue as Int)
-//                }
+                animateCheckedColor(it)
+            }
+        }
 
-                val colorAnimation2 = ValueAnimator.ofObject(
-                    ArgbEvaluator(),
-                    requireContext().getColor(prevColor.textColorId),
-                    requireContext().getColor(it.textColorId)
-                )
-                colorAnimation2.duration = 200 // milliseconds
-                colorAnimation2.addUpdateListener { animator ->
-                    //viewBinding.edittextTagTitle.setTextColor(animator.animatedValue as Int)
-                    currentTextColor = animator.animatedValue as Int
-                    viewBinding.textviewTagPreview.text = getFeaturesString(
-                        if (viewModel.title.value.isEmpty())
-                            getString(R.string.lesson_tag_example)
-                        else
-                            viewModel.title.value,
-                        currentColor,
-                        currentTextColor
-                    )
+        lifecycleScope.launchWhenResumed {
+            viewModel.errorMessages.collect {
+                if (it is LessonTagException) {
+                    when (it.resultMessage) {
+                        LessonTagMessages.AlreadyExist ->
+                            viewBinding.textviewMessage.text = getString(R.string.tag_with_title_exist)
+                        LessonTagMessages.EmptyTitle ->
+                            viewBinding.textviewMessage.text = getString(R.string.tag_with_empty_title)
+                        else -> viewBinding.textviewMessage.text =
+                            it.resultMessage.toString()
+                    }
+                    viewBinding.textviewMessage.show()
+                } else {
+                    viewBinding.textviewMessage.text = ""
+                    viewBinding.textviewMessage.gone()
                 }
-
-                val colorAnimation3 = ValueAnimator.ofObject(
-                    ArgbEvaluator(),
-                    requireContext().getColor(prevColor.colorId),
-                    requireContext().getColor(it.colorId)
-                )
-                colorAnimation3.duration = 200 // milliseconds
-                colorAnimation3.addUpdateListener { animator ->
-                    currentColor = animator.animatedValue as Int
-                    viewBinding.textviewTagPreview.text = getFeaturesString(
-                        if (viewModel.title.value.isEmpty())
-                            getString(R.string.lesson_tag_example)
-                        else
-                            viewModel.title.value,
-                        currentColor,
-                        currentTextColor
-                    )
-                    //viewBinding.edittextTagTitle.backgroundTintList =  ColorStateList.valueOf(animator.animatedValue as Int)
-                }
-
-                AnimatorSet().apply {
-                    playTogether(colorAnimation2, colorAnimation3)
-                    start()
-                }
-                prevColor = it
-
-//                viewBinding.edittextTagTitle.backgroundTintList = ColorStateList.valueOf(requireContext().getColor(it.colorId))
-//                viewBinding.edittextTagTitle.setTextColor(requireContext().getColor(it.textColorId))
-//                viewBinding.edittextTagTitle.setHintTextColor(requireContext().getColor(it.textColorId))
             }
         }
 
@@ -218,20 +183,66 @@ class LessonTagFragment : BottomSheetDialogFragment() {
                 it.onSuccess {
                     switchViews(true)
                     setTagList(it)
-                }.onFailure {
-                    if (it is LessonTagException) {
-                        when (it.resultMessage) {
-                            LessonTagMessages.AlreadyExist -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                            LessonTagMessages.EmptyTitle -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                            else -> viewBinding.textviewMessage.text = it.resultMessage.toString()
-                        }
-                        viewBinding.textviewMessage.visibility = View.VISIBLE
-                    } else {
-                        viewBinding.textviewMessage.text = ""
-                        viewBinding.textviewMessage.visibility = View.GONE
-                    }
+                    viewModel.resetTagData()
                 }
             }
         }
+    }
+
+    private var prevColor = LessonTagColors.ColorDefault
+    private var currentTextColor = 0xffaaaaaa.toInt()
+    private var currentColor = 0xffaaaaaa.toInt()
+    private var currentAnimation: AnimatorSet? = null
+
+    private fun animateCheckedColor(color: LessonTagColors) {
+        val colorAnimation2 = ValueAnimator.ofObject(
+            ArgbEvaluator(),
+            requireContext().getColor(prevColor.textColorId),
+            requireContext().getColor(color.textColorId)
+        )
+        colorAnimation2.duration = 200 // milliseconds
+        colorAnimation2.addUpdateListener { animator ->
+            currentTextColor = animator.animatedValue as Int
+            viewBinding.textviewTagPreview.text = getFeaturesString(
+                if (viewModel.title.value.isEmpty())
+                    getString(R.string.schedule_lesson_tag_example)
+                else
+                    viewModel.title.value,
+                currentColor,
+                currentTextColor
+            )
+        }
+
+        val colorAnimation3 = ValueAnimator.ofObject(
+            ArgbEvaluator(),
+            requireContext().getColor(prevColor.colorId),
+            requireContext().getColor(color.colorId)
+        )
+        colorAnimation3.duration = 200 // milliseconds
+        colorAnimation3.addUpdateListener { animator ->
+            currentColor = animator.animatedValue as Int
+            viewBinding.textviewTagPreview.text = getFeaturesString(
+                if (viewModel.title.value.isEmpty())
+                    getString(R.string.schedule_lesson_tag_example)
+                else
+                    viewModel.title.value,
+                currentColor,
+                currentTextColor
+            )
+        }
+
+        currentAnimation = AnimatorSet().apply {
+            playTogether(colorAnimation2, colorAnimation3)
+            start()
+        }
+        prevColor = color
+    }
+
+    override fun onStop() {
+        currentAnimation?.apply {
+            removeAllListeners()
+            cancel()
+        }
+        super.onStop()
     }
 }

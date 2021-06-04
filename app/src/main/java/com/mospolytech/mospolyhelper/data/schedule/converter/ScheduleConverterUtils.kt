@@ -4,8 +4,8 @@ import android.text.SpannableString
 import android.text.style.URLSpan
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
-import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
-import com.mospolytech.mospolyhelper.domain.schedule.model.Teacher
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import java.util.*
 
 private val titleRegex1 = Regex("""(\p{L}|\))\(""")

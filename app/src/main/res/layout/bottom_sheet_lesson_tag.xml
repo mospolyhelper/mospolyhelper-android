@@ -24,17 +24,19 @@
                 android:layout_marginEnd="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
             <TextView
-                android:layout_marginBottom="10dp"
+                android:id="@+id/textview_tag_list_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:textColor="#878998"
-                android:textSize="15sp"
+                android:layout_marginBottom="10dp"
                 android:breakStrategy="balanced"
                 android:fontFamily="@font/ubuntu_medium"
-                android:text="Select tags for the lesson"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                tools:text="@string/schedule_lesson_tags_select"
+                android:textColor="#878998"
+                android:textSize="15sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_tags"
@@ -104,7 +106,7 @@
                 android:ems="10"
                 android:fontFamily="@font/ubuntu"
                 android:maxLength="15"
-                android:hint="Enter tag name"
+                android:hint="@string/enter_tag_name"
                 android:inputType="textShortMessage"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
@@ -141,33 +143,18 @@
                 android:layout_height="wrap_content"/>
 
             <Button
-                android:id="@+id/btn_remove"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="7dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:text="Remove"
-                android:textColor="#FF0000"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textview_message" />
-
-            <Button
                 android:id="@+id/button_cancel"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="12dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:text="Cancel"
-                android:textColor="#2894FE"
+                android:text="@string/cancel"
+                android:textColor="#CC2031"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button_apply"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textview_message" />
 
             <Button
@@ -179,7 +166,7 @@
                 android:layout_marginEnd="12dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:text="Apply"
+                android:text="@string/apply"
                 android:textColor="#2894FE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -1,6 +1,6 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
 
 val Auditorium.isOnline: Boolean
     get() =

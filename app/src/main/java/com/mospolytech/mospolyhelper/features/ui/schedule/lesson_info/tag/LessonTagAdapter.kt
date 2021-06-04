@@ -59,12 +59,12 @@ class LessonTagAdapter : RecyclerView.Adapter<LessonTagAdapter.ViewHolder>() {
                 onTagCheckedListener(tag, lesson, !viewBinding.checkboxTag.isChecked)
                 viewBinding.checkboxTag.isChecked = !viewBinding.checkboxTag.isChecked
             }
-            viewBinding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                menu.add("Edit").setOnMenuItemClickListener {
-                    onTagEditListener(tag)
-                    true
-                }
-                menu.add("Remove").setOnMenuItemClickListener {
+            viewBinding.root.setOnCreateContextMenuListener { menu, _, _ ->
+//                menu.add("Edit").setOnMenuItemClickListener {
+//                    onTagEditListener(tag)
+//                    true
+//                }
+                menu.add(itemView.context.getString(R.string.remove)).setOnMenuItemClickListener {
                     onTagRemoveListener(tag)
                     true
                 }

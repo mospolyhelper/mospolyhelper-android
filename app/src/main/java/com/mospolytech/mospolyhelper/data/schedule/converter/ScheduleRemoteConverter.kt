@@ -3,6 +3,12 @@ package com.mospolytech.mospolyhelper.data.schedule.converter
 import android.util.Log
 import com.mospolytech.mospolyhelper.data.utils.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.GroupInfo
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.SerializationException

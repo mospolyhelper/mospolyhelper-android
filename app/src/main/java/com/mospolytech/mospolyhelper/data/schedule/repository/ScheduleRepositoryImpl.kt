@@ -34,13 +34,19 @@ class ScheduleRepositoryImpl(
             if (user is AdvancedSearchSchedule) {
                 emit(localDataSource.get(user).map { it.filter(user.filters) })
             } else {
-                val version = scheduleDao.getScheduleVersion(user)
-                if (version == null ||
-                    version.downloadingDateTime
-                        .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1) {
-                    emit(refresh(user))
+                val schedule = localDataSource.get(user)
+                if (schedule.isSuccess) {
+                    emit(schedule)
+                    val version = scheduleDao.getScheduleVersion(user)
+                    if (version == null ||
+                        version.downloadingDateTime
+                            .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1
+                    ) {
+                        emit(Result0.Loading)
+                        emit(refresh(user))
+                    }
                 } else {
-                    emit(localDataSource.get(user))
+                    emit(refresh(user))
                 }
             }
         }

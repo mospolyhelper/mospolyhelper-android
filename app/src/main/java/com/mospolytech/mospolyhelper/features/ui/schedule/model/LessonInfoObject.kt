@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.features.ui.schedule.model
 
 interface LessonInfoObject {
     val title: String

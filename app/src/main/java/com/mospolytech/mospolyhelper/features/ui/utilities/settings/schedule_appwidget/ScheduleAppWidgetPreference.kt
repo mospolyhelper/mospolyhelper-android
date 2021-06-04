@@ -19,7 +19,12 @@ import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceViewHolder
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
-import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.LessonRemoteAdapter
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
 import com.mospolytech.mospolyhelper.utils.Action0

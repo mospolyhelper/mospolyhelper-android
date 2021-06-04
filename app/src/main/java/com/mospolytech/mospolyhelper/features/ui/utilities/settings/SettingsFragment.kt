@@ -1,13 +1,22 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.settings
 
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import androidx.preference.internal.PreferenceImageView
+import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
+import com.mospolytech.mospolyhelper.databinding.FragmentSettingsBinding
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
 
@@ -21,9 +30,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     private val viewModel by viewModels<SettingsViewModel>()
+    private val viewBinding by viewBinding(FragmentSettingsBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setIconsTint()
 
         val toolbar = view.findViewById<Toolbar>(R.id.bottomAppBar)
         toolbar.title = getString(R.string.settings_title)
@@ -39,6 +51,24 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
             (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
+        }
+    }
+
+    private fun setIconsTint() {
+        val rv = requireView().findViewById<RecyclerView>(androidx.preference.R.id.recycler_view)
+        rv?.viewTreeObserver?.addOnDrawListener {
+            rv.children.forEach { pref ->
+                val icon = pref.findViewById<View>(android.R.id.icon) as? PreferenceImageView
+                icon?.let {
+                    if (it.tag != "painted") {
+                        it.setColorFilter(
+                            ContextCompat.getColor(requireContext(), R.color.textColorPrimary),
+                            PorterDuff.Mode.SRC_IN
+                        )
+                        it.tag = "painted"
+                    }
+                }
+            }
         }
     }
 

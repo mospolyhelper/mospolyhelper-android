@@ -5,6 +5,7 @@ import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.*
@@ -22,7 +23,6 @@ class ScheduleUseCase(
 
     fun getSchedule(user: UserSchedule?) =
         scheduleRepository.getSchedule(user)
-            .onStart { emit(Result0.Loading) }
 
     suspend fun updateSchedule(user: UserSchedule?) =
         scheduleRepository.updateSchedule(user)

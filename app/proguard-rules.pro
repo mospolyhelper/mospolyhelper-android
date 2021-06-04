@@ -44,6 +44,8 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
+-keep class com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity
+
 # Change here com.yourcompany.yourpackage
 -keep,includedescriptorclasses class com.mospolytech.mospolyhelper.**$$serializer { *; } # <-- change package name to your app's
 -keepclassmembers class com.mospolytech.mospolyhelper.** { # <-- change package name to your app's

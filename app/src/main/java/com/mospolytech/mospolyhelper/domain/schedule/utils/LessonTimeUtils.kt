@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
 import android.util.Log
-import com.mospolytech.mospolyhelper.domain.schedule.model.LessonTime
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.utils.TAG
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit

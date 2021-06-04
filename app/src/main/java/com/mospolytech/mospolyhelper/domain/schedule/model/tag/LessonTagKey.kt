@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper.domain.schedule.model.tag
 
 import android.os.Parcelable
-import com.mospolytech.mospolyhelper.domain.schedule.model.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek

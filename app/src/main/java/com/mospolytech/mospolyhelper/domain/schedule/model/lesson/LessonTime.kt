@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.domain.schedule.model.lesson
 
 import android.os.Parcelable
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils

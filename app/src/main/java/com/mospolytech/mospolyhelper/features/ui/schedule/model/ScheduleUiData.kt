@@ -7,5 +7,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 data class ScheduleUiData(
     val schedule: Schedule?,
     val tags: List<LessonTag>,
-    val deadlines: Map<String, List<Deadline>>
+    val deadlines: Map<String, List<Deadline>>,
+    val settings: ScheduleSettings
 )

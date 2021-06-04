@@ -1,10 +1,9 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.domain.schedule.model.lesson
 
 import android.os.Parcelable
-import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleItem
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import java.time.LocalTime
 
 @Parcelize
 @Serializable

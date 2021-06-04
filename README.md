@@ -18,7 +18,7 @@
 - [Room](https://developer.android.com/training/data-storage/room) - Для хранения данных в SQLite
 - [Navigation component](https://developer.android.com/guide/navigation) - Навигация в приложении
 - [Jsoup](https://jsoup.org) - Html парсер
-- [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
+- [Gradle Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
 
 ## TODO
 

@@ -1,6 +1,9 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.domain.schedule.model.lesson
 
 import android.os.Parcelable
+import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
+import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTypeUtils
 import com.mospolytech.mospolyhelper.utils.LocalDateSerializer
 import kotlinx.parcelize.Parcelize

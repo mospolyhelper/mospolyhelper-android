@@ -24,6 +24,7 @@ enum class LessonTypes(
     PracticeAndLaboratory("Практ. и лаб.", false),
     Other("Другое", false)
 }
+
 class LessonTypeParserPack(
     val sourceGroupType: String,
     val sourceTeacherType: String,

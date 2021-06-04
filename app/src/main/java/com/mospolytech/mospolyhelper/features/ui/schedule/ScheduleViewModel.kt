@@ -1,8 +1,8 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
@@ -10,6 +10,8 @@ import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleSettings
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
@@ -46,57 +48,72 @@ class ScheduleViewModel(
     private val _advancedSearchUser = MutableStateFlow<UserSchedule?>(null)
 
     val savedUsers = useCase.getSavedUsers()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    val user = useCase.getCurrentUser()
+    private val userLoadSignal = useCase.getCurrentUser()
         .combine(_advancedSearchUser) { user, advancedSearchUser ->
             advancedSearchUser ?: user
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        }.shareIn(viewModelScope, SharingStarted.Eagerly)
 
-    val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
+    val user = userLoadSignal
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private val scheduleLoadSignal = combine(loadDataSignal, user) { _, user -> user}
-        .shareIn(viewModelScope, SharingStarted.Lazily)
+    private val scheduleLoadSignal = combine(loadDataSignal, userLoadSignal) { _, user -> user}
+        .shareIn(viewModelScope, SharingStarted.Eagerly)
+
 
     // Refresh schedule when needed and when the user changes
     private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
-
-    private val tags = useCase.getAllTags()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
-
-    private val deadlines = useCase.getAllDeadlines()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
-
-    val scheduleUiData = combine(schedule, tags, deadlines) {
-            schedule, tags, deadlines ->
-        if (schedule.isLoading || tags.isLoading || deadlines.isLoading) {
-            Result0.Loading
-        } else {
-            Result0.Success(
-                ScheduleUiData(
-                    schedule.getOrNull(),
-                    tags.getOrDefault(emptyList()),
-                    deadlines.getOrDefault(emptyMap())
-                )
-            )
-        }
-    }
-
-    val isLoading: StateFlow<Boolean> = schedule.mapLatest { it.isLoading }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
-
-    val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+        .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
     private val _filterTypes = MutableStateFlow<Set<String>>(emptySet())
     val filterTypes: StateFlow<Set<String>> = _filterTypes
 
     val filteredSchedule = schedule.combine(filterTypes) { schedule, filterTypes ->
         schedule.map { it.filter(types = filterTypes) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, Result0.Loading)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
-    val showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
+    private val tags = useCase.getAllTags()
+        .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
+
+    private val deadlines = useCase.getAllDeadlines()
+        .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
+
+
+    private val showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
+
+    val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
+
+    val scheduleSettings = combine(showEmptyLessons, lessonDateFilter, user) {
+            showEmptyLessons, lessonDateFilter, user ->
+        ScheduleSettings(
+            showEmptyLessons,
+            lessonDateFilter,
+            LessonFeaturesSettings.fromUserSchedule(user)
+        )
+    }
+
+
+    val scheduleUiData = combineTransform(filteredSchedule, tags, deadlines, scheduleSettings) {
+            schedule, tags, deadlines, scheduleSettings ->
+        if (!schedule.isLoading && !tags.isLoading && !deadlines.isLoading) {
+            emit(Result0.Success(
+                ScheduleUiData(
+                    schedule.getOrNull(),
+                    tags.getOrDefault(emptyList()),
+                    deadlines.getOrDefault(emptyMap()),
+                    scheduleSettings
+                )
+            ))
+        }
+    }
+
+    val isLoading: StateFlow<Boolean> = schedule.mapLatest { it.isLoading }
+        .stateIn(viewModelScope, SharingStarted.Lazily, true)
+
+    val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+
 
     init {
         subscribe(::handleMessage)

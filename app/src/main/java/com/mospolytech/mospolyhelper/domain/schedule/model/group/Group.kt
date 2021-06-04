@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.domain.schedule.model
+package com.mospolytech.mospolyhelper.domain.schedule.model.group
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

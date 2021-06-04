@@ -14,8 +14,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleAdvancedSearchBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.Teacher
-import com.mospolytech.mospolyhelper.utils.RoundedBackgroundSpan
+import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
+import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
 import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel

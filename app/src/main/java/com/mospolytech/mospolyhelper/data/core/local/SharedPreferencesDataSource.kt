@@ -53,4 +53,8 @@ class SharedPreferencesDataSource(
     fun set(key: String, value: Set<String>) {
         prefs.edit().putStringSet(key, value).apply()
     }
+
+    fun clear() {
+        prefs.edit().clear().apply()
+    }
 }
