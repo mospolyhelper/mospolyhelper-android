@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/ubuntu"
-                android:textColor="@color/accent_text_color"
+                android:textColor="@color/text_color_surface_accent"
                 android:textAlignment="center"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Дындин Александр Владимирович"
-                android:textColor="@color/accent_text_color"
+                android:textColor="@color/text_color_surface_accent"
                 android:fontFamily="@font/ubuntu"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             app:endIconContentDescription="description"
             app:endIconMode="password_toggle"
-            app:endIconTint="@color/colorSecondary">
+            app:endIconTint="@color/color_secondary">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_password"
                 android:layout_width="match_parent"

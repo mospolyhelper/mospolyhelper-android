@@ -14,7 +14,7 @@
     <PreferenceScreen
         app:title="Расписание"
         app:key="ScheduleScreen"
-        app:icon="@drawable/ic_fluent_calendar_empty_20_regular">
+        app:icon="@drawable/ic_fluent_calendar_ltr_20_regular">
         <SwitchPreferenceCompat
             app:key="ShowEmptyLessons"
             app:title="Пустые пары"

@@ -25,7 +25,7 @@ import org.koin.core.component.inject
 import java.lang.ClassCastException
 
 
-class MainActivity : AppCompatActivity(), KoinComponent {
+class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSharedPreferenceChangeListener {
     private var doubleBackToExitPressedOnce = false
 
     private val clearVersion = 1
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
 
         doubleBackToExitPressedOnce = false
         PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener(::onSharedPreferenceChanged)
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
         }
     }
 
-    private fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             PreferenceKeys.NightMode -> {
                 AppCompatDelegate.setDefaultNightMode(
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
 
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this)
-            .unregisterOnSharedPreferenceChangeListener(::onSharedPreferenceChanged)
+            .unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
 }

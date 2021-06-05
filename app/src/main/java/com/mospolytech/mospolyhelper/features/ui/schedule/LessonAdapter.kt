@@ -478,7 +478,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 iconId = when {
                     totalMinutes < 180 -> R.drawable.ic_fluent_food_pizza_20_regular
                     totalMinutes < 270 -> R.drawable.ic_fluent2_games_20_regular
-                    else -> R.drawable.ic_fluent_book_20_regular
+                    else -> R.drawable.ic_fluent_phone_desktop_20_regular
                 }
             }
             viewBinding.textTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(iconId, 0, 0, 0)

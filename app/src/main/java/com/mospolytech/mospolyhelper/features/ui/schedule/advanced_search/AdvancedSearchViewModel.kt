@@ -1,21 +1,28 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search
 
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.viewModelScope
+import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
+import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.utils.onFailure
+import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AdvancedSearchViewModel(
     mediator: Mediator<String, ViewModelMessage>,
-    private val scheduleRepository: ScheduleRepository
-) :
-    ViewModelBase(
+    private val useCase: ScheduleUseCase
+) : ViewModelBase(
         mediator,
         AdvancedSearchViewModel::class.java.simpleName
 ) {
@@ -24,19 +31,45 @@ class AdvancedSearchViewModel(
     val checkedTeachers = ObservableArrayList<Int>()
     val checkedLessonTitles = ObservableArrayList<Int>()
     val checkedAuditoriums = ObservableArrayList<Int>()
-    var lessonTitles = emptyList<String>()
-    var lessonTeachers = emptyList<String>()
-    var lessonAuditoriums = emptyList<String>()
-    var lessonTypes = emptyList<String>()
-    var lessonGroups = emptyList<String>()
 
-    suspend fun getAdvancedSearchData(
-        onProgressChanged: (Float) -> Unit
-    ): SchedulePackList {
-        try {
-            return scheduleRepository.getAnySchedules(onProgressChanged)
-        } catch (e: Throwable) {
-            throw e
+
+    private val user = AdvancedSearchSchedule(
+        ScheduleFilters(emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+    )
+
+    private val _scheduleVersion = MutableStateFlow<ScheduleVersionDb?>(null)
+    val scheduleVersion: StateFlow<ScheduleVersionDb?> = _scheduleVersion
+
+    private val _schedulePackList = MutableStateFlow<SchedulePackList?>(null)
+    val schedulePackList: StateFlow<SchedulePackList?> = _schedulePackList
+
+    var lessonTitles = schedulePackList.map { it?.lessonTitles ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    var lessonTypes = schedulePackList.map { it?.lessonTypes ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    var lessonTeachers = schedulePackList.map { it?.lessonTeachers ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    var lessonGroups = schedulePackList.map { it?.lessonGroups ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    var lessonAuditoriums = schedulePackList.map { it?.lessonAuditoriums ?: emptyList() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+
+    init {
+       viewModelScope.launch {
+           _scheduleVersion.value = useCase.getScheduleVersion(user)
+       }
+    }
+
+    suspend fun getAdvancedSearchData(onProgressChanged: (Float) -> Unit) {
+        _schedulePackList.value = useCase.getAnySchedule(onProgressChanged)
+    }
+
+    suspend fun getAdvancedSearchDataLocal() {
+        useCase.getSchedulePackListLocal().onSuccess {
+            _schedulePackList.value = it
+        }.onFailure {
+            _scheduleVersion.value = null
         }
     }
 
@@ -46,16 +79,16 @@ class AdvancedSearchViewModel(
                 ScheduleViewModel::class.java.simpleName,
                 ScheduleViewModel.MessageSetAdvancedSearchSchedule,
                 ScheduleFilters(
-                    titles = if (checkedLessonTitles.isEmpty()) lessonTitles.toSet()
-                    else checkedLessonTitles.map { lessonTitles[it] }.toSet(),
-                    types = if (checkedLessonTypes.isEmpty()) lessonTypes.toSet()
-                    else checkedLessonTypes.map { lessonTypes[it] }.toSet(),
-                    teachers = if (checkedTeachers.isEmpty()) lessonTeachers.toSet()
-                    else checkedTeachers.map { lessonTeachers[it] }.toSet(),
-                    groups = if (checkedGroups.isEmpty()) lessonGroups.toSet()
-                    else checkedGroups.map { lessonGroups[it] }.toSet(),
-                    auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.toSet()
-                    else checkedAuditoriums.map { lessonAuditoriums[it] }.toSet()
+                    titles = if (checkedLessonTitles.isEmpty()) lessonTitles.value.toSet()
+                    else checkedLessonTitles.map { lessonTitles.value[it] }.toSet(),
+                    types = if (checkedLessonTypes.isEmpty()) lessonTypes.value.toSet()
+                    else checkedLessonTypes.map { lessonTypes.value[it] }.toSet(),
+                    teachers = if (checkedTeachers.isEmpty()) lessonTeachers.value.toSet()
+                    else checkedTeachers.map { lessonTeachers.value[it] }.toSet(),
+                    groups = if (checkedGroups.isEmpty()) lessonGroups.value.toSet()
+                    else checkedGroups.map { lessonGroups.value[it] }.toSet(),
+                    auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.value.toSet()
+                    else checkedAuditoriums.map { lessonAuditoriums.value[it] }.toSet()
                 )
             )
         }

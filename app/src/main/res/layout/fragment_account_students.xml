@@ -83,7 +83,7 @@
     app:layout_anchorGravity="bottom|end"
     android:contentDescription="@string/share"
     android:src="@drawable/ic_baseline_share_24"
-    app:backgroundTint="@color/colorSecondary"
+    app:backgroundTint="@color/color_secondary"
     android:visibility="invisible"
     tools:visibility="visible"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -33,7 +33,7 @@
                     android:layout_marginBottom="10dp"
                     android:textStyle="bold"
                     android:fontFamily="@font/ubuntu_bold"
-                    android:textColor="@color/accent_text_color"
+                    android:textColor="@color/text_color_surface_accent"
                     android:breakStrategy="balanced"
                     android:ellipsize="end"
                     android:maxLines="1"

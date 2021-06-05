@@ -141,7 +141,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
     private fun setScheduleViews() {
         viewBinding.refreshSchedule.setProgressBackgroundColorSchemeResource(R.color.colorLevelThree)
-        viewBinding.refreshSchedule.setColorSchemeResources(R.color.colorSecondary)
+        viewBinding.refreshSchedule.setColorSchemeResources(R.color.color_primary)
         viewBinding.refreshSchedule.setOnRefreshListener {
             lifecycleScope.launchWhenResumed {
                 viewModel.setRefreshing()

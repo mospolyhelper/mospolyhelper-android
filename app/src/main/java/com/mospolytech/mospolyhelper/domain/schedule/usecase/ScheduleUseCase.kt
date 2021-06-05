@@ -23,9 +23,21 @@ class ScheduleUseCase(
 
     fun getSchedule(user: UserSchedule?) =
         scheduleRepository.getSchedule(user)
+            .onStart { emit(Result0.Loading) }
 
     suspend fun updateSchedule(user: UserSchedule?) =
         scheduleRepository.updateSchedule(user)
+
+    suspend fun getAnySchedule(onProgressChanged: (Float) -> Unit): SchedulePackList {
+        return scheduleRepository.getSchedulePackList(onProgressChanged)
+    }
+
+    suspend fun getSchedulePackListLocal(): Result0<SchedulePackList> {
+        return scheduleRepository.getSchedulePackListLocal()
+    }
+
+    suspend fun getScheduleVersion(user: UserSchedule) =
+        scheduleRepository.getScheduleVersion(user)
 
     fun getAllUsers(): Flow<List<UserSchedule>> =
         scheduleUsersRepository.getScheduleUsers()

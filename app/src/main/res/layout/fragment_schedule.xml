@@ -4,17 +4,15 @@
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/scheduleBackground"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:background="@color/scheduleBackground"
+        android:background="?android:colorBackground"
         app:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-
             android:fitsSystemWindows="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,47 +39,42 @@
 
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
-            <LinearLayout
-                android:orientation="vertical"
+            <FrameLayout
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="25dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <FrameLayout
+
+                <TextView
+                    android:id="@+id/text_day_of_week"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="45dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/ubuntu"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    tools:text="Группа 181-721"
+                    android:textColor="#dddddd"
+                    android:textSize="19dp"
+                    android:visibility="visible"
+                    app:autoSizeMaxTextSize="21dp"
+                    app:autoSizeMinTextSize="15dp"
+                    app:autoSizeTextType="uniform" />
 
-                    <TextView
-                        android:id="@+id/text_day_of_week"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="45dp"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/ubuntu"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        tools:text="Группа 181-721"
-                        android:textColor="#dddddd"
-                        android:textSize="19dp"
-                        android:visibility="visible"
-                        app:autoSizeMaxTextSize="21dp"
-                        app:autoSizeMinTextSize="15dp"
-                        app:autoSizeTextType="uniform" />
+                <ImageButton
+                    android:id="@+id/btn_menu"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginTop="1dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_round_more_vert_24"
+                    app:tint="#bbbbbb" />
+            </FrameLayout>
 
-                    <ImageButton
-                        android:id="@+id/btn_menu"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginTop="1dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_round_more_vert_24"
-                        app:tint="#bbbbbb" />
-                </FrameLayout>
-
-            </LinearLayout>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewpager_weeks"

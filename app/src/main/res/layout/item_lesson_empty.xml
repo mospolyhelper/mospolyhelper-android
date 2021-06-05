@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<View xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_lesson"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false">
-
-    <LinearLayout
-        android:id="@+id/layout_lesson"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/lesson_margin_start"
-        android:layout_marginTop="@dimen/lesson_margin_top"
-        android:layout_marginEnd="@dimen/lesson_margin_end"
-        android:layout_marginBottom="@dimen/lesson_margin_bottom"
-        android:background="@drawable/shape_lesson"
-        android:clickable="true"
-        android:elevation="2dp"
-        android:focusable="true"
-        android:orientation="vertical"
-        android:paddingStart="@dimen/lesson_padding_start"
-        android:paddingTop="@dimen/lesson_padding_top"
-        android:paddingEnd="@dimen/lesson_padding_end"
-        android:paddingBottom="@dimen/lesson_padding_bottom">
-
-        <TextView
-            android:id="@+id/text_lesson_time"
-            style="@style/ScheduleLessonTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:breakStrategy="simple"
-            android:clickable="false"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="16:10" />
-
-    </LinearLayout>
-
-</FrameLayout>
+    android:layout_height="100dp"
+    android:layout_marginTop="6.3dp"
+    android:layout_marginStart="@dimen/lesson_margin_start"
+    android:layout_marginEnd="@dimen/lesson_margin_end"
+    android:layout_marginBottom="@dimen/lesson_margin_bottom"
+    android:background="@drawable/shape_lesson"
+    android:elevation="4dp" />

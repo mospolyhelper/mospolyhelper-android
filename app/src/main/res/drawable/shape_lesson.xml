@@ -10,7 +10,7 @@
     <item android:id="@android:id/background">
       <shape android:shape="rectangle">
         <corners android:radius="@dimen/lesson_corner_radius"/>
-        <solid android:color="@color/scheduleLessonBackground" />
+        <solid android:color="?attr/colorSurface" />
       </shape>
     </item>
 </ripple>
