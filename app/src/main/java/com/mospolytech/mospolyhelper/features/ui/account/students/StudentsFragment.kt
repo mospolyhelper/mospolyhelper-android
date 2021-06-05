@@ -136,7 +136,7 @@ class StudentsFragment : Fragment(R.layout.fragment_account_students), Coroutine
 //            }
 //        }
 
-        viewBinding.recyclerStudents.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
+        viewBinding.recyclerStudents.setOnScrollChangeListener { _, _, _, _, p4 ->
             if (p4<0) {
                 viewBinding.fabStudents.hide()
             } else {

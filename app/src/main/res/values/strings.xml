@@ -191,4 +191,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="qr_help">Как оплатить?</string>
     <string name="help">Вы можете скачать QR-код на устройство и открыть его в мобильном приложении СберБанка:\nОплата по QR-коду -> Загрузить изображение</string>
     <string name="missed">Неявка</string>
+    <string name="cop">Скопировать</string>
+    <string name="message_copied">Сообщение скопировано</string>
+    <string name="no_mark">Нет оценки</string>
 </resources>
