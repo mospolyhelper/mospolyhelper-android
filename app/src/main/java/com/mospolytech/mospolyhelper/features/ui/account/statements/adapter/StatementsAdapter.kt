@@ -57,7 +57,7 @@ class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView
                 statement.isExpanded = !statement.isExpanded
                 notifyItemChanged(layoutPosition)
             }
-            val subject = statement.subject.substringBeforeLast("\r", "")
+            val subject = statement.subject.replaceAfter("\r", "").replace("\r", "")
             type.text = statement.loadType
             if (statement.isExpanded) {
                 name.text = statement.subject

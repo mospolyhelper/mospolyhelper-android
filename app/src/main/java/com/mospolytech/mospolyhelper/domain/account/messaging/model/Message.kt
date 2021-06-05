@@ -1,6 +1,8 @@
 package com.mospolytech.mospolyhelper.domain.account.messaging.model
 
+import com.mospolytech.mospolyhelper.utils.MessageDateSerializer
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class Message(
@@ -8,7 +10,8 @@ data class Message(
     val avatarUrl: String,
     val authorName: String,
     val message: String,
-    val dateTime: String,
+    @Serializable(with = MessageDateSerializer::class)
+    val dateTime: LocalDateTime,
     val attachments: List<Attachment>,
     val removeUrl: String
 ) {

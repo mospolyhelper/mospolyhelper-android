@@ -53,26 +53,20 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
 
         viewBinding.fabShare.setOnClickListener {
             val types: MutableList<String> = mutableListOf()
+            var sheet = ""
+            var i = 1
             marks.forEach {
                 if (!types.contains(it.loadType)) {
                     types.add(it.loadType)
+                    i = 1
+                    sheet += "${if (types.size>1) "\n" else ""}${it.loadType}:\n"
                 }
+                sheet += "${i++}) ${it.subject.replaceAfterLast("\r", "")
+                    .replace("\r", "")} " +
+                        "- ${it.appraisalsDate} - ${if (it.grade.isEmpty())
+                            requireContext().getString(R.string.no_mark) else it.grade}\n"
             }
-            var sheet = ""
-            var i: Int
-            types.forEach { loadType ->
-                sheet += "$loadType:\n"
-                i = 1
-                marks.forEach {
-                    if (it.loadType == loadType) {
-                        sheet += "${i++}) ${it.subject.substringBeforeLast("\r", "")} - " +
-                                "${it.appraisalsDate} - ${if (it.grade.isEmpty()) 
-                                    requireContext().getString(R.string.no_mark) else it.grade}\n"
-                    }
-                }
-                sheet += "\n"
-            }
-            sheet = sheet.substringBeforeLast("\n\n")
+            sheet = sheet.substringBeforeLast("\n")
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, sheet)

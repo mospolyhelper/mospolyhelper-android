@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.marks
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -84,6 +85,7 @@ class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnI
                     setMarks(it.marks)
                     setSemesters(it.marks)
                     viewBinding.buttonSearch.isEnabled = true
+                    viewBinding.fabShare.show()
                     fillData()
                 }.onFailure { error ->
                     viewBinding.swipeMarks.isRefreshing = false
@@ -134,12 +136,36 @@ class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnI
             }
         }
 
-        viewBinding.recyclerMarks.setOnScrollChangeListener { view, p1, p2, p3, p4 ->
+        viewBinding.recyclerMarks.setOnScrollChangeListener { _, _, _, _, p4 ->
             if (p4<0) {
                 viewBinding.fabShare.hide()
             } else {
                 viewBinding.fabShare.show()
             }
+        }
+
+        viewBinding.fabShare.setOnClickListener {
+            val types: MutableList<String> = mutableListOf()
+            var sheet = ""
+            var i = 1
+            marksList.filter { it.semester == (currentSemester + 1).toString() }.forEach {
+                if (!types.contains(it.loadType)) {
+                    types.add(it.loadType)
+                    i = 1
+                    sheet += "${if (types.size>1) "\n" else ""}${it.loadType}:\n"
+                }
+                sheet += "${i++}) ${if (it.subject.isEmpty()) it.loadType else it.subject} " +
+                        "- ${if (it.mark.isEmpty())
+                            requireContext().getString(R.string.no_mark) else it.mark}\n"
+            }
+            sheet = sheet.substringBeforeLast("\n")
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, sheet)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
     }
 

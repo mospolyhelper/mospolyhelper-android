@@ -50,9 +50,9 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
 
         fun bind(item: MarkInfo) {
             type.text = item.loadType
-            name.text = item.subject
+            name.text = if (item.subject.isEmpty()) item.loadType else item.subject
             val mark: String
-            when (item.mark.lowercase(Locale.getDefault())) {
+            when (item.mark.toLowerCase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))

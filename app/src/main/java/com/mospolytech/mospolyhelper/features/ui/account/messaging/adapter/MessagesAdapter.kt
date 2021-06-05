@@ -22,6 +22,9 @@ import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
 import com.mospolytech.mospolyhelper.utils.show
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -96,10 +99,29 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val message: TextView = viewBinding.message
         private val avatar: ImageView = viewBinding.avatarStudent
         private val card: CardView = viewBinding.avatarStudentCircle
-        private val recycler = viewBinding.recyclerFiles
+        private val recycler: RecyclerView = viewBinding.recyclerFiles
+        private val time: TextView = viewBinding.messageTime
 
         fun bind(item: Message, isNextSame: Boolean) {
             name.text = item.authorName
+            val time = LocalDateTime.now()
+
+            if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("HH:mm").withLocale(
+                        Locale("ru")
+                    ))
+            } else if (item.dateTime.year == time.year) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("d MMMM").withLocale(
+                        Locale("ru")
+                    ))
+            } else {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                        Locale("ru")
+                    ))
+            }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
@@ -142,10 +164,29 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val message: TextView = viewBinding.message
         private val avatar: ImageView = viewBinding.avatarStudent
         private val card: CardView = viewBinding.avatarStudentCircle
-        private val recycler = viewBinding.recyclerFiles
+        private val recycler: RecyclerView = viewBinding.recyclerFiles
+        private val time: TextView = viewBinding.messageTime
 
         fun bind(item: Message, isNextSame: Boolean) {
             name.text = item.authorName
+            val time = LocalDateTime.now()
+
+            if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("HH:mm").withLocale(
+                        Locale("ru")
+                    ))
+            } else if (item.dateTime.year == time.year) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("d MMMM").withLocale(
+                        Locale("ru")
+                    ))
+            } else {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                        Locale("ru")
+                    ))
+            }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
