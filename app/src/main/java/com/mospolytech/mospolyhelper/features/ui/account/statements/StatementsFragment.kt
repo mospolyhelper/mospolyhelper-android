@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.statements
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountStatementsBinding
+import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.features.ui.account.statements.adapter.StatementsAdapter
 import com.mospolytech.mospolyhelper.utils.*
@@ -28,6 +30,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     
     private var currentSemester: Int = -1
     private var semesters: List<String> = emptyList()
+    private var marks: List<Statement> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,31 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             lifecycleScope.launch {
                 viewModel.downloadInfo(semesters[viewBinding.semestersSpinner.selectedItemPosition])
             }
+        }
+
+        viewBinding.fabShare.setOnClickListener {
+            val types: MutableList<String> = mutableListOf()
+            var sheet = ""
+            var i = 1
+            marks.forEach {
+                if (!types.contains(it.loadType)) {
+                    types.add(it.loadType)
+                    i = 1
+                    sheet += "${if (types.size>1) "\n" else ""}${it.loadType}:\n"
+                }
+                sheet += "${i++}) ${it.subject.replaceAfterLast("\r", "")
+                    .replace("\r", "")} " +
+                        "- ${it.appraisalsDate} - ${if (it.grade.isEmpty())
+                            requireContext().getString(R.string.no_mark) else it.grade}\n"
+            }
+            sheet = sheet.substringBeforeLast("\n")
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, sheet)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
 
         lifecycleScope.launchWhenResumed {
@@ -70,6 +98,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
                 result.onSuccess {
                     viewBinding.swipeMarks.isRefreshing = false
                     viewBinding.progressLoading.gone()
+                    viewBinding.fabShare.show()
                     fillData(it)
                 }.onFailure { error ->
                     viewBinding.swipeMarks.isRefreshing = false
@@ -97,6 +126,13 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             }
         }
 
+        viewBinding.recyclerMarks.setOnScrollChangeListener { _, _, _, _, p4 ->
+            if (p4<0) {
+                viewBinding.fabShare.hide()
+            } else {
+                viewBinding.fabShare.show()
+            }
+        }
     }
     private fun fillData(statements: Statements) {
         if (!semesters.containsAll(statements.semesterList)) {
@@ -111,6 +147,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
         }
 
         viewBinding.recyclerMarks.adapter = StatementsAdapter(statements.sheets)
+        marks = statements.sheets
         viewBinding.semestersSpinner.onItemSelectedListener = this
     }
 

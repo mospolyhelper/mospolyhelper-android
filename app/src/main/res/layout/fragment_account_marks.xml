@@ -97,5 +97,6 @@
         android:src="@drawable/ic_baseline_share_24"
         app:layout_anchor="@id/recycler_marks"
         app:layout_anchorGravity="bottom|end"
+        android:visibility="invisible"
         android:layout_margin="@dimen/fab_margin"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

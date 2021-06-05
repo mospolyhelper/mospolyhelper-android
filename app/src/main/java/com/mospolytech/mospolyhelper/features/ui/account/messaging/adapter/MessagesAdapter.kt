@@ -1,9 +1,13 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging.adapter
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -14,7 +18,13 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemMessageBinding
 import com.mospolytech.mospolyhelper.databinding.ItemMyMessageBinding
 import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
+import com.mospolytech.mospolyhelper.utils.show
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -43,9 +53,15 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        var isNextSame = false
+        if (position < items.size - 1) {
+            val next = items[position + 1]
+            val cur = items[position]
+            isNextSame = next.authorName == cur.authorName && next.avatarUrl == cur.avatarUrl
+        }
         when (holder) {
-            is MyMessageViewHolder -> holder.bind(items[position])
-            is OtherMessageViewHolder -> holder.bind(items[position])
+            is MyMessageViewHolder -> holder.bind(items[position], isNextSame)
+            is OtherMessageViewHolder -> holder.bind(items[position], isNextSame)
             else -> throw IllegalStateException("wrong holder")
         }
     }
@@ -79,14 +95,33 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         private val viewBinding by viewBinding(ItemMessageBinding::bind)
 
-        val name: TextView = viewBinding.titleStudent
-        val message: TextView = viewBinding.message
-        val avatar: ImageView = viewBinding.avatarStudent
-        val card: CardView = viewBinding.card
-        val recycler = viewBinding.recyclerFiles
+        private val name: TextView = viewBinding.titleStudent
+        private val message: TextView = viewBinding.message
+        private val avatar: ImageView = viewBinding.avatarStudent
+        private val card: CardView = viewBinding.avatarStudentCircle
+        private val recycler: RecyclerView = viewBinding.recyclerFiles
+        private val time: TextView = viewBinding.messageTime
 
-        fun bind(item: Message) {
+        fun bind(item: Message, isNextSame: Boolean) {
             name.text = item.authorName
+            val time = LocalDateTime.now()
+
+            if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("HH:mm").withLocale(
+                        Locale("ru")
+                    ))
+            } else if (item.dateTime.year == time.year) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("d MMMM").withLocale(
+                        Locale("ru")
+                    ))
+            } else {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                        Locale("ru")
+                    ))
+            }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
@@ -95,6 +130,24 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     deleteMessageClickListener?.invoke(item.removeUrl)
                     true
                 }
+                menu.add(R.string.cop).setOnMenuItemClickListener {
+                    val clipboard: ClipboardManager? =
+                        itemView.context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
+                    val clip = ClipData.newPlainText("list", message.text)
+                    clipboard?.setPrimaryClip(clip)
+                    Toast.makeText(
+                        itemView.context,
+                        R.string.message_copied,
+                        Toast.LENGTH_SHORT).show()
+                    true
+                }
+            }
+            if (isNextSame) {
+                card.hide()
+                name.gone()
+            } else {
+                card.show()
+                name.show()
             }
         }
 
@@ -107,14 +160,33 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         private val viewBinding by viewBinding(ItemMyMessageBinding::bind)
 
-        val name: TextView = viewBinding.titleStudent
-        val message: TextView = viewBinding.message
-        val avatar: ImageView = viewBinding.avatarStudent
-        val card: CardView = viewBinding.card
-        val recycler = viewBinding.recyclerFiles
+        private val name: TextView = viewBinding.titleStudent
+        private val message: TextView = viewBinding.message
+        private val avatar: ImageView = viewBinding.avatarStudent
+        private val card: CardView = viewBinding.avatarStudentCircle
+        private val recycler: RecyclerView = viewBinding.recyclerFiles
+        private val time: TextView = viewBinding.messageTime
 
-        fun bind(item: Message) {
+        fun bind(item: Message, isNextSame: Boolean) {
             name.text = item.authorName
+            val time = LocalDateTime.now()
+
+            if (item.dateTime.year == time.year && item.dateTime.dayOfYear == time.dayOfYear) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("HH:mm").withLocale(
+                        Locale("ru")
+                    ))
+            } else if (item.dateTime.year == time.year) {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("d MMMM").withLocale(
+                        Locale("ru")
+                    ))
+            } else {
+                this.time.text = item.dateTime.format(
+                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                        Locale("ru")
+                    ))
+            }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
             Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
@@ -123,6 +195,24 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     deleteMessageClickListener?.invoke(item.removeUrl)
                     true
                 }
+                menu.add(R.string.cop).setOnMenuItemClickListener {
+                    val clipboard: ClipboardManager? =
+                        itemView.context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
+                    val clip = ClipData.newPlainText("list", message.text)
+                    clipboard?.setPrimaryClip(clip)
+                    Toast.makeText(
+                        itemView.context,
+                        R.string.message_copied,
+                        Toast.LENGTH_SHORT).show()
+                    true
+                }
+            }
+            if (isNextSame) {
+                card.hide()
+                name.gone()
+            } else {
+                card.show()
+                name.show()
             }
         }
 

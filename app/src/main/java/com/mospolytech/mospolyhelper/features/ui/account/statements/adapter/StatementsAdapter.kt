@@ -57,7 +57,7 @@ class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView
                 statement.isExpanded = !statement.isExpanded
                 notifyItemChanged(layoutPosition)
             }
-            val subject = statement.subject.replaceAfter("\r", "")
+            val subject = statement.subject.replaceAfter("\r", "").replace("\r", "")
             type.text = statement.loadType
             if (statement.isExpanded) {
                 name.text = statement.subject
@@ -65,7 +65,7 @@ class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView
                 name.text = subject
             }
             val mark: String
-            when (statement.grade.lowercase(Locale.getDefault())) {
+            when (statement.grade.toLowerCase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))

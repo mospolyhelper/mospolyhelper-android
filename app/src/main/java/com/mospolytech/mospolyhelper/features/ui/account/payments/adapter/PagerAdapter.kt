@@ -73,7 +73,7 @@ class PagerAdapter(private val items: List<Contract>): RecyclerView.Adapter<Page
 
             if (contract.sberQR.isNotEmpty()) {
                 sberQr.text = HtmlCompat.fromHtml(
-                    "<a href=\"https://e.mospolytech.ru/qr.php?data=${contract.sberQR}\">Sber QR</a>",
+                    "<a href=\"https://e.mospolytech.ru/${contract.sberQR}\">Sber QR</a>",
                     HtmlCompat.FROM_HTML_MODE_COMPACT)
                 sberQr.movementMethod = LinkMovementMethod.getInstance()
                 qrContainer.show()
