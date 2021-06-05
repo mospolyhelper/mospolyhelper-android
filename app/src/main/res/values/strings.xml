@@ -12,11 +12,15 @@
 
 
     <!-- Common -->
+    <!-- Common Actions -->
     <string name="add">Добавить</string>
     <string name="remove">Удалить</string>
     <string name="edit">Изменить</string>
     <string name="apply">Применить</string>
     <string name="cancel">Отмена</string>
+    <!-- Common People -->
+    <string name="teachers">Преподаватели</string>
+
 
     <!-- Schedule -->
     <string name="schedule_user_group">Группа %1$s</string>
@@ -38,6 +42,33 @@
     <string name="schedule_info_window_description">У тебя будет %1$s, чтобы перекусить или отдохнуть</string>
 
 
+    <!-- Schedule Advanced Search -->
+    <string name="schedule_advanced_search_updated_recently">Расписание обновлялось менее дня назад</string>
+    <string name="schedule_advanced_search_update_long_ago">Расписание обновлялось более месяца назад и могло устареть</string>
+    <string name="schedule_advanced_search_not_downloaded">Расписание не загружено</string>
+    <plurals name="schedule_advanced_search_updated">
+        <item quantity="one">Расписание обновлялось %d день назад</item>
+        <item quantity="few">Расписание обновлялось %d дня назад</item>
+        <item quantity="other">Расписание обновлялось %d дней назад</item>
+    </plurals>
+
+    <string name="lesson_titles">Предметы</string>
+    <string name="lesson_types">Типы занятий</string>
+    <string name="groups">Группы</string>
+    <string name="auditoriums">Аудитории</string>
+    <string name="all_subjects">Все предметы</string>
+    <string name="all_lesson_types">Все типы занятий</string>
+    <string name="all_teachers">Все преподаватели</string>
+    <string name="all_groups">Все группы</string>
+    <string name="all_auditoriums">Все аудитории</string>
+
+    <string name="download_schedules">Загрузить расписание</string>
+    <string name="update_schedules">Обновить расписание</string>
+    <string name="select_all">Выбрать все</string>
+    <string name="unselect_all">Снять все</string>
+    <string name="advanced_search">Расширенный поиск</string>
+
+
     <!-- Schedule Lesson Tags -->
     <string name="schedule_lesson_tags_select">Выберите метки для занятия</string>
     <string name="schedule_lesson_tags_empty">Добавьте метки</string>
@@ -56,17 +87,7 @@
     <string name="schedule_lesson_info_groups">Группы</string>
 
 
-
-    <!--ModelMsgs-->
-    <string name="schedule_not_found">Не удалось скачать расписание</string>
-    <string name="offline_schedule_not_found">Не удалось найти сохранённое расписание</string>
-    <string name="offline_schedule_found">Сохранённое расписание найдено</string>
-    <string name="group_list_not_found">Не удалось скачать список групп</string>
-    <string name="offline_group_list_not_found">Не удалось найти сохранённый список групп</string>
-    <string name="offline_group_list_found">Сохранённый список групп найден</string>
-
     <!--Preferences-->
-
     <string name="pref_category_appwidget">Виджет</string>
     <string name="pref_appwidget_schedule_show_order">Номер занятия</string>
     <string name="pref_appwidget_schedule_show_order_summary">Показывать номер занятия</string>
@@ -82,17 +103,6 @@
     <string name="pref_appwidget_schedule_show_groups_summary">Показывать группы</string>
     <string name="pref_appwidget_schedule_show_auditoriums">Аудитории</string>
     <string name="pref_appwidget_schedule_show_auditoriums_summary">Показывать аудитории</string>
-
-    <string name="all_groups">Все группы</string>
-    <string name="all_subjects">Все предметы</string>
-    <string name="all_lesson_types">Все типы занятий</string>
-    <string name="all_auditoriums">Все аудитории</string>
-    <string name="all_teachers">Все преподаватели</string>
-    <string name="download_schedules">Загрузить расписание</string>
-    <string name="select_all">Выбрать все</string>
-    <string name="unselect_all">Снять все</string>
-    <string name="advanced_search">Расширенный поиск</string>
-    <string name="advanced_search_hint">Загрузите нужные расписания для применения к ним фильтров</string>
 
     <string name="settings_title">Настройки</string>
 
@@ -153,7 +163,6 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="Payments">Оплата</string>
     <string name="Students">Студенты</string>
     <string name="Student">Студент</string>
-    <string name="teachers">Преподаватели</string>
     <string name="classmates">Одногруппники</string>
     <string name="statements">Электронная зачетная книжка</string>
     <string name="account">Аккаунт</string>

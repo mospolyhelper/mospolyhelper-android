@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!--  Core  -->
-  <color name="colorPrimary">#fafafa</color>
-  <color name="colorPrimaryDark">#EEEEF0</color>
-  <color name="colorPrimaryLight">#FFFFFF</color>
+  <color name="blue">#6179ff</color>
+  <color name="white">#fff</color>
+  <color name="black">#000</color>
+  <color name="transparent">#0fff</color>
+
+  <color name="color_primary">@color/blue</color>
+  <color name="color_on_primary">@color/white</color>
+
+  <color name="color_primary_dark">#EEEEF0</color>
+
+  <color name="color_secondary">@color/blue</color>
+  <color name="color_secondary_variant">#69e2ff</color>
+
+  <color name="color_edge_effect">@color/color_secondary</color>
+  <color name="nav_bar_color">#0C0C0C</color>
+
   <color name="textColorPrimary">#000000</color>
-  <color name="colorSecondary">#00b0ff</color>
-  <color name="colorSecondaryLight">#69e2ff</color>
 
   <color name="colorLevelZero">#c9c9cf</color>
   <color name="colorLevelOne">#d6d6db</color>
@@ -17,7 +28,7 @@
   <color name="colorLevelSix">#ffffff</color>
 
 
-  <!--  Common  -->
+
   <color name="layerZero">@color/colorLevelTwo</color>
   <color name="layerOne">@color/colorLevelFour</color>
   <color name="layerOneActivated">@color/colorLevelZero</color>
@@ -40,7 +51,7 @@
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
-  <color name="lessonTimeText">@color/accent_text_color</color>
+  <color name="lessonTimeText">@color/text_color_surface_accent</color>
   <color name="lessonTypeImportant">#f0dcf3</color>
   <color name="lessonTypeNotImportant">#cfeafd</color>
 
@@ -51,14 +62,6 @@
   <color name="lessonOrder5">#3F66BB</color>
   <color name="lessonOrder6">#8250D2</color>
   <color name="lessonOrder7">#612280</color>
-
-  <color name="lessonOrder1Text">#bb725d</color>
-  <color name="lessonOrder2Text">#db7924</color>
-  <color name="lessonOrder3Text">#C99F20</color>
-  <color name="lessonOrder4Text">#149FBB</color>
-  <color name="lessonOrder5Text">#496A70</color>
-  <color name="lessonOrder6Text">#415D71</color>
-  <color name="lessonOrder7Text">#413f5a</color>
 
 
 

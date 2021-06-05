@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
@@ -30,6 +31,8 @@ class ScheduleViewModel(
         const val MessageChangeDate = "ChangeDate"
         const val MessageSetAdvancedSearchSchedule = "SetAdvancedSearchSchedule"
     }
+
+
     val date = MutableStateFlow<LocalDate>(LocalDate.now())
     val currentLessonTimes: MutableStateFlow<Pair<List<LessonTime>, LocalTime>> =
         MutableStateFlow(Pair(emptyList(), LocalTime.now()))
@@ -53,10 +56,10 @@ class ScheduleViewModel(
     private val userLoadSignal = useCase.getCurrentUser()
         .combine(_advancedSearchUser) { user, advancedSearchUser ->
             advancedSearchUser ?: user
-        }.shareIn(viewModelScope, SharingStarted.Eagerly)
+        }.distinctUntilChanged()
+        .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-    val user = userLoadSignal
-        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+    val user = userLoadSignal.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     private val scheduleLoadSignal = combine(loadDataSignal, userLoadSignal) { _, user -> user}
         .shareIn(viewModelScope, SharingStarted.Eagerly)
@@ -121,7 +124,7 @@ class ScheduleViewModel(
 
         viewModelScope.launch {
             useCase.scheduleUpdates.collect {
-                refreshSignal.tryEmit(Unit)
+                refreshSignal.emit(Unit)
             }
         }
 

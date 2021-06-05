@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
   <!--  Core  -->
-  <color name="colorPrimary">#202124</color>
-  <color name="colorPrimaryDark">#0C0C0C</color>
-  <color name="colorPrimaryLight">#47484c</color>
+  <color name="color_primary_dark">#0C0C0C</color>
+  <color name="nav_bar_color">@color/layerZero</color>
+
   <color name="textColorPrimary">#ffffff</color>
-  <color name="colorSecondary">#ff5722</color>
-  <color name="colorSecondaryLight">#ff8a50</color>
+
 
   <color name="colorLevelZero">#000000</color>
   <color name="colorLevelOne">#121212</color>
@@ -41,7 +39,7 @@
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
-  <color name="lessonTimeText">@color/accent_text_color</color>
+  <color name="lessonTimeText">@color/text_color_surface_accent</color>
   <color name="lessonTypeImportant">#f0dcf3</color>
   <color name="lessonTypeNotImportant">#cfeafd</color>
 

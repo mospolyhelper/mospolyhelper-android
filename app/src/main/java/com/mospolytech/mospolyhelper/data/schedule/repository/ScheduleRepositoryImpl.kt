@@ -32,9 +32,9 @@ class ScheduleRepositoryImpl(
             emit(Result0.Failure(IllegalArgumentException()))
         } else {
             if (user is AdvancedSearchSchedule) {
-                emit(localDataSource.get(user).map { it.filter(user.filters) })
+                emit(localDataSource.get(user.idGlobal).map { it.filter(user.filters) })
             } else {
-                val schedule = localDataSource.get(user)
+                val schedule = localDataSource.get(user.idGlobal)
                 if (schedule.isSuccess) {
                     emit(schedule)
                     val version = scheduleDao.getScheduleVersion(user)
@@ -75,7 +75,39 @@ class ScheduleRepositoryImpl(
         schedule
     }
 
-    override suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList =
+    override suspend fun getSchedulePackListLocal(): Result0<SchedulePackList> = withContext(ioDispatcher) {
+        val lessonTitles = HashSet<String>(2000)
+        val lessonTypes = HashSet<String>(30)
+        val lessonTeachers = HashSet<String>(1000)
+        val lessonGroups = HashSet<String>(500)
+        val lessonAuditoriums = HashSet<String>(600)
+
+        val scheduleRes = localDataSource.get(UserSchedule.PREFIX_ADVANCED_SEARCH)
+        if (scheduleRes is Result0.Failure) return@withContext scheduleRes
+        scheduleRes.onSuccess { schedule ->
+            schedule.dailySchedules.forEach { dailySchedule ->
+                dailySchedule.forEach { lessonPlace ->
+                    lessonPlace.lessons.forEach { lesson ->
+                        lessonTitles.add(lesson.title)
+                        lessonTypes.add(lesson.type)
+                        lesson.teachers.forEach { lessonTeachers.add(it.name) }
+                        lesson.groups.forEach { lessonGroups.add(it.title) }
+                        lesson.auditoriums.forEach { lessonAuditoriums.add(it.title) }
+                    }
+                }
+            }
+        }
+
+        return@withContext Result0.Success(SchedulePackList(
+            lessonTitles.sorted(),
+            lessonTypes.sorted(),
+            lessonTeachers.sorted(),
+            lessonGroups.sorted(),
+            lessonAuditoriums.sorted(),
+        ))
+    }
+
+    override suspend fun getSchedulePackList(onProgressChanged: (Float) -> Unit): SchedulePackList =
         withContext(Dispatchers.Default) {
             val lessonTitles = HashSet<String>(2000)
             val lessonTypes = HashSet<String>(30)

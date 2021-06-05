@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+        <!-- Represent the colors of brand -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorOnPrimary">@color/color_on_primary</item>
+
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+
+        <item name="colorSecondary">@color/color_secondary</item>
+        <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
+        <item name="colorOnSecondary">@color/textColorPrimary</item>
+
+        <!-- The window background color -->
+        <item name="android:colorBackground">@color/layerZero</item>
+        <item name="colorOnBackground">#ffffff</item>
+
+        <!-- Used for “sheets” of material (like cards and bottom sheets) -->
+        <item name="colorSurface">@color/layerOne</item>
+        <item name="colorOnSurface">@color/textColorPrimary</item>
+
+        <item name="colorAccent">@color/color_secondary</item>
+
+        <item name="android:colorEdgeEffect">@color/color_edge_effect</item>
+
+
+        <!-- Window decor -->
+        <item name="android:windowLightStatusBar">@bool/use_light_status</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
+<!--        <item name="android:windowLightNavigationBar">@bool/use_light_navigation</item>-->
+        <item name="android:navigationBarColor">@color/nav_bar_color</item>
+
+
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+        <item name="preferenceTheme">@style/AppTheme.PreferenceThemeOverlay</item>
+        <item name="android:datePickerDialogTheme">@style/Dialog.Theme</item>
+        <item name="android:timePickerDialogTheme">@style/Dialog.Theme</item>
+    </style>
+
+    <style name="AppTheme.ActionBar">
+        <item name="background">?android:colorBackground</item>
+    </style>
+
+    <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/fragment_settings</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    </style>
+
+    <style name="AppTheme.Splash">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

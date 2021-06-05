@@ -54,7 +54,7 @@
                             app:autoSizeMaxTextSize="21dp"
                             app:autoSizeMinTextSize="15dp"
                             app:autoSizeTextType="uniform"
-                            android:textColor="@color/accent_text_color"
+                            android:textColor="@color/text_color_surface_accent"
                             android:fontFamily="@font/ubuntu_bold"
                             app:layout_constraintTop_toBottomOf="@+id/type_user"
                             app:layout_constraintStart_toStartOf="parent"

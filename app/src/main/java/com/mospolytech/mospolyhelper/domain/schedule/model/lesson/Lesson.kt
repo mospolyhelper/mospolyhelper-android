@@ -45,9 +45,6 @@ data class Lesson(
     val isImportant
         get() = LessonTypeUtils.isTypeImportant(type)
 
-    val groupIsEvening: Boolean
-        get() = groups.firstOrNull()?.isEvening ?: false
-
 
     override fun compareTo(other: Lesson): Int {
         val g1 = groups.joinToString()

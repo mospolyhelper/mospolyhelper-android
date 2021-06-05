@@ -147,7 +147,7 @@ class LessonRemoteAdapter(
             dailySchedule = null
             return
         }
-        val schedule = runBlocking { localDataSource.get(user).getOrNull() }
+        val schedule = runBlocking { localDataSource.get(user.idGlobal).getOrNull() }
         if (schedule == null) {
             dailySchedule = null
             return

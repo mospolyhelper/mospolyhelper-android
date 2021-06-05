@@ -10,7 +10,8 @@ import java.time.ZonedDateTime
 interface ScheduleRepository {
     fun getSchedule(user: UserSchedule?): Flow<Result0<Schedule>>
     suspend fun getScheduleVersion(user: UserSchedule): ScheduleVersionDb?
-    suspend fun getAnySchedules(onProgressChanged: (Float) -> Unit): SchedulePackList
+    suspend fun getSchedulePackList(onProgressChanged: (Float) -> Unit): SchedulePackList
+    suspend fun getSchedulePackListLocal(): Result0<SchedulePackList>
     suspend fun updateSchedule(user: UserSchedule?)
     val dataLastUpdatedObservable: Flow<ZonedDateTime>
 }

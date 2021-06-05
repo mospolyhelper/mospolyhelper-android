@@ -46,7 +46,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="@string/Dialog"
-                android:textColor="@color/accent_text_color"
+                android:textColor="@color/text_color_surface_accent"
                 android:textStyle="bold"
                 android:fontFamily="@font/ubuntu"
                 android:textSize="17sp"

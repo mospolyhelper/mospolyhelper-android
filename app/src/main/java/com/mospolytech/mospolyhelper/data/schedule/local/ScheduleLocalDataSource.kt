@@ -17,10 +17,10 @@ class ScheduleLocalDataSource(
         const val SCHEDULE_FOLDER = "cached_schedules"
     }
 
-    fun get(user: UserSchedule): Result0<Schedule> {
+    fun get(userScheduleGlobalId: String): Result0<Schedule> {
         val file = context.filesDir
             .resolve(SCHEDULE_FOLDER)
-            .resolve(user.idGlobal)
+            .resolve(userScheduleGlobalId)
 
         if (!file.exists()) {
             return Result0.Failure(Exception("Schedule not found"))

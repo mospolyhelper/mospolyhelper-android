@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:minHeight="60dp"
             tools:text="@string/marks"
-            android:textColor="@color/accent_text_color"
+            android:textColor="@color/text_color_surface_accent"
             android:fontFamily="@font/ubuntu"
             android:textSize="18sp"
             android:ellipsize="end"
