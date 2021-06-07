@@ -6,7 +6,6 @@ import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -63,6 +62,7 @@ class AdvancedSearchViewModel(
 
     suspend fun getAdvancedSearchData(onProgressChanged: (Float) -> Unit) {
         _schedulePackList.value = useCase.getAnySchedule(onProgressChanged)
+        _scheduleVersion.value = useCase.getScheduleVersion(user)
     }
 
     suspend fun getAdvancedSearchDataLocal() {

@@ -1,21 +1,16 @@
 package com.mospolytech.mospolyhelper.features.ui.account.payments.adapter
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentsBinding
 import com.mospolytech.mospolyhelper.domain.account.payments.model.Contract

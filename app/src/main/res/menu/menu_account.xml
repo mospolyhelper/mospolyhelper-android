@@ -40,11 +40,11 @@
         android:icon="@drawable/ic_fluent_person_20_regular"
         android:title="@string/classmates"
         android:visible="false"/>
-    <item
-        android:id="@+id/nav_deadlines"
-        android:icon="@drawable/ic_fluent_task_list_square_ltr_20_regular"
-        android:title="@string/nav_deadlines"
-        android:visible="false"/>
+<!--    <item-->
+<!--        android:id="@+id/nav_deadlines"-->
+<!--        android:icon="@drawable/ic_fluent_task_list_square_ltr_20_regular"-->
+<!--        android:title="@string/nav_deadlines"-->
+<!--        android:visible="false"/>-->
     <item
         android:id="@+id/nav_statements"
         android:icon="@drawable/ic_fluent_clipboard_text_ltr_20_regular"

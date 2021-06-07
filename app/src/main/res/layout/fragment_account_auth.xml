@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/layerZero"
+    android:background="?android:attr/colorBackground"
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
     <androidx.appcompat.widget.Toolbar
@@ -14,91 +14,71 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
     </androidx.appcompat.widget.Toolbar>
-    <FrameLayout
-        android:id="@+id/auth_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:id="@+id/auth_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical">
-            <androidx.cardview.widget.CardView
-                android:id="@+id/avatar_teacher_circle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="300dp"
+            <ImageView
+                android:id="@+id/avatar_user"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_margin="10dp"
-                android:layout_gravity="center">
-                <ImageView
-                    android:id="@+id/avatar_user"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/avatar"/>
-            </androidx.cardview.widget.CardView>
-            <TextView
-                android:id="@+id/hello_msg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/ubuntu"
-                android:textColor="@color/text_color_surface_accent"
-                android:textAlignment="center"
-                android:breakStrategy="balanced"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="30sp"
-                app:autoSizeMaxTextSize="45sp"
-                app:autoSizeMinTextSize="20sp"
-                app:autoSizeTextType="uniform"
-                android:text="@string/hello_msg"/>
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/avatar"/>
+
             <TextView
                 android:id="@+id/fio_student"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Дындин Александр Владимирович"
-                android:textColor="@color/text_color_surface_accent"
+                tools:text="Здравствуйте,\nДындин Александр Владимирович!"
+                android:textAlignment="center"
+                android:textColor="@color/text_color_primary"
                 android:fontFamily="@font/ubuntu"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="30sp"
-                app:autoSizeMaxTextSize="45sp"
-                app:autoSizeMinTextSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintTop_toBottomOf="@+id/hello_msg"
+                android:maxLines="2"
+                android:textSize="21sp"
+                android:lineSpacingMultiplier="@dimen/text_line_spacing"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/avatar_user"
                 app:layout_constraintStart_toStartOf="parent"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_logout"
+                android:text="@string/logout"
+                style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="50dp"/>
         </LinearLayout>
-        <Button
-            android:id="@+id/btn_logout"
-            android:text="@string/logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="20dp"/>
-    </FrameLayout>
+
+
     <LinearLayout
         android:id="@+id/login_layout"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="invisible"
-        tools:visibility="visible">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/nickname" />
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -106,6 +86,7 @@
             app:endIconContentDescription="description"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/color_secondary">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_password"
                 android:layout_width="match_parent"
@@ -113,23 +94,28 @@
                 android:hint="@string/password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
-            <Button
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_login"
-                android:text="@string/login"
+                style="@style/ButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="@string/login" />
+
             <ProgressBar
                 android:id="@+id/progress_auth"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
         </FrameLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,14 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStatementBinding
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
-import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.show
 import java.util.*

@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/layerZero">
+    android:background="?android:attr/colorBackground">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_dialog"
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                     android:id="@+id/attach_file"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:drawableStart="@drawable/ic_baseline_attach_file_24"
+                    app:drawableStartCompat="@drawable/ic_baseline_attach_file_24"
                     android:layout_weight="0.45"
                     android:visibility="gone"/>
                 <EditText
@@ -50,7 +50,7 @@
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="3dp"
                     android:background="@drawable/shape_lesson"
-                    android:backgroundTint="@color/layerZero"
+                    android:backgroundTint="?android:attr/colorBackground"
                     android:drawablePadding="10dp"
                     android:hint="@string/input_message"
                     android:inputType="text"

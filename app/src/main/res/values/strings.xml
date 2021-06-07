@@ -21,6 +21,9 @@
     <!-- Common People -->
     <string name="teachers">Преподаватели</string>
 
+    <string name="date">Дата</string>
+    <string name="time">Время</string>
+
 
     <!-- Schedule -->
     <string name="schedule_user_group">Группа %1$s</string>
@@ -40,6 +43,8 @@
     <string name="schedule_info_break_description">У тебя будет 40 минут, чтобы перекусить или отдохнуть</string>
     <string name="schedule_info_window_title">Окно между занятиями</string>
     <string name="schedule_info_window_description">У тебя будет %1$s, чтобы перекусить или отдохнуть</string>
+
+    <string name="schedule_lesson_empty">Нет занятий в это время</string>
 
 
     <!-- Schedule Advanced Search -->
@@ -180,7 +185,7 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="menu_about_app">О приложении</string>
     <string name="share">Поделиться</string>
     <string name="logout">Выйти</string>
-    <string name="hello_msg">Здравствуйте! Вы вошли как</string>
+    <string name="hello_msg">Здравствуйте,\n%1$s!</string>
     <string name="login">Войти</string>
     <string name="nickname">Логин</string>
     <string name="password">Пароль</string>

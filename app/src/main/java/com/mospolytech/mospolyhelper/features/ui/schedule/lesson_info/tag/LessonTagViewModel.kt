@@ -8,7 +8,6 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 
 class LessonTagViewModel(

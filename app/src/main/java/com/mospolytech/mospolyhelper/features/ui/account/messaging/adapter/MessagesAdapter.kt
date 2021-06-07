@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -98,7 +97,6 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val name: TextView = viewBinding.titleStudent
         private val message: TextView = viewBinding.message
         private val avatar: ImageView = viewBinding.avatarStudent
-        private val card: CardView = viewBinding.avatarStudentCircle
         private val recycler: RecyclerView = viewBinding.recyclerFiles
         private val time: TextView = viewBinding.messageTime
 
@@ -123,7 +121,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     ))
             }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
             itemView.setOnCreateContextMenuListener { menu, _, _ ->
                 menu.add(itemView.context.getString(R.string.delete_message)).setOnMenuItemClickListener {
@@ -143,10 +141,10 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
             if (isNextSame) {
-                card.hide()
+                viewBinding.avatarStudent.hide()
                 name.gone()
             } else {
-                card.show()
+                viewBinding.avatarStudent.show()
                 name.show()
             }
         }
@@ -163,7 +161,6 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val name: TextView = viewBinding.titleStudent
         private val message: TextView = viewBinding.message
         private val avatar: ImageView = viewBinding.avatarStudent
-        private val card: CardView = viewBinding.avatarStudentCircle
         private val recycler: RecyclerView = viewBinding.recyclerFiles
         private val time: TextView = viewBinding.messageTime
 
@@ -188,7 +185,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     ))
             }
             message.text = HtmlCompat.fromHtml(item.message, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatar)
             recycler.adapter = FilesAdapter(item.attachments)
             itemView.setOnCreateContextMenuListener { menu, _, _ ->
                 menu.add(itemView.context.getString(R.string.delete_message)).setOnMenuItemClickListener {
@@ -208,10 +205,10 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
             if (isNextSame) {
-                card.hide()
+                viewBinding.avatarStudent.hide()
                 name.gone()
             } else {
-                card.show()
+                viewBinding.avatarStudent.show()
                 name.show()
             }
         }

@@ -33,7 +33,7 @@
                     android:layout_marginBottom="10dp"
                     android:textStyle="bold"
                     android:fontFamily="@font/ubuntu_bold"
-                    android:textColor="@color/text_color_surface_accent"
+                    android:textColor="@color/text_color_primary"
                     android:breakStrategy="balanced"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -48,7 +48,7 @@
                     android:textSize="16sp"
                     android:fontFamily="@font/ubuntu"
                     android:layout_marginBottom="5dp"
-                    android:drawableStart="@drawable/ic_fluent_money_24_regular"
+                    app:drawableStartCompat="@drawable/ic_fluent_money_24_regular"
                     android:drawablePadding="10dp"
                     tools:text="@string/payment_left"
                     app:drawableTint="@color/iconColor"/>
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:fontFamily="@font/ubuntu"
-                    android:drawableStart="@drawable/ic_fluent_info_24_regular"
+                    app:drawableStartCompat="@drawable/ic_fluent_info_24_regular"
                     android:layout_marginBottom="5dp"
                     android:drawablePadding="10dp"
                     tools:text="Переплата -650"
@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:fontFamily="@font/ubuntu"
-                        android:drawableStart="@drawable/ic_fluent_payment_24_regular"
+                        app:drawableStartCompat="@drawable/ic_fluent_payment_24_regular"
                         android:drawablePadding="10dp"
                         android:text="@string/sber_qr"
                         app:drawableTint="@color/iconColor"/>
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/qr_help"
-                        android:textColor="@color/secondary_text_color"
+                        android:textColor="@color/text_color_secondary"
                         android:layout_gravity="right|center_vertical"/>
                 </FrameLayout>
 

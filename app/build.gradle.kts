@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.loadProperties
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -16,8 +14,8 @@ android {
         applicationId = "com.mospolytech.mospolyhelper"
         minSdkVersion(23)
         targetSdkVersion(30)
-        versionCode = 4
-        versionName = "0.3.0"
+        versionCode = 5
+        versionName = "0.4.0"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")

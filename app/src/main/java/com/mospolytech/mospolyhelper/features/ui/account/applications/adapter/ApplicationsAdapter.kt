@@ -69,7 +69,7 @@ class ApplicationsAdapter(
                 "Получено" -> info.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
                 "Отклонено" -> info.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 "Готово" -> info.setTextColor(ContextCompat.getColor(itemView.context, R.color.predmetcolor))
-                else -> info.setTextColor(ContextCompat.getColor(itemView.context, R.color.text_color_surface_accent))
+                else -> info.setTextColor(ContextCompat.getColor(itemView.context, R.color.text_color_primary))
             }
                 reg.text = HtmlCompat.fromHtml(
                     String.format(

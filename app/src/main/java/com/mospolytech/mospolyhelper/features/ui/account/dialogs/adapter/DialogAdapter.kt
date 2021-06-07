@@ -90,16 +90,16 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                 }
 
                 if (item.avatarUrl.isNotEmpty()) {
-                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatarDialog)
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatarDialog)
                 } else {
-                    Glide.with(itemView.context).load("https://e.mospolytech.ru/img/no_avatar.jpg").into(avatarDialog)
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/img/no_avatar.jpg").circleCrop().into(avatarDialog)
                 }
 
                 if (item.senderImageUrl.isNotEmpty()) {
-                    avatarSenderCircle.show()
-                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.senderImageUrl}").into(avatarSender)
+                    avatarSender.show()
+                    Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.senderImageUrl}").circleCrop().into(avatarSender)
                 } else {
-                    avatarSenderCircle.gone()
+                    avatarSender.gone()
                 }
 
                 dialogContainer.setOnClickListener {

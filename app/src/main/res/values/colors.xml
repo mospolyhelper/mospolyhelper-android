@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!--  Core  -->
-  <color name="blue">#6179ff</color>
+  <color name="blue">#6179fe</color>
+  <color name="gray_blue">#878998</color>
+  <color name="dark_gray">#222222</color>
+  <color name="light_gray">#808080</color>
+  <color name="green">#00C100</color>
+  <color name="dark_green">#00a300</color>
   <color name="white">#fff</color>
   <color name="black">#000</color>
   <color name="transparent">#0fff</color>
+  <color name="red">#FC3636</color>
+
+  <color name="white0">#ffffff</color>
+  <color name="white1">#fcfcfc</color>
+  <color name="white2">#fafafa</color>
+  <color name="white3">#f7f7f7</color>
+  <color name="white4">#f5f5f5</color>
+  <color name="white5">#f2f2f2</color>
+
+  <color name="gray0">#000000</color>
+  <color name="gray1">#121212</color>
+  <color name="gray2">#202124</color>
+  <color name="gray3">#303136</color>
+  <color name="gray4">#41434A</color>
+  <color name="gray5">#484a51</color>
+  <color name="gray6">#6c6f7a</color>
+
 
   <color name="color_primary">@color/blue</color>
   <color name="color_on_primary">@color/white</color>
@@ -14,50 +36,50 @@
   <color name="color_secondary">@color/blue</color>
   <color name="color_secondary_variant">#69e2ff</color>
 
+  <color name="color_background">@color/white3</color>
+  <color name="color_on_background">@color/color_high_emphasis</color>
+  
+  <color name="color_surface">@color/layerOne</color>
+  <color name="color_on_surface">@color/black</color>
+
+  <color name="color_surface_secondary">@color/layerTwo</color>
+  <color name="color_on_surface_secondary">@color/black</color>
+  <color name="color_primary_surface_secondary">@color/color_primary</color>
+  <color name="color_on_primary_surface_secondary">@color/color_on_primary</color>
+
+  <color name="color_high_emphasis">#DF000004</color>
+  <color name="color_medium_emphasis">#A9000004</color>
+  <color name="color_low_emphasis">#85000004</color>
+  <color name="color_super_low_emphasis">#7F000004</color>
+  <color name="color_min_emphasis">#30000004</color>
+
   <color name="color_edge_effect">@color/color_secondary</color>
-  <color name="nav_bar_color">#0C0C0C</color>
-
-  <color name="textColorPrimary">#000000</color>
-
-  <color name="colorLevelZero">#c9c9cf</color>
-  <color name="colorLevelOne">#d6d6db</color>
-  <color name="colorLevelTwo">#e8ecf5</color>
-  <color name="colorLevelThree">#edf0f7</color>
-  <color name="colorLevelFour">#f1f3fa</color>
-  <color name="colorLevelFive">#ffffff</color>
-  <color name="colorLevelSix">#ffffff</color>
+  <color name="nav_bar_color">@color/dark_gray</color>
+  <color name="nav_bar_bottom_sheet_color">@color/dark_gray</color>
 
 
-
-  <color name="layerZero">@color/colorLevelTwo</color>
-  <color name="layerOne">@color/colorLevelFour</color>
-  <color name="layerOneActivated">@color/colorLevelZero</color>
-  <color name="layerTwo">@color/colorLevelFive</color>
-  <color name="layerTwoActivated">@color/colorLevelOne</color>
+  <color name="layerOne">@color/white1</color>
+  <color name="layerOneActivated">@color/white2</color>
+  <color name="layerTwo">@color/white0</color>
+  <color name="layerTwoActivated">@color/white4</color>
   <color name="iconColor">#555555</color>
-  <color name="dividerLayerZero">@color/colorLevelZero</color>
 
   <color name="chipLayerTwo">@color/layerTwo</color>
   <color name="chipLayerTwoChecked">@color/layerTwoActivated</color>
 
 
-  <!--  Main Menu  -->
-
   <!--  Schedule  -->
-  <color name="scheduleBackground">@color/layerZero</color>
-  <color name="scheduleLessonBackground">@color/layerOne</color>
   <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
 
   <color name="scheduleChip">@color/layerOne</color>
-  <color name="scheduleChipChecked">@color/layerOneActivated</color>
+  <color name="scheduleChipChecked">#aaaaaa</color>
 
-  <color name="lessonTimeText">@color/text_color_surface_accent</color>
-  <color name="lessonTypeImportant">#f0dcf3</color>
-  <color name="lessonTypeNotImportant">#cfeafd</color>
+  <color name="lessonTimeText">@color/text_color_primary</color>
+  <color name="text_color_lesson_type_important">@color/red</color>
 
-  <color name="lessonOrder1">#FB6A5A</color>
-  <color name="lessonOrder2">#E3A24D</color>
-  <color name="lessonOrder3">#f2e1ad</color>
+  <color name="lessonOrder1">#F9604F</color>
+  <color name="lessonOrder2">#E38C4D</color>
+  <color name="lessonOrder3">#EAD0B7</color>
   <color name="lessonOrder4">#8ADEF8</color>
   <color name="lessonOrder5">#3F66BB</color>
   <color name="lessonOrder6">#8250D2</color>
@@ -100,28 +122,8 @@
   <color name="lessonTagPinkText">#FFBCE3</color>
 
 
-
-  <color name="textAccent">#222222</color>
-  <color name="textAccentDisabled">#CCCCCC</color>
-  <color name="textSecondary">#808080</color>
-  <color name="textSecondaryDisabled">#E0E0E0</color>
-
-
-  <!-- Schedule Lesson Info  -->
-  <color name="lessonInfoBackground">@color/layerOne</color>
-  <color name="lessonInfoChipColor">@color/layerOne</color>
-  <color name="lessonInfoText">#333333</color>
-
-
-  <!--  Schedule Advanced Search  -->
-
-
   <!--  Schedule Calendar  -->
-  <color name="calendarDivider">#E6E6E6</color>
-  <color name="calendarTitle">#828282</color>
-  <color name="calendarCurrentTitle">#00C100</color>
-  <color name="calendarParagraph">#CFCFCF</color>
-  <color name="calendarTimeBackground">#E3E3E3</color>
+  <color name="calendarCurrentTitle">@color/green</color>
 
 
   <!--  Schedule App Widget  -->
@@ -141,15 +143,11 @@
   <color name="colorPinned">#F4FEF5</color>
   <color name="textColorDate">#6E6E6E</color>
 
-  <color name="defaultCardColor">#FFFFFF</color>
   <color name="colorFab">#5ea3de</color>
   <color name="colorFabIcon">#FFFFFF</color>
   <color name="pushPin">#878787</color>
   <color name="pushUnPin">#D5D5D5</color>
 
-  <!--  Addresses  -->
-  <color name="addressesBackground">@color/layerZero</color>
-  <color name="addressesItemBackground">@color/layerOne</color>
 
   <color name="featureBackground">#DCE0FC</color>
   <color name="featureText">#8C9FFF</color>

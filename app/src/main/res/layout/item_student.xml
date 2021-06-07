@@ -15,30 +15,24 @@
         android:paddingEnd="7dp"
         android:paddingStart="15dp"
         android:background="?android:selectableItemBackground">
-        <androidx.cardview.widget.CardView
-            android:id="@+id/image_corner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="100dp"
+        <ImageView
+            android:id="@+id/student_avatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageView
-                android:id="@+id/student_avatar"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:scaleType="centerCrop"/>
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"/>
         <TextView
             android:id="@+id/title_student"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             tools:text="@string/fio"
-            android:textColor="@color/text_color_surface_accent"
+            android:textColor="@color/text_color_primary"
             android:fontFamily="@font/ubuntu"
             android:textSize="21sp"
             android:layout_marginStart="10dp"
             android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@id/image_corner"
+            app:layout_constraintStart_toEndOf="@id/student_avatar"
             app:layout_constraintTop_toTopOf="parent"/>
         <TextView
             android:id="@+id/info_student"
@@ -48,11 +42,11 @@
             tools:text="Инфо"
             android:ellipsize="end"
             android:fontFamily="@font/ubuntu"
-            android:textColor="@color/text_color_surface_accent"
+            android:textColor="@color/text_color_primary"
             android:layout_marginTop="3dp"
             android:textSize="15sp"
             android:layout_marginStart="10dp"
-            app:layout_constraintStart_toEndOf="@id/image_corner"
+            app:layout_constraintStart_toEndOf="@id/student_avatar"
             app:layout_constraintTop_toBottomOf="@id/title_student"
             app:layout_constraintEnd_toEndOf="parent"/>
         <LinearLayout
@@ -69,7 +63,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:fontFamily="@font/ubuntu"
-                android:drawableStart="@drawable/ic_fluent_people_24_regular"
+                app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
                 tools:text="Направление"
                 app:drawableTint="@color/iconColor"/>
             <TextView
@@ -79,7 +73,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:fontFamily="@font/ubuntu"
-                android:drawableStart="@drawable/ic_fluent_info_24_regular"
+                app:drawableStartCompat="@drawable/ic_fluent_info_24_regular"
                 tools:text="Профиль"
                 app:drawableTint="@color/iconColor"/>
             <TextView
@@ -89,7 +83,7 @@
                 android:layout_marginTop="10dp"
                 android:drawablePadding="10dp"
                 android:fontFamily="@font/ubuntu"
-                android:drawableStart="@drawable/ic_teacher_24"
+                app:drawableStartCompat="@drawable/ic_teacher_24"
                 tools:text="Форма: Очная"
                 app:drawableTint="@color/iconColor"/>
         </LinearLayout>

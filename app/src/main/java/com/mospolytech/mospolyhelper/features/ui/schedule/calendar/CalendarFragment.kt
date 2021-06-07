@@ -1,7 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.calendar
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
@@ -10,7 +8,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -21,24 +18,14 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
     private val viewModel by sharedViewModel<ScheduleViewModel>()
     private val viewBinding by viewBinding(FragmentScheduleCalendarBinding::bind)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-    }
+    override fun getTheme() = R.style.CustomDialogTheme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().invalidateOptionsMenu()
-
-        (activity as MainActivity).setSupportActionBar(viewBinding.toolbarScheduleCalendar.toolbar)
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
-        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        viewBinding.toolbarScheduleCalendar.toolbar.setNavigationOnClickListener {
+            findNavController().safe { navigateUp() }
+        }
 
         val recyclerAdapter = CalendarThreeAdapter(
             viewModel.filteredSchedule.value.getOrNull()
@@ -74,11 +61,5 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 }

@@ -6,7 +6,7 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Toast
 import androidx.databinding.ObservableList
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,8 +20,11 @@ import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.safe
 import com.mospolytech.mospolyhelper.utils.show
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -292,6 +295,8 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             if (iterator.hasNext()) {
+                builder.append(" ")
+            } else {
                 builder.append(" ")
             }
         }

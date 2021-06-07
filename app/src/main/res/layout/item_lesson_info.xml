@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginStart="@dimen/lesson_margin_start"
     android:layout_marginEnd="@dimen/lesson_margin_end"
@@ -13,30 +12,25 @@
     android:layout_height="wrap_content">
     <TextView
         android:id="@+id/text_title"
-        style="@style/ScheduleLessonSubtitle"
-        android:fontFamily="@font/ubuntu"
-        android:textColor="#9E9EA6"
-        android:textSize="15.4dp"
+        style="@style/ScheduleLessonTime"
         android:drawablePadding="@dimen/lesson_drawable_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:breakStrategy="simple"
         android:clickable="false"
         tools:text="Большой перерыв"
-        tools:drawableStart="@drawable/ic_fluent_drink_coffee_20_regular"
-        app:drawableTint="#9E9EA6" />
+        tools:drawableStart="@drawable/ic_fluent_drink_coffee_20_regular" />
 
     <TextView
+        android:id="@+id/text_info"
+        style="@style/ScheduleLessonSubtitle"
+        android:textColor="@color/text_color_quaternary"
         android:paddingStart="10dp"
         android:paddingEnd="0dp"
-        android:layout_marginTop="5.5dp"
+        android:layout_marginTop="4.5dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="@dimen/lesson_icon_size"
         android:layout_marginEnd="@dimen/lesson_margin_end"
         android:lineSpacingMultiplier="@dimen/text_line_spacing"
-        android:id="@+id/text_info"
-        style="@style/ScheduleLessonSubtitle"
-        android:textColor="#68686D"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:breakStrategy="balanced"

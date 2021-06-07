@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.view.isVisible
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,10 +16,6 @@ import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentMenuAccountBinding
 import com.mospolytech.mospolyhelper.utils.safe
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
@@ -28,20 +25,13 @@ class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
     private val viewBinding by viewBinding(FragmentMenuAccountBinding::bind)
     private val viewModel by viewModel<MenuViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-//        GlobalScope.launch(Dispatchers.Main) {
-//            viewModel.refresh().collect()
-//        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val name = viewModel.getName()
         name?.let {
             viewBinding.textFio.text = it
-            Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarUser)
+            Glide.with(this).load(viewModel.getAvatar()).circleCrop().into(viewBinding.avatarUser)
         } ?: let {
             viewBinding.textFio.text = requireContext().getText(R.string.account)
         }
@@ -56,26 +46,55 @@ class AccountMenuFragment : Fragment(R.layout.fragment_menu_account) {
         super.onDestroyView()
     }
 
+    private val idNavMap = mapOf(
+        "dialogs" to R.id.nav_dialogs,
+        "info" to R.id.nav_info,
+        "payments" to R.id.nav_payments,
+        "marks" to R.id.nav_marks,
+        "grade-sheets" to R.id.nav_statements,
+        "classmates" to R.id.nav_classmates,
+        "teachers" to R.id.nav_teachers,
+        "applications" to R.id.nav_applications,
+//        "myportfolio" to R.id.nav_deadlines,
+//        "students" to R.id.nav_students
+    )
+
+    private val idNavOrderMap = mapOf(
+        "info" to 0,
+        "payments" to 1,
+        "applications" to 2,
+        "marks" to 3,
+        "grade-sheets" to 4,
+        "dialogs" to 5,
+        "classmates" to 6,
+        "teachers" to 7,
+        "students" to 8,
+        "myportfolio" to 9,
+    )
+
+    private val idNavComparator = Comparator<String> { o1, o2 ->
+        val i1 = idNavOrderMap[o1]
+        val i2 = idNavOrderMap[o2]
+        return@Comparator when {
+            i1 == i2 ->  0
+            i1 == null -> -1
+            i2 == null -> 1
+            else -> i1.compareTo(i2)
+        }
+    }
+
+
+
     @SuppressLint("RestrictedApi")
     private fun setMenu(permissions: List<String>) {
         menuList.layoutManager = GridLayoutManager(context, 2)
         val menu = MenuBuilder(context)
         requireActivity().menuInflater.inflate(R.menu.menu_account, menu)
         val menuItems: MutableList<MenuItem> = mutableListOf()
-        menuItems.add(menu.getItem(0))
-        permissions.forEach {
-            when (it) {
-                "dialogs" -> { menuItems.add(menu.getItem(10)) }
-                "info" -> { menuItems.add(menu.getItem(1)) }
-                "payments" -> { menuItems.add(menu.getItem(4)) }
-                "marks" -> { menuItems.add(menu.getItem(3)) }
-                "grade-sheets" -> { menuItems.add(menu.getItem(9)) }
-                "classmates" -> { menuItems.add(menu.getItem(7)) }
-                "teachers" -> { menuItems.add(menu.getItem(6)) }
-                "applications" -> { menuItems.add(menu.getItem(2)) }
-                "myportfolio" -> { menuItems.add(menu.getItem(8)) }
-                //"students" -> { menuItems.add(menu.getItem(5)) }
-            }
+        val itemMap = menu.iterator().asSequence().associateBy { it.itemId }
+        menuItems.add(itemMap[R.id.nav_auth]!!)
+        permissions.sortedWith(idNavComparator).forEach { permission ->
+            idNavMap[permission]?.let { menuItems.add(itemMap[it]!!) }
         }
         menuItems.add(menu.getItem(5))
         val adapter = MenuAdapter(menuItems)

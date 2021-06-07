@@ -1,68 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!--  Core  -->
+  <color name="color_primary">@color/blue</color>
+  <color name="color_on_primary">@color/white</color>
+
   <color name="color_primary_dark">#0C0C0C</color>
-  <color name="nav_bar_color">@color/layerZero</color>
 
-  <color name="textColorPrimary">#ffffff</color>
+  <color name="color_secondary">@color/blue</color>
+  <color name="color_secondary_variant">#69e2ff</color>
+
+  <color name="color_background">@color/gray2</color>
+  <color name="color_on_background">@color/color_high_emphasis</color>
+
+  <color name="color_surface">@color/layerOne</color>
+  <color name="color_on_surface">@color/white</color>
+
+  <color name="color_surface_secondary">@color/layerTwo</color>
+  <color name="color_on_surface_secondary">@color/white</color>
+  <color name="color_primary_surface_secondary">@color/color_surface_secondary</color>
+  <color name="color_on_primary_surface_secondary">@color/color_on_surface_secondary</color>
+
+  <color name="color_high_emphasis">#F7F5F5FF</color>
+  <color name="color_medium_emphasis">#AAF5F5FF</color>
+  <color name="color_low_emphasis">#7EF5F5FF</color>
+  <color name="color_super_low_emphasis">#64F5F5FF</color>
+  <color name="color_min_emphasis">#28F5F5FF</color>
 
 
-  <color name="colorLevelZero">#000000</color>
-  <color name="colorLevelOne">#121212</color>
-  <color name="colorLevelTwo">#202124</color>
-  <color name="colorLevelThree">#303136</color>
-  <color name="colorLevelFour">#41434A</color>
-  <color name="colorLevelFive">#484a51</color>
-  <color name="colorLevelSix">#6c6f7a</color>
-
+  <color name="nav_bar_color">@color/gray2</color>
+  <color name="nav_bar_bottom_sheet_color">@color/color_surface</color>
 
   <!--  Common  -->
-  <color name="layerZero">@color/colorLevelTwo</color>
-  <color name="layerOne">@color/colorLevelThree</color>
-  <color name="layerOneActivated">@color/colorLevelFour</color>
-  <color name="layerTwo">@color/colorLevelFive</color>
-  <color name="layerTwoActivated">@color/colorLevelSix</color>
+  <color name="layerOne">@color/gray3</color>
+  <color name="layerOneActivated">@color/gray4</color>
+  <color name="layerTwo">@color/gray5</color>
+  <color name="layerTwoActivated">@color/gray6</color>
   <color name="iconColor">#BEBEBE</color>
-  <color name="dividerLayerZero">@color/colorLevelFour</color>
 
   <color name="chipLayerTwo">@color/layerTwo</color>
   <color name="chipLayerTwoChecked">@color/layerTwoActivated</color>
 
 
-  <!--  Main Menu  -->
-
   <!--  Schedule  -->
-  <color name="scheduleBackground">@color/layerZero</color>
-  <color name="scheduleLessonBackground">@color/layerOne</color>
   <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
 
   <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
-  <color name="lessonTimeText">@color/text_color_surface_accent</color>
-  <color name="lessonTypeImportant">#f0dcf3</color>
-  <color name="lessonTypeNotImportant">#cfeafd</color>
-
-  <color name="textAccent">#EAEAEA</color>
-  <color name="textAccentDisabled">#545454</color>
-  <color name="textSecondary">#78787B</color>
-  <color name="textSecondaryDisabled">#3F3F3F</color>
-
-  <!-- Schedule Lesson Info  -->
-  <color name="lessonInfoBackground">@color/layerZero</color>
-  <color name="lessonInfoChipColor">@color/layerOne</color>
-  <color name="lessonInfoText">#CCCCCC</color>
-
-
-  <!--  Schedule Advanced Search  -->
-
 
   <!--  Schedule Calendar  -->
-  <color name="calendarDivider">#1C1C1C</color>
-  <color name="calendarTitle">#787878</color>
-  <color name="calendarCurrentTitle">#00a300</color>
-  <color name="calendarParagraph">#666666</color>
-  <color name="calendarTimeBackground">#282828</color>
+  <color name="calendarCurrentTitle">@color/dark_green</color>
 
 
   <!--  Schedule App Widget  -->
@@ -74,24 +61,25 @@
 
 
   <!--  Deadlines  -->
-  <color name="predmetcolor">#0093CE</color>
-  <color name="colorLow">#CC26E910</color>
   <color name="colorMedium">#CCFFCB0F</color>
-  <color name="colorHigh">#CCDB0C0C</color>
   <color name="colorCompleted">#191919</color>
   <color name="colorPinned">#1E1E22</color>
 
-  <color name="defaultCardColor">#1e1e1e</color>
-  <color name="textColorDate">#6E6E6E</color>
   <color name="colorFabIcon">#000000</color>
   <color name="pushPin">#AAAAAA</color>
   <color name="pushUnPin">#606060</color>
 
-  <!--  Addresses  -->
-  <color name="addressesBackground">@color/layerZero</color>
-  <color name="addressesItemBackground">@color/layerOne</color>
 
   <color name="featureBackground">#525669</color>
   <color name="featureText">#ADB6DD</color>
+
+  <color name="lessonOrder1">#FB6A5A</color>
+  <color name="lessonOrder2">#E3A24D</color>
+  <color name="lessonOrder3">#f2e1ad</color>
+  <color name="lessonOrder4">#8ADEF8</color>
+  <color name="lessonOrder5">#3F66BB</color>
+  <color name="lessonOrder6">#8250D2</color>
+  <color name="lessonOrder7">#612280</color>
+
 
 </resources>

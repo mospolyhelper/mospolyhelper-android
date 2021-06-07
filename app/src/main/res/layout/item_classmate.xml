@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card"
     android:orientation="vertical"
     app:cardBackgroundColor="@color/layerOne"
@@ -14,37 +13,30 @@
         android:layout_height="match_parent"
         android:padding="7dp"
         android:background="?android:selectableItemBackground">
-        <androidx.cardview.widget.CardView
-            android:id="@+id/avatar_classmate_circle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="100dp"
+        <ImageView
+            android:id="@+id/avatar_classmate"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
             android:layout_marginStart="2dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
-
-            <ImageView
-                android:id="@+id/avatar_classmate"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background" />
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"/>
         <TextView
             android:id="@+id/title_classmate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/fio"
-            android:textColor="@color/text_color_surface_accent"
+            android:textColor="@color/text_color_primary"
             android:textStyle="bold"
             android:fontFamily="@font/ubuntu"
             android:textSize="18sp"
             android:layout_marginStart="10dp"
             android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@+id/avatar_classmate_circle"
+            app:layout_constraintStart_toEndOf="@+id/avatar_classmate"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -52,9 +44,9 @@
             android:id="@+id/status_classmate"
             android:layout_width="17dp"
             android:layout_height="17dp"
-            app:layout_constraintEnd_toEndOf="@+id/avatar_classmate_circle"
+            app:layout_constraintEnd_toEndOf="@+id/avatar_classmate"
             android:background="@drawable/round_online"
-            app:layout_constraintBottom_toBottomOf="@id/avatar_classmate_circle"
+            app:layout_constraintBottom_toBottomOf="@id/avatar_classmate"
             android:elevation="3dp"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>

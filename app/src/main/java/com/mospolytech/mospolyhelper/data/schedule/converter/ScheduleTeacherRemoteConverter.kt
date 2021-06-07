@@ -1,6 +1,6 @@
 package com.mospolytech.mospolyhelper.data.schedule.converter
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
 import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson

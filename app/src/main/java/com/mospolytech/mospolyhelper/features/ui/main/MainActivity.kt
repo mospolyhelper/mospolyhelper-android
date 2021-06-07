@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.main
 
-import android.Manifest
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
@@ -16,13 +14,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.databinding.ActivityMainBinding
-import com.mospolytech.mospolyhelper.features.utils.PermissionRequestCodes
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.lang.ClassCastException
 
 
 class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -44,7 +40,7 @@ class MainActivity : AppCompatActivity(), KoinComponent, SharedPreferences.OnSha
                 PreferenceManager.getDefaultSharedPreferences(this)
             )
             AppCompatDelegate.setDefaultNightMode(
-                if (prefs.get(PreferenceKeys.NightMode, false))
+                if (prefs.get(PreferenceKeys.NightMode, true))
                     AppCompatDelegate.MODE_NIGHT_YES
                 else
                     AppCompatDelegate.MODE_NIGHT_NO

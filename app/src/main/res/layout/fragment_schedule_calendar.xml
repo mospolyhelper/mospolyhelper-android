@@ -2,10 +2,9 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorLevelZero"
-    android:focusableInTouchMode="true">
+    android:layout_height="match_parent">
 
         <include android:id="@+id/toolbar_schedule_calendar"
             layout="@layout/toolbar_schedule_calendar" />
@@ -16,5 +15,8 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:spanCount="3"
+            tools:itemCount="20"
             tools:listitem="@layout/item_schedule_calendar_three" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

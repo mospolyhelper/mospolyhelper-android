@@ -9,7 +9,10 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults

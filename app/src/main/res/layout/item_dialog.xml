@@ -13,30 +13,22 @@
         android:layout_height="match_parent"
         android:padding="7dp"
         android:background="?android:selectableItemBackground">
-        <androidx.cardview.widget.CardView
-            android:id="@+id/avatar_student_circle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="100dp"
+        <ImageView
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
             android:layout_marginStart="2dp"
+            android:id="@+id/avatar_dialog"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
-
-            <ImageView
-                android:id="@+id/avatar_dialog"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                />
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent" />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            app:layout_constraintStart_toEndOf="@id/avatar_student_circle"
+            app:layout_constraintStart_toEndOf="@id/avatar_dialog"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -46,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="@string/Dialog"
-                android:textColor="@color/text_color_surface_accent"
+                android:textColor="@color/text_color_primary"
                 android:textStyle="bold"
                 android:fontFamily="@font/ubuntu"
                 android:textSize="17sp"
@@ -67,7 +59,7 @@
                 android:layout_marginStart="5dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/ubuntu"
-                android:textColor="@color/secondary_text_color"
+                android:textColor="@color/text_color_secondary"
                 android:textSize="13sp"
                 android:maxLines="1"
                 app:layout_constraintTop_toTopOf="@id/title_dialog"
@@ -81,22 +73,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/title_dialog"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/unread_message">
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/avatar_sender_circle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="100dp"
+                <ImageView
+                    android:id="@+id/avatar_sender"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
                     android:layout_marginEnd="5dp"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <ImageView
-                        android:id="@+id/avatar_sender"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:scaleType="centerCrop" />
-                </androidx.cardview.widget.CardView>
+                    tools:visibility="visible"/>
                 <TextView
                     android:id="@+id/message"
                     android:layout_width="match_parent"
@@ -107,7 +92,7 @@
                     android:layout_marginTop="3dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/ubuntu"
-                    android:textColor="@color/secondary_text_color"
+                    android:textColor="@color/text_color_secondary"
                     android:textSize="16sp"
                     android:maxLines="1"/>
             </LinearLayout>

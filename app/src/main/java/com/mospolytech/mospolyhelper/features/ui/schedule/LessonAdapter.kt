@@ -23,7 +23,10 @@ import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.*
 import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.*
+import com.mospolytech.mospolyhelper.features.utils.getColor
+import com.mospolytech.mospolyhelper.features.utils.getColorStateList
+import com.mospolytech.mospolyhelper.utils.WeakMutableSet
+import com.mospolytech.mospolyhelper.utils.setSafeOnClickListener
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -140,7 +143,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 onLessonClick(lessonPack.lessonTime, lessonPack.lesson)
             }
             setLessonType(lessonPack.lesson, lessonPack.isEnabled)
-            setLessonDuration(lessonPack.lesson)
+            setLessonDuration(lessonPack.lesson, lessonPack.isEnabled)
             setLessonTitle(lessonPack.lesson, lessonPack.isEnabled)
             setAuditoriums(lessonPack.lesson, lessonPack.featuresSettings, lessonPack.isEnabled)
             setTeachers(lessonPack.lesson, lessonPack.featuresSettings, lessonPack.isEnabled)
@@ -185,43 +188,38 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 )
                 if (iterator.hasNext()) {
                     builder.append(" ")
+                } else {
+                    builder.append(" ")
                 }
             }
             return builder
         }
 
         private fun setLessonType(lesson: Lesson, enabled: Boolean) {
-            val colorType = if (enabled) {
-                (if (lesson.isImportant)
-                    itemView.context.getColor(R.color.lessonTypeImportant)
-                else
-                    itemView.context.getColor(R.color.lessonTypeNotImportant))
+            if (enabled && lesson.isImportant) {
+                viewBinding.textviewLessonType.setTextColor(
+                    getColor(R.color.text_color_lesson_type_important)
+                )
             } else {
-                itemView.context.getColor(R.color.textSecondaryDisabled)
-            }
-            val colorTextType = if (enabled) {
-                (if (lesson.isImportant)
-                    0xffFC3636.toInt()
-                //view.context.getColor(R.color.viewBinding.textScheduleFeaturesImportantText)
-                else
-                    0xff818289.toInt())
-                //view.context.getColor(R.color.viewBinding.textScheduleFeaturesNotImportantText))
-            } else {
-                0xffffffff.toInt()
+                viewBinding.textviewLessonType.setTextColor(
+                    getColorStateList(R.color.text_color_tertiary)
+                )
             }
 
+
             viewBinding.textviewLessonType.text = lesson.type
-            viewBinding.textviewLessonType.setTextColor(colorTextType)
+
             viewBinding.textviewLessonType.isEnabled = enabled
         }
 
-        private fun setLessonDuration(lesson: Lesson) {
+        private fun setLessonDuration(lesson: Lesson, enabled: Boolean) {
             viewBinding.textScheduleDates.text = getDuration(lesson)
+            viewBinding.textScheduleDates.isEnabled = enabled
         }
 
         private fun setLessonTitle(lesson: Lesson, enabled: Boolean) {
             viewBinding.textviewLessonTitle.text = lesson.title
-            viewBinding.textviewLessonType.isEnabled = enabled
+            viewBinding.textviewLessonTitle.isEnabled = enabled
         }
 
         private fun getDuration(lesson: Lesson): String {
@@ -417,7 +415,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 timeStart,
                 timeEnd
             )
-            viewBinding.textLessonTime.setTextColor(0xff9E9EA6.toInt())
+            viewBinding.textLessonTime.setTextColor(getColor(R.color.text_color_secondary))
         }
 
         private fun getTimeText(totalMinutes: Long): String {

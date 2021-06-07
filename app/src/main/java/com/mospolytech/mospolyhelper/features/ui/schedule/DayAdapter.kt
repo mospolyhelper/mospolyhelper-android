@@ -123,35 +123,41 @@ class DayAdapter : RecyclerView.Adapter<DayAdapter.ViewHolder>() {
                     colorTo = itemView.context.getColor(R.color.layerOneActivated)
                     scaleFrom = 1.0f
                     scaleTo = 1.1f
-                    elevationFrom = 3.dp(itemView.context)
-                    elevationTo = 5.dp(itemView.context)
+                    elevationFrom = 0f
+                    elevationTo = 2.dp(itemView.context)
                 } else {
                     colorFrom = itemView.context.getColor(R.color.layerOneActivated)
                     colorTo = itemView.context.getColor(R.color.layerOne)
                     scaleFrom = 1.1f
                     scaleTo = 1.0f
-                    elevationFrom = 5.dp(itemView.context)
-                    elevationTo = 3.dp(itemView.context)
+                    elevationFrom = 2.dp(itemView.context)
+                    elevationTo = 0f
                 }
                 val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
-                colorAnimation.duration = 200
-                colorAnimation.addUpdateListener { animator ->
-                    viewBinding.root.backgroundTintList = ColorStateList.valueOf(animator.animatedValue as Int)
-                }
+                    .apply {
+                        duration = 200
+                        addUpdateListener { animator ->
+                            viewBinding.root.backgroundTintList =
+                                ColorStateList.valueOf(animator.animatedValue as Int)
+                        }
+                    }
 
                 val scaleAnimation = ValueAnimator.ofFloat(scaleFrom, scaleTo)
-                scaleAnimation.duration = 200
-                scaleAnimation.addUpdateListener { animator ->
-                    viewBinding.root.scaleX = animator.animatedValue as Float
-                    viewBinding.root.scaleY = animator.animatedValue as Float
-                }
+                    .apply {
+                        duration = 200
+                        addUpdateListener { animator ->
+                            viewBinding.root.scaleX = animator.animatedValue as Float
+                            viewBinding.root.scaleY = animator.animatedValue as Float
+                        }
+                    }
 
                 val elevationAnimation = ValueAnimator.ofFloat(elevationFrom, elevationTo)
-                scaleAnimation.duration = 200
-                scaleAnimation.addUpdateListener { animator ->
-                    viewBinding.root.elevation = animator.animatedValue as Float
-                    viewBinding.root.elevation = animator.animatedValue as Float
-                }
+                    .apply {
+                        duration = 200
+                        addUpdateListener { animator ->
+                            viewBinding.root.translationZ = animator.animatedValue as Float
+                        }
+                    }
                 AnimatorSet().apply {
                     playTogether(colorAnimation, scaleAnimation, elevationAnimation)
                     start()

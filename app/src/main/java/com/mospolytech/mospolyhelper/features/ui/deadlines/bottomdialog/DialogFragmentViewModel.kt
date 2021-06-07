@@ -1,10 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.deadlines.bottomdialog
 
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
-import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
-import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule

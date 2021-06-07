@@ -24,16 +24,15 @@ data class Lesson(
     val dateTo: LocalDate,
 ) : Comparable<Lesson>, Parcelable {
     companion object {
-        fun getEmpty() =
-            Lesson(
-                "",
-                "",
-                emptyList(),
-                emptyList(),
-                listOf(),
-                LocalDate.MIN,
-                LocalDate.MAX
-            )
+        val Empty = Lesson(
+            "",
+            "",
+            emptyList(),
+            emptyList(),
+            listOf(),
+            LocalDate.MIN,
+            LocalDate.MAX
+        )
     }
 
     val isEmpty

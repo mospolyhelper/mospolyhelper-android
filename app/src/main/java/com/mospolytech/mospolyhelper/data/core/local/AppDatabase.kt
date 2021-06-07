@@ -3,10 +3,9 @@ package com.mospolytech.mospolyhelper.data.core.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.mospolytech.mospolyhelper.data.core.model.DataVersion
 import com.mospolytech.mospolyhelper.data.deadline.DeadlineDAO
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleDao
-import com.mospolytech.mospolyhelper.data.schedule.model.*
+import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
 import com.mospolytech.mospolyhelper.data.utils.Converters
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 

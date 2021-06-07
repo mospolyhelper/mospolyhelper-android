@@ -96,17 +96,23 @@ class LessonTagColorAdapter : RecyclerView.Adapter<LessonTagColorAdapter.ViewHol
                     scaleTo = 1.0f
                 }
                 val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), colorFrom, colorTo)
-                colorAnimation.duration = 200
-                colorAnimation.addUpdateListener { animator ->
-                    viewBinding.root.foregroundTintList = ColorStateList.valueOf(animator.animatedValue as Int)
-                }
+                    .apply {
+                        duration = 200
+                        addUpdateListener { animator ->
+                            viewBinding.root.foregroundTintList =
+                                ColorStateList.valueOf(animator.animatedValue as Int)
+                        }
+                    }
 
                 val scaleAnimation = ValueAnimator.ofFloat(scaleFrom, scaleTo)
-                scaleAnimation.duration = 200
-                scaleAnimation.addUpdateListener { animator ->
-                    viewBinding.root.scaleX = animator.animatedValue as Float
-                    viewBinding.root.scaleY = animator.animatedValue as Float
-                }
+                    .apply {
+                        duration = 200
+                        addUpdateListener { animator ->
+                            viewBinding.root.scaleX = animator.animatedValue as Float
+                            viewBinding.root.scaleY = animator.animatedValue as Float
+                        }
+                    }
+
                 AnimatorSet().apply {
                     playTogether(colorAnimation, scaleAnimation)
                     start()

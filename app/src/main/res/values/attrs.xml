@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="colorSurfaceSecondary" format="color" />
+    <attr name="colorOnSurfaceSecondary" format="color" />
+    <attr name="colorPrimarySurfaceSecondary" format="color" />
+    <attr name="colorOnPrimarySurfaceSecondary" format="color" />
 </resources>

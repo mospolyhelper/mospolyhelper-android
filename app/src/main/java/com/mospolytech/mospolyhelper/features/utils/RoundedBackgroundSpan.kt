@@ -88,6 +88,7 @@ class RoundedBackgroundSpan(
             textWidth = width - horizontalPadding * 2f
         }
 
+        // TODO: Fix api 23 broken top
         val rect = RectF(
             x,
             topOfLine.toFloat() + bias,

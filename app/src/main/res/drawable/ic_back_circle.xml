@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape
+            android:shape="oval"
+            android:useLevel="false">
+            <solid android:color="@color/color_min_emphasis"/>
+        </shape>
+    </item>
+    <item
+        android:left="6.2dp"
+        android:right="6.2dp"
+        android:top="6.2dp"
+        android:bottom="6.2dp"
+        android:drawable="@drawable/ic_fluent2_arrow_left_20_regular"/>
+</layer-list>

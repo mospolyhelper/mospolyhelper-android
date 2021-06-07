@@ -11,7 +11,6 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -19,24 +18,26 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
 import com.mospolytech.mospolyhelper.domain.schedule.utils.isOnline
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.getColor
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonInfoObject
 import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.*
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.onSuccess
+import com.mospolytech.mospolyhelper.utils.safe
+import com.mospolytech.mospolyhelper.utils.show
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
 class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info) {
-
     companion object {
         val lessonTypeColors = listOf(
             0xffeb4141.toInt(),   // Exam, Credit,..
@@ -54,12 +55,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     override fun getTheme(): Int  = R.style.LessonInfoDialogTheme
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.toolbar.setNavigationOnClickListener {
@@ -68,7 +63,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
         viewModel.lessonTime = args.lessonTime
         viewModel.lesson = args.lesson
-        viewModel.date = args.date
+        viewModel.date = LocalDate.ofEpochDay(args.date)
         viewModel.setTags()
 
         if (viewModel.lesson.isEmpty) {
@@ -143,6 +138,8 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             )
             if (iterator.hasNext()) {
                 builder.append(" ")
+            } else {
+                builder.append(" ")
             }
         }
         return builder
@@ -198,6 +195,13 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                     }
                     override val onClickListener: () -> Unit = {
                         if (it.url.isNotEmpty()) {
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, it.url)
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+
                             AlertDialog.Builder(context)
                                 .setTitle("Открыть ссылку?")
                                 .setMessage(it.url)
@@ -208,7 +212,9 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                                             Uri.parse(it.url)
                                         )
                                     )
-                                }.setNegativeButton("Нет") { _, _ -> }.create().show()
+                                }.setNegativeButton("Нет") { _, _ -> }
+                                .setNeutralButton("Поделиться") { _, _ -> startActivity(shareIntent) }
+                                .create().show()
                         }
                     }
                 }
@@ -295,20 +301,13 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
         }
     }
 
-    private fun createChip(text: CharSequence, root: ViewGroup, onClickListener: View.OnClickListener): Chip {
-        val chip = layoutInflater.inflate(R.layout.chip_schedule_lesson_info, null, false) as Chip
-        chip.text = text
-        chip.setOnClickListener(onClickListener)
-        return chip
-    }
-
     private fun setTagButton() {
         viewBinding.buttonAddLabel.setOnClickListener {
             findNavController().safe { navigate(
                 LessonInfoFragmentDirections
                     .actionLessonInfoFragmentToLessonTagFragment(
                         lesson = viewModel.lesson,
-                        dayOfWeek = viewModel.date.dayOfWeek,
+                        dayOfWeek = viewModel.date.dayOfWeek.value,
                         order = viewModel.lessonTime.order
                     )
             ) }

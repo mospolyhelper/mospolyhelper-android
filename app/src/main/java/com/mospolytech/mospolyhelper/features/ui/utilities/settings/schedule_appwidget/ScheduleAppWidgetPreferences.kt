@@ -48,7 +48,7 @@ class ScheduleAppWidgetPreferences : PreferenceFragmentCompat(),
                 icon?.let {
                     if (it.tag != "painted") {
                         it.setColorFilter(
-                            ContextCompat.getColor(requireContext(), R.color.textColorPrimary),
+                            ContextCompat.getColor(requireContext(), R.color.text_color_primary),
                             PorterDuff.Mode.SRC_IN
                         )
                         it.tag = "painted"

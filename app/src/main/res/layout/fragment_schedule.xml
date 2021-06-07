@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:background="?android:colorBackground"
+        android:background="?android:attr/colorBackground"
         app:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/text_day_of_week"
+                    android:id="@+id/textview_user"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginEnd="45dp"
@@ -56,7 +56,7 @@
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     tools:text="Группа 181-721"
-                    android:textColor="#dddddd"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="19dp"
                     android:visibility="visible"
                     app:autoSizeMaxTextSize="21dp"
@@ -71,8 +71,8 @@
                     android:layout_marginTop="1dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_round_more_vert_24"
-                    app:tint="#bbbbbb" />
+                    android:src="@drawable/ic_fluent_more_vertical_24_regular"
+                    app:tint="@color/text_color_primary" />
             </FrameLayout>
 
 
@@ -86,7 +86,7 @@
             <TextView
                 android:id="@+id/textview_date_and_week"
                 tools:text="29 апреля, 4-я неделя"
-                android:textColor="#68686D"
+                android:textColor="@color/text_color_quaternary"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="25dp"
                 android:layout_marginBottom="4dp"

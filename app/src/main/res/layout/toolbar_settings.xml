@@ -3,6 +3,6 @@
     android:id="@+id/bottomAppBar"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/fragment_settings"
-    android:background="@color/layerZero"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize" />

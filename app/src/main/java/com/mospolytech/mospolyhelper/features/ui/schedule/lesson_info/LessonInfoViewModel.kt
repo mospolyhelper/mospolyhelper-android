@@ -12,7 +12,9 @@ import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.map
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -23,7 +25,7 @@ class LessonInfoViewModel(
 ) : ViewModelBase(mediator, LessonInfoViewModel::class.java.simpleName) {
 
     var lessonTime: LessonTime = LessonTime(0, false)
-    var lesson: Lesson = Lesson.getEmpty()
+    var lesson: Lesson = Lesson.Empty
     var date: LocalDate = LocalDate.now()
 
     val tags = MutableStateFlow<Result0<List<LessonTag>>>(Result0.Failure(Exception()))

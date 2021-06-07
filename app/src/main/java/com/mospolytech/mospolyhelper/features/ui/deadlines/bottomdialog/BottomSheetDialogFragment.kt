@@ -16,7 +16,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
-import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline

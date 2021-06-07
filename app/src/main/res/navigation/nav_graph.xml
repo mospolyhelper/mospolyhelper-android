@@ -81,7 +81,7 @@
             app:argType="com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson" />
         <argument
             android:name="date"
-            app:argType="java.time.LocalDate" />
+            app:argType="long" />
         <action
             android:id="@+id/action_lessonInfoFragment_to_lessonTagFragment"
             app:destination="@id/lessonTagFragment" />
@@ -304,7 +304,7 @@
             app:argType="com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson" />
         <argument
             android:name="dayOfWeek"
-            app:argType="java.time.DayOfWeek" />
+            app:argType="integer" />
         <argument
             android:name="order"
             app:argType="integer" />

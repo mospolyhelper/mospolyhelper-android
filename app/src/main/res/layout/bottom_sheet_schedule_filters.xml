@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/scheduleBackground"
+    android:background="@drawable/shape_bottom_sheet"
     android:orientation="vertical"
     android:paddingStart="20dp"
     android:paddingTop="10dp"

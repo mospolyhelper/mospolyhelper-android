@@ -14,10 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleCalendarThreeBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.cutTitle
+import com.mospolytech.mospolyhelper.features.utils.getAttributeColor
 import com.mospolytech.mospolyhelper.utils.Action1
 import com.mospolytech.mospolyhelper.utils.Event1
 import java.time.DayOfWeek
@@ -82,10 +83,8 @@ class CalendarThreeAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val colorParagraph: Int = view.context.getColor(R.color.calendarParagraph)
-        val colorTimeBackground: Int = view.context.getColor(R.color.calendarTimeBackground)
-        val colorTitle: Int = view.context.getColor(R.color.calendarTitle)
-        val colorCurrentTitle: Int = view.context.getColor(R.color.calendarCurrentTitle)
+        private val colorTitle: Int = getAttributeColor(R.attr.colorOnPrimarySurfaceSecondary)!!
+        private val colorCurrentTitle: Int = view.context.getColor(R.color.calendarCurrentTitle)
 
         private val viewBinding by viewBinding(ItemScheduleCalendarThreeBinding::bind)
 
@@ -163,11 +162,13 @@ class CalendarThreeAdapter(
         }
 
         private fun setHead(date: LocalDate) {
-            viewBinding.textScheduleTimeGrid.setTextColor(colorTitle)
+
             val today = LocalDate.now()
 
-            if (date.dayOfYear == today.dayOfYear && date.year == today.year) {
+            if (date == today) {
                 viewBinding.textScheduleTimeGrid.setTextColor(colorCurrentTitle)
+            } else {
+                viewBinding.textScheduleTimeGrid.setTextColor(colorTitle)
             }
             viewBinding.textScheduleTimeGrid.setText(date.format(dateFormatter), TextView.BufferType.NORMAL)
         }

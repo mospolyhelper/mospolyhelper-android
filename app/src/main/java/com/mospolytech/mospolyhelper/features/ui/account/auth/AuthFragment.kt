@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.features.ui.account.auth
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -13,7 +12,6 @@ import com.mospolytech.mospolyhelper.databinding.FragmentAccountAuthBinding
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.UnknownHostException
 
@@ -24,7 +22,7 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
     private lateinit var logInButton: Button
     private lateinit var logOutButton: Button
     private lateinit var progressAuth: ProgressBar
-    private lateinit var authLayout: FrameLayout
+    private lateinit var authLayout: LinearLayout
     private lateinit var loginLayout: LinearLayout
     private lateinit var fioStudent: TextView
     private lateinit var avatarUser: ImageView
@@ -89,8 +87,8 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
         viewModel.getName()?.let {
             authLayout.show()
             loginLayout.hide()
-            fioStudent.text = it
-            Glide.with(this).load(viewModel.getAvatar()).into(avatarUser)
+            fioStudent.text = getString(R.string.hello_msg, it)
+            Glide.with(this).load(viewModel.getAvatar()).circleCrop().into(avatarUser)
         } ?: let {
             authLayout.hide()
             loginLayout.show()
