@@ -3,7 +3,7 @@ package com.mospolytech.mospolyhelper.domain.core.repository
 import kotlinx.coroutines.flow.Flow
 
 interface PreferencesRepository {
-    val dataLastUpdatedFlow: Flow<String>
+    val dataLastUpdatedFlow: Flow<String?>
 
     fun get(key: String, defaultValue: Boolean): Boolean
     fun get(key: String, defaultValue: Int): Int
