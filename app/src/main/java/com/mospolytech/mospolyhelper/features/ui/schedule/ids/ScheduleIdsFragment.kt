@@ -1,12 +1,7 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.ids
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +11,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleIdsBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
-import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -27,20 +21,7 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
     private val viewModel by viewModel<ScheduleIdsViewModel>()
     private val viewBinding by viewBinding(FragmentScheduleIdsBinding::bind)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-    }
+    override fun getTheme(): Int  = R.style.CustomDialogTheme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,10 +34,10 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
     }
 
     private fun setToolbar() {
-        (activity as MainActivity).setSupportActionBar(viewBinding.toolbarScheduleId)
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as MainActivity).supportActionBar?.setHomeButtonEnabled(true)
-        (activity as MainActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        viewBinding.toolbarScheduleId.setNavigationOnClickListener {
+            findNavController().safe { navigateUp() }
+        }
+
     }
 
     private fun setEditText() {
@@ -115,8 +96,8 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
         ) {
             lifecycleScope.launchWhenResumed {
                 viewModel.addSavedScheduleUser(it)
+                findNavController().safe { navigateUp() }
             }
-            findNavController().safe { navigateUp() }
         }
     }
 }

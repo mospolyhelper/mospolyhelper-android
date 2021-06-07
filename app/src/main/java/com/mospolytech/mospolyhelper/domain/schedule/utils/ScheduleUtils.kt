@@ -32,22 +32,8 @@ object ScheduleUtils {
 
     fun getEmptyPairsDecorator(lessonPlaces: List<LessonPlace>): List<LessonPlace> {
         if (lessonPlaces.isEmpty()) return lessonPlaces
-        val lastOrder = lessonPlaces.last().time.order
-        val resList = mutableListOf<LessonPlace>()
-
-        for (i in 0..lastOrder) {
-            var notFound = true
-            for (lessonPlace in lessonPlaces) {
-                if (lessonPlace.time.order == i) {
-                    notFound = false
-                    resList.add(lessonPlace)
-                } else if (lessonPlace.time.order > i && notFound) {
-                    resList.add(LessonPlace(emptyList(), LessonTime(i, false)))
-                }
-            }
-        }
-
-        return resList
+        val minOrder = lessonPlaces.minOf { it.time.order }
+        return (0 until minOrder).map { LessonPlace(listOf(Lesson.Empty), LessonTime(it, false)) } + lessonPlaces
     }
 
     fun List<LessonPlace>?.getOrderMap(): Map<Int, Boolean> {

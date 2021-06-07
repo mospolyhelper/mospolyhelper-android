@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/layerZero"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="3dp"
@@ -42,7 +42,7 @@
                             android:fontFamily="@font/ubuntu_light"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/avatar_student_circle"/>
+                            app:layout_constraintEnd_toStartOf="@id/avatar_student"/>
                         <TextView
                             android:id="@+id/fio_student"
                             android:layout_width="0dp"
@@ -54,11 +54,11 @@
                             app:autoSizeMaxTextSize="21dp"
                             app:autoSizeMinTextSize="15dp"
                             app:autoSizeTextType="uniform"
-                            android:textColor="@color/text_color_surface_accent"
+                            android:textColor="@color/text_color_primary"
                             android:fontFamily="@font/ubuntu_bold"
                             app:layout_constraintTop_toBottomOf="@+id/type_user"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/avatar_student_circle"/>
+                            app:layout_constraintEnd_toStartOf="@id/avatar_student"/>
                         <TextView
                             android:id="@+id/info_student"
                             android:layout_width="0dp"
@@ -70,28 +70,21 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/fio_student"/>
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/avatar_student_circle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardCornerRadius="100dp"
+                        <ImageView
+                            android:id="@+id/avatar_student"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_launcher_background"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent">
-
-                            <ImageView
-                                android:id="@+id/avatar_student"
-                                android:layout_width="75dp"
-                                android:layout_height="75dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/ic_launcher_background" />
-                        </androidx.cardview.widget.CardView>
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
                         <View
                             android:id="@+id/divider_info"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginTop="5dp"
-                            android:background="@color/dividerLayerZero"
+                            android:background="@color/color_low_emphasis"
                             app:layout_constraintTop_toBottomOf="@id/info_student"/>
 
                         <TextView
@@ -101,7 +94,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_building_24_regular"
+                            app:drawableStartCompat="@drawable/ic_fluent_building_24_regular"
                             tools:text="Факультет"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/divider_info"
@@ -114,7 +107,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_teacher_24"
+                            app:drawableStartCompat="@drawable/ic_teacher_24"
                             tools:text="Направление"
                             app:drawableTint="@color/iconColor"
                             app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +120,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_people_24_regular"
+                            app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
                             app:drawableTint="@color/iconColor"
                             tools:text="Специальность"
                             app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +133,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_home_24_regular"
+                            app:drawableStartCompat="@drawable/ic_fluent_home_24_regular"
                             app:drawableTint="@color/iconColor"
                             tools:text="Общежитие"
                             android:visibility="gone"
@@ -155,7 +148,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_money_24_regular"
+                            app:drawableStartCompat="@drawable/ic_fluent_money_24_regular"
                             app:drawableTint="@color/iconColor"
                             tools:text="Оплата"
                             app:layout_constraintStart_toStartOf="parent"
@@ -168,7 +161,7 @@
                             android:layout_marginTop="20dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/ubuntu"
-                            android:drawableStart="@drawable/ic_fluent_calendar_ltr_24_regular"
+                            app:drawableStartCompat="@drawable/ic_fluent_calendar_ltr_24_regular"
                             app:drawableTint="@color/iconColor"
                             tools:text="Год"
                             app:layout_constraintStart_toStartOf="parent"

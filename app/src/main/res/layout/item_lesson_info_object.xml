@@ -16,12 +16,12 @@
         android:layout_marginTop="6dp"
         android:layout_marginBottom="6dp"
         android:background="@drawable/circle2"
-        android:backgroundTint="@color/layerTwo"
+        android:backgroundTint="@color/color_min_emphasis"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/textColorPrimary"
+        app:tint="@color/text_color_secondary"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -33,6 +33,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/ubuntu"
         android:maxLines="1"
+        android:textColor="@color/text_color_primary"
         android:textSize="15.5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageview_avatar"
@@ -50,6 +51,7 @@
         android:fontFamily="@font/ubuntu"
         android:maxLines="1"
         android:text="TextView"
+        android:textColor="@color/text_color_secondary"
         android:textSize="12.5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

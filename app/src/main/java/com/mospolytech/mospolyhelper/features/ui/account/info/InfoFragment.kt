@@ -41,7 +41,7 @@ class InfoFragment : Fragment(R.layout.fragment_account_info) {
             }
         }
 
-        Glide.with(this).load(viewModel.getAvatar()).into(viewBinding.avatarStudent)
+        Glide.with(this).load(viewModel.getAvatar()).circleCrop().into(viewBinding.avatarStudent)
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->

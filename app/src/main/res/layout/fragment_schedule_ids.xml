@@ -11,15 +11,15 @@
         android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:background="@color/scheduleLessonBackground"
+        android:background="?attr/colorSurface"
         android:elevation="2dp"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_schedule_id"
+            app:navigationIcon="@drawable/ic_back"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
+            android:layout_height="?attr/actionBarSize" />
 
         <EditText
             android:id="@+id/edittext_schedule_id"
@@ -27,9 +27,8 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/shape_button"
-            android:backgroundTint="@color/layerZero"
-            android:drawableStart="@drawable/ic_search_24"
+            android:background="@drawable/shape_search_field"
+            app:drawableStartCompat="@drawable/ic_search_24"
             android:drawablePadding="10dp"
             android:hint="Введите группу, ФИО или ID"
             android:inputType="text"
@@ -55,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Все"
-                app:chipIconTint="@color/textColorPrimary"
+                app:chipIconTint="@color/text_color_primary"
                 app:checkedIconEnabled="false"
                 android:elevation="2dp"
                 app:chipBackgroundColor="@color/chip_color_layer_two"
@@ -69,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Группы"
-                app:chipIconTint="@color/textColorPrimary"
+                app:chipIconTint="@color/text_color_primary"
                 app:checkedIconEnabled="false"
                 app:chipIcon="@drawable/ic_fluent_people_24_regular"
                 android:elevation="2dp"
@@ -85,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:elevation="2dp"
                 android:text="Преподаватели"
-                app:chipIconTint="@color/textColorPrimary"
+                app:chipIconTint="@color/text_color_primary"
                 app:checkedIconEnabled="false"
                 app:chipBackgroundColor="@color/chip_color_layer_two"
                 app:chipIcon="@drawable/ic_fluent_hat_graduation_24_regular"
@@ -104,11 +103,9 @@
             android:id="@+id/recyclerview_schedule_ids"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/scheduleBackground"
+            android:background="?android:attr/colorBackground"
             android:scrollbars="vertical"
-            tools:listitem="@layout/item_schedule_id">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            tools:listitem="@layout/item_schedule_id"/>
 
         <ProgressBar
             android:id="@+id/progressBar"

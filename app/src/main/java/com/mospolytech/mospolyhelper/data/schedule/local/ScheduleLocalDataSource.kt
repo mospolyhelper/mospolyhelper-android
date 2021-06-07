@@ -3,7 +3,6 @@ package com.mospolytech.mospolyhelper.data.schedule.local
 import android.content.Context
 import android.util.Log
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString

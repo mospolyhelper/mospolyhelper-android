@@ -25,12 +25,13 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
             android:fontFamily="@font/ubuntu"
-            android:textColor="@color/textAccent"
+            android:textColor="@color/text_color_primary"
             android:textSize="26sp"
             android:text="@string/advanced_search" />
 
         <LinearLayout
             android:background="@drawable/shape_additional_info"
+            android:elevation="3dp"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="14dp"
             android:layout_marginStart="24dp"
@@ -43,7 +44,7 @@
                 android:layout_marginStart="14dp"
                 android:layout_marginEnd="14dp"
                 android:id="@+id/textview_schedule_status"
-                android:textColor="#878998"
+                android:textColor="@color/text_color_secondary"
                 android:textSize="15sp"
                 android:breakStrategy="balanced"
                 android:fontFamily="@font/ubuntu_medium"
@@ -77,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:text="0 %"
                     android:textAlignment="center"
-                    android:textColor="@color/textColorPrimary"
+                    android:textColor="@color/text_color_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -93,15 +94,14 @@
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_download"
                 style="@style/ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
                 android:layout_marginEnd="14dp"
                 android:layout_marginBottom="14dp"
-                android:id="@+id/button_download"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="@string/download_schedules"
-                android:textColor="@color/text_color_surface_accent" />
+                tools:text="@string/download_schedules" />
         </LinearLayout>
 
         <ProgressBar
@@ -117,7 +117,7 @@
         <TextView
             android:id="@+id/textview_lesson_titles_label"
             style="@style/TextH1Style"
-            android:textColor="#C9CCE1"
+            android:textColor="@color/text_color_primary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/lesson_titles"
@@ -140,7 +140,7 @@
         <TextView
             android:id="@+id/textview_lesson_types_label"
             style="@style/TextH1Style"
-            android:textColor="#C9CCE1"
+            android:textColor="@color/text_color_primary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/lesson_types"
@@ -163,7 +163,7 @@
         <TextView
             android:id="@+id/textview_teachers_label"
             style="@style/TextH1Style"
-            android:textColor="#C9CCE1"
+            android:textColor="@color/text_color_primary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/teachers"
@@ -186,7 +186,7 @@
         <TextView
             android:id="@+id/textview_groups_label"
             style="@style/TextH1Style"
-            android:textColor="#C9CCE1"
+            android:textColor="@color/text_color_primary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/groups"
@@ -210,7 +210,7 @@
             android:id="@+id/textview_auditoriums_label"
             android:visibility="gone"
             style="@style/TextH1Style"
-            android:textColor="#C9CCE1"
+            android:textColor="@color/text_color_primary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"
             android:text="@string/auditoriums"
@@ -238,7 +238,6 @@
             android:layout_marginTop="15dp"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="12dp"
-            android:text="@string/apply"
-            android:textColor="@color/textAccent" />
+            android:text="@string/apply" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

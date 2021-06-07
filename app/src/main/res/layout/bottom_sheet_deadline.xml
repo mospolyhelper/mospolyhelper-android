@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_library_books_black_24dp"
+            app:drawableStartCompat="@drawable/ic_library_books_black_24dp"
             android:contentDescription="@string/predmet_title"
             android:layout_gravity="start"/>
 
@@ -43,7 +43,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_sort_black_24dp"
+            app:drawableStartCompat="@drawable/ic_sort_black_24dp"
             android:contentDescription="@string/deadline_descr"
             android:layout_gravity="start"/>
         <EditText
@@ -65,7 +65,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_date_range_24"
+            app:drawableStartCompat="@drawable/ic_date_range_24"
             android:contentDescription="@string/deadline_date"
             android:layout_gravity="start"/>
         <EditText
@@ -88,7 +88,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_access_time_24"
+            app:drawableStartCompat="@drawable/ic_access_time_24"
             android:layout_gravity="start"
             android:contentDescription="@string/deadline_time" />
         <EditText
@@ -139,7 +139,7 @@
             android:id="@+id/imgPinned"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_push_unpin_24px"
+            app:drawableStartCompat="@drawable/ic_push_unpin_24px"
             android:adjustViewBounds="true"
             android:maxWidth="26dp"
             android:maxHeight="30dp"

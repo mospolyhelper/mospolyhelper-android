@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/layerZero"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.appcompat.widget.Toolbar
@@ -20,7 +20,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="Дындин Александр Владимирович"
-                android:textColor="@color/text_color_surface_accent"
+                android:textColor="@color/text_color_primary"
                 android:fontFamily="@font/ubuntu"
                 android:breakStrategy="balanced"
                 android:ellipsize="end"
@@ -31,24 +31,16 @@
                 app:autoSizeTextType="uniform"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/avatar_teacher_circle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
-            <androidx.cardview.widget.CardView
-                android:id="@+id/avatar_teacher_circle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="100dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
+                app:layout_constraintEnd_toStartOf="@id/avatar_user"
+                app:layout_constraintBottom_toBottomOf="parent" />
             <ImageView
                 android:id="@+id/avatar_user"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:scaleType="centerCrop"/>
-            </androidx.cardview.widget.CardView>
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 <androidx.recyclerview.widget.RecyclerView

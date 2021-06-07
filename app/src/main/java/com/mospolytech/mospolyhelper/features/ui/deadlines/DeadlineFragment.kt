@@ -250,7 +250,7 @@ class DeadlineFragment : Fragment(R.layout.fragment_deadline), CoroutineScope,
         override fun onMove(recyclerView: RecyclerView,
                             viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder
         ): Boolean {
-            if (viewHolder is DeadlinesViewHolder) {
+            if (viewHolder is MyDeadlineRecyclerViewAdapter.DeadlinesViewHolder) {
                 viewHolder.closeContextMenu()
             }
             return false
@@ -258,7 +258,7 @@ class DeadlineFragment : Fragment(R.layout.fragment_deadline), CoroutineScope,
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
             if (swipeDir == ItemTouchHelper.LEFT) {
-                if (viewHolder is DeadlinesViewHolder) {
+                if (viewHolder is MyDeadlineRecyclerViewAdapter.DeadlinesViewHolder) {
                     viewHolder.closeContextMenu()
                     viewModel.delete(viewHolder.getDeadline())
                 }

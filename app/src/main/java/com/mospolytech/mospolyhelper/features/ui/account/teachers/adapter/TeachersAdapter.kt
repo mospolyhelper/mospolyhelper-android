@@ -68,7 +68,7 @@ class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diff
                 }
             }
             itemView.setOnClickListener { teacherClickListener?.invoke(item.dialogKey, item.name) }
-            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatar)
         }
 
         fun recycle() {

@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.account.students.adapter
 
-import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,13 +9,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStudentBinding
 import com.mospolytech.mospolyhelper.domain.account.students.model.Student
 import com.mospolytech.mospolyhelper.utils.gone
-import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate
 import com.mospolytech.mospolyhelper.utils.show
 
@@ -124,7 +120,7 @@ class StudentsAdapter: PagingDataAdapter<Student, RecyclerView.ViewHolder>(diffU
             } else {
                 expander.gone()
             }
-            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatar)
         }
 
         fun recycle() {

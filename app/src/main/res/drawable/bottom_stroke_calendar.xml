@@ -7,10 +7,10 @@
       android:bottom="0dp">
 
     <shape android:shape="rectangle">
-      <solid android:color="@color/scheduleBackground"/>
+      <solid android:color="?android:attr/colorBackground"/>
       <stroke
           android:width="0.5dp"
-          android:color="@color/calendarDivider"/>
+          android:color="?attr/colorSurfaceSecondary"/>
     </shape>
   </item>
 </layer-list>

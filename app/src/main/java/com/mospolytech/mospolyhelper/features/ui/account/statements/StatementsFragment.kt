@@ -52,24 +52,35 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
         }
 
         viewBinding.fabShare.setOnClickListener {
-            val types: MutableList<String> = mutableListOf()
-            var sheet = ""
-            var i = 1
-            marks.forEach {
-                if (!types.contains(it.loadType)) {
-                    types.add(it.loadType)
-                    i = 1
-                    sheet += "${if (types.size>1) "\n" else ""}${it.loadType}:\n"
+            val sheet = marks.groupBy { it.loadType }
+                .toList()
+                .sortedBy { it.first }
+                .joinToString(separator = "\n\n") { statements ->
+                    StringBuilder()
+                        .append(statements.first)
+                        .append(":\n")
+                        .append(
+                            statements.second.withIndex()
+                                .joinToString(separator = "\n") { statement ->
+                                    StringBuilder()
+                                        .append(statement.index + 1)
+                                        .append(") ")
+                                        .append(statement.value.subject.substringBeforeLast("\r"))
+                                        .append(" - ")
+                                        .append(statement.value.appraisalsDate)
+                                        .append(" - ")
+                                        .append(
+                                            if (statement.value.grade.isEmpty())
+                                                getString(R.string.no_mark)
+                                            else
+                                                statement.value.grade
+                                        )
+                                }
+                        )
                 }
-                sheet += "${i++}) ${it.subject.replaceAfterLast("\r", "")
-                    .replace("\r", "")} " +
-                        "- ${it.appraisalsDate} - ${if (it.grade.isEmpty())
-                            requireContext().getString(R.string.no_mark) else it.grade}\n"
-            }
-            sheet = sheet.substringBeforeLast("\n")
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, sheet)
+                putExtra(Intent.EXTRA_TEXT, sheet.toString())
                 type = "text/plain"
             }
             val shareIntent = Intent.createChooser(sendIntent, null)

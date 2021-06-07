@@ -1,10 +1,31 @@
 package com.mospolytech.mospolyhelper.data.core.local
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class SharedPreferencesDataSource(
     private val prefs: SharedPreferences
-) {
+) : SharedPreferences.OnSharedPreferenceChangeListener, CoroutineScope  {
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + Job()
+    private val dataLastUpdatedFlow = MutableSharedFlow<String>(replay = 1)
+    val dataLastUpdatedObservable: Flow<String> = dataLastUpdatedFlow
+
+    init {
+        prefs.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
+        launch {
+            dataLastUpdatedFlow.emit(key)
+        }
+    }
+
     fun get(key: String, defaultValue: Boolean): Boolean {
         return prefs.getBoolean(key, defaultValue)
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,12 +14,12 @@
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:drawableTop="@drawable/ic_sleeping_face"
             android:drawablePadding="20dp"
             android:fontFamily="@font/ubuntu"
             android:paddingBottom="?actionBarSize"
             android:text="@string/null_daily_schedule"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            app:drawableTopCompat="@drawable/ic_sleeping_face" />
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

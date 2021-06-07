@@ -15,7 +15,6 @@ import com.mospolytech.mospolyhelper.data.schedule.remote.GroupInfoRemoteDataSou
 import com.mospolytech.mospolyhelper.databinding.FragmentGroupInfoBinding
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import io.ktor.client.*
-import kotlinx.coroutines.runBlocking
 
 class GroupInfoFragment : Fragment(R.layout.fragment_group_info) {
     private val viewBinding by viewBinding(FragmentGroupInfoBinding::bind)

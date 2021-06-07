@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mospolytech.mospolyhelper.App
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetDeadlineBinding
 import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline

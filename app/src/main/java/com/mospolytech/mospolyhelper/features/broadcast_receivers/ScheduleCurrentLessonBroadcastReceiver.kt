@@ -7,8 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.text.SpannableString
 import androidx.core.text.HtmlCompat
-import com.mospolytech.mospolyhelper.App
-import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 
 class ScheduleCurrentLessonBroadcastReceiver : BroadcastReceiver() {

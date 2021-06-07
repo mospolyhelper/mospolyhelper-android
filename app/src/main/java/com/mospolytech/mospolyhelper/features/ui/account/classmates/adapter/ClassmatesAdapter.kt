@@ -69,7 +69,7 @@ class ClassmatesAdapter:RecyclerView.Adapter<ClassmatesAdapter.ClassmatesViewHol
                 }
             }
             card.setOnClickListener { classmatesClickListener?.invoke(item.dialogKey) }
-            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").into(avatar)
+            Glide.with(itemView.context).load("https://e.mospolytech.ru/${item.avatarUrl}").circleCrop().into(avatar)
         }
 
         fun recycle() {

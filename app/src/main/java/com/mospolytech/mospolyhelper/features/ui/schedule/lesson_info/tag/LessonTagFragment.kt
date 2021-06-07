@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -22,9 +21,12 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagExceptio
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagMessages
 import com.mospolytech.mospolyhelper.features.utils.RoundedBackgroundSpan
-import com.mospolytech.mospolyhelper.utils.*
+import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.onSuccess
+import com.mospolytech.mospolyhelper.utils.show
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import java.time.DayOfWeek
 
 class LessonTagFragment : BottomSheetDialogFragment() {
 
@@ -36,7 +38,7 @@ class LessonTagFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setArgs(args.lesson, args.dayOfWeek, args.order)
+        viewModel.setArgs(args.lesson, DayOfWeek.of(args.dayOfWeek), args.order)
     }
 
     override fun onCreateView(
@@ -136,6 +138,7 @@ class LessonTagFragment : BottomSheetDialogFragment() {
             ),
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
+        builder.append(" ")
         return builder
     }
 

@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/addressesBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,7 +21,7 @@
         android:layout_alignParentBottom="true"
         android:elevation="4dp"
         android:background="@drawable/background_tab_indicator_schedule_type"
-        android:backgroundTint="@color/colorLevelOne"
+        android:backgroundTint="?android:attr/colorBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.tabs.TabLayout

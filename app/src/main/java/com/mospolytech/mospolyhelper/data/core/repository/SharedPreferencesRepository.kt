@@ -6,6 +6,7 @@ import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepositor
 class SharedPreferencesRepository(
     private val dataSource: SharedPreferencesDataSource
 ) : PreferencesRepository {
+    override val dataLastUpdatedFlow = dataSource.dataLastUpdatedObservable
 
     override fun get(key: String, defaultValue: Boolean): Boolean {
         return dataSource.get(key, defaultValue)

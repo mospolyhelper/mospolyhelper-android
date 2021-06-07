@@ -1,10 +1,8 @@
 package com.mospolytech.mospolyhelper.features.ui.utilities.settings
 
-import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -62,7 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 icon?.let {
                     if (it.tag != "painted") {
                         it.setColorFilter(
-                            ContextCompat.getColor(requireContext(), R.color.textColorPrimary),
+                            ContextCompat.getColor(requireContext(), R.color.text_color_primary),
                             PorterDuff.Mode.SRC_IN
                         )
                         it.tag = "painted"

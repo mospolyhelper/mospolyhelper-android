@@ -1,8 +1,8 @@
 package com.mospolytech.mospolyhelper.data.schedule.local
 
 import androidx.room.*
-import com.mospolytech.mospolyhelper.data.schedule.model.*
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 
 @Dao
 abstract class ScheduleDao {

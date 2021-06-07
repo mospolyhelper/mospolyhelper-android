@@ -4,8 +4,6 @@ class PreferenceDefaults {
     companion object {
         const val ScheduleUser = ""
         const val ScheduleShowEmptyLessons = false
-        const val ScheduleTypePreference = false
-        const val ScheduleUserTypePreference = true
 
         const val ShowEndedLessons = false
         const val ShowCurrentLessons = true

@@ -1,8 +1,9 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
@@ -15,8 +16,10 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSe
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleSettings
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import java.time.LocalDate
 import java.time.LocalTime
@@ -82,12 +85,9 @@ class ScheduleViewModel(
     private val deadlines = useCase.getAllDeadlines()
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
-
-    private val showEmptyLessons = MutableStateFlow(useCase.getShowEmptyLessons())
-
     val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
 
-    val scheduleSettings = combine(showEmptyLessons, lessonDateFilter, user) {
+    val scheduleSettings = combine(useCase.getShowEmptyLessons(), lessonDateFilter, user) {
             showEmptyLessons, lessonDateFilter, user ->
         ScheduleSettings(
             showEmptyLessons,
@@ -141,12 +141,6 @@ class ScheduleViewModel(
         viewModelScope.launch {
             lessonDateFilter.collect {
                 useCase.setLessonDateFilter(it)
-            }
-        }
-
-        viewModelScope.launch {
-            showEmptyLessons.collect {
-                useCase.setShowEmptyLessons(it)
             }
         }
 

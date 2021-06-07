@@ -1,8 +1,8 @@
 package com.mospolytech.mospolyhelper.data.utils
 
 import androidx.room.TypeConverter
-import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -31,7 +31,7 @@ class Converters {
         return try {
             Json.decodeFromString(json)
         } catch (e: Exception) {
-            Lesson.getEmpty()
+            Lesson.Empty
         }
     }
 

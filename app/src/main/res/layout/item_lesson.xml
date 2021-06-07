@@ -5,7 +5,7 @@
     android:id="@+id/layout_lesson"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="6.3dp"
+    android:layout_marginTop="5.3dp"
     android:layout_marginStart="@dimen/lesson_margin_start"
     android:layout_marginEnd="@dimen/lesson_margin_end"
     android:layout_marginBottom="@dimen/lesson_margin_bottom"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:textColor="#818289"
+            android:textColor="@color/text_color_tertiary"
             android:textSize="12.6sp"
             android:fontFamily="@font/ubuntu_medium"
             android:id="@+id/textview_lesson_type"
@@ -35,7 +35,7 @@
             tools:text="Лекция" />
 
         <TextView
-            android:textColor="#818289"
+            android:textColor="@color/text_color_tertiary"
             android:textSize="12.6sp"
             android:fontFamily="@font/ubuntu_medium"
             android:id="@+id/text_schedule_dates"
@@ -49,7 +49,7 @@
 
     </FrameLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textview_lesson_title"
         style="@style/ScheduleLessonTitle"
         android:layout_width="match_parent"
@@ -68,8 +68,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="7.1dp"
         android:breakStrategy="simple"
-        android:textColor="#818289"
-        app:drawableTint="#818289"
         android:clickable="false"
         android:drawablePadding="@dimen/lesson_drawable_padding"
         android:ellipsize="end"
@@ -84,8 +82,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="7.1dp"
         android:breakStrategy="simple"
-        android:textColor="#818289"
-        app:drawableTint="#818289"
         android:clickable="false"
         android:drawablePadding="@dimen/lesson_drawable_padding"
         android:ellipsize="end"
@@ -100,8 +96,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="7.1dp"
         android:breakStrategy="simple"
-        android:textColor="#818289"
-        app:drawableTint="#818289"
         android:clickable="false"
         android:drawablePadding="@dimen/lesson_drawable_padding"
         android:ellipsize="end"

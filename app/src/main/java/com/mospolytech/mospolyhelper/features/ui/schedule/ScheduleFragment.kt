@@ -6,9 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.*
 import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources
@@ -29,18 +27,16 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
-import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.SchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
+import com.mospolytech.mospolyhelper.features.utils.getAttributeRes
 import com.mospolytech.mospolyhelper.features.utils.setSmartCurrentItem
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -69,7 +65,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     private fun setAppBar() {
         viewBinding.chipgroupIds.addView(createAddButton())
 
-        viewBinding.textDayOfWeek.setOnClickListener {
+        viewBinding.textviewUser.setOnClickListener {
             if (viewBinding.scrollIds.visibility == View.VISIBLE) {
                 viewBinding.scrollIds.gone()
             } else {
@@ -90,7 +86,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         inflater.inflate(R.menu.menu_schedule, menuBuilder)
         menuBuilder.forEach {
             val drawable = DrawableCompat.wrap(it.icon)
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(requireContext(), R.color.textColorPrimary))
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(requireContext(), R.color.text_color_primary))
             it.icon = drawable
         }
         val optionsMenu = MenuPopupHelper(requireContext(), menuBuilder, viewBinding.btnMenu)
@@ -133,14 +129,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                     .actionScheduleFragmentToLessonInfoFragment(
                         lessonTime = lessonTime,
                         lesson = lesson,
-                        date = date
+                        date = date.toEpochDay()
                     )
             )
         }
     }
 
     private fun setScheduleViews() {
-        viewBinding.refreshSchedule.setProgressBackgroundColorSchemeResource(R.color.colorLevelThree)
+        viewBinding.refreshSchedule.setProgressBackgroundColorSchemeResource(getAttributeRes(R.attr.colorSurfaceSecondary)!!)
         viewBinding.refreshSchedule.setColorSchemeResources(R.color.color_primary)
         viewBinding.refreshSchedule.setOnRefreshListener {
             lifecycleScope.launchWhenResumed {
@@ -172,17 +168,10 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         addBtn.setOnClickListener {
             findNavController().safe { navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleIdsFragment()) }
         }
-        val tv = TypedValue()
-        if (requireContext().theme.resolveAttribute(
-                android.R.attr.actionBarItemBackground,
-                tv,
-                true
-            )
-        ) {
-            addBtn.setBackgroundResource(tv.resourceId)
-        } else {
-            addBtn.background = ColorDrawable(requireContext().getColor(R.color.scheduleBackground))
-        }
+        addBtn.setBackgroundResource(
+            getAttributeRes(android.R.attr.actionBarItemBackground) ?:
+            getAttributeRes(android.R.attr.colorBackground)!!
+        )
         val dp24 = 24.dp(requireContext()).toInt()
         addBtn.minimumHeight = dp24
         addBtn.minimumWidth = dp24
@@ -206,7 +195,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             false
         ) as Chip
         chip.text = if (user is TeacherSchedule) Teacher(user.title).getShortName() else user.title
-        chip.chipIconTint = ColorStateList.valueOf(requireContext().getColor(R.color.textColorPrimary))
+        chip.chipIconTint = ColorStateList.valueOf(requireContext().getColor(R.color.text_color_primary))
         chip.setChipIconResource(
             if (user is StudentSchedule)
                 R.drawable.ic_fluent_people_20_regular
@@ -236,7 +225,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun setUserTitle(user: UserSchedule?) {
-        viewBinding.textDayOfWeek.text = when (user) {
+        viewBinding.textviewUser.text = when (user) {
             null -> getString(R.string.schedule_choose_user)
             is StudentSchedule ->
                 getString(R.string.schedule_user_group, user.title)

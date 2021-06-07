@@ -23,5 +23,5 @@
             app:itemTextColor="@color/main_menu_text"
             app:itemIconTint="@color/main_menu_text"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/layerZero"/>
+            app:backgroundTint="?android:attr/colorBackground"/>
 </FrameLayout>

@@ -9,24 +9,28 @@
 
         <item name="colorSecondary">@color/color_secondary</item>
         <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
-        <item name="colorOnSecondary">@color/textColorPrimary</item>
+        <item name="colorOnSecondary">@color/text_color_primary</item>
 
         <!-- The window background color -->
-        <item name="android:colorBackground">@color/layerZero</item>
-        <item name="colorOnBackground">#ffffff</item>
+        <item name="android:colorBackground">@color/color_background</item>
+        <item name="colorOnBackground">@color/color_on_background</item>
 
         <!-- Used for “sheets” of material (like cards and bottom sheets) -->
         <item name="colorSurface">@color/layerOne</item>
-        <item name="colorOnSurface">@color/textColorPrimary</item>
+        <item name="colorOnSurface">@color/text_color_primary</item>
 
-        <item name="colorAccent">@color/color_secondary</item>
+        <item name="colorSurfaceSecondary">@color/color_surface_secondary</item>
+        <item name="colorPrimarySurfaceSecondary">@color/color_primary_surface_secondary</item>
+        <item name="colorOnPrimarySurfaceSecondary">@color/color_on_primary_surface_secondary</item>
+
+
 
         <item name="android:colorEdgeEffect">@color/color_edge_effect</item>
 
 
         <!-- Window decor -->
         <item name="android:windowLightStatusBar">@bool/use_light_status</item>
-        <item name="android:statusBarColor">?android:colorBackground</item>
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
 <!--        <item name="android:windowLightNavigationBar">@bool/use_light_navigation</item>-->
         <item name="android:navigationBarColor">@color/nav_bar_color</item>
 
@@ -38,7 +42,7 @@
     </style>
 
     <style name="AppTheme.ActionBar">
-        <item name="background">?android:colorBackground</item>
+        <item name="background">?android:attr/colorBackground</item>
     </style>
 
     <style name="AppTheme.PreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">

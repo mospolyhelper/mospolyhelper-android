@@ -10,14 +10,11 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.PageScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
-import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.SchedulePack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.features.utils.RecyclerViewInViewPagerHelper
 import com.mospolytech.mospolyhelper.utils.WeakMutableSet
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 
 class ScheduleAdapter(

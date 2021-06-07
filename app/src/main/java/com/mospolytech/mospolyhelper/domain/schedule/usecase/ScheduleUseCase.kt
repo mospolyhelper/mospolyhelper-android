@@ -4,12 +4,18 @@ import android.util.Log
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
-import com.mospolytech.mospolyhelper.domain.schedule.model.*
+import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
+import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
-import com.mospolytech.mospolyhelper.domain.schedule.repository.*
-import com.mospolytech.mospolyhelper.utils.*
+import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
+import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleUsersRepository
+import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
+import com.mospolytech.mospolyhelper.utils.PreferenceKeys
+import com.mospolytech.mospolyhelper.utils.Result0
+import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.coroutines.flow.*
 
 class ScheduleUseCase(
@@ -75,18 +81,19 @@ class ScheduleUseCase(
     }
 
 
-    fun getShowEmptyLessons(): Boolean {
-        return preferences.get(
-            PreferenceKeys.ScheduleShowEmptyLessons,
-            PreferenceDefaults.ScheduleShowEmptyLessons
-        )
-    }
-    fun setShowEmptyLessons(showEmptyLessons: Boolean) {
-        return preferences.set(
-            PreferenceKeys.ScheduleShowEmptyLessons,
-            showEmptyLessons
-        )
-    }
+    fun getShowEmptyLessons() = preferences.dataLastUpdatedFlow.transform {
+        if (it == PreferenceKeys.ScheduleShowEmptyLessons) {
+            emit(
+                preferences.get(
+                    PreferenceKeys.ScheduleShowEmptyLessons,
+                    PreferenceDefaults.ScheduleShowEmptyLessons
+                )
+            )
+        }
+    }.onStart { emit(preferences.get(
+        PreferenceKeys.ScheduleShowEmptyLessons,
+        PreferenceDefaults.ScheduleShowEmptyLessons
+    )) }
 
     fun getLessonDateFilter(): LessonDateFilter {
         return LessonDateFilter(
@@ -94,10 +101,7 @@ class ScheduleUseCase(
                 PreferenceKeys.ShowEndedLessons,
                 PreferenceDefaults.ShowEndedLessons
             ),
-            preferences.get(
-                PreferenceKeys.ShowCurrentLessons,
-                PreferenceDefaults.ShowCurrentLessons
-            ),
+            true,
             preferences.get(
                 PreferenceKeys.ShowNotStartedLessons,
                 PreferenceDefaults.ShowNotStartedLessons
@@ -109,10 +113,10 @@ class ScheduleUseCase(
             PreferenceKeys.ShowEndedLessons,
             lessonDateFilter.showEndedLessons
         )
-        preferences.set(
-            PreferenceKeys.ShowCurrentLessons,
-            lessonDateFilter.showCurrentLessons
-        )
+//        preferences.set(
+//            PreferenceKeys.ShowCurrentLessons,
+//            lessonDateFilter.showCurrentLessons
+//        )
         preferences.set(
             PreferenceKeys.ShowNotStartedLessons,
             lessonDateFilter.showNotStartedLessons

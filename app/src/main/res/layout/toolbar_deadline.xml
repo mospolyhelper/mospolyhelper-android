@@ -6,7 +6,7 @@
     android:id="@+id/bottomAppBar"
     android:layout_width="match_parent"
     android:layout_gravity="bottom"
-    app:backgroundTint="@color/scheduleLessonBackground"
+    app:backgroundTint="?android:attr/colorBackground"
     android:layout_height="?attr/actionBarSize"
     tools:showIn="@layout/fragment_deadline"
     tools:ignore="BottomAppBar"
@@ -54,7 +54,7 @@
             android:minHeight="0dp"
             android:padding="10dp"
             android:background="@drawable/transparent_gfx"
-            android:drawableRight="@drawable/ic_clear_24"
+            android:drawableEnd="@drawable/ic_clear_24"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="2dp"/>

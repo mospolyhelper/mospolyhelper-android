@@ -9,7 +9,7 @@
         app:key="NightMode"
         app:title="@string/night_mode"
         app:icon="@drawable/ic_fluent_dark_theme_24_regular"
-        app:defaultValue="false"/>
+        app:defaultValue="true"/>
   </PreferenceScreen>
     <PreferenceScreen
         app:title="Расписание"

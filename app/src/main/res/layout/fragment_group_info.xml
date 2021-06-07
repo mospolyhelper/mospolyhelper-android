@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/layerZero">
+    android:background="?android:attr/colorBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -18,8 +18,8 @@
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/layerZero"
-            app:contentScrim="@color/layerZero"
+            android:background="?android:attr/colorBackground"
+            app:contentScrim="?android:attr/colorBackground"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false"
             app:toolbarId="@+id/toolbar">
@@ -43,7 +43,7 @@
                     android:layout_width="0dp"
                     android:layout_height="20dp"
                     android:background="@drawable/shape_bottom_sheet"
-                    android:backgroundTint="@color/layerZero"
+                    android:backgroundTint="?android:attr/colorBackground"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -112,7 +112,7 @@
                     android:layout_marginTop="11dp"
                     android:layout_marginEnd="16dp"
                     android:drawablePadding="10dp"
-                    android:drawableTint="@color/secondary_text_color"
+                    app:drawableTint="@color/text_color_secondary"
                     android:textSize="15sp"
                     app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -127,7 +127,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
                     android:drawablePadding="10dp"
-                    android:drawableTint="@color/secondary_text_color"
+                    app:drawableTint="@color/text_color_secondary"
                     android:textSize="15sp"
                     app:drawableStartCompat="@drawable/ic_fluent_info_24_regular"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -163,7 +163,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/layerZero"
+        android:background="?android:attr/colorBackground"
         android:orientation="vertical">
 
         <com.google.android.material.tabs.TabLayout
@@ -171,7 +171,7 @@
             style="@style/TabLayoutSchedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/layerZero"
+            android:background="?android:attr/colorBackground"
             android:visibility="gone">
 
             <com.google.android.material.tabs.TabItem

@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@color/lessonInfoBackground"
+        android:background="?attr/colorSurface"
         android:overScrollMode="never"
         android:scrollbars="none">
 
@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="300dp"
                 android:background="@drawable/shape_round_lower"
-                android:backgroundTint="@color/layerTwo"
+                android:backgroundTint="@color/color_min_emphasis"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +52,7 @@
                 android:fontFamily="@font/ubuntu"
                 android:hyphenationFrequency="none"
                 android:lineSpacingMultiplier="@dimen/text_line_spacing"
-                android:textColor="@color/textColorPrimary"
+                android:textColor="@color/text_color_primary"
                 android:textIsSelectable="true"
                 android:textSize="21sp"
                 app:layout_constraintBottom_toTopOf="@+id/text_lesson_dates"
@@ -70,7 +70,7 @@
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/ubuntu_bold"
                 android:textAlignment="textEnd"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textIsSelectable="true"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="@+id/view4"
@@ -103,8 +103,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/ubuntu_bold"
-                        android:text="09:00 - 10:30"
-                        android:textColor="@color/lessonInfoText"
+                        tools:text="09:00 - 10:30"
+                        android:textColor="@color/text_color_primary"
                         android:textIsSelectable="true"
                         android:textSize="15sp" />
 
@@ -113,8 +113,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/ubuntu_medium"
-                        android:text="Время"
-                        android:textColor="@color/lessonInfoText"
+                        android:text="@string/time"
+                        android:textColor="@color/text_color_secondary"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -138,8 +138,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/ubuntu_bold"
-                        android:text="7 декабря 2021"
-                        android:textColor="@color/lessonInfoText"
+                        tools:text="7 декабря 2021"
+                        android:textColor="@color/text_color_primary"
                         android:textIsSelectable="true"
                         android:textSize="15sp" />
 
@@ -148,8 +148,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/ubuntu_medium"
-                        android:text="Дата"
-                        android:textColor="@color/lessonInfoText"
+                        android:text="@string/date"
+                        android:textColor="@color/text_color_secondary"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -195,7 +195,7 @@
                 android:fontFamily="@font/ubuntu_medium"
                 android:gravity="center_vertical"
                 android:text="@string/schedule_lesson_info_auditoriums"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textIsSelectable="true"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -228,7 +228,7 @@
                 android:fontFamily="@font/ubuntu_medium"
                 android:gravity="center_vertical"
                 android:text="@string/schedule_lesson_info_teachers"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textIsSelectable="true"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -261,7 +261,7 @@
                 android:fontFamily="@font/ubuntu_medium"
                 android:gravity="center_vertical"
                 android:text="@string/schedule_lesson_info_groups"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -290,7 +290,7 @@
                 android:drawablePadding="@dimen/lesson_info_drawable_padding"
                 android:fontFamily="@font/ubuntu_medium"
                 android:text="Дедлайны (Скоро)"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -310,7 +310,7 @@
                 android:focusable="true"
                 android:fontFamily="sans-serif"
                 android:text="Всего 4 дедлайна:\n• 2 выполнено\n• до конца 1 менее недели\n• до конца 1 менее 3 дней"
-                android:textColor="@color/lessonInfoText"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="17sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -327,6 +327,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back"
+        app:navigationIcon="@drawable/ic_back_circle"
         app:elevation="0dp" />
 </FrameLayout>

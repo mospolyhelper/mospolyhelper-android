@@ -18,6 +18,8 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
     private val viewModel by sharedViewModel<ScheduleViewModel>()
     private val viewBinding by viewBinding(BottomSheetScheduleFiltersBinding::bind)
 
+    override fun getTheme(): Int  = R.style.CustomBottomSheetDialogTheme
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
