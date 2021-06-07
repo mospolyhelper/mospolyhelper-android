@@ -116,7 +116,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     ))
             } else {
                 this.time.text = item.dateTime.format(
-                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                    DateTimeFormatter.ofPattern("dd.MM.yyyy").withLocale(
                         Locale("ru")
                     ))
             }
@@ -180,7 +180,7 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     ))
             } else {
                 this.time.text = item.dateTime.format(
-                    DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(
+                    DateTimeFormatter.ofPattern("dd.MM.yyyy").withLocale(
                         Locale("ru")
                     ))
             }

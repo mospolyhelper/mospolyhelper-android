@@ -80,7 +80,7 @@ class DialogAdapter: RecyclerView.Adapter<DialogAdapter.DialogViewHolder>() {
                 } else if (item.dateTime.year == time.year) {
                     dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("d MMMM").withLocale(Locale("ru")))
                 } else {
-                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd.mm.yyyy").withLocale(Locale("ru")))
+                    dateMessage.text = item.dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy").withLocale(Locale("ru")))
                 }
 
                 if (item.authorName.isNotEmpty()) {
