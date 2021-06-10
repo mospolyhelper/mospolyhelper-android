@@ -22,7 +22,7 @@ android {
             }
         }
 
-//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
@@ -44,6 +44,11 @@ android {
         dataBinding = true
         viewBinding = true
     }
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    }
+
 }
 
 dependencies {
@@ -85,10 +90,14 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
 
-    // Unit tests
+    // Tests
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test:core:1.3.0")
-    testImplementation("org.robolectric:robolectric:4.5.1")
+    testImplementation("org.mockito:mockito-core:1.10.19")
+    testImplementation("com.google.truth:truth:1.1.3")
+
+    androidTestImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("androidx.room:room-testing:2.3.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 
@@ -143,6 +152,7 @@ dependencies {
         // Excludes the support library because it"s already included by Glide.
         isTransitive = false
     }
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

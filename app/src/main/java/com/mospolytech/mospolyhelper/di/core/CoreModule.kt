@@ -2,6 +2,7 @@ package com.mospolytech.mospolyhelper.di.core
 
 import androidx.room.Room
 import com.mospolytech.mospolyhelper.data.core.local.AppDatabase
+import com.mospolytech.mospolyhelper.data.core.local.AssetsDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.core.migrations.MIGRATION_1_2
 import com.mospolytech.mospolyhelper.data.core.repository.SharedPreferencesRepository
@@ -28,6 +29,7 @@ val coreModule = module {
     }
 
     single { SharedPreferencesDataSource(get()) }
+    single { AssetsDataSource(get()) }
 
     single<PreferencesRepository> { SharedPreferencesRepository(get()) }
 

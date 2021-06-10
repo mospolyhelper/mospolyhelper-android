@@ -16,7 +16,6 @@ val menuModule = module {
     single { AuthJwtHerokuClient(get(named("accountHerokuClient"))) }
     single { AuthJwtRemoteDataSource(get()) }
     single { AuthJwtLocalDataSource(get()) }
-    single { AuthRemoteDataSource(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
     single { AuthUseCase(get()) }
     viewModel { MenuViewModel(get()) }
