@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.data.schedule.converter
+package com.mospolytech.mospolyhelper.data.utils
 
 import android.text.SpannableString
 import android.text.style.URLSpan

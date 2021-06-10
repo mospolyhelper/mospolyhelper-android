@@ -1,16 +1,23 @@
 package com.mospolytech.mospolyhelper.di
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.AssetManager
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.data.core.local.AssetsDataSource
+import com.mospolytech.mospolyhelper.di.account.*
+import com.mospolytech.mospolyhelper.di.core.coreModule
+import com.mospolytech.mospolyhelper.di.deadline.deadlineModule
+import com.mospolytech.mospolyhelper.di.main.mainModule
+import com.mospolytech.mospolyhelper.di.relevant.relevantModule
+import com.mospolytech.mospolyhelper.di.schedule.scheduleModule
+import com.mospolytech.mospolyhelper.di.utilities.addresses.addressesModule
 import org.koin.core.KoinApplication
 import org.koin.core.logger.Level
 import org.koin.dsl.module
 
 val appModule = module {
     single<SharedPreferences> { PreferenceManager.getDefaultSharedPreferences(get()) }
-    single { AssetsDataSource(get()) }
 }
 
 fun KoinApplication.androidAssetManager(assetManager: AssetManager): KoinApplication {
@@ -22,5 +29,36 @@ fun KoinApplication.androidAssetManager(assetManager: AssetManager): KoinApplica
     }))
     return this
 }
+
+val diModules = listOf(
+    appModule,
+    coreModule,
+    mainModule,
+
+    // Account
+    menuModule,
+    authModule,
+    infoModule,
+    marksModule,
+    studentsModule,
+    teachersModule,
+    classmatesModule,
+    messagingModule,
+    applicationsModule,
+    paymentsModule,
+    deadlinesModule,
+    statementsModule,
+    dialogsModule,
+
+    // Utilities
+    addressesModule,
+    deadlineModule,
+
+    // Schedule
+    scheduleModule,
+
+    // Relevant
+    relevantModule
+)
 
 
