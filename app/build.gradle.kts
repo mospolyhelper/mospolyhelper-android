@@ -53,7 +53,7 @@ android {
 
 dependencies {
     val navVersion = "2.3.5"
-    val koinVersion = "3.0.2"
+    val koinVersion = "3.1.0"
     val ktorVersion = "1.6.0"
     val roomVersion = "2.3.0"
     val logbackVersion = "1.2.3"
@@ -73,11 +73,11 @@ dependencies {
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.recyclerview:recyclerview:1.2.0")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.127@aar")
+    implementation ("com.microsoft.design:fluent-system-icons:1.1.129@aar")
 
 
     // Coroutines
@@ -93,7 +93,7 @@ dependencies {
     // Tests
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test:core:1.3.0")
-    testImplementation("org.mockito:mockito-core:1.10.19")
+    testImplementation("org.mockito:mockito-core:3.11.1")
     testImplementation("com.google.truth:truth:1.1.3")
 
     androidTestImplementation("com.google.truth:truth:1.1.3")

@@ -5,11 +5,8 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
-import android.widget.*
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.content.ContextCompat
@@ -22,14 +19,13 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
-import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
+import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchFragment
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.SchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.features.utils.getAttributeRes
@@ -63,13 +59,9 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun setAppBar() {
-        viewBinding.chipgroupIds.addView(createAddButton())
-
         viewBinding.textviewUser.setOnClickListener {
-            if (viewBinding.scrollIds.visibility == View.VISIBLE) {
-                viewBinding.scrollIds.gone()
-            } else {
-                viewBinding.scrollIds.show()
+            findNavController().safe {
+                navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleUsersFragment())
             }
         }
 
@@ -77,7 +69,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             openMenu(context)
         }
     }
-
 
     @SuppressLint("RestrictedApi")
     private fun openMenu(context: Context?) {
@@ -162,68 +153,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
     }
 
-    private fun createAddButton(): ImageButton {
-        val addBtn = ImageButton(context)
-        addBtn.setImageDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.ic_round_add_24))
-        addBtn.setOnClickListener {
-            findNavController().safe { navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleIdsFragment()) }
-        }
-        addBtn.setBackgroundResource(
-            getAttributeRes(android.R.attr.actionBarItemBackground) ?:
-            getAttributeRes(android.R.attr.colorBackground)!!
-        )
-        val dp24 = 24.dp(requireContext()).toInt()
-        addBtn.minimumHeight = dp24
-        addBtn.minimumWidth = dp24
-        return addBtn
-    }
-
-    private fun createAddUserText(): TextView {
-        val textView = layoutInflater.inflate(
-            R.layout.textview_schedule_user,
-            viewBinding.chipgroupIds,
-            false
-        ) as TextView
-        textView.text = getString(R.string.schedule_add_user)
-        return textView
-    }
-
-    private fun createChip(user: UserSchedule): Chip {
-        val chip = layoutInflater.inflate(
-            R.layout.chip_schedule_user,
-            viewBinding.chipgroupIds,
-            false
-        ) as Chip
-        chip.text = if (user is TeacherSchedule) Teacher(user.title).getShortName() else user.title
-        chip.chipIconTint = ColorStateList.valueOf(requireContext().getColor(R.color.text_color_primary))
-        chip.setChipIconResource(
-            if (user is StudentSchedule)
-                R.drawable.ic_fluent_people_20_regular
-            else
-                R.drawable.ic_fluent_hat_graduation_20_regular
-        )
-        chip.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                lifecycleScope.launchWhenResumed {
-                    viewModel.setUser(user)
-                }
-            }
-        }
-        chip.setOnCreateContextMenuListener { menu, _, _ ->
-            menu.add("Удалить").setOnMenuItemClickListener {
-                if (it.title == "Удалить") {
-                    viewBinding.chipgroupIds.removeView(chip)
-                    lifecycleScope.launchWhenResumed {
-                        viewModel.removeUser(user)
-                    }
-                    return@setOnMenuItemClickListener true
-                }
-                false
-            }
-        }
-        return chip
-    }
-
     private fun setUserTitle(user: UserSchedule?) {
         viewBinding.textviewUser.text = when (user) {
             null -> getString(R.string.schedule_choose_user)
@@ -258,39 +187,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             weekAdapter.updateSelectedDay(date)
             viewBinding.textviewDateAndWeek.text =
                 getString(R.string.schedule_date, date.format(dateFormatter), newPos + 1)
-        }
-    }
-
-    private fun setSavedUsers(users: List<UserSchedule>) {
-        var checkedChip: Chip? = null
-        // TODO: Inefficient
-        viewBinding.chipgroupIds.removeAllViews()
-        for (user in users) {
-            val chip = createChip(user)
-
-            var viewId: Int? = null
-            if (users.size == 1 || (viewModel.user.value == user)) {
-                viewId = View.generateViewId()
-                chip.id = viewId
-                checkedChip = chip
-            }
-            viewBinding.chipgroupIds.addView(chip)
-            if (viewId != null) {
-                viewBinding.chipgroupIds.check(viewId)
-            }
-        }
-        viewBinding.chipgroupIds.addView(createAddButton())
-        if (users.isEmpty()) {
-            viewBinding.chipgroupIds.addView(createAddUserText())
-        }
-        viewBinding.chipgroupIds.post {
-            if (checkedChip != null) {
-                (viewBinding.chipgroupIds.parent as HorizontalScrollView)
-                    .smoothScrollTo(
-                        checkedChip.left - checkedChip.paddingLeft,
-                        checkedChip.top
-                    )
-            }
         }
     }
 
@@ -352,11 +248,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
         lifecycleScope.launchWhenResumed {
-            viewModel.savedUsers.collect {
-                setSavedUsers(it)
-            }
-        }
-        lifecycleScope.launchWhenResumed {
             viewModel.date.collect {
                 setDate(it)
             }
@@ -390,6 +281,12 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                 }
             }
         }
+
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<ScheduleFilters>(AdvancedSearchFragment.ADVANCED_SEARCH)
+            ?.observe(viewLifecycleOwner) {
+                viewModel.setAdvancedSearch(it)
+            }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -413,10 +310,8 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                 }
             }
             R.id.menu_schedule_user_choice -> {
-                if (viewBinding.scrollIds.visibility == View.VISIBLE) {
-                    viewBinding.scrollIds.visibility = View.GONE
-                } else {
-                    viewBinding.scrollIds.visibility = View.VISIBLE
+                findNavController().safe {
+                    navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleUsersFragment())
                 }
             }
         }

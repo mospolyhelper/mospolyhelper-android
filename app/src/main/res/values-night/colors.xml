@@ -44,7 +44,6 @@
   <!--  Schedule  -->
   <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
 
-  <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">@color/layerOneActivated</color>
 
 

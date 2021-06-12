@@ -49,7 +49,8 @@ class ScheduleUseCase(
         scheduleUsersRepository.getScheduleUsers()
             .catch { Log.e(TAG, "Flow exception", it) }
 
-    fun getSavedUsers() = scheduleUsersRepository.getSavedUsers()
+    fun getSavedUsers() =
+        scheduleUsersRepository.getSavedUsers()
         .onEach {
             if (it.isEmpty() && getCurrentUser().first() != null) {
                 setCurrentUser(null)
@@ -90,10 +91,14 @@ class ScheduleUseCase(
                 )
             )
         }
-    }.onStart { emit(preferences.get(
-        PreferenceKeys.ScheduleShowEmptyLessons,
-        PreferenceDefaults.ScheduleShowEmptyLessons
-    )) }
+    }.onStart {
+        emit(
+            preferences.get(
+                PreferenceKeys.ScheduleShowEmptyLessons,
+                PreferenceDefaults.ScheduleShowEmptyLessons
+            )
+        )
+    }
 
     fun getLessonDateFilter(): LessonDateFilter {
         return LessonDateFilter(
@@ -113,10 +118,6 @@ class ScheduleUseCase(
             PreferenceKeys.ShowEndedLessons,
             lessonDateFilter.showEndedLessons
         )
-//        preferences.set(
-//            PreferenceKeys.ShowCurrentLessons,
-//            lessonDateFilter.showCurrentLessons
-//        )
         preferences.set(
             PreferenceKeys.ShowNotStartedLessons,
             lessonDateFilter.showNotStartedLessons

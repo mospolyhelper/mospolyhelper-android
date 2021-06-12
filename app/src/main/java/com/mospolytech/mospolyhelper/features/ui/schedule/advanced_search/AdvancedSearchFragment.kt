@@ -32,6 +32,10 @@ import kotlin.coroutines.CoroutineContext
 
 class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
 
+    companion object {
+        const val ADVANCED_SEARCH = "ADVANCED_SEARCH"
+    }
+
     private val job = SupervisorJob()
 
     override val coroutineContext: CoroutineContext
@@ -142,10 +146,10 @@ class AdvancedSearchFragment : BottomSheetDialogFragment(), CoroutineScope {
         }
 
         viewBinding.buttonApply.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.sendSchedule()
+            findNavController().safe {
+                previousBackStackEntry?.savedStateHandle?.set(ADVANCED_SEARCH, viewModel.getScheduleFilters())
+                navigateUp()
             }
-            findNavController().safe { navigateUp() }
         }
 
         setLessonTitles()

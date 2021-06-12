@@ -73,24 +73,17 @@ class AdvancedSearchViewModel(
         }
     }
 
-    suspend fun sendSchedule() {
-        withContext(Dispatchers.Main) {
-            send(
-                ScheduleViewModel::class.java.simpleName,
-                ScheduleViewModel.MessageSetAdvancedSearchSchedule,
-                ScheduleFilters(
-                    titles = if (checkedLessonTitles.isEmpty()) lessonTitles.value.toSet()
-                    else checkedLessonTitles.map { lessonTitles.value[it] }.toSet(),
-                    types = if (checkedLessonTypes.isEmpty()) lessonTypes.value.toSet()
-                    else checkedLessonTypes.map { lessonTypes.value[it] }.toSet(),
-                    teachers = if (checkedTeachers.isEmpty()) lessonTeachers.value.toSet()
-                    else checkedTeachers.map { lessonTeachers.value[it] }.toSet(),
-                    groups = if (checkedGroups.isEmpty()) lessonGroups.value.toSet()
-                    else checkedGroups.map { lessonGroups.value[it] }.toSet(),
-                    auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.value.toSet()
-                    else checkedAuditoriums.map { lessonAuditoriums.value[it] }.toSet()
-                )
-            )
-        }
-    }
+    fun getScheduleFilters() =
+        ScheduleFilters(
+            titles = if (checkedLessonTitles.isEmpty()) lessonTitles.value.toSet()
+            else checkedLessonTitles.map { lessonTitles.value[it] }.toSet(),
+            types = if (checkedLessonTypes.isEmpty()) lessonTypes.value.toSet()
+            else checkedLessonTypes.map { lessonTypes.value[it] }.toSet(),
+            teachers = if (checkedTeachers.isEmpty()) lessonTeachers.value.toSet()
+            else checkedTeachers.map { lessonTeachers.value[it] }.toSet(),
+            groups = if (checkedGroups.isEmpty()) lessonGroups.value.toSet()
+            else checkedGroups.map { lessonGroups.value[it] }.toSet(),
+            auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.value.toSet()
+            else checkedAuditoriums.map { lessonAuditoriums.value[it] }.toSet()
+        )
 }

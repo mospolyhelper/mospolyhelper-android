@@ -32,7 +32,7 @@ class DiTest {
         }
 
         checkModules {
-            modules(testModule + (diModules) - appModule)
+            modules(testModule + diModules - appModule)
         }
     }
 }

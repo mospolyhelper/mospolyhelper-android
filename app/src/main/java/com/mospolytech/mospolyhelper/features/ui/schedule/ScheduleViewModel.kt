@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
@@ -28,13 +29,7 @@ import java.time.LocalTime
 class ScheduleViewModel(
     mediator: Mediator<String, ViewModelMessage>,
     private val useCase: ScheduleUseCase
-) : ViewModelBase(mediator, ScheduleViewModel::class.java.simpleName), KoinComponent {
-
-    companion object {
-        const val MessageChangeDate = "ChangeDate"
-        const val MessageSetAdvancedSearchSchedule = "SetAdvancedSearchSchedule"
-    }
-
+) : ViewModel(), KoinComponent {
 
     val date = MutableStateFlow<LocalDate>(LocalDate.now())
     val currentLessonTimes: MutableStateFlow<Pair<List<LessonTime>, LocalTime>> =
@@ -119,7 +114,6 @@ class ScheduleViewModel(
 
 
     init {
-        subscribe(::handleMessage)
         launchTimer()
 
         viewModelScope.launch {
@@ -139,6 +133,14 @@ class ScheduleViewModel(
         }
 
         viewModelScope.launch {
+            savedUsers.collect {
+                if (it.size == 1) {
+                    useCase.setCurrentUser(it.first())
+                }
+            }
+        }
+
+        viewModelScope.launch {
             lessonDateFilter.collect {
                 useCase.setLessonDateFilter(it)
             }
@@ -152,25 +154,19 @@ class ScheduleViewModel(
     }
 
 
-    // TODO: Remove
-    private fun handleMessage(message: ViewModelMessage) {
-        when (message.key) {
-            MessageChangeDate -> {
-                date.value = message.content[0] as LocalDate
-            }
-            MessageSetAdvancedSearchSchedule -> {
-                viewModelScope.launch {
-                    _advancedSearchUser.value = AdvancedSearchSchedule(
-                        message.content[0] as ScheduleFilters
-                    )
-                }
-            }
+    fun setAdvancedSearch(filters: ScheduleFilters) {
+        viewModelScope.launch {
+            _advancedSearchUser.value = AdvancedSearchSchedule(filters)
         }
     }
 
-    suspend fun setUser(user: UserSchedule?) {
-        _advancedSearchUser.value = null
-        useCase.setCurrentUser(user)
+    fun setUser(user: UserSchedule?) {
+        if (this.user.value != user) {
+            viewModelScope.launch {
+                _advancedSearchUser.value = null
+                useCase.setCurrentUser(user)
+            }
+        }
     }
 
     private suspend fun updateSchedule() {
@@ -178,8 +174,10 @@ class ScheduleViewModel(
         useCase.updateSchedule(user.value)
     }
 
-    suspend fun removeUser(user: UserSchedule) {
-        useCase.removeSavedScheduleUser(user)
+    fun removeUser(user: UserSchedule) {
+        viewModelScope.launch {
+            useCase.removeSavedScheduleUser(user)
+        }
     }
 
     private fun launchTimer() {

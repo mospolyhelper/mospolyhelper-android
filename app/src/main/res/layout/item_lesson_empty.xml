@@ -13,7 +13,7 @@
         android:id="@+id/text_info"
         style="@style/ScheduleLessonSubtitle"
         android:textColor="@color/text_color_quaternary"
-        android:paddingStart="10dp"
+        android:paddingStart="@dimen/lesson_drawable_padding"
         android:paddingEnd="0dp"
         android:layout_marginTop="4.5dp"
         android:layout_marginBottom="8dp"

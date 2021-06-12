@@ -2,7 +2,8 @@ package com.mospolytech.mospolyhelper.features.utils
 
 class NotificationChannelIds {
     companion object {
-        const val SCHEDULE_CURRENT_LESSON = "scl"
+        const val SCHEDULE_CURRENT_LESSON = "SCHEDULE_CURRENT_LESSON"
+        const val UPDATE = "UPDATE"
     }
 }
 

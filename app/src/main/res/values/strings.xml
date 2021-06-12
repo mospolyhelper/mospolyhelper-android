@@ -26,8 +26,17 @@
 
 
     <!-- Schedule -->
+    <string name="menu_schedule_user_choosing">Выбор расписания</string>
+    <string name="menu_schedule_advanced_search">Продвинутый поиск</string>
+    <string name="menu_schedule_filters">Фильтры</string>
+    <string name="menu_schedule_calendar">Календарь</string>
+
+
+    <string name="add_schedule">Добавить расписание</string>
+
+
     <string name="schedule_user_group">Группа %1$s</string>
-    <string name="schedule_choose_user">Выберите пользователя</string>
+    <string name="schedule_choose_user">Выберите расписание</string>
     <string name="schedule_add_user">Добавьте группу или преподавателя</string>
     <string name="schedule_date">%1$s, %2$d-я неделя</string>
     <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
@@ -175,10 +184,6 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="nothing_found">Ничего не найдено</string>
     <string name="Dialog">Диалог</string>
     <string name="delete_message">Удалить сообщение</string>
-    <string name="menu_schedule_advanced_search">Продвинутый поиск</string>
-    <string name="menu_schedule_filters">Фильтры</string>
-    <string name="menu_schedule_calendar">Календарь</string>
-    <string name="menu_schedule_user_choosing">Выбор пользователя</string>
     <string name="settings">Настройки</string>
     <string name="addresses">Адреса</string>
     <string name="pass">Пропуск\n(пока недоступно)</string>

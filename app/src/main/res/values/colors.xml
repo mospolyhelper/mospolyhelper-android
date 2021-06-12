@@ -59,7 +59,7 @@
 
 
   <color name="layerOne">@color/white1</color>
-  <color name="layerOneActivated">@color/white2</color>
+  <color name="layerOneActivated">@color/white5</color>
   <color name="layerTwo">@color/white0</color>
   <color name="layerTwoActivated">@color/white4</color>
   <color name="iconColor">#555555</color>
@@ -69,9 +69,8 @@
 
 
   <!--  Schedule  -->
-  <color name="scheduleLessonBackgroundRipple">@color/layerOneActivated</color>
+  <color name="scheduleLessonBackgroundRipple">@color/color_min_emphasis</color>
 
-  <color name="scheduleChip">@color/layerOne</color>
   <color name="scheduleChipChecked">#aaaaaa</color>
 
   <color name="lessonTimeText">@color/text_color_primary</color>

@@ -22,11 +22,11 @@
             app:enterAnim="@android:anim/fade_in"
             app:popEnterAnim="@android:anim/fade_in" />
         <action
-            android:id="@+id/action_scheduleFragment_to_scheduleIdsFragment"
-            app:destination="@id/scheduleIdsFragment" />
-        <action
             android:id="@+id/action_scheduleFragment_to_scheduleFiltersFragment"
             app:destination="@id/scheduleFiltersFragment" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_scheduleUsersFragment"
+            app:destination="@id/scheduleUsersFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressesFragment"
@@ -322,5 +322,13 @@
             android:id="@+id/action_dialogsFragment_to_messagingFragment"
             app:destination="@id/messagingFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/scheduleUsersFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.schedule.users.ScheduleUsersFragment"
+        android:label="ScheduleUsersFragment" >
+        <action
+            android:id="@+id/action_scheduleUsersFragment_to_scheduleIdsFragment"
+            app:destination="@id/scheduleIdsFragment" />
+    </dialog>
 
 </navigation>
