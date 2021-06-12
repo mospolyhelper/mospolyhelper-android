@@ -95,6 +95,8 @@ dependencies {
     testImplementation("androidx.test:core:1.3.0")
     testImplementation("org.mockito:mockito-core:3.11.1")
     testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
+    testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
 
     androidTestImplementation("com.google.truth:truth:1.1.3")
     androidTestImplementation("androidx.room:room-testing:2.3.0")
@@ -109,11 +111,8 @@ dependencies {
     // DI
     // Koin for Kotlin Multiplatform
     implementation("io.insert-koin:koin-core:$koinVersion")
-    // Koin Test for Kotlin Multiplatform
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
     // Koin main features for Android (Scope,ViewModel ...)
     implementation("io.insert-koin:koin-android:$koinVersion")
-    // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     // SLF4J Logger
     //implementation("io.insert-koin:koin-logger-slf4j:$koin_version")

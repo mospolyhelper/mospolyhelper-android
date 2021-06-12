@@ -50,9 +50,11 @@ val scheduleModule = module {
     single { TeacherInfoRemoteDataSource(get()) }
     single { AuditoriumInfoRemoteDataSource(get()) }
 
+    single { get<AppDatabase>().getScheduleDao() }
+
     // Repositories
     single<ScheduleRepository> {
-        ScheduleRepositoryImpl(get(), get(), get<AppDatabase>().getScheduleDao())
+        ScheduleRepositoryImpl(get(), get(), get())
     }
     single<LessonTagsRepository> {
         LessonTagsRepositoryImpl(get())
