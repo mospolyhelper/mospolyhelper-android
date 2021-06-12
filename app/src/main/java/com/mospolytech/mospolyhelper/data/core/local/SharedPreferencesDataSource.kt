@@ -13,14 +13,14 @@ class SharedPreferencesDataSource(
     private val prefs: SharedPreferences
 ) : SharedPreferences.OnSharedPreferenceChangeListener, CoroutineScope  {
     override val coroutineContext: CoroutineContext = Dispatchers.IO + Job()
-    private val dataLastUpdatedFlow = MutableSharedFlow<String>(replay = 1)
-    val dataLastUpdatedObservable: Flow<String> = dataLastUpdatedFlow
+    private val dataLastUpdatedFlow = MutableSharedFlow<String?>(replay = 1)
+    val dataLastUpdatedObservable: Flow<String?> = dataLastUpdatedFlow
 
     init {
         prefs.registerOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         launch {
             dataLastUpdatedFlow.emit(key)
         }

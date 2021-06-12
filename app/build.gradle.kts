@@ -14,8 +14,8 @@ android {
         applicationId = "com.mospolytech.mospolyhelper"
         minSdkVersion(23)
         targetSdkVersion(30)
-        versionCode = 5
-        versionName = "0.4.0"
+        versionCode = 6
+        versionName = "0.4.1"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
