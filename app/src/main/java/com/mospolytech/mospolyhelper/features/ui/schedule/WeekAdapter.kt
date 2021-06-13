@@ -40,6 +40,7 @@ class WeekAdapter : RecyclerView.Adapter<WeekAdapter.ViewHolder>() {
     }
 
     fun updateSelectedDay(day: LocalDate) {
+        selectedDay = day
         try {
             for (viewHolder in activeViewHolders) {
                 viewHolder.updateSelectedDay(day)

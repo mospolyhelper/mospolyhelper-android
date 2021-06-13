@@ -4,6 +4,7 @@ import android.util.Log
 import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleException
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
@@ -27,9 +28,17 @@ class ScheduleUseCase(
 ) {
     val scheduleUpdates = scheduleRepository.dataLastUpdatedObservable
 
-    fun getSchedule(user: UserSchedule?) =
-        scheduleRepository.getSchedule(user)
-            .onStart { emit(Result0.Loading) }
+    fun getSchedule(user: UserSchedule?) = flow {
+        if (user != null) {
+            emitAll(
+                scheduleRepository.getSchedule(user)
+                    .onStart { emit(Result0.Loading) }
+            )
+        } else {
+            emit(Result0.Failure(ScheduleException.UserIsNull))
+        }
+    }
+
 
     suspend fun updateSchedule(user: UserSchedule?) =
         scheduleRepository.updateSchedule(user)

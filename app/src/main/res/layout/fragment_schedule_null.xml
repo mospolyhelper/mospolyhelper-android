@@ -6,9 +6,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/ubuntu_medium"
+        android:fontFamily="@font/ubuntu"
         android:layout_gravity="center"
         android:text="@string/null_schedule"
         android:textAlignment="center"
-        android:textSize="22sp" />
+        android:textSize="21sp" />
 </androidx.core.widget.NestedScrollView>

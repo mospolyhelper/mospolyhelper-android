@@ -14,19 +14,14 @@ class SchedulePack(
     override val size: Int
     val dateFrom: LocalDate
     init {
-        if (scheduleUiData.schedule == null) {
-            size = 0
-            dateFrom = LocalDate.now()
+        val tempSize = scheduleUiData.schedule.dateFrom
+            .until(scheduleUiData.schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
+        if (tempSize !in 1..MAX_COUNT) {
+            size = MAX_COUNT
+            dateFrom = LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
         } else {
-            val tempSize = scheduleUiData.schedule.dateFrom
-                .until(scheduleUiData.schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-            if (tempSize !in 1..MAX_COUNT) {
-                size = MAX_COUNT
-                dateFrom = LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
-            } else {
-                size = tempSize
-                dateFrom = scheduleUiData.schedule.dateFrom
-            }
+            size = tempSize
+            dateFrom = scheduleUiData.schedule.dateFrom
         }
     }
 

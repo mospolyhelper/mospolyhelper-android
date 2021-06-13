@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 
 interface ScheduleRepository {
-    fun getSchedule(user: UserSchedule?): Flow<Result0<Schedule>>
+    fun getSchedule(user: UserSchedule): Flow<Result0<Schedule>>
     suspend fun getScheduleVersion(user: UserSchedule): ScheduleVersionDb?
     suspend fun getSchedulePackList(onProgressChanged: (Float) -> Unit): SchedulePackList
     suspend fun getSchedulePackListLocal(): Result0<SchedulePackList>

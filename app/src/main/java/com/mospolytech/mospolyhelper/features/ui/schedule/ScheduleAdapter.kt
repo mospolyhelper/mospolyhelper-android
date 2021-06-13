@@ -11,29 +11,32 @@ import com.mospolytech.mospolyhelper.databinding.PageScheduleBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.SchedulePack
 import com.mospolytech.mospolyhelper.features.utils.RecyclerViewInViewPagerHelper
 import com.mospolytech.mospolyhelper.utils.WeakMutableSet
 import java.time.LocalDate
 
 
-class ScheduleAdapter(
-    var schedulePack: SchedulePack,
-    private var currentTimes: List<LessonTime>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ScheduleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private const val VIEW_TYPE_NULL = 0
-        private const val VIEW_TYPE_NORMAL = 2
-        private const val VIEW_TYPE_EMPTY = 3
+        private const val VIEW_TYPE_NORMAL = 0
+        private const val VIEW_TYPE_EMPTY = 1
     }
     private val commonPool = RecyclerView.RecycledViewPool()
     private val activeViewHolders: MutableSet<RecyclerView.ViewHolder> = WeakMutableSet()
 
-    var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
+    private var currentTimes: List<LessonTime> = emptyList()
+    private var dailySchedules: List<DailySchedulePack> = emptyList()
+
+    var onLessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }
 
 
-    fun submitData(schedulePack: SchedulePack) {
-        this.schedulePack = schedulePack
+    fun submitData(
+            dailySchedules: List<DailySchedulePack>,
+            currentTimes: List<LessonTime>
+    ) {
+        this.dailySchedules = dailySchedules
+        this.currentTimes = currentTimes
+        notifyDataSetChanged()
     }
 
     fun setCurrentLessonTimes(currentTimes: List<LessonTime>) {
@@ -45,22 +48,17 @@ class ScheduleAdapter(
         }
     }
 
-    override fun getItemCount() = if (schedulePack.isEmpty()) 1 else schedulePack.size
+    override fun getItemCount() = dailySchedules.size
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            schedulePack.isEmpty() -> VIEW_TYPE_NULL
-            schedulePack[position].lessons.isEmpty() -> VIEW_TYPE_EMPTY
+            dailySchedules[position].lessons.isEmpty() -> VIEW_TYPE_EMPTY
             else -> VIEW_TYPE_NORMAL
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_NULL -> ViewHolderSimple(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.page_schedule_null, parent, false)
-            )
             VIEW_TYPE_EMPTY -> ViewHolderEmpty(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.page_schedule_empty, parent, false)
@@ -69,7 +67,7 @@ class ScheduleAdapter(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.page_schedule, parent, false),
                 commonPool,
-                lessonClick
+                onLessonClick
             )
             else -> throw IllegalArgumentException()
         }
@@ -79,7 +77,7 @@ class ScheduleAdapter(
         activeViewHolders.add(holder)
         when (holder) {
             is ViewHolderDailySchedule -> {
-                holder.bind(schedulePack[position], currentTimes)
+                holder.bind(dailySchedules[position], currentTimes)
             }
         }
     }
@@ -133,8 +131,6 @@ class ScheduleAdapter(
             }
         }
     }
-
-    class ViewHolderSimple(view: View) : RecyclerView.ViewHolder(view)
 
     class ViewHolderEmpty(view: View) : RecyclerView.ViewHolder(view)
 }

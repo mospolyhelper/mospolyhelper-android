@@ -41,6 +41,8 @@
     <string name="schedule_date">%1$s, %2$d-я неделя</string>
     <string name="null_daily_schedule">В этот день нет занятий.\nМожно подольше поспать.</string>
     <string name="null_schedule">Расписание не найдено</string>
+    <string name="schedule_not_chosen">Вы ещё не выбрали расписание</string>
+    <string name="choose_schedule">Выбрать расписание</string>
 
 
     <string name="schedule_lesson_time">%1$s - %2$s</string>

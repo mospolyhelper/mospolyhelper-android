@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.data.schedule.local
 import android.content.Context
 import android.util.Log
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleException
 import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.TAG
 import kotlinx.serialization.decodeFromString
@@ -30,7 +31,7 @@ class ScheduleLocalDataSource(
             Result0.Success(Json.decodeFromString<Schedule>(json))
         } catch (e: Exception) {
             Log.e(TAG, "Schedule reading and converting exception", e)
-            Result0.Failure(e)
+            Result0.Failure(ScheduleException.ScheduleNotFound)
         }
     }
 

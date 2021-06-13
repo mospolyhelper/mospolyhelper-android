@@ -11,7 +11,7 @@ data class LessonFeaturesSettings(
     val showAuditoriums: Boolean,
 ) {
     companion object {
-        fun fromUserSchedule(user: UserSchedule?): LessonFeaturesSettings {
+        fun fromUserSchedule(user: UserSchedule): LessonFeaturesSettings {
             if (user == null)
                 return LessonFeaturesSettings(true, true, true)
             var showTeachers = true

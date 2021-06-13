@@ -86,16 +86,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewpager_schedule"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <include android:id="@+id/include_viewpager"
+                android:visibility="visible"
+                layout="@layout/fragment_schedule_viewpager"/>
 
+            <include android:id="@+id/include_null"
+                android:visibility="gone"
+                layout="@layout/fragment_schedule_null"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:background="@drawable/top_list_gradient" />
+            <include android:id="@+id/include_add_user"
+                android:visibility="gone"
+                layout="@layout/fragment_schedule_add_user"/>
 
             <ProgressBar
                 android:visibility="gone"

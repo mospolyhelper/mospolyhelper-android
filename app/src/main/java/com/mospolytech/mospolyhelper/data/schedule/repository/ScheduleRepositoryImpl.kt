@@ -9,6 +9,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleReposito
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.map
+import com.mospolytech.mospolyhelper.utils.onFailure
 import com.mospolytech.mospolyhelper.utils.onSuccess
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -26,29 +27,25 @@ class ScheduleRepositoryImpl(
     override val dataLastUpdatedObservable: Flow<ZonedDateTime> = dataLastUpdatedFlow
 
     override fun getSchedule(
-        user: UserSchedule?
+        user: UserSchedule
     ) = flow<Result0<Schedule>> {
-        if (user == null) {
-            emit(Result0.Failure(IllegalArgumentException()))
+        if (user is AdvancedSearchSchedule) {
+            emit(localDataSource.get(user.idGlobal).map { it.filter(user.filters) })
         } else {
-            if (user is AdvancedSearchSchedule) {
-                emit(localDataSource.get(user.idGlobal).map { it.filter(user.filters) })
-            } else {
-                val schedule = localDataSource.get(user.idGlobal)
-                if (schedule.isSuccess) {
-                    emit(schedule)
-                    val version = scheduleDao.getScheduleVersion(user)
-                    if (version == null ||
-                        version.downloadingDateTime
-                            .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1
-                    ) {
-                        emit(Result0.Loading)
-                        emit(refresh(user))
-                    }
-                } else {
-                    emit(refresh(user))
-                }
-            }
+           val schedule = localDataSource.get(user.idGlobal)
+            schedule.onSuccess {
+               emit(schedule)
+               val version = scheduleDao.getScheduleVersion(user)
+               if (version == null ||
+                   version.downloadingDateTime
+                       .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1
+               ) {
+                   emit(Result0.Loading)
+                   emit(refresh(user))
+               }
+           }.onFailure {
+               emit(refresh(user))
+           }
         }
     }.flowOn(ioDispatcher)
 
@@ -67,7 +64,7 @@ class ScheduleRepositoryImpl(
         val schedule = when (user) {
             is StudentSchedule -> remoteDataSource.getByGroup(user.id)
             is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
-            else -> Result0.Failure(Exception())
+            else -> Result0.Failure(ScheduleException.ScheduleNotFound)
         }.onSuccess {
             scheduleDao.setScheduleVersion(ScheduleVersionDb(user.idGlobal, ZonedDateTime.now()))
             localDataSource.set(it, user.idGlobal)

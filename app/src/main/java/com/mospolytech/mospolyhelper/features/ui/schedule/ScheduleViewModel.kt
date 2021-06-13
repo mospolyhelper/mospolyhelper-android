@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
@@ -32,8 +33,11 @@ class ScheduleViewModel(
 ) : ViewModel(), KoinComponent {
 
     val date = MutableStateFlow<LocalDate>(LocalDate.now())
-    val currentLessonTimes: MutableStateFlow<Pair<List<LessonTime>, LocalTime>> =
-        MutableStateFlow(Pair(emptyList(), LocalTime.now()))
+    private val _currentLessonTimes = MutableStateFlow(Pair(emptyList<LessonTime>(), LocalTime.now()))
+    val currentLessonTimes: StateFlow<Pair<List<LessonTime>, LocalTime>> = _currentLessonTimes
+
+    private val _filterTypes = MutableStateFlow<Set<String>>(emptySet())
+    val filterTypes: StateFlow<Set<String>> = _filterTypes
 
     // Used to re-run flows on command
     private val refreshSignal = MutableSharedFlow<Unit>()
@@ -51,26 +55,19 @@ class ScheduleViewModel(
     val savedUsers = useCase.getSavedUsers()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    private val userLoadSignal = useCase.getCurrentUser()
+
+    val user = useCase.getCurrentUser()
         .combine(_advancedSearchUser) { user, advancedSearchUser ->
             advancedSearchUser ?: user
-        }.distinctUntilChanged()
+        }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    private val scheduleLoadSignal = combine(loadDataSignal, user) { _, user -> user }
         .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-    val user = userLoadSignal.stateIn(viewModelScope, SharingStarted.Lazily, null)
-
-    private val scheduleLoadSignal = combine(loadDataSignal, userLoadSignal) { _, user -> user}
-        .shareIn(viewModelScope, SharingStarted.Eagerly)
-
-
-    // Refresh schedule when needed and when the user changes
     private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
-    private val _filterTypes = MutableStateFlow<Set<String>>(emptySet())
-    val filterTypes: StateFlow<Set<String>> = _filterTypes
-
-    val filteredSchedule = schedule.combine(filterTypes) { schedule, filterTypes ->
+    val filteredSchedule = combine(schedule, filterTypes) { schedule, filterTypes ->
         schedule.map { it.filter(types = filterTypes) }
     }.stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
@@ -82,27 +79,31 @@ class ScheduleViewModel(
 
     val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
 
-    val scheduleSettings = combine(useCase.getShowEmptyLessons(), lessonDateFilter, user) {
+    private val scheduleSettings = combine(useCase.getShowEmptyLessons(), lessonDateFilter, user.filterNotNull()) {
             showEmptyLessons, lessonDateFilter, user ->
         ScheduleSettings(
             showEmptyLessons,
             lessonDateFilter,
             LessonFeaturesSettings.fromUserSchedule(user)
         )
-    }
+    }.distinctUntilChanged()
 
 
     val scheduleUiData = combineTransform(filteredSchedule, tags, deadlines, scheduleSettings) {
             schedule, tags, deadlines, scheduleSettings ->
         if (!schedule.isLoading && !tags.isLoading && !deadlines.isLoading) {
-            emit(Result0.Success(
-                ScheduleUiData(
-                    schedule.getOrNull(),
-                    tags.getOrDefault(emptyList()),
-                    deadlines.getOrDefault(emptyMap()),
-                    scheduleSettings
-                )
-            ))
+            schedule.onSuccess {
+                emit(Result0.Success(
+                    ScheduleUiData(
+                        it,
+                        tags.getOrDefault(emptyList()),
+                        deadlines.getOrDefault(emptyMap()),
+                        scheduleSettings
+                    )
+                ))
+            }.onFailure {
+                emit(Result0.Failure(it))
+            }
         }
     }
 
@@ -111,6 +112,14 @@ class ScheduleViewModel(
 
     val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
+
+    val dates = filteredSchedule.transform {
+        it.onSuccess {
+            emit(it.dateFrom..it.dateTo)
+        }.onFailure {
+            emit(LocalDate.now()..LocalDate.now())
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDate.now()..LocalDate.now())
 
 
     init {
@@ -148,7 +157,9 @@ class ScheduleViewModel(
 
         viewModelScope.launch {
             filteredSchedule.collect {
-                setCurrentTimes()
+                it.onSuccess {
+                    setCurrentTimes()
+                }
             }
         }
     }
@@ -174,6 +185,16 @@ class ScheduleViewModel(
         useCase.updateSchedule(user.value)
     }
 
+    fun setDay(day: Int) {
+        date.value = filteredSchedule.value.getOrNull()?.dateFrom?.plusDays(day.toLong())
+                ?: LocalDate.now()
+    }
+
+    fun getDateByDay(day: Long): LocalDate {
+        return filteredSchedule.value.getOrNull()?.dateFrom?.plusDays(day)
+                ?: LocalDate.now()
+    }
+
     fun removeUser(user: UserSchedule) {
         viewModelScope.launch {
             useCase.removeSavedScheduleUser(user)
@@ -193,7 +214,7 @@ class ScheduleViewModel(
         val lessonTimes = filteredSchedule.value.getOrNull()
             ?.getLessons(moscowLocalDate())?.map { it.time } ?: emptyList()
         val time = moscowLocalTime()
-        currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(time, lessonTimes), time)
+        _currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(time, lessonTimes), time)
     }
 
     suspend fun setRefreshing() {
