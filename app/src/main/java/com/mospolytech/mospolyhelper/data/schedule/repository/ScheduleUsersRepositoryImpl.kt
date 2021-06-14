@@ -43,7 +43,9 @@ class ScheduleUsersRepositoryImpl(
     override suspend fun addSavedUser(user: UserSchedule) = withContext(ioDispatcher) {
         val users = prefDataSource.getFromJson<List<UserSchedule>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
-        setSavedUsers((users + user).sorted())
+        if (user !in users) {
+            setSavedUsers((users + user).sorted())
+        }
     }
 
     override suspend fun removeSavedUser(user: UserSchedule) = withContext(ioDispatcher) {
