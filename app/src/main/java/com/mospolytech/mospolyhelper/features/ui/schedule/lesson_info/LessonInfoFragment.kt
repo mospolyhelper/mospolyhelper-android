@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
@@ -12,6 +13,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleLessonInfoBinding
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
+import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.utils.description
 import com.mospolytech.mospolyhelper.domain.schedule.utils.fullTitle
@@ -44,7 +48,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             0xff29b6f6.toInt()    // Other
         )
     }
-    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EE, d MMM,")
     private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMMM")
     private val dateFormatter2 = DateTimeFormatter.ofPattern("d MMMM yyyy (EE)")
 
@@ -77,6 +80,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                     }
                 }
             }
+            setShareButton()
             setType()
             setTitle()
             setTime()
@@ -88,6 +92,24 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             setDeadlines()
         }
 
+    }
+
+    private fun setShareButton() {
+        viewBinding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_schedule_lesson_info_share -> {
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, getShareText(viewModel.date, viewModel.lessonTime, viewModel.lesson))
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun setType() {
@@ -105,7 +127,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 
     private fun setTime() {
         val (startTime, endTime) = viewModel.lessonTime.timeString
-        val dateStr = viewModel.date.format(dateFormatter).capitalize()
         with(viewBinding) {
             this.textLessonTime.text = "$startTime - $endTime (#${viewModel.lessonTime.order + 1})"
         }
@@ -139,6 +160,7 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
             if (iterator.hasNext()) {
                 builder.append(" ")
             } else {
+                // For bug in lower version android
                 builder.append(" ")
             }
         }
@@ -148,39 +170,6 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
     private fun setAuditoriums() {
         if (viewModel.lesson.auditoriums.isEmpty()) {
             return
-        }
-        val nightMode = (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-
-        for (auditorium in viewModel.lesson.auditoriums) {
-            val audTitle = auditorium.fullTitle
-            val color = convertColorFromString(auditorium.color, nightMode)
-
-            val text = if (color != null) {
-                SpannableString(audTitle).apply {
-                    setSpan(
-                        ForegroundColorSpan(color),
-                        0,
-                        audTitle.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
-            } else {
-                audTitle
-            }
-
-            val onClickListener = if (auditorium.url.isNotEmpty()) {
-                { it: View ->
-                    AlertDialog.Builder(context).setTitle("Открыть ссылку?")
-                        .setPositiveButton("Да") { _, _ ->
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(auditorium.url)))
-                        }.setNegativeButton("Нет") { _, _ -> }.create().show()
-
-                }
-            } else {
-                {  it: View ->
-                    Toast.makeText(context, text.toString(), Toast.LENGTH_SHORT).show()
-                }
-            }
         }
         with(viewBinding) {
             recyclerviewAuditoriums.layoutManager = LinearLayoutManager(context)
@@ -324,5 +313,41 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
 //            textView.text = deadlines?.joinToString(separator = "\n") { "${it.name} ${it.description}" } ?: "Дедлайнов нет"
 //        })
 //        viewModel.getSubjectDeadlines(subjectTitle)
+    }
+
+    private fun getShareText(date: LocalDate, lessonTime: LessonTime, lesson: Lesson): String {
+        val res = StringBuilder()
+
+        res.append(date.format(shortDateFormatter))
+
+        val (startTime, endTime) = lessonTime.timeString
+        val time = ", $startTime - $endTime\n"
+        res.append(time)
+
+        res.append(lesson.title)
+        if (lesson.teachers.isNotEmpty()) {
+            res.append("\n")
+            res.append("🎓  ")
+            res.append(lesson.teachers.joinToString { it.name })
+        }
+
+        if (lesson.groups.isNotEmpty()) {
+            res.append("\n")
+            res.append("👥  ")
+            res.append(lesson.groups.joinToString { it.title })
+        }
+
+        if (lesson.auditoriums.isNotEmpty()) {
+            res.append("\n")
+            res.append("🏛️  ")
+            res.append(lesson.auditoriums.joinToString { it.title })
+
+            val urls = lesson.auditoriums.filter { it.url.isNotEmpty() }
+            if (urls.isNotEmpty()) {
+                res.append("\n")
+                res.append(urls.joinToString(separator = "\n") { it.url })
+            }
+        }
+        return res.toString()
     }
 }

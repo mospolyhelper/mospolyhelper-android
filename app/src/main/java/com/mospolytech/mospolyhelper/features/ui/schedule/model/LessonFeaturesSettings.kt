@@ -12,8 +12,6 @@ data class LessonFeaturesSettings(
 ) {
     companion object {
         fun fromUserSchedule(user: UserSchedule): LessonFeaturesSettings {
-            if (user == null)
-                return LessonFeaturesSettings(true, true, true)
             var showTeachers = true
             var showGroups = true
             var showAuditoriums = true

@@ -33,6 +33,7 @@ fun parseTeachers(teachers: String): List<Teacher> {
                 it.replace(teacherRegex1, " - ")
                     .replace(teacherRegex2, " - ")
                     .replace("  ", " ")
+                    .trim()
             )
         }
 }
@@ -63,7 +64,7 @@ private val emojis = listOf(
 fun parseEmoji(raw: String): Pair<String, String> {
     val emoji = emojis.firstOrNull { raw.contains(it.first) }
     return if (emoji == null)
-        Pair(raw, "")
+        Pair(raw.trim(), "")
     else
-        Pair(raw.replace(emoji.first, ""), emoji.second)
+        Pair(raw.replace(emoji.first, "").trim(), emoji.second)
 }

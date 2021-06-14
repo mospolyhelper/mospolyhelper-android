@@ -1,10 +1,12 @@
 package com.mospolytech.mospolyhelper.domain.schedule.utils
 
+import android.util.Log
 import com.mospolytech.mospolyhelper.domain.schedule.model.*
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonPlace
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonWindow
+import com.mospolytech.mospolyhelper.utils.TAG
 import java.time.LocalDate
 
 object ScheduleUtils {

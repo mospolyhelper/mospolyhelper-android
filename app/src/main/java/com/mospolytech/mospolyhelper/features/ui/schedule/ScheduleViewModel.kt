@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleException
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
 import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
@@ -65,11 +66,13 @@ class ScheduleViewModel(
         .shareIn(viewModelScope, SharingStarted.Eagerly)
 
     private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
+        .onEach { Log.d(TAG, "0!!!!") }
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
     val filteredSchedule = combine(schedule, filterTypes) { schedule, filterTypes ->
         schedule.map { it.filter(types = filterTypes) }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
+    }.onEach { Log.d(TAG, "1!!!!") }
+        .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
     private val tags = useCase.getAllTags()
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
@@ -79,30 +82,38 @@ class ScheduleViewModel(
 
     val lessonDateFilter = MutableStateFlow(useCase.getLessonDateFilter())
 
-    private val scheduleSettings = combine(useCase.getShowEmptyLessons(), lessonDateFilter, user.filterNotNull()) {
+    private val scheduleSettings = combineTransform(useCase.getShowEmptyLessons(), lessonDateFilter, user) {
             showEmptyLessons, lessonDateFilter, user ->
-        ScheduleSettings(
-            showEmptyLessons,
-            lessonDateFilter,
-            LessonFeaturesSettings.fromUserSchedule(user)
-        )
-    }.distinctUntilChanged()
+        if (user != null) {
+            emit(
+                ScheduleSettings(
+                    showEmptyLessons,
+                    lessonDateFilter,
+                    LessonFeaturesSettings.fromUserSchedule(user)
+                )
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
 
     val scheduleUiData = combineTransform(filteredSchedule, tags, deadlines, scheduleSettings) {
             schedule, tags, deadlines, scheduleSettings ->
         if (!schedule.isLoading && !tags.isLoading && !deadlines.isLoading) {
             schedule.onSuccess {
-                emit(Result0.Success(
-                    ScheduleUiData(
-                        it,
-                        tags.getOrDefault(emptyList()),
-                        deadlines.getOrDefault(emptyMap()),
-                        scheduleSettings
-                    )
-                ))
+                if (scheduleSettings != null) {
+                    emit(Result0.Success(
+                        ScheduleUiData(
+                            it,
+                            tags.getOrDefault(emptyList()),
+                            deadlines.getOrDefault(emptyMap()),
+                            scheduleSettings
+                        )
+                    ))
+                }
             }.onFailure {
-                emit(Result0.Failure(it))
+                if (it !is ScheduleException.UserIsNull && scheduleSettings != null) {
+                    emit(Result0.Failure(it))
+                }
             }
         }
     }
@@ -224,7 +235,12 @@ class ScheduleViewModel(
     }
 
     fun setTodayDate() {
-        date.value = LocalDate.now()
+        val today = LocalDate.now()
+        date.value = when {
+            today < dates.value.start -> dates.value.start
+            today > dates.value.endInclusive -> dates.value.endInclusive
+            else -> today
+        }
     }
 
     fun addTypeFilter(filter: String) {

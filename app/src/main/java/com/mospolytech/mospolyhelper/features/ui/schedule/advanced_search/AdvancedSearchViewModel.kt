@@ -75,15 +75,10 @@ class AdvancedSearchViewModel(
 
     fun getScheduleFilters() =
         ScheduleFilters(
-            titles = if (checkedLessonTitles.isEmpty()) lessonTitles.value.toSet()
-            else checkedLessonTitles.map { lessonTitles.value[it] }.toSet(),
-            types = if (checkedLessonTypes.isEmpty()) lessonTypes.value.toSet()
-            else checkedLessonTypes.map { lessonTypes.value[it] }.toSet(),
-            teachers = if (checkedTeachers.isEmpty()) lessonTeachers.value.toSet()
-            else checkedTeachers.map { lessonTeachers.value[it] }.toSet(),
-            groups = if (checkedGroups.isEmpty()) lessonGroups.value.toSet()
-            else checkedGroups.map { lessonGroups.value[it] }.toSet(),
-            auditoriums = if (checkedAuditoriums.isEmpty()) lessonAuditoriums.value.toSet()
-            else checkedAuditoriums.map { lessonAuditoriums.value[it] }.toSet()
+            titles = checkedLessonTitles.map { lessonTitles.value[it] }.toSet(),
+            types = checkedLessonTypes.map { lessonTypes.value[it] }.toSet(),
+            teachers = checkedTeachers.map { lessonTeachers.value[it] }.toSet(),
+            groups = checkedGroups.map { lessonGroups.value[it] }.toSet(),
+            auditoriums = checkedAuditoriums.map { lessonAuditoriums.value[it] }.toSet()
         )
 }

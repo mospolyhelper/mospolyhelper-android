@@ -17,6 +17,11 @@ data class Schedule(
 ) {
     companion object {
         fun from(dailySchedules: List<List<LessonPlace>>): Schedule {
+            val today = LocalDate.now()
+            val minDateFrom = today.minusDays(200L)
+            val maxDateTo = today.plusDays(200L)
+
+
             var dateFrom = LocalDate.MAX
             var dateTo = LocalDate.MIN
             for (dailySchedule in dailySchedules) {
@@ -28,6 +33,14 @@ data class Schedule(
                             dateTo = lesson.dateTo
                     }
                 }
+            }
+
+            if (dateFrom < minDateFrom) {
+                dateFrom = minDateFrom
+            }
+
+            if (dateTo > maxDateTo) {
+                dateTo = maxDateTo
             }
 
             return Schedule(

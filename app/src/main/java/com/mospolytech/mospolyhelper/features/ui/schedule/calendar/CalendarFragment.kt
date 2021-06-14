@@ -9,6 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
 import com.mospolytech.mospolyhelper.utils.safe
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.temporal.ChronoUnit
@@ -28,7 +29,10 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
         }
 
         val recyclerAdapter = CalendarThreeAdapter(
-            viewModel.filteredSchedule.value.getOrNull()
+            viewModel.filteredSchedule.value.getOrNull(),
+            viewModel.user.value?.let {
+                LessonFeaturesSettings.fromUserSchedule(it)
+            } ?: LessonFeaturesSettings(true, true, true)
         )
         recyclerAdapter.dayClick += { date ->
             viewModel.date.value = date
@@ -43,23 +47,23 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
             recyclerAdapter.firstPosDate.until(viewModel.date.value, ChronoUnit.DAYS).toInt()
         )
 
-        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (!isChecked) {
-                return@addOnButtonCheckedListener
-            }
-            when (checkedId) {
-                R.id.btn_schedule_calendar_three -> {
-                    viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
-                    val recyclerAdapter = CalendarThreeAdapter(
-                        viewModel.filteredSchedule.value.getOrNull()
-                    )
-                    viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
-                    recyclerAdapter.dayClick += { date ->
-                        viewModel.date.value = date
-                        findNavController().safe { navigateUp() }
-                    }
-                }
-            }
-        }
+//        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->
+//            if (!isChecked) {
+//                return@addOnButtonCheckedListener
+//            }
+//            when (checkedId) {
+//                R.id.btn_schedule_calendar_three -> {
+//                    viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
+//                    val recyclerAdapter = CalendarThreeAdapter(
+//                        viewModel.filteredSchedule.value.getOrNull()
+//                    )
+//                    viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
+//                    recyclerAdapter.dayClick += { date ->
+//                        viewModel.date.value = date
+//                        findNavController().safe { navigateUp() }
+//                    }
+//                }
+//            }
+//        }
     }
 }

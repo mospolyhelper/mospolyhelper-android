@@ -58,7 +58,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         ) as Chip
         chip.tag = user
         chip.text = if (user is TeacherSchedule) Teacher(user.title).getShortName() else user.title
-        chip.chipIconTint = getColorStateList(R.color.chip_color_layer_one)
+        chip.chipIconTint = getColorStateList(R.color.chip_color_text)
         chip.setChipIconResource(
             if (user is StudentSchedule)
                 R.drawable.ic_fluent_people_20_selector
