@@ -92,6 +92,8 @@ class ScheduleViewModel(
                     LessonFeaturesSettings.fromUserSchedule(user)
                 )
             )
+        } else {
+            emit(null)
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
@@ -111,7 +113,7 @@ class ScheduleViewModel(
                     ))
                 }
             }.onFailure {
-                if (it !is ScheduleException.UserIsNull && scheduleSettings != null) {
+                if (it !is ScheduleException.UserIsNull || scheduleSettings == null) {
                     emit(Result0.Failure(it))
                 }
             }
