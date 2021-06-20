@@ -55,7 +55,7 @@ class LessonAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         )
     )
     private var currentTimes: List<LessonTime> = emptyList()
-    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder> = WeakMutableSet()
+    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder?> = WeakMutableSet()
 
 
     var lessonClick: (LessonTime, Lesson, LocalDate) -> Unit = { _, _, _ -> }

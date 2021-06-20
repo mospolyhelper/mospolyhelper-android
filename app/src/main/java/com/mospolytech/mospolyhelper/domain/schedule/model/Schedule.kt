@@ -20,6 +20,7 @@ data class Schedule(
             val today = LocalDate.now()
             val minDateFrom = today.minusDays(200L)
             val maxDateTo = today.plusDays(200L)
+            val requiredDateRange = minDateFrom..maxDateTo
 
 
             var dateFrom = LocalDate.MAX
@@ -35,11 +36,11 @@ data class Schedule(
                 }
             }
 
-            if (dateFrom < minDateFrom) {
+            if (dateFrom !in requiredDateRange) {
                 dateFrom = minDateFrom
             }
 
-            if (dateTo > maxDateTo) {
+            if (dateTo !in requiredDateRange) {
                 dateTo = maxDateTo
             }
 

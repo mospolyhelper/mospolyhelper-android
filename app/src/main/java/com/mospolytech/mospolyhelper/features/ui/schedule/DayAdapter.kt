@@ -12,61 +12,52 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleDayBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.utils.ScheduleUtils.getOrderMap
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleDayUiData
 import com.mospolytech.mospolyhelper.utils.TAG
 import com.mospolytech.mospolyhelper.utils.WeakMutableSet
 import com.mospolytech.mospolyhelper.utils.dp
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 
 class DayAdapter : RecyclerView.Adapter<DayAdapter.ViewHolder>() {
 
-    private val activeViewHolders: MutableSet<ViewHolder> = WeakMutableSet()
-    var dateRange = LocalDate.now()..LocalDate.now()
-        private set
-    private var selectedDay = LocalDate.MIN
+    private val activeViewHolders: MutableSet<ViewHolder?> = WeakMutableSet()
+    private var selectedPosition = -1
     private var previousSelectedPosition = -1
-    private var schedule: Schedule? = null
+    var scheduleDays: List<ScheduleDayUiData> = emptyList()
+        private set
 
-    fun update(from: LocalDate, to: LocalDate, schedule: Schedule?) {
-        dateRange = from..to
-        this.schedule = schedule
+    fun update(lessonsMap: List<ScheduleDayUiData>) {
+        this.scheduleDays = lessonsMap
         notifyDataSetChanged()
     }
 
-    fun updateSelectedDay(day: LocalDate): Int {
-        selectedDay = day
+    fun updateSelectedDay(date: LocalDate): Int {
+        selectedPosition = scheduleDays.indexOfFirst { it.date == date }
+        if (selectedPosition == -1) return -1
         val oldPosition = previousSelectedPosition
-        val position = dateRange.start.until(selectedDay, ChronoUnit.DAYS).toInt()
-        previousSelectedPosition = position
-        try {
-            for (viewHolder in activeViewHolders) {
+        previousSelectedPosition = selectedPosition
+        for (viewHolder in activeViewHolders) {
+            viewHolder?.let {
                 when (viewHolder.bindingAdapterPosition) {
-                    position -> {
-                        val date = dateRange.start.plusDays(position.toLong())
-                        viewHolder.updateIsSelected(date == selectedDay)
+                    selectedPosition -> {
+                        viewHolder.updateIsSelected(true)
                     }
                     oldPosition -> {
                         if (oldPosition != -1) {
-                            val date = dateRange.start.plusDays(oldPosition.toLong())
-                            viewHolder.updateIsSelected(date == selectedDay)
+                            viewHolder.updateIsSelected(false)
                         }
 
                     }
                 }
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "WeakReference exception", e)
         }
-        return position
+        return selectedPosition
     }
 
-    override fun getItemCount(): Int {
-        return (dateRange.start.until(dateRange.endInclusive, ChronoUnit.DAYS) + 1).toInt()
-    }
+    override fun getItemCount() = scheduleDays.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
@@ -77,9 +68,8 @@ class DayAdapter : RecyclerView.Adapter<DayAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         activeViewHolders.add(holder)
-        val date = dateRange.start.plusDays(position.toLong())
-
-        holder.bind(date, schedule?.getLessons(date).getOrderMap(), date == selectedDay, previousSelectedPosition)
+        val item = scheduleDays[position]
+        holder.bind(item, position == selectedPosition)
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
@@ -94,18 +84,38 @@ class DayAdapter : RecyclerView.Adapter<DayAdapter.ViewHolder>() {
 
         private var isSelected: Boolean = false
 
-        fun bind(date: LocalDate, orderMap: Map<Int, Boolean>, isSelected: Boolean, previousSelectedPosition: Int) {
-            viewBinding.textviewDayOfMonth.text = date.dayOfMonth.toString()
-            viewBinding.textviewDayOfWeek.text = dateFormatter.format(date).capitalize()
-            updateIsSelected(isSelected)
+        fun bind(day: ScheduleDayUiData, isSelected: Boolean) {
+            viewBinding.textviewDayOfMonth.text = day.date.dayOfMonth.toString()
+            viewBinding.textviewDayOfWeek.text = day.date.format(dateFormatter).capitalize()
+            updateIsSelectedWithoutAnimation(isSelected)
 
             for (i in 0 until viewBinding.linearlayoutOrderIndicators.childCount) {
-                if (orderMap.getOrDefault(i, false)) {
+                if (day.orderMap.getOrDefault(i, false)) {
                     viewBinding.linearlayoutOrderIndicators.getChildAt(i).visibility = View.VISIBLE
                 } else {
                     viewBinding.linearlayoutOrderIndicators.getChildAt(i).visibility = View.GONE
                 }
             }
+        }
+
+        private fun updateIsSelectedWithoutAnimation(isSelected: Boolean) {
+            this.isSelected = isSelected
+            val colorTo: Int
+            val scaleTo: Float
+            val elevationTo: Float
+            if (isSelected) {
+                colorTo = itemView.context.getColor(R.color.layerOneActivated)
+                scaleTo = 1.1f
+                elevationTo = 2.dp(itemView.context)
+            } else {
+                colorTo = itemView.context.getColor(R.color.layerOne)
+                scaleTo = 1.0f
+                elevationTo = 0f
+            }
+            viewBinding.root.backgroundTintList = ColorStateList.valueOf(colorTo)
+            viewBinding.root.scaleX = scaleTo
+            viewBinding.root.scaleY = scaleTo
+            viewBinding.root.translationZ = elevationTo
         }
 
         fun updateIsSelected(isSelected: Boolean) {

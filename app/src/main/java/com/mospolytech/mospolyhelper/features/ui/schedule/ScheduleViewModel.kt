@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
@@ -13,11 +12,8 @@ import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
-import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleSettings
-import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
+import com.mospolytech.mospolyhelper.features.ui.schedule.model.*
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -26,10 +22,10 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 
 class ScheduleViewModel(
-    mediator: Mediator<String, ViewModelMessage>,
     private val useCase: ScheduleUseCase
 ) : ViewModel(), KoinComponent {
 
@@ -66,13 +62,11 @@ class ScheduleViewModel(
         .shareIn(viewModelScope, SharingStarted.Eagerly)
 
     private val schedule = scheduleLoadSignal.flatMapConcat { useCase.getSchedule(it) }
-        .onEach { Log.d(TAG, "0!!!!") }
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
     val filteredSchedule = combine(schedule, filterTypes) { schedule, filterTypes ->
         schedule.map { it.filter(types = filterTypes) }
-    }.onEach { Log.d(TAG, "1!!!!") }
-        .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
 
     private val tags = useCase.getAllTags()
         .stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
@@ -120,15 +114,33 @@ class ScheduleViewModel(
         }
     }
 
+    private val _schedulePosition = MutableStateFlow(0)
+    val schedulePosition: StateFlow<Int> = _schedulePosition
+
+    val scheduleDatesUiData = filteredSchedule.map {
+        it.map { ScheduleDatesUiData(it) }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, Result0.Loading)
+
+    private val _scheduleWeekPosition = MutableStateFlow(0)
+    val scheduleWeekPosition: StateFlow<Int> = _scheduleWeekPosition
+
     val isLoading: StateFlow<Boolean> = schedule.mapLatest { it.isLoading }
         .stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
 
-    val dates = filteredSchedule.transform {
+    private val dates = filteredSchedule.transform {
         it.onSuccess {
             emit(it.dateFrom..it.dateTo)
+        }.onFailure {
+            emit(LocalDate.now()..LocalDate.now())
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDate.now()..LocalDate.now())
+
+    private val datesWeeks = scheduleDatesUiData.transform {
+        it.onSuccess {
+            emit(it.dates)
         }.onFailure {
             emit(LocalDate.now()..LocalDate.now())
         }
@@ -175,6 +187,24 @@ class ScheduleViewModel(
                 }
             }
         }
+
+        viewModelScope.launch {
+            dates.collect {
+                setDate(date.value)
+            }
+        }
+
+        viewModelScope.launch {
+            combine(datesWeeks, date) { dates, date ->
+                _scheduleWeekPosition.value = (dates.start.until(date, ChronoUnit.DAYS) / 7L).toInt()
+            }.collect()
+        }
+
+        viewModelScope.launch {
+            combine(dates, date) { dates, date ->
+                _schedulePosition.value = dates.start.until(date, ChronoUnit.DAYS).toInt()
+            }.collect()
+        }
     }
 
 
@@ -199,13 +229,11 @@ class ScheduleViewModel(
     }
 
     fun setDay(day: Int) {
-        date.value = filteredSchedule.value.getOrNull()?.dateFrom?.plusDays(day.toLong())
-                ?: LocalDate.now()
+        setDate(dates.value.start.plusDays(day.toLong()))
     }
 
     fun getDateByDay(day: Long): LocalDate {
-        return filteredSchedule.value.getOrNull()?.dateFrom?.plusDays(day)
-                ?: LocalDate.now()
+        return dates.value.start.plusDays(day)
     }
 
     fun removeUser(user: UserSchedule) {
@@ -230,19 +258,24 @@ class ScheduleViewModel(
         _currentLessonTimes.value = Pair(LessonTimeUtils.getCurrentTimes(time, lessonTimes), time)
     }
 
-    suspend fun setRefreshing() {
-        _isRefreshing.emit(true)
-        updateSchedule()
-        _isRefreshing.emit(false)
+    fun setRefreshing() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            updateSchedule()
+            _isRefreshing.emit(false)
+        }
+    }
+
+    private fun setDate(date: LocalDate) {
+        this.date.value = when {
+            date < dates.value.start -> dates.value.start
+            date > dates.value.endInclusive -> dates.value.endInclusive
+            else -> date
+        }
     }
 
     fun setTodayDate() {
-        val today = LocalDate.now()
-        date.value = when {
-            today < dates.value.start -> dates.value.start
-            today > dates.value.endInclusive -> dates.value.endInclusive
-            else -> today
-        }
+        setDate(LocalDate.now())
     }
 
     fun addTypeFilter(filter: String) {
@@ -251,6 +284,14 @@ class ScheduleViewModel(
 
     fun removeTypeFilter(filter: String) {
         _filterTypes.value -= filter
+    }
+
+    fun setWeek(position: Int) {
+        _scheduleWeekPosition.value = position
+    }
+
+    fun setSchedulePosition(position: Int) {
+        _schedulePosition.value = position
     }
 }
 

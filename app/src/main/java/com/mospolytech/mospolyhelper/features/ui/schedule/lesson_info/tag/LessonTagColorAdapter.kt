@@ -21,7 +21,7 @@ class LessonTagColorAdapter : RecyclerView.Adapter<LessonTagColorAdapter.ViewHol
 
     private var colors: List<LessonTagColors> = LessonTagColors.values().toList()
     private var checkedPosition = LessonTagColors.ColorDefault.ordinal
-    private val activeViewHolders: MutableSet<ViewHolder> = WeakMutableSet()
+    private val activeViewHolders: MutableSet<ViewHolder?> = WeakMutableSet()
 
     var onItemChecked: (position: Int) -> Unit = { }
 
@@ -31,7 +31,7 @@ class LessonTagColorAdapter : RecyclerView.Adapter<LessonTagColorAdapter.ViewHol
         checkedPosition = position
         try {
             for (viewHolder in activeViewHolders) {
-                viewHolder.setChecked(viewHolder.bindingAdapterPosition == position)
+                viewHolder?.setChecked(viewHolder.bindingAdapterPosition == position)
             }
         } catch (e: Exception) {
             Log.e(TAG, "WeakReference exception", e)
