@@ -67,7 +67,7 @@ val scheduleModule = module {
     single { ScheduleUseCase(get(), get(), get(), get(), get()) }
 
     // ViewModels
-    viewModel { ScheduleViewModel(get(), get()) }
+    viewModel { ScheduleViewModel(get()) }
     viewModel { AdvancedSearchViewModel(get(), get()) }
     viewModel { LessonInfoViewModel(get(), get(), get()) }
     viewModel { LessonTagViewModel(get()) }

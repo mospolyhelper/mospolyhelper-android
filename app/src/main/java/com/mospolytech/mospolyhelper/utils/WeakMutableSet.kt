@@ -43,7 +43,7 @@ import java.util.*
  * A weak MutableSet. An element stored in the WeakMutableSet might be
  * garbage collected, if there is no strong reference to this element.
  */
-class WeakMutableSet<T> : MutableSet<T> {
+class WeakMutableSet<T> : MutableSet<T?> {
 
     private val delegate = HashSet<WeakElement<T>>()
 
@@ -62,21 +62,21 @@ class WeakMutableSet<T> : MutableSet<T> {
      *
      * @return an Iterator over the elements in this set.
      */
-    override fun iterator(): MutableIterator<T> {
+    override fun iterator(): MutableIterator<T?> {
         // remove garbage collected elements
         processQueue()
 
         // get an iterator of the superclass WeakMutableSet
         val i = delegate.iterator()
 
-        return object : MutableIterator<T> {
+        return object : MutableIterator<T?> {
             override fun hasNext(): Boolean {
                 return i.hasNext()
             }
 
-            override fun next(): T {
+            override fun next(): T? {
                 // unwrap the element
-                return i.next().get()!!
+                return i.next().get()
             }
 
             override fun remove() {
@@ -92,7 +92,8 @@ class WeakMutableSet<T> : MutableSet<T> {
      * @param element element whose presence in this set is to be tested.
      * @return `true` if this set contains the specified element.
      */
-    override fun contains(element: T): Boolean {
+    override fun contains(element: T?): Boolean {
+        if (element == null) return false
         return delegate.contains(WeakElement(element))
     }
 
@@ -104,8 +105,9 @@ class WeakMutableSet<T> : MutableSet<T> {
      * @return `true` if the set did not already contain the specified
      * element.
      */
-    override fun add(element: T): Boolean {
+    override fun add(element: T?): Boolean {
         processQueue()
+        if (element == null) return false
         return delegate.add(WeakElement(element, this.queue))
     }
 
@@ -115,13 +117,14 @@ class WeakMutableSet<T> : MutableSet<T> {
      * @param element object to be removed from this set, if present.
      * @return `true` if the set contained the specified element.
      */
-    override fun remove(element: T): Boolean {
+    override fun remove(element: T?): Boolean {
+        if (element == null) return false
         val ret = delegate.remove(WeakElement(element))
         processQueue()
         return ret
     }
 
-    override fun containsAll(elements: Collection<T>): Boolean {
+    override fun containsAll(elements: Collection<T?>): Boolean {
         for (o in elements) {
             if (!contains(o)) {
                 return false
@@ -130,7 +133,7 @@ class WeakMutableSet<T> : MutableSet<T> {
         return true
     }
 
-    override fun addAll(elements: Collection<T>): Boolean {
+    override fun addAll(elements: Collection<T?>): Boolean {
         for (o in elements) {
             if (!add(o)) {
                 return false
@@ -139,8 +142,8 @@ class WeakMutableSet<T> : MutableSet<T> {
         return true
     }
 
-    override fun retainAll(elements: Collection<T>): Boolean {
-        val itemsToRemove = HashSet<T>(elements.size)
+    override fun retainAll(elements: Collection<T?>): Boolean {
+        val itemsToRemove = HashSet<T?>(elements.size)
         for (t in this) {
             if (!elements.contains(t)) {
                 itemsToRemove.add(t)
@@ -156,7 +159,7 @@ class WeakMutableSet<T> : MutableSet<T> {
         }
     }
 
-    override fun removeAll(elements: Collection<T>): Boolean {
+    override fun removeAll(elements: Collection<T?>): Boolean {
         var changed = false
         for (o in elements) {
             if (remove(o)) {

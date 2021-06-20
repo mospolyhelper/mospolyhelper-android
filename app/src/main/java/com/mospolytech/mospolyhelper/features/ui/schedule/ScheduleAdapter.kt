@@ -22,7 +22,7 @@ class ScheduleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val VIEW_TYPE_EMPTY = 1
     }
     private val commonPool = RecyclerView.RecycledViewPool()
-    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder> = WeakMutableSet()
+    private val activeViewHolders: MutableSet<RecyclerView.ViewHolder?> = WeakMutableSet()
 
     private var currentTimes: List<LessonTime> = emptyList()
     private var dailySchedules: List<DailySchedulePack> = emptyList()
