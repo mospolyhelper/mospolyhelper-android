@@ -48,29 +48,32 @@ class AuthFragment : Fragment(R.layout.fragment_account_auth) {
         logInButton.setOnClickListener {
             lifecycleScope.launchWhenResumed {
                 viewModel.logIn(loginText.text.toString(), passwordText.text.toString()).collect {
-                    it.onSuccess {
-                        progressAuth.hide()
-                        logInButton.show()
-                        createLayout()
-                    }.onFailure { error ->
-                        progressAuth.hide()
-                        logInButton.show()
-                        when (error) {
-                            is ClientRequestException -> {
-                                when (error.response.status.value) {
-                                    401 -> Toast.makeText(context, R.string.not_authorized, Toast.LENGTH_LONG).show()
-                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                                }
-                            }
-                            is UnknownHostException -> {
-                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                            }
-                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                    when (it) {
+                        is Result0.Success -> {
+                            progressAuth.hide()
+                            logInButton.show()
+                            createLayout()
                         }
-
-                    }.onLoading {
-                        progressAuth.show()
-                        logInButton.hide()
+                        is Result0.Failure -> {
+                            progressAuth.hide()
+                            logInButton.show()
+                            when (val error = it.exception) {
+                                is ClientRequestException -> {
+                                    when (error.response.status.value) {
+                                        401 -> Toast.makeText(context, R.string.not_authorized, Toast.LENGTH_LONG).show()
+                                        else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                                is UnknownHostException -> {
+                                    Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                                }
+                                else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        is Result0.Loading -> {
+                            progressAuth.show()
+                            logInButton.hide()
+                        }
                     }
                 }
             }

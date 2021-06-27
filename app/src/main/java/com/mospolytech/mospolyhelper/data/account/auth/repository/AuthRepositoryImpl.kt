@@ -1,94 +1,76 @@
 package com.mospolytech.mospolyhelper.data.account.auth.repository
 
-import com.mospolytech.mospolyhelper.data.account.auth.local.AuthJwtLocalDataSource
-import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthJwtRemoteDataSource
+import android.app.Application
+import com.auth0.android.jwt.JWT
+import com.mospolytech.mospolyhelper.data.account.auth.local.AuthLocalDataSource
+import com.mospolytech.mospolyhelper.data.account.auth.remote.AuthRemoteDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
+import com.mospolytech.mospolyhelper.data.utils.clearJson
+import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.domain.account.auth.repository.AuthRepository
+import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
+import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
+import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
+import com.mospolytech.mospolyhelper.domain.account.info.model.Info
+import com.mospolytech.mospolyhelper.domain.account.marks.model.Marks
+import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
+import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
 import com.mospolytech.mospolyhelper.utils.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlin.contracts.ExperimentalContracts
 
 class AuthRepositoryImpl(
-    private val dataSourceJWT: AuthJwtRemoteDataSource,
-    private val authJwtLocalDataSource: AuthJwtLocalDataSource,
-    private val prefDataSource: SharedPreferencesDataSource
+    private val dataSourceJWT: AuthRemoteDataSource,
+    private val prefDataSource: SharedPreferencesDataSource,
+    private val localDataSourceJWT: AuthLocalDataSource
 ) : AuthRepository {
 
-    @ExperimentalContracts
     override suspend fun logIn(login: String, password: String) = flow {
         val token = dataSourceJWT.authJwt(login, password)
         emit(token.map {
-            authJwtLocalDataSource.set(it.accessToken)
-            val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
+            localDataSourceJWT.accessToken = it.accessToken
+            val sessionId = localDataSourceJWT.jwt?.getSessionId()!!
             prefDataSource.set(PreferenceKeys.SessionId, sessionId)
             prefDataSource.set(PreferenceKeys.RefreshToken, it.refreshToken)
             return@map sessionId
         })
     }
 
-
-    override suspend fun refresh(): Flow<Result2<String>> = flow {
-        if (authJwtLocalDataSource.get()?.isExpired() == true) {
+    override suspend fun refresh(): Flow<Result0<String>> = flow {
+        if (prefDataSource.getFromJson<JWT>()?.isExpired() == true) {
             val oldToken = prefDataSource.get(PreferenceKeys.AccessToken, "")
             val refresh = prefDataSource.get(PreferenceKeys.RefreshToken, "")
             val newToken = dataSourceJWT.refresh(oldToken, refresh)
             newToken.onSuccess {
-                authJwtLocalDataSource.set(it.replace("\"", ""))
-                val sessionId = authJwtLocalDataSource.get()?.getSessionId()!!
+                localDataSourceJWT.accessToken = it.replace("\"", "")
+                val sessionId = localDataSourceJWT.jwt?.getSessionId()!!
                 prefDataSource.set(PreferenceKeys.SessionId, sessionId)
             }
             emit(newToken)
         }
     }
 
-    override fun getAvatar() = authJwtLocalDataSource.get()?.getAvatar()
+    override fun getAvatar() =
+        localDataSourceJWT.jwt?.getAvatar()
 
-    override fun getPermissions() = authJwtLocalDataSource.get()?.getPermissions() ?: emptyList()
+    override fun getPermissions() =
+        localDataSourceJWT.jwt?.getPermissions() ?: emptyList()
 
-    override fun getFio() = authJwtLocalDataSource.get()?.getName()
+    override fun getFio() =
+        localDataSourceJWT.jwt?.getName()
 
     override fun logOut() {
+        localDataSourceJWT.clearToken()
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
         prefDataSource.set(PreferenceKeys.RefreshToken, "")
-        authJwtLocalDataSource.clear()
-        prefDataSource.set(PreferenceKeys.Classmates, "")
-        prefDataSource.set(PreferenceKeys.Deadlines, "")
-        prefDataSource.set(PreferenceKeys.Info, "")
-        prefDataSource.set(PreferenceKeys.Marks, "")
-        prefDataSource.set(PreferenceKeys.Payments, "")
-        prefDataSource.set(PreferenceKeys.Statements, "")
+        prefDataSource.clearJson<List<Application>>(PreferenceKeys.Applications)
+        prefDataSource.clearJson<List<Classmate>>(PreferenceKeys.Classmates)
+        prefDataSource.clearJson<List<Deadline>>(PreferenceKeys.Deadlines)
+        prefDataSource.clearJson<Info>()
+        prefDataSource.clearJson<Marks>()
+        prefDataSource.clearJson<Payments>()
+        prefDataSource.clearJson<List<DialogModel>>(PreferenceKeys.Dialogs)
+        prefDataSource.clearJson<Statements>()
     }
 
-    override fun getLogin(): String {
-        return prefDataSource.get(PreferenceKeys.Login, PreferenceDefaults.Login)
-    }
-
-    override fun setLogin(value: String) {
-        prefDataSource.set(PreferenceKeys.Login, value)
-    }
-
-    override fun getPassword(): String {
-        return prefDataSource.get(PreferenceKeys.Password, PreferenceDefaults.Password)
-    }
-
-    override fun setPassword(value: String) {
-        prefDataSource.set(PreferenceKeys.Password, value)
-    }
-
-    override fun getSaveLogin(): Boolean {
-        return prefDataSource.get(PreferenceKeys.SaveLogin, PreferenceDefaults.SaveLogin)
-    }
-
-    override fun setSaveLogin(value: Boolean) {
-        prefDataSource.set(PreferenceKeys.SaveLogin, value)
-    }
-
-    override fun getSavePassword(): Boolean {
-        return prefDataSource.get(PreferenceKeys.SavePassword, PreferenceDefaults.SavePassword)
-    }
-
-    override fun setSavePassword(value: Boolean) {
-        prefDataSource.set(PreferenceKeys.SavePassword, value)
-    }
 }

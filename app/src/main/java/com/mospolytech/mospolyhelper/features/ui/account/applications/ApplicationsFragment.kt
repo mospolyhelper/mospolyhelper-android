@@ -21,8 +21,6 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
     private val viewBinding by viewBinding(FragmentAccountApplicationsBinding::bind)
     private val viewModel by viewModel<ApplicationsViewModel>()
 
-    //private val adapter = ApplicationsAdapter()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,55 +38,61 @@ class ApplicationsFragment: Fragment(R.layout.fragment_account_applications) {
             }
         }
 
-        //viewBinding.applications.adapter = adapter
-
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                result?.let {
+                    when(it) {
+                        is Result0.Success -> {
+                            lifecycleScope.launch {
+                                viewModel.downloadInfo()
+                            }
+                        }
+                        is Result0.Failure -> {
+                            viewBinding.progressLoading.gone()
+                            viewBinding.applicationsSwipe.isRefreshing = false
+                            Toast.makeText(context, it.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                        is Result0.Loading -> {
+                            if (!viewBinding.applicationsSwipe.isRefreshing)
+                                viewBinding.progressLoading.show()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.applicationsSwipe.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.applicationsSwipe.isRefreshing)
-                        viewBinding.progressLoading.show()
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.applications.collect { result ->
-                result.onSuccess {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.applicationsSwipe.isRefreshing = false
-                    //adapter.items = emptyList()
-                    //adapter.items = it
-                    viewBinding.applications.adapter = ApplicationsAdapter(it)
-                }.onFailure { error ->
-                    viewBinding.progressLoading.gone()
-                    viewBinding.applicationsSwipe.isRefreshing = false
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when(result) {
+                    is Result0.Success -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.applicationsSwipe.isRefreshing = false
+                        viewBinding.applications.adapter = ApplicationsAdapter(result.value)
                     }
-                }.onLoading {
-                    if (!viewBinding.applicationsSwipe.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Loading -> {
+                        if (!viewBinding.applicationsSwipe.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
+                    is Result0.Failure -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.applicationsSwipe.isRefreshing = false
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
             }
         }

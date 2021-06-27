@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.di.account
 
 import com.mospolytech.mospolyhelper.data.account.payments.api.PaymentsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.payments.local.PaymentsLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.payments.remote.PaymentsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.payments.repository.PaymentsRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.account.payments.repository.PaymentsRepository
@@ -14,8 +13,7 @@ import org.koin.dsl.module
 val paymentsModule = module {
     single { PaymentsHerokuClient(get(named("accountHerokuClient"))) }
     single { PaymentsRemoteDataSource(get()) }
-    single { PaymentsLocalDataSource(get()) }
-    single<PaymentsRepository> { PaymentsRepositoryImpl(get(), get(), get()) }
+    single<PaymentsRepository> { PaymentsRepositoryImpl(get(), get()) }
     single { PaymentsUseCase(get()) }
     viewModel { PaymentsViewModel(get(), get()) }
 }

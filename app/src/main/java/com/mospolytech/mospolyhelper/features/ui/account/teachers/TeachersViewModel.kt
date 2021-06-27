@@ -7,7 +7,7 @@ import androidx.paging.cachedIn
 import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
 import com.mospolytech.mospolyhelper.domain.account.teachers.usecase.TeachersUseCase
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -18,7 +18,7 @@ class TeachersViewModel(
     private val authUseCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
-    val auth = MutableStateFlow<Result2<String>?>(null)
+    val auth = MutableStateFlow<Result0<String>?>(null)
 
     suspend fun refresh() {
         authUseCase.refresh().collect {

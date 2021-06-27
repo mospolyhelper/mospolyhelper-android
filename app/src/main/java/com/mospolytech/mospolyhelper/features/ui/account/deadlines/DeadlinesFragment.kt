@@ -45,50 +45,58 @@ class DeadlinesFragment: Fragment(R.layout.fragment_account_deadline) {
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadInfo()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.loadingSpinner.gone()
-                    viewBinding.deadlineSwipe.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.deadlineSwipe.isRefreshing)
-                        viewBinding.loadingSpinner.show()
+                    is Result0.Failure -> {
+                        viewBinding.loadingSpinner.gone()
+                        viewBinding.deadlineSwipe.isRefreshing = false
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.deadlineSwipe.isRefreshing)
+                            viewBinding.loadingSpinner.show()
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.deadlines.collect { result ->
-                result.onSuccess {
-                    viewBinding.loadingSpinner.gone()
-                    fillData(it)
-                    deadlines = it
-                    viewBinding.deadlineSwipe.isRefreshing = false
-                }.onFailure { error ->
-                    viewBinding.loadingSpinner.gone()
-                    viewBinding.deadlineSwipe.isRefreshing = false
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.loadingSpinner.gone()
+                        fillData(result.value)
+                        deadlines = result.value
+                        viewBinding.deadlineSwipe.isRefreshing = false
                     }
-                }.onLoading {
-                    if (!viewBinding.deadlineSwipe.isRefreshing)
-                        viewBinding.loadingSpinner.show()
+                    is Result0.Failure -> {
+                        viewBinding.loadingSpinner.gone()
+                        viewBinding.deadlineSwipe.isRefreshing = false
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.deadlineSwipe.isRefreshing)
+                            viewBinding.loadingSpinner.show()
+                    }
                 }
             }
         }

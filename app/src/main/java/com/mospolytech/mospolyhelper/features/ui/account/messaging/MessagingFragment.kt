@@ -77,55 +77,63 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadDialog(dialogId)
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadDialog(dialogId)
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.swipeMessaging.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    viewBinding.sendMessage.hide()
-                    if (!viewBinding.swipeMessaging.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.swipeMessaging.isRefreshing = false
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        viewBinding.sendMessage.hide()
+                        if (!viewBinding.swipeMessaging.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.dialog.collect { result ->
-                result.onSuccess {
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                    adapter.items = it
-                    viewBinding.recyclerMessaging.scrollToPosition(0)
-                    viewBinding.editMessage.text.clear()
-                    viewBinding.swipeMessaging.isRefreshing = false
-                }.onFailure { error ->
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                    viewBinding.swipeMessaging.isRefreshing = false
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.sendMessage.show()
+                        viewBinding.progressLoading.gone()
+                        adapter.items = result.value
+                        viewBinding.recyclerMessaging.scrollToPosition(0)
+                        viewBinding.editMessage.text.clear()
+                        viewBinding.swipeMessaging.isRefreshing = false
                     }
-                }.onLoading {
-                    viewBinding.sendMessage.hide()
-                    if (!viewBinding.swipeMessaging.isRefreshing) {
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.sendMessage.show()
+                        viewBinding.progressLoading.gone()
+                        viewBinding.swipeMessaging.isRefreshing = false
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        viewBinding.sendMessage.hide()
+                        if (!viewBinding.swipeMessaging.isRefreshing) {
+                            viewBinding.progressLoading.show()
+                        }
                     }
                 }
             }
@@ -133,20 +141,39 @@ class MessagingFragment : Fragment(R.layout.fragment_account_messaging) {
 
         lifecycleScope.launchWhenResumed {
             viewModel.update.collect { result ->
-                result.onSuccess {
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                    adapter.items = it
-                    viewBinding.swipeMessaging.isRefreshing = false
-                }.onFailure {
-                    Toast.makeText(context, it.toString(), Toast.LENGTH_LONG).show()
-                    viewBinding.sendMessage.show()
-                    viewBinding.progressLoading.gone()
-                    viewBinding.swipeMessaging.isRefreshing = false
-                }.onLoading {
-                    viewBinding.sendMessage.hide()
-                    if (!viewBinding.swipeMessaging.isRefreshing) {
-                        viewBinding.progressLoading.show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.sendMessage.show()
+                        viewBinding.progressLoading.gone()
+                        adapter.items = result.value
+                        viewBinding.swipeMessaging.isRefreshing = false
+                    }
+                    is Result0.Failure -> {
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                        viewBinding.sendMessage.show()
+                        viewBinding.progressLoading.gone()
+                        viewBinding.swipeMessaging.isRefreshing = false
+                    }
+                    is Result0.Loading -> {
+                        viewBinding.sendMessage.hide()
+                        if (!viewBinding.swipeMessaging.isRefreshing) {
+                            viewBinding.progressLoading.show()
+                        }
                     }
                 }
             }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
 import com.mospolytech.mospolyhelper.domain.account.info.model.Info
 import com.mospolytech.mospolyhelper.domain.account.info.usecase.InfoUseCase
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
@@ -14,8 +14,8 @@ class InfoViewModel(
     private val authUseCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
-    val info = MutableStateFlow<Result2<Info>>(Result2.loading())
-    val auth = MutableStateFlow<Result2<String>?>(null)
+    val info = MutableStateFlow<Result0<Info>>(Result0.Loading)
+    val auth = MutableStateFlow<Result0<String>?>(null)
 
     suspend fun downloadInfo() {
         useCase.getInfo().collect {
@@ -38,6 +38,6 @@ class InfoViewModel(
         }
     }
 
-    fun getAvatar() = useCase.getAvatar()
+    fun getAvatar() = authUseCase.getAvatar()
 
 }

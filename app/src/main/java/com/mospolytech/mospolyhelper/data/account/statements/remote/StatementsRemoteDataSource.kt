@@ -2,19 +2,19 @@ package com.mospolytech.mospolyhelper.data.account.statements.remote
 
 import com.mospolytech.mospolyhelper.data.account.statements.api.StatementsHerokuClient
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
-import com.mospolytech.mospolyhelper.utils.Result2
+import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class StatementsRemoteDataSource(
     private val client: StatementsHerokuClient
 ) {
-    suspend fun get(sessionId: String, semester: String?): Result2<Statements> {
+    suspend fun get(sessionId: String, semester: String?): Result0<Statements> {
         return try {
             val res = client.getMarks(sessionId, semester)
-            Result2.success(Json.decodeFromString(res))
+            Result0.Success(Json.decodeFromString(res))
         } catch (e: Exception) {
-            Result2.failure(e)
+            Result0.Failure(e)
         }
     }
 }
