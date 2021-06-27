@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layout_marginHorizontal="3dp"
     android:layout_marginTop="3dp"
-    app:cardCornerRadius="10dp"
+    app:cardCornerRadius="5dp"
     app:cardBackgroundColor="@color/layerOne">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
