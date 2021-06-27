@@ -37,7 +37,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun refresh(): Flow<Result0<String>> = flow {
-        if (prefDataSource.getFromJson<JWT>()?.isExpired() == true) {
+        if (localDataSourceJWT.jwt?.isExpired() == true) {
             val oldToken = prefDataSource.get(PreferenceKeys.AccessToken, "")
             val refresh = prefDataSource.get(PreferenceKeys.RefreshToken, "")
             val newToken = dataSourceJWT.refresh(oldToken, refresh)
@@ -62,7 +62,7 @@ class AuthRepositoryImpl(
     override fun logOut() {
         localDataSourceJWT.clearToken()
         prefDataSource.set(PreferenceKeys.SessionId, PreferenceDefaults.SessionId)
-        prefDataSource.set(PreferenceKeys.RefreshToken, "")
+        prefDataSource.set(PreferenceKeys.RefreshToken, PreferenceDefaults.RefreshToken)
         prefDataSource.clearJson<List<Application>>(PreferenceKeys.Applications)
         prefDataSource.clearJson<List<Classmate>>(PreferenceKeys.Classmates)
         prefDataSource.clearJson<List<Deadline>>(PreferenceKeys.Deadlines)
