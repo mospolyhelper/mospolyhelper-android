@@ -19,13 +19,9 @@ import java.util.*
 
 class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView.Adapter<StatementsAdapter.ViewHolderStatements>() {
 
-//    var items : List<Statement> = emptyList()
-//    set(value) {
-//        val diffResult =
-//            DiffUtil.calculateDiff(StatementsDiffCallback(field, value), true)
-//        field = value
-//        diffResult.dispatchUpdatesTo(this)
-//    }
+    companion object {
+        var gradeContextClickListener: ((String) -> Unit)? = null
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderStatements {
         return ViewHolderStatements(
@@ -109,6 +105,10 @@ class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView
             }
 
             itemView.setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(R.string.open_statement).setOnMenuItemClickListener {
+                    gradeContextClickListener?.invoke(statement.id)
+                    true
+                }
                 menu.add(itemView.context.getString(R.string.download_statement)).setOnMenuItemClickListener {
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.mospolytech.ru/assets/stats_marks.php?s=${statement.id}"))
                     ContextCompat.startActivity(itemView.context, browserIntent, null)
@@ -117,20 +117,5 @@ class StatementsAdapter(var items : List<Statement> = emptyList()): RecyclerView
             }
         }
     }
-
-//    inner class StatementsDiffCallback(private val oldList: List<Statement>,
-//                                       private val newList: List<Statement>) : DiffUtil.Callback() {
-//
-//        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-//            oldList[oldItemPosition].number == newList[newItemPosition].number
-//
-//        override fun getOldListSize() = oldList.size
-//
-//        override fun getNewListSize() = newList.size
-//
-//        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-//            oldList[oldItemPosition] == newList[newItemPosition]
-//
-//    }
 
 }

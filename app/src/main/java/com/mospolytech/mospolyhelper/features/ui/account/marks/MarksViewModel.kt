@@ -33,7 +33,6 @@ class MarksViewModel(
         useCase.getLocalInfo().collect {
             marks.value = it
         }
-        //marks.value = Result.loading()
         useCase.getInfo().collect {
             marks.value = it
         }

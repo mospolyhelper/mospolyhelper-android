@@ -1,7 +1,11 @@
 package com.mospolytech.mospolyhelper.domain.account.group_marks.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class GradeSheet(
     val id: String,
+    val guid: String,
     val documentType: String,
     val examType: String,
     val department: String,
@@ -14,6 +18,7 @@ data class GradeSheet(
     val semester: String,
     val group: String,
     val disciplineName: String,
+    val educationForm: String,
     val direction: String,
     val directionCode: String,
     val specialization: String,

@@ -250,4 +250,5 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="cop">Скопировать</string>
     <string name="message_copied">Сообщение скопировано</string>
     <string name="no_mark">Нет оценки</string>
+    <string name="open_statement">Показать оценки</string>
 </resources>
