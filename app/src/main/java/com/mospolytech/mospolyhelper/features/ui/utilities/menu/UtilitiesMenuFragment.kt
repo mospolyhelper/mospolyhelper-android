@@ -48,6 +48,12 @@ class UtilitiesMenuFragment : Fragment(R.layout.fragment_menu_utilities) {
                             .actionUtilitiesMenuFragmentToDeadlineFragment()
                     )
                 }
+                R.id.nav_news -> findNavController().safe {
+                    navigate(
+                        UtilitiesMenuFragmentDirections
+                            .actionUtilitiesMenuFragmentToNewsFragment()
+                    )
+                }
 //                R.id.nav_university_pass -> findNavController().safe {
 //                    navigate(
 //                        UtilitiesMenuFragmentDirections

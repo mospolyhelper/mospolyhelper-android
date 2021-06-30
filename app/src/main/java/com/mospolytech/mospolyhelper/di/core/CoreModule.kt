@@ -6,6 +6,7 @@ import com.mospolytech.mospolyhelper.data.core.local.AssetsDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.core.migrations.MIGRATION_1_2
 import com.mospolytech.mospolyhelper.data.core.repository.SharedPreferencesRepository
+import com.mospolytech.mospolyhelper.di.utils.DiConstants
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
@@ -41,7 +42,7 @@ val coreModule = module {
         }
     }
 
-    single(named("accountHerokuClient")) {
+    single(named(DiConstants.ACCOUNT_HEROKU_CLIENT)) {
         HttpClient {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
@@ -51,9 +52,5 @@ val coreModule = module {
 //                level = LogLevel.ALL
 //            }
         }
-    }
-
-    single(named("schedule")) {
-        HttpClient()
     }
 }

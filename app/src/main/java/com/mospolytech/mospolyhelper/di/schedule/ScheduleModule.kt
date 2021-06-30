@@ -12,6 +12,7 @@ import com.mospolytech.mospolyhelper.data.schedule.remote.*
 import com.mospolytech.mospolyhelper.data.schedule.repository.LessonTagsRepositoryImpl
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleUsersRepositoryImpl
+import com.mospolytech.mospolyhelper.di.utils.DiConstants
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleUsersRepository
@@ -21,18 +22,23 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.Advanc
 import com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.LessonTagViewModel
+import io.ktor.client.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val scheduleModule = module {
 
+    single(named(DiConstants.SCHEDULE_CLIENT)) {
+        HttpClient()
+    }
+
     // Apis
-    single { ScheduleClient(get(named("schedule"))) }
-    single { GroupListClient(get(named("schedule"))) }
-    single { GroupInfoApi(get(named("schedule"))) }
-    single { TeacherInfoApi(get(named("schedule"))) }
-    single { AuditoriumInfoApi(get(named("schedule"))) }
+    single { ScheduleClient(get(named(DiConstants.SCHEDULE_CLIENT))) }
+    single { GroupListClient(get(named(DiConstants.SCHEDULE_CLIENT))) }
+    single { GroupInfoApi(get(named(DiConstants.SCHEDULE_CLIENT))) }
+    single { TeacherInfoApi(get(named(DiConstants.SCHEDULE_CLIENT))) }
+    single { AuditoriumInfoApi(get(named(DiConstants.SCHEDULE_CLIENT))) }
 
     // Converters
     single { ScheduleRemoteConverter() }

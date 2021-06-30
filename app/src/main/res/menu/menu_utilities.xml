@@ -13,6 +13,10 @@
         android:icon="@drawable/ic_fluent_task_list_square_ltr_20_regular"
         android:title="@string/nav_deadlines" />
     <item
+        android:id="@+id/nav_news"
+        android:icon="@drawable/ic_fluent_news_20_regular"
+        android:title="@string/nav_news" />
+    <item
         android:id="@+id/nav_university_pass"
         android:icon="@drawable/ic_outline_contactless_24"
         android:title="@string/pass" />

@@ -160,6 +160,9 @@
         <action
             android:id="@+id/action_utilitiesMenuFragment_to_aboutAppFragment"
             app:destination="@id/aboutAppFragment" />
+        <action
+            android:id="@+id/action_utilitiesMenuFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_menu_account"
@@ -330,5 +333,9 @@
             android:id="@+id/action_scheduleUsersFragment_to_scheduleIdsFragment"
             app:destination="@id/scheduleIdsFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.utilities.news.NewsFragment"
+        android:label="NewsFragment" />
 
 </navigation>

@@ -42,7 +42,8 @@ import java.time.temporal.ChronoUnit
 
 class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     companion object {
-        private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM")
+        private val dateFormatter = DateTimeFormatter.ofPattern("EEEE")
+        private val dateFormatter1 = DateTimeFormatter.ofPattern("d MMMM")
     }
 
     private val viewModel  by sharedViewModel<ScheduleViewModel>()
@@ -158,17 +159,19 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     private fun setWeekViewPager(scheduleDatesUiData: ScheduleDatesUiData?) {
         (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)
             ?.update(scheduleDatesUiData ?: emptyList(), viewModel.date.value)
+        viewBinding.viewpagerWeeks.setCurrentItem(viewModel.scheduleWeekPosition.value, false)
     }
 
     private fun setSchedule(scheduleUiData: ScheduleUiData) {
         viewBinding.includeViewpager.root.show()
         viewBinding.includeAddUser.root.hide()
         viewBinding.includeNull.root.hide()
-        (viewBinding.includeViewpager.viewpagerSchedule.adapter as ScheduleAdapter)
-            .submitData(
+        (viewBinding.includeViewpager.viewpagerSchedule.adapter as? ScheduleAdapter)
+            ?.submitData(
                 scheduleUiData,
                 viewModel.currentLessonTimes.value.first
             )
+        viewBinding.includeViewpager.viewpagerSchedule.setCurrentItem(viewModel.schedulePosition.value, false)
     }
 
     private fun setNullSchedule() {
@@ -235,15 +238,19 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
         lifecycleScope.launchWhenResumed {
-            combine(viewModel.date, viewModel.scheduleWeekPosition) { date, week ->
-                if (viewModel.scheduleDatesUiData.value.getOrNull()?.isNotEmpty() == true) {
-                    viewBinding.textviewDateAndWeek.text =
-                        getString(R.string.schedule_date, date.format(dateFormatter), week + 1)
-                    viewBinding.textviewDateAndWeek.show()
-                } else {
+            combine(viewModel.date, viewModel.scheduleWeekPosition, viewModel.scheduleDatesUiData) {
+                    date, week, scheduleDatesUiData ->
+                scheduleDatesUiData.onSuccess {
+                    if (it.isNotEmpty()) {
+                        viewBinding.textviewDateAndWeek.text =
+                            getString(R.string.schedule_date, date.format(dateFormatter1), week + 1)
+                        viewBinding.textviewDateAndWeek.show()
+                    } else {
+                        viewBinding.textviewDateAndWeek.hide()
+                    }
+                }.onFailure {
                     viewBinding.textviewDateAndWeek.hide()
                 }
-
             }.collect()
         }
         lifecycleScope.launchWhenResumed {

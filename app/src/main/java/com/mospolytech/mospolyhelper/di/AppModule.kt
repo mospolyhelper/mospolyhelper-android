@@ -12,6 +12,7 @@ import com.mospolytech.mospolyhelper.di.main.mainModule
 import com.mospolytech.mospolyhelper.di.relevant.relevantModule
 import com.mospolytech.mospolyhelper.di.schedule.scheduleModule
 import com.mospolytech.mospolyhelper.di.utilities.addresses.addressesModule
+import com.mospolytech.mospolyhelper.di.utilities.news.newsModule
 import org.koin.core.KoinApplication
 import org.koin.core.logger.Level
 import org.koin.dsl.module
@@ -53,6 +54,7 @@ val diModules = listOf(
     // Utilities
     addressesModule,
     deadlineModule,
+    newsModule,
 
     // Schedule
     scheduleModule,

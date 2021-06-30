@@ -64,13 +64,14 @@
             <TextView
                 android:id="@+id/textview_date_and_week"
                 tools:text="29 апреля, 4-я неделя"
+                android:textAllCaps="true"
                 android:textColor="@color/text_color_quaternary"
-                android:layout_marginStart="30dp"
                 android:layout_marginEnd="25dp"
+                android:layout_marginTop="1dp"
                 android:layout_marginBottom="4dp"
                 android:layout_gravity="end"
-                android:textSize="12.4sp"
                 android:fontFamily="@font/ubuntu_medium"
+                android:textSize="11.6sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

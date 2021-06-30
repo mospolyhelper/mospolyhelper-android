@@ -97,6 +97,7 @@ dependencies {
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
 
     androidTestImplementation("com.google.truth:truth:1.1.3")
     androidTestImplementation("androidx.room:room-testing:2.3.0")
@@ -124,7 +125,8 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.auth0.android:jwtdecode:2.0.0")
-
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     // Json
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")

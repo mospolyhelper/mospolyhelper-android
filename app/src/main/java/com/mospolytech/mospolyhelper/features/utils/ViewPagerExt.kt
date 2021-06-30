@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.utils
 
+import androidx.core.view.doOnAttach
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
@@ -16,6 +17,8 @@ fun ViewPager2.setSmartCurrentItem(item: Int, smoothMaxRange: Int = 3) {
     if (abs(currentItem - item) > smoothMaxRange) {
         setCurrentItem(item, false)
     } else {
-        setCurrentItem(item, true)
+        post {
+            setCurrentItem(item, true)
+        }
     }
 }
