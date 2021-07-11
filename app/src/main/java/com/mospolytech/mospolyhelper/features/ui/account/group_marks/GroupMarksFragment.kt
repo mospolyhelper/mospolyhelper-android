@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.features.ui.account.group_marks
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -154,8 +155,28 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showInfo(item: GradeSheet) {
         viewBinding.infoGrade.text = item.toString()
+        viewBinding.dateGrade.text = requireContext().getString(R.string.grade_date, item.examType, "${item.examDate} ${item.examTime}")
+        viewBinding.directionGrade.text = "${item.directionCode} ${item.direction}"
+        viewBinding.facultGrade.text = item.school
+        if (!item.fixed) {
+            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed)
+            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorLow))
+        } else {
+            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed_modified, item.modifiedDate)
+            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorHigh))
+        }
+        viewBinding.numberGrade.text = requireContext().getString(R.string.grade_number, item.id)
+        viewBinding.timeGrade.text = requireContext().getString(R.string.grade_group_info, item.year, item.course, item.semester)
+        if (item.specialization.isNotEmpty()) {
+            viewBinding.groupGrade.text = "${item.group}, ${item.specialization}"
+        } else {
+            viewBinding.groupGrade.text = item.group
+        }
+        viewBinding.cafGrade.text = item.department
+        viewBinding.toolbarMarks.title = item.disciplineName
     }
 
     private fun showMarks(items: List<GradeSheetMark>) {

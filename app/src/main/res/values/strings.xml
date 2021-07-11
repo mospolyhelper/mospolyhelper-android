@@ -251,4 +251,9 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="message_copied">Сообщение скопировано</string>
     <string name="no_mark">Нет оценки</string>
     <string name="open_statement">Показать оценки</string>
+    <string name="grade_number">Ведомость №%1$s</string>
+    <string name="grade_fixed">Ведомость открыта</string>
+    <string name="grade_fixed_modified">Закрыта в %1$s</string>
+    <string name="grade_date">%1$s,\n%2$s</string>
+    <string name="grade_group_info">%1$s год, %2$s курс %3$s семестр</string>
 </resources>
