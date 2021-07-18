@@ -16,23 +16,45 @@ class NewsConverter {
             .withLocale(Locale("ru"))
     }
 
-    fun parseNews(newsHtml: String): List<NewsPreview> {
+    fun parseNewsYear(newsHtml: String): Int {
+        return Jsoup.parse(newsHtml)
+            .getElementsByClass("news-detail-head__date").first()
+            .getElementsByClass("numerical-item__label").first()
+            .text().trim().split(' ').last().toInt()
+    }
+
+    fun parseFirstNewsUrl(newsHtml: String): String? {
+        val html = Jsoup.parse(newsHtml)
+        val newsCard = html.getElementsByClass("card-news-list__item").firstOrNull()
+        val newsUrl = newsCard?.getElementsByTag("a")?.firstOrNull()?.attr("href")
+        return newsUrl?.let { "https://mospolytech.ru$it" }
+    }
+
+    fun parseNewsList(newsHtml: String, firstNewsYear: Int): List<NewsPreview> {
         val html = Jsoup.parse(newsHtml)
         val newsCards = html.getElementsByClass("card-news-list__item")
+        var prevDate: LocalDate? = null
         return newsCards.map { element ->
-            val newsUrl = "https://new.mospolytech.ru" +
+            val newsUrl = "https://mospolytech.ru" +
                     (element.getElementsByTag("a").firstOrNull()?.attr("href") ?: "")
-            val imageURL = "https://new.mospolytech.ru" +
+            val imageURL = "https://mospolytech.ru" +
                     (element.getElementsByTag("img").firstOrNull()?.attr("data-src") ?: "")
-            val date = element.getElementsByClass("card-news__label").firstOrNull()?.text() ?: ""
-            val localDate = try {
-                MonthDay.from(dateFormatter.parse(date.toLowerCase()))
+            val dateStr = element.getElementsByClass("card-news__label").firstOrNull()?.text() ?: ""
+            val monthDay = try {
+                MonthDay.from(dateFormatter.parse(dateStr.toLowerCase()))
             } catch (e: DateTimeParseException) {
                 MonthDay.now()
             } catch (e: DateTimeException) {
                 MonthDay.now()
             }
-            val title =  element.getElementsByClass("card-news__text").firstOrNull()?.text() ?: ""
+            val localDate = prevDate?.let { findDate(monthDay, it) } ?: LocalDate.of(
+                firstNewsYear,
+                monthDay.month,
+                monthDay.dayOfMonth
+            )
+            prevDate = localDate
+
+            val title = element.getElementsByClass("card-news__text").firstOrNull()?.text() ?: ""
             NewsPreview(
                 title,
                 localDate,
@@ -40,5 +62,13 @@ class NewsConverter {
                 newsUrl
             )
         }
+    }
+
+    private fun findDate(currentMonthDay: MonthDay, previousDate: LocalDate): LocalDate {
+        val year = if (previousDate.month.value >= currentMonthDay.month.value)
+            previousDate.year
+        else
+            previousDate.year - 1
+        return LocalDate.of(year, currentMonthDay.month, currentMonthDay.dayOfMonth)
     }
 }

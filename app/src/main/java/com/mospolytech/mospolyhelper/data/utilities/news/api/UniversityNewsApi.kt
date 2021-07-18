@@ -8,7 +8,7 @@ class UniversityNewsApi(
     private val client: HttpClient
 ) {
     companion object {
-        private const val BASE_URL = "https://new.mospolytech.ru"
+        private const val BASE_URL = "https://mospolytech.ru"
 
         private const val NEWS_ENDPOINT = "/news/"
         private const val EVENTS_ENDPOINT = "/events/"
@@ -19,7 +19,6 @@ class UniversityNewsApi(
 
     suspend fun getNews(page: Int): NewsResponse {
         return client.get(NEWS_URL) {
-            header("host", "new.mospolytech.ru")
             parameter("PAGEN_1", page)
         }
     }
@@ -27,6 +26,11 @@ class UniversityNewsApi(
     suspend fun getEvents(page: Int): NewsResponse {
         return client.get(EVENTS_URL) {
             parameter("PAGEN_1", page)
+        }
+    }
+
+    suspend fun getNews(url: String): String {
+        return client.get(url) {
         }
     }
 }

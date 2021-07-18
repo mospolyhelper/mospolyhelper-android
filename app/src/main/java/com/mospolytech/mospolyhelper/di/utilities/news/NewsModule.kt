@@ -31,7 +31,7 @@ val newsModule = module {
             }
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.ALL
+                level = LogLevel.HEADERS
             }
             val customTrust = try {
                 CustomTrust()
