@@ -153,7 +153,9 @@ dependencies {
         // Excludes the support library because it"s already included by Glide.
         isTransitive = false
     }
-
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0"){
+        exclude(group = "glide-parent")
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

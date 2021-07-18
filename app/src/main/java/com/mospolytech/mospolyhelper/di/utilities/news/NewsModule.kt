@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.di.utilities.news
 import com.mospolytech.mospolyhelper.data.utilities.news.api.UniversityNewsApi
 import com.mospolytech.mospolyhelper.data.utilities.news.converter.NewsConverter
 import com.mospolytech.mospolyhelper.data.utilities.news.remote.NewsPagingSource
+import com.mospolytech.mospolyhelper.data.utilities.news.remote.NewsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.utilities.news.repository.NewsRepositoryImpl
 import com.mospolytech.mospolyhelper.di.utils.DiConstants
 import com.mospolytech.mospolyhelper.domain.utilities.news.repository.NewsRepository
@@ -50,7 +51,8 @@ val newsModule = module {
 
     single { UniversityNewsApi(get(named(DiConstants.NEWS_CLIENT))) }
     single { NewsConverter() }
-    single { NewsPagingSource(get(), get()) }
+    single { NewsRemoteDataSource(get(), get()) }
+    single { NewsPagingSource(get()) }
     single<NewsRepository> { NewsRepositoryImpl(get()) }
     single { NewsUseCase(get()) }
     viewModel { NewsViewModel(get()) }

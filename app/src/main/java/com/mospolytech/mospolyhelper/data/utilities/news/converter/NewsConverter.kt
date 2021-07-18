@@ -1,6 +1,8 @@
 package com.mospolytech.mospolyhelper.data.utilities.news.converter
 
 import com.mospolytech.mospolyhelper.domain.utilities.news.model.NewsPreview
+import com.mospolytech.mospolyhelper.domain.utilities.news.model.UniversityNewsPreview
+import com.mospolytech.mospolyhelper.domain.utilities.news.model.UniversityNewsTypes
 import org.jsoup.Jsoup
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -55,11 +57,12 @@ class NewsConverter {
             prevDate = localDate
 
             val title = element.getElementsByClass("card-news__text").firstOrNull()?.text() ?: ""
-            NewsPreview(
+            UniversityNewsPreview(
                 title,
                 localDate,
                 imageURL,
-                newsUrl
+                newsUrl,
+                UniversityNewsTypes.News
             )
         }
     }
