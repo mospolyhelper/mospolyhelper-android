@@ -57,12 +57,12 @@ class ScheduleTeacherRemoteConverter {
             parser
                 .getElementsByClass("teacher-info__name")
                 .first()
-                .text()
+                !!.text()
                 .replace(regex4, " - ")
                 .replace(regex5, " - ")
                 .replace("  ", " ")
         )
-        val tableBody = parser.getElementsByTag("tbody").first()
+        val tableBody = parser.getElementsByTag("tbody").first()!!
 
         val tempList: List<MutableList<LessonPlace>> = List(7) { mutableListOf() }
 

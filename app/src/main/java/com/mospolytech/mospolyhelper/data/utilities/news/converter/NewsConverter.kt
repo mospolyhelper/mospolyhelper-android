@@ -20,8 +20,8 @@ class NewsConverter {
 
     fun parseNewsYear(newsHtml: String): Int {
         return Jsoup.parse(newsHtml)
-            .getElementsByClass("news-detail-head__date").first()
-            .getElementsByClass("numerical-item__label").first()
+            .getElementsByClass("news-detail-head__date").first()!!
+            .getElementsByClass("numerical-item__label").first()!!
             .text().trim().split(' ').last().toInt()
     }
 
