@@ -50,50 +50,58 @@ class PaymentsFragment: Fragment(R.layout.fragment_account_payments) {
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadInfo()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.paymentsSwipe.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.paymentsSwipe.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.paymentsSwipe.isRefreshing = false
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.paymentsSwipe.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.payments.collect { result ->
-                result.onSuccess {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.paymentsSwipe.show()
-                    fillData(it)
-                    viewBinding.paymentsSwipe.isRefreshing = false
-                }.onFailure { error ->
-                    viewBinding.progressLoading.gone()
-                    viewBinding.paymentsSwipe.isRefreshing = false
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.paymentsSwipe.show()
+                        fillData(result.value)
+                        viewBinding.paymentsSwipe.isRefreshing = false
                     }
-                }.onLoading {
-                    if (!viewBinding.paymentsSwipe.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.paymentsSwipe.isRefreshing = false
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.paymentsSwipe.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }

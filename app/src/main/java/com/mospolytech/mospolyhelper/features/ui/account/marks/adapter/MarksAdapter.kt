@@ -52,7 +52,7 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
             type.text = item.loadType
             name.text = if (item.subject.isEmpty()) item.loadType else item.subject
             val mark: String
-            when (item.mark.toLowerCase(Locale.getDefault())) {
+            when (item.mark.lowercase(Locale.getDefault())) {
                 "отлично" -> {
                     mark ="5"
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorLow))
@@ -85,7 +85,15 @@ class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {
                     mark = itemView.context.getString(R.string.ne_zach)
                     this.mark.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorHigh))
                 }
-                else -> mark = item.mark
+                else -> {
+                    mark = item.mark
+                    this.mark.setTextColor(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.text_color_primary
+                        )
+                    )
+                }
             }
             this.mark.text = mark
             course.text = String.format(itemView.context.getString(R.string.course), item.course)

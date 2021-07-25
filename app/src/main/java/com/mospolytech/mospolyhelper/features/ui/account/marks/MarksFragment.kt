@@ -62,54 +62,62 @@ class MarksFragment : Fragment(R.layout.fragment_account_marks), AdapterView.OnI
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadInfo()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.swipeMarks.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.swipeMarks.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.swipeMarks.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeMarks.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.marks.collect { result ->
-                result.onSuccess {
-                    viewBinding.swipeMarks.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    setMarks(it.marks)
-                    setSemesters(it.marks)
-                    viewBinding.buttonSearch.isEnabled = true
-                    viewBinding.fabShare.show()
-                    fillData()
-                }.onFailure { error ->
-                    viewBinding.swipeMarks.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.swipeMarks.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        setMarks(result.value.marks)
+                        setSemesters(result.value.marks)
+                        viewBinding.buttonSearch.isEnabled = true
+                        viewBinding.fabShare.show()
+                        fillData()
                     }
-                }.onLoading {
-                    if (!viewBinding.swipeMarks.isRefreshing)
-                        viewBinding.progressLoading.show()
-                    viewBinding.buttonSearch.isEnabled = false
+                    is Result0.Failure -> {
+                        viewBinding.swipeMarks.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeMarks.isRefreshing)
+                            viewBinding.progressLoading.show()
+                        viewBinding.buttonSearch.isEnabled = false
+                    }
                 }
             }
         }

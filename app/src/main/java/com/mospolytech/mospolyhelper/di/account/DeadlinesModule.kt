@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.di.account
 
 import com.mospolytech.mospolyhelper.data.account.deadlines.api.DeadlinesHerokuClient
-import com.mospolytech.mospolyhelper.data.account.deadlines.local.DeadlinesLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.deadlines.remote.DeadlinesRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.deadlines.repository.DeadlinesRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.account.deadlines.repository.DeadlinesRepository
@@ -14,8 +13,7 @@ import org.koin.dsl.module
 val deadlinesModule = module {
     single { DeadlinesHerokuClient(get(named("accountHerokuClient"))) }
     single { DeadlinesRemoteDataSource(get()) }
-    single { DeadlinesLocalDataSource(get()) }
-    single<DeadlinesRepository> { DeadlinesRepositoryImpl(get(), get(), get()) }
+    single<DeadlinesRepository> { DeadlinesRepositoryImpl(get(), get()) }
     single { DeadlinesUseCase(get()) }
     viewModel { DeadlinesViewModel(get(), get()) }
 }

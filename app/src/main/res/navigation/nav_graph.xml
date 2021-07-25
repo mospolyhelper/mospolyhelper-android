@@ -273,7 +273,11 @@
     <fragment
         android:id="@+id/statementsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.statements.StatementsFragment"
-        android:label="StatementsFragment" />
+        android:label="StatementsFragment" >
+        <action
+            android:id="@+id/action_statementsFragment_to_groupMarksFragment"
+            app:destination="@id/groupMarksFragment" />
+    </fragment>
     <dialog
         android:id="@+id/bottomDialogFilter"
         android:name="com.mospolytech.mospolyhelper.features.ui.account.students.BottomDialogFilter"
@@ -333,6 +337,14 @@
             android:id="@+id/action_scheduleUsersFragment_to_scheduleIdsFragment"
             app:destination="@id/scheduleIdsFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/groupMarksFragment"
+        android:name="com.mospolytech.mospolyhelper.features.ui.account.group_marks.GroupMarksFragment"
+        android:label="GroupMarksFragment" >
+        <argument
+            android:name="guid"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/newsFragment"
         android:name="com.mospolytech.mospolyhelper.features.ui.utilities.news.NewsFragment"

@@ -92,20 +92,24 @@ class TeachersFragment : Fragment(R.layout.fragment_account_teachers), Coroutine
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.fetchTeachers(viewBinding.editSearchTeacher.text.toString())
-                            .collectLatest { pagingData ->
-                                adapter.submitData(pagingData)
-                            }
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.fetchTeachers(viewBinding.editSearchTeacher.text.toString())
+                                .collectLatest { pagingData ->
+                                    adapter.submitData(pagingData)
+                                }
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.progressFirstLoading.gone()
-                    viewBinding.swipeTeachers.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.swipeTeachers.isRefreshing)
-                        viewBinding.progressFirstLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.progressFirstLoading.gone()
+                        viewBinding.swipeTeachers.isRefreshing = false
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeTeachers.isRefreshing)
+                            viewBinding.progressFirstLoading.show()
+                    }
                 }
             }
         }

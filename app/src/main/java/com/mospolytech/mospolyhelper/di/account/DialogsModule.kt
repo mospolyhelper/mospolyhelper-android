@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.di.account
 
 import com.mospolytech.mospolyhelper.data.account.dialogs.api.DialogsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.dialogs.local.DialogsLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.dialogs.remote.DialogsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.dialogs.repository.DialogsRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.account.dialogs.repository.DialogsRepository
@@ -14,8 +13,7 @@ import org.koin.dsl.module
 val dialogsModule = module {
     single { DialogsHerokuClient(get(named("accountHerokuClient"))) }
     single { DialogsRemoteDataSource(get()) }
-    single { DialogsLocalDataSource(get()) }
-    single<DialogsRepository> { DialogsRepositoryImpl(get(), get(), get()) }
+    single<DialogsRepository> { DialogsRepositoryImpl(get(), get()) }
     single { DialogsUseCase(get()) }
     viewModel { DialogsViewModel(get(), get()) }
 }

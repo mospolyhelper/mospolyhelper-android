@@ -6,13 +6,16 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountStatementsBinding
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
 import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
+import com.mospolytech.mospolyhelper.features.ui.account.group_marks.GroupMarksFragment.Companion.GUID
 import com.mospolytech.mospolyhelper.features.ui.account.statements.adapter.StatementsAdapter
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*
@@ -26,8 +29,6 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     private val viewBinding by viewBinding(FragmentAccountStatementsBinding::bind)
     private val viewModel by viewModel<StatementsViewModel>()
     
-    //private val adapter = StatementsAdapter()
-    
     private var currentSemester: Int = -1
     private var semesters: List<String> = emptyList()
     private var marks: List<Statement> = emptyList()
@@ -38,12 +39,17 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
         lifecycleScope.launch {
             viewModel.getInfo()
         }
+
+        StatementsAdapter.gradeContextClickListener = {
+            val data = bundleOf(GUID to it)
+            findNavController().navigate(R.id.action_statementsFragment_to_groupMarksFragment, data)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        //viewBinding.recyclerMarks.adapter = adapter
+
+        setSpinner()
 
         viewBinding.swipeMarks.setOnRefreshListener {
             lifecycleScope.launch {
@@ -80,7 +86,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
                 }
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, sheet.toString())
+                putExtra(Intent.EXTRA_TEXT, sheet)
                 type = "text/plain"
             }
             val shareIntent = Intent.createChooser(sendIntent, null)
@@ -89,50 +95,58 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadInfo()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.progressLoading.gone()
-                    viewBinding.swipeMarks.isRefreshing = false
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.swipeMarks.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.progressLoading.gone()
+                        viewBinding.swipeMarks.isRefreshing = false
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeMarks.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.statements.collect { result ->
-                result.onSuccess {
-                    viewBinding.swipeMarks.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    viewBinding.fabShare.show()
-                    fillData(it)
-                }.onFailure { error ->
-                    viewBinding.swipeMarks.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.swipeMarks.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        viewBinding.fabShare.show()
+                        fillData(result.value)
                     }
-                }.onLoading {
-                    if (!viewBinding.swipeMarks.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.swipeMarks.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeMarks.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }
@@ -145,6 +159,7 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             }
         }
     }
+
     private fun fillData(statements: Statements) {
         if (!semesters.containsAll(statements.semesterList)) {
             ArrayAdapter(
@@ -159,9 +174,20 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
 
         viewBinding.recyclerMarks.adapter = StatementsAdapter(statements.sheets)
         marks = statements.sheets
-        viewBinding.semestersSpinner.onItemSelectedListener = this
+
     }
 
+    private fun setSpinner() {
+        viewBinding.semestersSpinner.onItemSelectedListener = null
+        ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item,
+            semesters.map { it.replace("/", " / ").replace("|", " год | ") + " семестр" }
+        ).also { adapterSpinner ->
+            adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            viewBinding.semestersSpinner.adapter = adapterSpinner
+        }
+        viewBinding.semestersSpinner.onItemSelectedListener = this
+    }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         if (currentSemester == -1) {
@@ -179,5 +205,20 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
         lifecycleScope.launch {
             viewModel.downloadInfo(viewBinding.semestersSpinner.selectedItem.toString())
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StatementsAdapter.gradeContextClickListener = null
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewBinding.semestersSpinner.onItemSelectedListener = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewBinding.semestersSpinner.onItemSelectedListener = this
     }
 }

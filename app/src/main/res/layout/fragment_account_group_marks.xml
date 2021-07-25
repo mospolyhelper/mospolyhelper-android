@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/colorBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="3dp"
+    android:paddingTop="0dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/colorBackground">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_marks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            tools:title="Курсовая по программированию, экзамен"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_grade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="5dp">
+
+                        <LinearLayout
+                            android:id="@+id/info_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="15dp"
+                            android:orientation="vertical"
+                            tools:visibility="visible"
+                            android:background="@color/layerOne">
+                            <TextView
+                                android:id="@+id/info_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/base_info"
+                                android:fontFamily="@font/ubuntu"
+                                android:layout_marginTop="5dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/fio_student"/>
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp">
+
+                                <TextView
+                                    android:id="@+id/number_grade"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_app_generic_24_regular"
+                                    tools:text="@string/grade_number"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@id/date_grade"
+                                    app:layout_constraintBottom_toBottomOf="@id/date_grade"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:drawableTint="@color/iconColor" />
+
+                                <TextView
+                                    android:id="@+id/date_grade"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/ubuntu"
+                                    android:textColor="@color/color_secondary"
+                                    tools:text="@string/grade_date"
+                                    android:textAlignment="textEnd"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"/>
+
+                                <TextView
+                                    android:id="@+id/fixed_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    android:layout_marginTop="7dp"
+                                    app:drawableStartCompat="@drawable/ic_fluent_lock_closed_24_regular"
+                                    tools:text="@string/grade_fixed_modified"
+                                    app:drawableTint="@color/iconColor"
+                                    app:layout_constraintTop_toBottomOf="@id/date_grade"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                            <View
+                                android:id="@+id/divider_info"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@color/color_low_emphasis"/>
+
+                            <TextView
+                                android:id="@+id/facult_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_building_24_regular"
+                                tools:text="Факультет"
+                                app:drawableTint="@color/iconColor" />
+
+                            <TextView
+                                android:id="@+id/caf_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_teacher_24"
+                                tools:text="Кафедра"
+                                app:drawableTint="@color/iconColor"/>
+
+                            <TextView
+                                android:id="@+id/direction_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_teacher_24"
+                                tools:text="Направление"
+                                app:drawableTint="@color/iconColor"/>
+
+                            <TextView
+                                android:id="@+id/group_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
+                                app:drawableTint="@color/iconColor"
+                                tools:text="Группа"/>
+
+                            <TextView
+                                android:id="@+id/time_grade"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_clock_24_regular"
+                                app:drawableTint="@color/iconColor"
+                                tools:text="@string/grade_group_info"/>
+
+                        </LinearLayout>
+
+
+                        <ProgressBar
+                            android:id="@+id/progress_loading_info"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/marks"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            android:overScrollMode="never"
+                            tools:listitem="@layout/item_grade_mark"/>
+
+                        <ProgressBar
+                            android:id="@+id/progress_loading_marks"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"/>
+                    </FrameLayout>
+                </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

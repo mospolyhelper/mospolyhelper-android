@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 
 
-class StudentsRepositoryImpl(
-    private val dataSource: StudentsRemoteDataSource,
-    private val client: StudentsHerokuClient
-) : StudentsRepository {
+class StudentsRepositoryImpl(private val client: StudentsHerokuClient) : StudentsRepository {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 

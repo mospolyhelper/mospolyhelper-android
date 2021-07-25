@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.di.account
 
 import com.mospolytech.mospolyhelper.data.account.applications.api.ApplicationsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.applications.local.ApplicationsLocalDataSource
 import com.mospolytech.mospolyhelper.data.account.applications.remote.ApplicationsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.applications.repository.ApplicationsRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.account.applications.repository.ApplicationsRepository
@@ -14,8 +13,7 @@ import org.koin.dsl.module
 val applicationsModule = module {
     single { ApplicationsHerokuClient(get(named("accountHerokuClient"))) }
     single { ApplicationsRemoteDataSource(get()) }
-    single { ApplicationsLocalDataSource(get()) }
-    single<ApplicationsRepository> { ApplicationsRepositoryImpl(get(), get(), get()) }
+    single<ApplicationsRepository> { ApplicationsRepositoryImpl(get(), get()) }
     single { ApplicationsUseCase(get()) }
     viewModel { ApplicationsViewModel(get(), get()) }
 }

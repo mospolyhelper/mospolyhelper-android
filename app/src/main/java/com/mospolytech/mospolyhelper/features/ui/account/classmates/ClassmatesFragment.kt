@@ -67,57 +67,76 @@ class ClassmatesFragment : Fragment(R.layout.fragment_account_classmates) {
 
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
-                result?.onSuccess {
-                    lifecycleScope.launch {
-                        viewModel.downloadInfo()
+                when (result) {
+                    is Result0.Success -> {
+                        lifecycleScope.launch {
+                            viewModel.downloadInfo()
+                        }
                     }
-                }?.onFailure {
-                    viewBinding.swipeClassmates.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                }?.onLoading {
-                    if (!viewBinding.swipeClassmates.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.swipeClassmates.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        Toast.makeText(context, result.exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeClassmates.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
+                }
+                when (result) {
+                    is Result0.Success -> {
+
+                    }
+                    is Result0.Failure -> {
+
+                    }
+                    is Result0.Loading -> {
+
+                    }
                 }
             }
         }
 
         lifecycleScope.launchWhenResumed {
             viewModel.classmates.collect { result ->
-                result.onSuccess {
-                    viewBinding.swipeClassmates.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    classmates = it
-                    if (viewBinding.editSearchClassmate.text.isNotEmpty()) {
-                        val classmatesMutable: MutableList<Classmate> = classmates.toMutableList()
-                        adapter.items = classmatesMutable.filter { predicate ->
-                            predicate.name.contains(viewBinding.editSearchClassmate.text.toString(), true)
-                        }
-                    } else {
-                        adapter.items = classmates
-                    }
-                }.onFailure { error ->
-                    viewBinding.swipeClassmates.isRefreshing = false
-                    viewBinding.progressLoading.gone()
-                    when (error) {
-                        is ClientRequestException -> {
-                            when (error.response.status.value) {
-                                401 ->  {
-                                    lifecycleScope.launch {
-                                        viewModel.refresh()
-                                    }
-                                }
-                                else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                when (result) {
+                    is Result0.Success -> {
+                        viewBinding.swipeClassmates.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        classmates = result.value
+                        if (viewBinding.editSearchClassmate.text.isNotEmpty()) {
+                            val classmatesMutable: MutableList<Classmate> = classmates.toMutableList()
+                            adapter.items = classmatesMutable.filter { predicate ->
+                                predicate.name.contains(viewBinding.editSearchClassmate.text.toString(), true)
                             }
+                        } else {
+                            adapter.items = classmates
                         }
-                        is UnknownHostException -> {
-                            Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
-                        }
-                        else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
                     }
-                }.onLoading {
-                    if (!viewBinding.swipeClassmates.isRefreshing)
-                        viewBinding.progressLoading.show()
+                    is Result0.Failure -> {
+                        viewBinding.swipeClassmates.isRefreshing = false
+                        viewBinding.progressLoading.gone()
+                        when (val error = result.exception) {
+                            is ClientRequestException -> {
+                                when (error.response.status.value) {
+                                    401 ->  {
+                                        lifecycleScope.launch {
+                                            viewModel.refresh()
+                                        }
+                                    }
+                                    else -> Toast.makeText(context, R.string.server_error, Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            is UnknownHostException -> {
+                                Toast.makeText(context, R.string.check_connection, Toast.LENGTH_LONG).show()
+                            }
+                            else -> Toast.makeText(context, error.localizedMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is Result0.Loading -> {
+                        if (!viewBinding.swipeClassmates.isRefreshing)
+                            viewBinding.progressLoading.show()
+                    }
                 }
             }
         }

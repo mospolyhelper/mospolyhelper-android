@@ -9,7 +9,9 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class StudentsRemoteDataSource(
-    private val client: StudentsHerokuClient, private val query: String): PagingSource<Int, Student>() {
+    private val client: StudentsHerokuClient,
+    private val query: String
+    ): PagingSource<Int, Student>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Student> {
         return try {

@@ -50,6 +50,7 @@ val diModules = listOf(
     deadlinesModule,
     statementsModule,
     dialogsModule,
+    groupMarksModule,
 
     // Utilities
     addressesModule,

@@ -15,10 +15,8 @@ class PreferenceDefaults {
         const val ShowNotLabeledLessons = false
 
         // Account
-        const val Login = ""
         const val Password = ""
         const val SessionId = ""
-        const val SaveLogin = false
-        const val SavePassword = false
+        const val RefreshToken = ""
     }
 }
