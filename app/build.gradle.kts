@@ -1,19 +1,19 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    kotlin("android")
     id("kotlin-parcelize")
-    id("kotlin-kapt")
-    id("kotlinx-serialization")
+    kotlin("kapt")
+    kotlin("plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 30
 
     defaultConfig {
         applicationId = "com.mospolytech.mospolyhelper"
-        minSdkVersion(23)
-        targetSdkVersion(30)
+        minSdk = 23
+        targetSdk = 30
         versionCode = 8
         versionName = "0.4.3"
         javaCompileOptions {
@@ -34,11 +34,11 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         dataBinding = true
@@ -52,110 +52,85 @@ android {
 }
 
 dependencies {
-    val navVersion = "2.3.5"
-    val koinVersion = "3.1.2"
-    val ktorVersion = "1.6.1"
-    val roomVersion = "2.3.0"
-    val logbackVersion = "1.2.3"
-
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
-
     // Android
-    implementation("androidx.appcompat:appcompat:1.3.0")
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.fragment:fragment-ktx:1.3.5")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-
+    coreLibraryDesugaring(libs.desugar)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.preference)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.lifecycle.ext)
+    implementation(libs.androidx.lifecycle.viewmodel)
 
     // UI
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("com.microsoft.design:fluent-system-icons:1.1.135@aar")
-
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.google.material)
+    implementation(libs.google.flexbox)
+    implementation (libs.fluenticons)
+    implementation(libs.viewbinding)
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1-native-mt")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1-native-mt")
-
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     // Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
-
-
-    // Tests
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("androidx.test:core:1.4.0")
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation("com.google.truth:truth:1.1.3")
-    testImplementation("io.insert-koin:koin-test:$koinVersion")
-    testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1-native-mt")
-
-    androidTestImplementation("com.google.truth:truth:1.1.3")
-    androidTestImplementation("androidx.room:room-testing:2.3.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-
-
-    // ViewBinding
-    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.7")
-
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
 
     // DI
-    // Koin for Kotlin Multiplatform
-    implementation("io.insert-koin:koin-core:$koinVersion")
-    // Koin main features for Android (Scope,ViewModel ...)
-    implementation("io.insert-koin:koin-android:$koinVersion")
-    implementation("io.insert-koin:koin-ktor:$koinVersion")
-    // SLF4J Logger
-    //implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.ktor)
 
 
     // Network
-    implementation("io.ktor:ktor-client-android:$ktorVersion")
-    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("com.auth0.android:jwtdecode:2.0.0")
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.logback)
+    implementation(libs.jwtdecode)
 
     // Json
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-
+    implementation(libs.kotlinx.serialization.json)
 
     // Database
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 
     // Html parser
-    implementation("org.jsoup:jsoup:1.14.1")
-
+    implementation(libs.jsoup)
 
     // Paging
-    implementation("androidx.paging:paging-runtime-ktx:3.0.0")
-
+    implementation(libs.androidx.paging)
 
     // Image loader
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    kapt("com.github.bumptech.glide:compiler:4.12.0")
-    implementation("com.github.bumptech.glide:recyclerview-integration:4.12.0") {
+    implementation(libs.glide.glide)
+    kapt(libs.glide.compiler)
+    implementation(libs.glide.recyclerview) {
         // Excludes the support library because it"s already included by Glide.
         isTransitive = false
     }
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0"){
+    implementation(libs.glide.okhttp){
         exclude(group = "glide-parent")
     }
+
+    // Tests
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.koin.test.core)
+    testImplementation(libs.koin.test.junit4)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    androidTestImplementation(libs.google.truth)
+    androidTestImplementation(libs.room.test)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.espresso.core)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

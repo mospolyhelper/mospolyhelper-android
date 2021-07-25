@@ -1,16 +1,14 @@
 buildscript {
-    val kotlinVersion = "1.5.0"
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
-
-        val navVersion = "2.3.5"
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion")
+        val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs") as org.gradle.accessors.dm.LibrariesForLibs
+        classpath(libs.android.gradlePlugin)
+        classpath(libs.kotlin.gradlePlugin)
+        classpath(libs.navigation.gradlePlugin)
+        classpath(libs.kotlinx.serialization.plugin)
     }
 }
 
