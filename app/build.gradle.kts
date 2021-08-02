@@ -1,6 +1,5 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    id("android-app-convention")
     id("kotlin-parcelize")
     kotlin("kapt")
     kotlin("plugin.serialization")
@@ -8,41 +7,15 @@ plugins {
 }
 
 android {
-    compileSdk = 30
-
     defaultConfig {
-        applicationId = "com.mospolytech.mospolyhelper"
-        minSdk = 23
-        targetSdk = 30
-        versionCode = 8
-        versionName = "0.4.3"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf("room.schemaLocation" to "$projectDir/schemas")
             }
         }
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("debug")
-            isShrinkResources = true
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         dataBinding = true
-        viewBinding = true
     }
     sourceSets {
         // Adds exported schema location as test app assets.
