@@ -22,11 +22,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/androidApp" />
-            <option value="$PROJECT_DIR$/androidApp/ui" />
-            <option value="$PROJECT_DIR$/androidApp/ui/schedule" />
+            <option value="$PROJECT_DIR$/android-app" />
+            <option value="$PROJECT_DIR$/android-app/ui" />
+            <option value="$PROJECT_DIR$/android-app/ui/schedule" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/common/data" />
+            <option value="$PROJECT_DIR$/common/data/schedule" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

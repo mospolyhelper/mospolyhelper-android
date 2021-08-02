@@ -13,4 +13,9 @@ rootProject.name="mospolyhelper"
 includeBuild("build-logic")
 
 include(":app")
-include(":androidApp:ui:schedule")
+include(":android-app:ui:schedule")
+
+// common data
+include(":common:data:schedule")
+
+// common domain
