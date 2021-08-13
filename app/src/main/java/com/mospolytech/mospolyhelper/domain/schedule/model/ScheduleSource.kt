@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class UserSchedule : Comparable<UserSchedule> {
+sealed class ScheduleSource : Comparable<ScheduleSource> {
     companion object {
         const val PREFIX_STUDENT = "st_"
         const val PREFIX_TEACHER = "te_"
@@ -14,47 +14,47 @@ sealed class UserSchedule : Comparable<UserSchedule> {
     abstract val title: String
     abstract val idGlobal: String
 
-    override fun compareTo(other: UserSchedule): Int {
+    override fun compareTo(other: ScheduleSource): Int {
         return title.compareTo(other.title)
     }
 }
 
 @Serializable
 @SerialName("student")
-data class StudentSchedule(
+data class StudentScheduleSource(
     val id: String,
     override val title: String
-) : UserSchedule() {
+) : ScheduleSource() {
     override val idGlobal: String
         get() = PREFIX_STUDENT + id
 }
 
 @Serializable
 @SerialName("teacher")
-data class TeacherSchedule(
+data class TeacherScheduleSource(
     val id: String,
     override val title: String
-) : UserSchedule() {
+) : ScheduleSource() {
     override val idGlobal: String
         get() = PREFIX_TEACHER + id
 }
 
 @Serializable
 @SerialName("auditorium")
-data class AuditoriumSchedule(
+data class AuditoriumScheduleSource(
     val id: String,
     override val title: String
-) : UserSchedule() {
+) : ScheduleSource() {
     override val idGlobal: String
         get() = PREFIX_AUDITORIUM + id
 }
 
 @Serializable
 @SerialName("advancedSearch")
-data class AdvancedSearchSchedule(
+data class AdvancedSearchScheduleSource(
     val filters: ScheduleFilters
-) : UserSchedule()  {
+) : ScheduleSource()  {
     override val title: String = "Продвинутый поиск"
     override val idGlobal: String
-        get() = UserSchedule.PREFIX_ADVANCED_SEARCH
+        get() = ScheduleSource.PREFIX_ADVANCED_SEARCH
 }

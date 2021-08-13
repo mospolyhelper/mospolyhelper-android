@@ -1,16 +1,16 @@
 package com.mospolytech.mospolyhelper.domain.schedule.repository
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import kotlinx.coroutines.flow.Flow
 
 interface ScheduleUsersRepository {
-    fun getSavedUsers(): Flow<List<UserSchedule>>
-    suspend fun setSavedUsers(savedUsers: List<UserSchedule>)
-    suspend fun addSavedUser(user: UserSchedule)
-    suspend fun removeSavedUser(user: UserSchedule)
+    fun getSavedUsers(): Flow<List<ScheduleSource>>
+    suspend fun setSavedUsers(savedSources: List<ScheduleSource>)
+    suspend fun addSavedUser(source: ScheduleSource)
+    suspend fun removeSavedUser(source: ScheduleSource)
 
-    fun getScheduleUsers(): Flow<List<UserSchedule>>
+    fun getScheduleUsers(): Flow<List<ScheduleSource>>
 
-    fun getCurrentUser(): Flow<UserSchedule?>
-    suspend fun setCurrentUser(user: UserSchedule?)
+    fun getCurrentUser(): Flow<ScheduleSource?>
+    suspend fun setCurrentUser(source: ScheduleSource?)
 }

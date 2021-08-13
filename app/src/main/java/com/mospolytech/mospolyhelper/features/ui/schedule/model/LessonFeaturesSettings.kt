@@ -1,9 +1,9 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule.model
 
-import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 
 data class LessonFeaturesSettings(
     val showTeachers: Boolean,
@@ -11,14 +11,14 @@ data class LessonFeaturesSettings(
     val showAuditoriums: Boolean,
 ) {
     companion object {
-        fun fromUserSchedule(user: UserSchedule): LessonFeaturesSettings {
+        fun fromUserSchedule(source: ScheduleSource): LessonFeaturesSettings {
             var showTeachers = true
             var showGroups = true
             var showAuditoriums = true
-            when (user) {
-                is TeacherSchedule -> showTeachers = false
-                is StudentSchedule -> showGroups = false
-                is AuditoriumSchedule -> showAuditoriums = false
+            when (source) {
+                is TeacherScheduleSource -> showTeachers = false
+                is StudentScheduleSource -> showGroups = false
+                is AuditoriumScheduleSource -> showAuditoriums = false
             }
             return LessonFeaturesSettings(
                 showTeachers,

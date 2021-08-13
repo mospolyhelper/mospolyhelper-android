@@ -6,7 +6,7 @@ import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepositor
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleException
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonDateFilter
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
@@ -28,10 +28,10 @@ class ScheduleUseCase(
 ) {
     val scheduleUpdates = scheduleRepository.dataLastUpdatedObservable
 
-    fun getSchedule(user: UserSchedule?) = flow {
-        if (user != null) {
+    fun getSchedule(source: ScheduleSource?) = flow {
+        if (source != null) {
             emitAll(
-                scheduleRepository.getSchedule(user)
+                scheduleRepository.getSchedule(source)
                     .onStart { emit(Result0.Loading) }
             )
         } else {
@@ -40,8 +40,8 @@ class ScheduleUseCase(
     }
 
 
-    suspend fun updateSchedule(user: UserSchedule?) =
-        scheduleRepository.updateSchedule(user)
+    suspend fun updateSchedule(source: ScheduleSource?) =
+        scheduleRepository.updateSchedule(source)
 
     suspend fun getAnySchedule(onProgressChanged: (Float) -> Unit): SchedulePackList {
         return scheduleRepository.getSchedulePackList(onProgressChanged)
@@ -51,10 +51,10 @@ class ScheduleUseCase(
         return scheduleRepository.getSchedulePackListLocal()
     }
 
-    suspend fun getScheduleVersion(user: UserSchedule) =
-        scheduleRepository.getScheduleVersion(user)
+    suspend fun getScheduleVersion(source: ScheduleSource) =
+        scheduleRepository.getScheduleVersion(source)
 
-    fun getAllUsers(): Flow<List<UserSchedule>> =
+    fun getAllUsers(): Flow<List<ScheduleSource>> =
         scheduleUsersRepository.getScheduleUsers()
             .catch { Log.e(TAG, "Flow exception", it) }
 
@@ -67,17 +67,17 @@ class ScheduleUseCase(
         }
         .catch { Log.e(TAG, "Flow exception", it) }
 
-    suspend fun setSavedUsers(users: List<UserSchedule>) {
-        scheduleUsersRepository.setSavedUsers(users)
+    suspend fun setSavedUsers(sources: List<ScheduleSource>) {
+        scheduleUsersRepository.setSavedUsers(sources)
     }
 
-    suspend fun addSavedScheduleUser(user: UserSchedule) {
-        scheduleUsersRepository.addSavedUser(user)
+    suspend fun addSavedScheduleUser(source: ScheduleSource) {
+        scheduleUsersRepository.addSavedUser(source)
     }
 
-    suspend fun removeSavedScheduleUser(user: UserSchedule) {
-        scheduleUsersRepository.removeSavedUser(user)
-        if (getCurrentUser().first() == user) {
+    suspend fun removeSavedScheduleUser(source: ScheduleSource) {
+        scheduleUsersRepository.removeSavedUser(source)
+        if (getCurrentUser().first() == source) {
             setCurrentUser(null)
         }
     }
@@ -86,8 +86,8 @@ class ScheduleUseCase(
         scheduleUsersRepository.getCurrentUser()
             .catch { Log.e(TAG, "Flow exception", it) }
 
-    suspend fun setCurrentUser(user: UserSchedule?) {
-        scheduleUsersRepository.setCurrentUser(user)
+    suspend fun setCurrentUser(source: ScheduleSource?) {
+        scheduleUsersRepository.setCurrentUser(source)
     }
 
 

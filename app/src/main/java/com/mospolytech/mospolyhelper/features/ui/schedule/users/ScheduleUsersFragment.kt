@@ -10,9 +10,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleUsersBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.features.utils.getColorStateList
@@ -50,30 +50,30 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun createChip(user: UserSchedule): Chip {
+    private fun createChip(source: ScheduleSource): Chip {
         val chip = layoutInflater.inflate(
             R.layout.chip_schedule_user,
             viewBinding.chipgroupUsers,
             false
         ) as Chip
-        chip.tag = user
-        chip.text = if (user is TeacherSchedule) Teacher(user.title).getShortName() else user.title
+        chip.tag = source
+        chip.text = if (source is TeacherScheduleSource) Teacher(source.title).getShortName() else source.title
         chip.chipIconTint = getColorStateList(R.color.chip_color_text)
         chip.setChipIconResource(
-            if (user is StudentSchedule)
+            if (source is StudentScheduleSource)
                 R.drawable.ic_fluent_people_20_selector
             else
                 R.drawable.ic_fluent_hat_graduation_20_selector
         )
         chip.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                viewModel.setUser(user)
+                viewModel.setUser(source)
             }
         }
         chip.setOnCreateContextMenuListener { menu, _, _ ->
             menu.add(getString(R.string.remove)).setOnMenuItemClickListener {
                 if (it.title == getString(R.string.remove)) {
-                    viewModel.removeUser(user)
+                    viewModel.removeUser(source)
                     return@setOnMenuItemClickListener true
                 }
                 false
@@ -83,10 +83,10 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
     }
 
 
-    private fun setSavedUsers(users: List<UserSchedule>) {
+    private fun setSavedUsers(sources: List<ScheduleSource>) {
         var checkedChip: Chip? = null
         viewBinding.chipgroupUsers.removeAllViews()
-        for (user in users) {
+        for (user in sources) {
             val chip = createChip(user)
             viewBinding.chipgroupUsers.addView(chip)
             if (viewModel.user.value == user) {
@@ -102,9 +102,9 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun updateCheckedUser(user: UserSchedule) {
+    private fun updateCheckedUser(source: ScheduleSource) {
         val checkedChip = viewBinding.chipgroupUsers.children.firstOrNull {
-            (it.tag as? UserSchedule)?.idGlobal == user.idGlobal
+            (it.tag as? ScheduleSource)?.idGlobal == source.idGlobal
         }
         checkedChip?.let {
             it.id = View.generateViewId()

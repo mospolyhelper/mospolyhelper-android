@@ -1,6 +1,6 @@
 [versions]
-kotlin = "1.5.20"
-androidBuildTools = "7.0.0-rc01"
+kotlin = "1.5.21"
+androidBuildTools = "7.0.0"
 
 navigation = "2.3.5"
 
@@ -12,19 +12,19 @@ androidxFragment = "1.3.6"
 androidxLifecycleExt = "2.2.0"
 androidxLifecycleViewModel = "2.3.1"
 
-androidxConstraintLayout = "2.0.4"
+androidxConstraintLayout = "2.1.0"
 androidxRecyclerView = "1.2.1"
 androidxSwipeRefreshLayout = "1.1.0"
 googleMaterial = "1.4.0"
 googleFlexbox = "3.0.0"
-fluentIcons = "1.1.135"
+fluentIcons = "1.1.136"
 viewBinding = "1.4.7"
 
-kotlinxCoroutines = "1.5.1-native-mt"
+kotlinxCoroutines = "1.5.1"
 serializationJson = "1.2.2"
 koin = "3.1.2"
-ktor = "1.6.1"
-logback = "1.2.3"
+ktor = "1.6.2"
+logback = "1.2.5"
 jwtdecode = "2.0.0"
 room = "2.3.0"
 jsoup = "1.14.1"
@@ -80,8 +80,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 # di
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-android = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
-koin-ktor = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 # network
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }

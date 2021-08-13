@@ -3,20 +3,17 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.data.schedule.model.ScheduleVersionDb
-import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
 import com.mospolytech.mospolyhelper.domain.schedule.model.SchedulePackList
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
-import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.utils.onFailure
 import com.mospolytech.mospolyhelper.utils.onSuccess
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AdvancedSearchViewModel(
     mediator: Mediator<String, ViewModelMessage>,
@@ -32,7 +29,7 @@ class AdvancedSearchViewModel(
     val checkedAuditoriums = ObservableArrayList<Int>()
 
 
-    private val user = AdvancedSearchSchedule(
+    private val user = AdvancedSearchScheduleSource(
         ScheduleFilters(emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
     )
 

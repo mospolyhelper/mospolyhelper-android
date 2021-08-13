@@ -4,6 +4,17 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -11,7 +22,17 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/android-app" />
+            <option value="$PROJECT_DIR$/android-app/ui" />
+            <option value="$PROJECT_DIR$/android-app/ui/schedule" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared/data" />
+            <option value="$PROJECT_DIR$/shared/data/schedule" />
+            <option value="$PROJECT_DIR$/shared/domain" />
+            <option value="$PROJECT_DIR$/shared/domain/common" />
+            <option value="$PROJECT_DIR$/shared/domain/schedule" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

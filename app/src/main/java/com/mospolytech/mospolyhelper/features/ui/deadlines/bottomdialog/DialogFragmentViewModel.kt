@@ -5,7 +5,7 @@ import com.mospolytech.mospolyhelper.data.deadline.DeadlinesRepository
 import com.mospolytech.mospolyhelper.domain.core.repository.PreferencesRepository
 import com.mospolytech.mospolyhelper.domain.deadline.model.Deadline
 import com.mospolytech.mospolyhelper.domain.schedule.model.Schedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.mospolyhelper.features.ui.common.Mediator
 import com.mospolytech.mospolyhelper.features.ui.common.ViewModelBase
@@ -55,7 +55,7 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
 
     fun getLessons(): Set<String>? {
         val user = try {
-            Json.decodeFromString<UserSchedule>(prefs.get(
+            Json.decodeFromString<ScheduleSource>(prefs.get(
                 PreferenceKeys.ScheduleUser,
                 PreferenceDefaults.ScheduleUser))
         } catch (e: Exception) {
@@ -67,16 +67,16 @@ class DialogFragmentViewModel(mediator: Mediator<String, ViewModelMessage>,
         }
     }
 
-    private fun setUpSchedule(user: UserSchedule?, downloadNew: Boolean = false) {
+    private fun setUpSchedule(source: ScheduleSource?, downloadNew: Boolean = false) {
         viewModelScope.async {
-            if (user == null) {
+            if (source == null) {
                 withContext(Dispatchers.Main) {
                     this@DialogFragmentViewModel.schedule.value = null
                 }
             } else {
                 // TODO: Fix isStudentConstant
                 scheduleRepository.getSchedule(
-                    user
+                    source
                 ).collect {
                     withContext(Dispatchers.Main) {
                         this@DialogFragmentViewModel.schedule.value = it.getOrNull()

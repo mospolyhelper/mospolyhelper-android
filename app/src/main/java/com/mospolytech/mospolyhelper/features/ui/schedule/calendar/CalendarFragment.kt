@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleIntent
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
 import com.mospolytech.mospolyhelper.utils.safe
@@ -35,7 +36,7 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
             } ?: LessonFeaturesSettings(true, true, true)
         )
         recyclerAdapter.dayClick += { date ->
-            viewModel.date.value = date
+            viewModel.store.onIntent(ScheduleIntent.SetDate(date))
             findNavController().safe { navigateUp() }
         }
 
@@ -44,7 +45,7 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
         viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
 
         viewBinding.recyclerScheduleDay.scrollToPosition(
-            recyclerAdapter.firstPosDate.until(viewModel.date.value, ChronoUnit.DAYS).toInt()
+            recyclerAdapter.firstPosDate.until(viewModel.store.state.date, ChronoUnit.DAYS).toInt()
         )
 
 //        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->

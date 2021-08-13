@@ -18,10 +18,10 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceViewHolder
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.auditorium.Auditorium
 import com.mospolytech.mospolyhelper.domain.schedule.model.group.Group
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
@@ -109,7 +109,7 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
         showType = prefs.getBoolean("ScheduleAppwidgetShowType", true)
 
         val user = try {
-            Json.decodeFromString<UserSchedule>(prefs.getString(
+            Json.decodeFromString<ScheduleSource>(prefs.getString(
                 PreferenceKeys.ScheduleUser,
                 PreferenceDefaults.ScheduleUser
             )!!)
@@ -117,9 +117,9 @@ class ScheduleAppWidgetPreference @JvmOverloads constructor(
             null
         }
         val userTitle = when (user) {
-            is StudentSchedule -> user.title
-            is TeacherSchedule -> Teacher(user.title).getShortName()
-            is AuditoriumSchedule -> user.title
+            is StudentScheduleSource -> user.title
+            is TeacherScheduleSource -> Teacher(user.title).getShortName()
+            is AuditoriumScheduleSource -> user.title
             else -> ""
         }
         val date = LocalDate.now().format(dateFormatter).capitalize()

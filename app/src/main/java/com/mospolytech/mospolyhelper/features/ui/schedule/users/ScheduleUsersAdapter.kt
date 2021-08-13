@@ -9,22 +9,22 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleUserBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 
 class ScheduleUsersAdapter :
-    ListAdapter<UserSchedule, ScheduleUsersAdapter.ViewHolder>(DIFF_CALLBACK) {
+    ListAdapter<ScheduleSource, ScheduleUsersAdapter.ViewHolder>(DIFF_CALLBACK) {
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<UserSchedule>() {
-            override fun areItemsTheSame(oldItem: UserSchedule, newItem: UserSchedule): Boolean =
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ScheduleSource>() {
+            override fun areItemsTheSame(oldItem: ScheduleSource, newItem: ScheduleSource): Boolean =
                 oldItem.idGlobal == newItem.idGlobal
 
-            override fun areContentsTheSame(oldItem: UserSchedule, newItem: UserSchedule): Boolean =
+            override fun areContentsTheSame(oldItem: ScheduleSource, newItem: ScheduleSource): Boolean =
                 oldItem == newItem
 
         }
     }
 
-    var onItemClickListener: (user: UserSchedule) -> Unit = { }
+    var onItemClickListener: (source: ScheduleSource) -> Unit = { }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -43,13 +43,13 @@ class ScheduleUsersAdapter :
 
         private val viewBinding by viewBinding(ItemScheduleUserBinding::bind)
 
-        var onClickListener: (user: UserSchedule) -> Unit = { }
+        var onClickListener: (source: ScheduleSource) -> Unit = { }
 
-        fun bind(user: UserSchedule) {
+        fun bind(source: ScheduleSource) {
             viewBinding.root.setOnCloseIconClickListener {
-                onClickListener(user)
+                onClickListener(source)
             }
-            viewBinding.root.text = user.title
+            viewBinding.root.text = source.title
         }
     }
 }
