@@ -1,35 +1,33 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleException
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleFilters
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
 import com.mospolytech.mospolyhelper.domain.schedule.utils.filter
 import com.mospolytech.mospolyhelper.domain.schedule.utils.getAllTypes
-import com.mospolytech.mospolyhelper.features.ui.common.Mediator
-import com.mospolytech.mospolyhelper.features.ui.common.ViewModelMessage
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.*
 import com.mospolytech.mospolyhelper.utils.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
+import kotlin.coroutines.CoroutineContext
 
 
 class ScheduleViewModel(
     private val useCase: ScheduleUseCase
-) : ViewModel(), KoinComponent {
+) : ViewModel() {
+    internal val store: Store<ScheduleState, ScheduleIntent, Nothing> =
+        ScheduleStore().boundWith(viewModelScope)
 
-    val date = MutableStateFlow<LocalDate>(LocalDate.now())
     private val _currentLessonTimes = MutableStateFlow(Pair(emptyList<LessonTime>(), LocalTime.now()))
     val currentLessonTimes: StateFlow<Pair<List<LessonTime>, LocalTime>> = _currentLessonTimes
 
@@ -47,7 +45,7 @@ class ScheduleViewModel(
     private val _isRefreshing = MutableStateFlow<Boolean>(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
-    private val _advancedSearchUser = MutableStateFlow<UserSchedule?>(null)
+    private val _advancedSearchUser = MutableStateFlow<ScheduleSource?>(null)
 
     val savedUsers = useCase.getSavedUsers()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -190,19 +188,19 @@ class ScheduleViewModel(
 
         viewModelScope.launch {
             dates.collect {
-                setDate(date.value)
+                setDate(store.state.date)
             }
         }
 
         viewModelScope.launch {
-            combine(datesWeeks, date) { dates, date ->
-                _scheduleWeekPosition.value = (dates.start.until(date, ChronoUnit.DAYS) / 7L).toInt()
+            combine(datesWeeks, store.statesFlow) { dates, date ->
+                _scheduleWeekPosition.value = (dates.start.until(date.date, ChronoUnit.DAYS) / 7L).toInt()
             }.collect()
         }
 
         viewModelScope.launch {
-            combine(dates, date) { dates, date ->
-                _schedulePosition.value = dates.start.until(date, ChronoUnit.DAYS).toInt()
+            combine(dates, store.statesFlow) { dates, date ->
+                _schedulePosition.value = dates.start.until(date.date, ChronoUnit.DAYS).toInt()
             }.collect()
         }
     }
@@ -210,15 +208,15 @@ class ScheduleViewModel(
 
     fun setAdvancedSearch(filters: ScheduleFilters) {
         viewModelScope.launch {
-            _advancedSearchUser.value = AdvancedSearchSchedule(filters)
+            _advancedSearchUser.value = AdvancedSearchScheduleSource(filters)
         }
     }
 
-    fun setUser(user: UserSchedule?) {
-        if (this.user.value != user) {
+    fun setUser(source: ScheduleSource?) {
+        if (this.user.value != source) {
             viewModelScope.launch {
                 _advancedSearchUser.value = null
-                useCase.setCurrentUser(user)
+                useCase.setCurrentUser(source)
             }
         }
     }
@@ -236,9 +234,9 @@ class ScheduleViewModel(
         return dates.value.start.plusDays(day)
     }
 
-    fun removeUser(user: UserSchedule) {
+    fun removeUser(source: ScheduleSource) {
         viewModelScope.launch {
-            useCase.removeSavedScheduleUser(user)
+            useCase.removeSavedScheduleUser(source)
         }
     }
 
@@ -267,11 +265,12 @@ class ScheduleViewModel(
     }
 
     private fun setDate(date: LocalDate) {
-        this.date.value = when {
+        val newDate = when {
             date < dates.value.start -> dates.value.start
             date > dates.value.endInclusive -> dates.value.endInclusive
             else -> date
         }
+        store.onIntent(ScheduleIntent.SetDate(newDate))
     }
 
     fun setTodayDate() {
@@ -295,4 +294,41 @@ class ScheduleViewModel(
     }
 }
 
+internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing>(ScheduleState()) {
+    override fun onIntent(intent: ScheduleIntent) {
+        when (intent) {
+            is ScheduleIntent.SetScheduleSource -> TODO()
+            is ScheduleIntent.SetTodayDate -> setTodayDate()
+            is ScheduleIntent.SetDate -> setDate(intent.date)
+        }
+    }
 
+    private fun setScheduleSource() {
+
+    }
+
+    private fun setTodayDate() {
+        val today = LocalDate.now()
+        if (state.date != today) {
+            state = state.copy(date = today)
+        }
+    }
+
+    private fun setDate(date: LocalDate) {
+        if (state.date != date) {
+            state = state.copy(date = date)
+        }
+    }
+}
+
+internal data class ScheduleState(
+    val scheduleSource: ScheduleSource? = null,
+    val schedule: List<DailySchedulePack> = emptyList(),
+    val date: LocalDate = LocalDate.now()
+    )
+
+internal sealed class ScheduleIntent {
+    object SetScheduleSource : ScheduleIntent()
+    object SetTodayDate : ScheduleIntent()
+    data class SetDate(val date: LocalDate) : ScheduleIntent()
+}

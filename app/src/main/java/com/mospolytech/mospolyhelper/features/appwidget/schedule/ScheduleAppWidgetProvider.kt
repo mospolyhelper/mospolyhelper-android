@@ -9,10 +9,10 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
-import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.AuditoriumScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
 import com.mospolytech.mospolyhelper.features.ui.main.MainActivity
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
@@ -85,7 +85,7 @@ class ScheduleAppWidgetProvider : AppWidgetProvider() {
 
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
             val user = try {
-                Json.decodeFromString<UserSchedule>(prefs.getString(
+                Json.decodeFromString<ScheduleSource>(prefs.getString(
                     PreferenceKeys.ScheduleUser,
                     PreferenceDefaults.ScheduleUser
                 )!!)
@@ -93,9 +93,9 @@ class ScheduleAppWidgetProvider : AppWidgetProvider() {
                 null
             }
             val userTitle = when (user) {
-                is StudentSchedule -> user.title
-                is TeacherSchedule -> Teacher(user.title).getShortName()
-                is AuditoriumSchedule -> user.title
+                is StudentScheduleSource -> user.title
+                is TeacherScheduleSource -> Teacher(user.title).getShortName()
+                is AuditoriumScheduleSource -> user.title
                 else -> ""
             }
             val date = LocalDate.now().format(dateFormatter).capitalize()

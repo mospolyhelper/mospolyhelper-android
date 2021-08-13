@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 
 class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
@@ -146,19 +145,19 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
     }
 
-    private fun setUserTitle(user: UserSchedule?) {
-        viewBinding.textviewUser.text = when (user) {
+    private fun setUserTitle(source: ScheduleSource?) {
+        viewBinding.textviewUser.text = when (source) {
             null -> getString(R.string.schedule_choose_user)
-            is StudentSchedule ->
-                getString(R.string.schedule_user_group, user.title)
-            else -> user.title
+            is StudentScheduleSource ->
+                getString(R.string.schedule_user_group, source.title)
+            else -> source.title
         }
     }
 
 
     private fun setWeekViewPager(scheduleDatesUiData: ScheduleDatesUiData?) {
         (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)
-            ?.update(scheduleDatesUiData ?: emptyList(), viewModel.date.value)
+            ?.update(scheduleDatesUiData ?: emptyList(), viewModel.store.state.date)
         viewBinding.viewpagerWeeks.setCurrentItem(viewModel.scheduleWeekPosition.value, false)
     }
 
@@ -238,12 +237,12 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
         lifecycleScope.launchWhenResumed {
-            combine(viewModel.date, viewModel.scheduleWeekPosition, viewModel.scheduleDatesUiData) {
+            combine(viewModel.store.statesFlow, viewModel.scheduleWeekPosition, viewModel.scheduleDatesUiData) {
                     date, week, scheduleDatesUiData ->
                 scheduleDatesUiData.onSuccess {
                     if (it.isNotEmpty()) {
                         viewBinding.textviewDateAndWeek.text =
-                            getString(R.string.schedule_date, date.format(dateFormatter1), week + 1)
+                            getString(R.string.schedule_date, date.date.format(dateFormatter1), week + 1)
                         viewBinding.textviewDateAndWeek.show()
                     } else {
                         viewBinding.textviewDateAndWeek.hide()
@@ -261,14 +260,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             }
         }
         lifecycleScope.launchWhenResumed {
-            viewModel.date.collect {
-                if (LocalDate.now() == it) {
+            viewModel.store.statesFlow.collect {
+                if (LocalDate.now() == it.date) {
                     viewBinding.buttonHome.hide()
                 } else {
                     viewBinding.buttonHome.show()
                 }
 
-                (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(it)
+                (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(it.date)
             }
         }
         lifecycleScope.launchWhenResumed {
@@ -295,7 +294,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
         lifecycleScope.launch {
             viewModel.user.collect {
-                if (it !is AdvancedSearchSchedule) {
+                if (it !is AdvancedSearchScheduleSource) {
                     updateAppWidget()
                 }
             }

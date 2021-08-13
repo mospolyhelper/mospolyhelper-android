@@ -16,6 +16,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        viewBinding = true
     }
     sourceSets {
         // Adds exported schema location as test app assets.
@@ -40,7 +41,7 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.google.material)
     implementation(libs.google.flexbox)
-    implementation (libs.fluenticons)
+    implementation(libs.fluenticons)
     implementation(libs.viewbinding)
 
     // Coroutines
@@ -54,7 +55,6 @@ dependencies {
     // DI
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.ktor)
 
 
     // Network

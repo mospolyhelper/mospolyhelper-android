@@ -27,47 +27,47 @@ class ScheduleRepositoryImpl(
     override val dataLastUpdatedObservable: Flow<ZonedDateTime> = dataLastUpdatedFlow
 
     override fun getSchedule(
-        user: UserSchedule
+        source: ScheduleSource
     ) = flow<Result0<Schedule>> {
-        if (user is AdvancedSearchSchedule) {
-            emit(localDataSource.get(user.idGlobal).map { it.filter(user.filters) })
+        if (source is AdvancedSearchScheduleSource) {
+            emit(localDataSource.get(source.idGlobal).map { it.filter(source.filters) })
         } else {
-           val schedule = localDataSource.get(user.idGlobal)
+           val schedule = localDataSource.get(source.idGlobal)
             schedule.onSuccess {
                emit(schedule)
-               val version = scheduleDao.getScheduleVersion(user)
+               val version = scheduleDao.getScheduleVersion(source)
                if (version == null ||
                    version.downloadingDateTime
                        .until(ZonedDateTime.now(), ChronoUnit.DAYS) >= 1
                ) {
                    emit(Result0.Loading)
-                   emit(refresh(user))
+                   emit(refresh(source))
                }
            }.onFailure {
-               emit(refresh(user))
+               emit(refresh(source))
            }
         }
     }.flowOn(ioDispatcher)
 
-    override suspend fun getScheduleVersion(user: UserSchedule): ScheduleVersionDb? {
-        return scheduleDao.getScheduleVersion(user)
+    override suspend fun getScheduleVersion(source: ScheduleSource): ScheduleVersionDb? {
+        return scheduleDao.getScheduleVersion(source)
     }
 
-    override suspend fun updateSchedule(user: UserSchedule?) = withContext(ioDispatcher) {
-        if (user != null && user !is AdvancedSearchSchedule) {
-            refresh(user)
+    override suspend fun updateSchedule(source: ScheduleSource?) = withContext(ioDispatcher) {
+        if (source != null && source !is AdvancedSearchScheduleSource) {
+            refresh(source)
             dataLastUpdatedFlow.emit(ZonedDateTime.now())
         }
     }
 
-    private suspend fun refresh(user: UserSchedule): Result0<Schedule> = coroutineScope {
-        val schedule = when (user) {
-            is StudentSchedule -> remoteDataSource.getByGroup(user.id)
-            is TeacherSchedule -> remoteDataSource.getByTeacher(user.id)
+    private suspend fun refresh(source: ScheduleSource): Result0<Schedule> = coroutineScope {
+        val schedule = when (source) {
+            is StudentScheduleSource -> remoteDataSource.getByGroup(source.id)
+            is TeacherScheduleSource -> remoteDataSource.getByTeacher(source.id)
             else -> Result0.Failure(ScheduleException.ScheduleNotFound)
         }.onSuccess {
-            scheduleDao.setScheduleVersion(ScheduleVersionDb(user.idGlobal, ZonedDateTime.now()))
-            localDataSource.set(it, user.idGlobal)
+            scheduleDao.setScheduleVersion(ScheduleVersionDb(source.idGlobal, ZonedDateTime.now()))
+            localDataSource.set(it, source.idGlobal)
         }
         schedule
     }
@@ -79,7 +79,7 @@ class ScheduleRepositoryImpl(
         val lessonGroups = HashSet<String>(500)
         val lessonAuditoriums = HashSet<String>(600)
 
-        val scheduleRes = localDataSource.get(UserSchedule.PREFIX_ADVANCED_SEARCH)
+        val scheduleRes = localDataSource.get(ScheduleSource.PREFIX_ADVANCED_SEARCH)
         if (scheduleRes is Result0.Failure) return@withContext scheduleRes
         scheduleRes.onSuccess { schedule ->
             schedule.dailySchedules.forEach { dailySchedule ->
@@ -125,11 +125,11 @@ class ScheduleRepositoryImpl(
 
             scheduleDao.setScheduleVersion(
                 ScheduleVersionDb(
-                    UserSchedule.PREFIX_ADVANCED_SEARCH,
+                    ScheduleSource.PREFIX_ADVANCED_SEARCH,
                     downloadDateTime
                 )
             )
-            localDataSource.set(schedule, UserSchedule.PREFIX_ADVANCED_SEARCH)
+            localDataSource.set(schedule, ScheduleSource.PREFIX_ADVANCED_SEARCH)
             SchedulePackList(
                 lessonTitles.sorted(),
                 lessonTypes.sorted(),

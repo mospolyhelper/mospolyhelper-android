@@ -80,8 +80,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 # di
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-android = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
-koin-ktor = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 # network
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }

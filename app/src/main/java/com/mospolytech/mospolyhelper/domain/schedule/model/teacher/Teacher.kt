@@ -12,9 +12,7 @@ data class Teacher(val name: String) : Parcelable {
         if (names.isEmpty())
             return ""
 
-        val isVacancy = names.any { it.contains("вакансия", true) }
-
-        return if (isVacancy || (names.first().length > 1) && (names.first().let { it[0].isLowerCase() == it[1].isLowerCase() })) {
+        return if (!canBeShortened(names)) {
             names.joinToString("\u00A0")
         } else {
             val shortName = StringBuilder(names.first())
@@ -27,24 +25,19 @@ data class Teacher(val name: String) : Parcelable {
         }
     }
 
+    private fun canBeShortened(names: List<String>): Boolean {
+        val blockWords = listOf("вакансия")
+        val hasBlockWord = blockWords.all { blockWord ->
+            names.any { it.contains(blockWord, true) }
+        }
+
+        val cond2 = (names.first().length > 1) && (names.first().let { it[0].isLowerCase() == it[1].isLowerCase() })
+
+        return !hasBlockWord || cond2
+    }
+
     private fun getNames(name: String): List<String> {
-        return StringBuilder(name).apply {
-            var idx = indexOf(" - ")
-            while (idx != -1) {
-                replace(idx, idx + 4, "-")
-                idx = indexOf(" - ")
-            }
-            idx = indexOf(" -")
-            while (idx != -1) {
-                replace(idx, idx + 3, "-")
-                idx = indexOf(" -")
-            }
-            idx = indexOf("- ")
-            while (idx != -1) {
-                replace(idx, idx + 3, "-")
-                idx = indexOf(" -")
-            }
-        }.split(' ', '.')
+        return name.split(' ', '.')
             .filter { it.isNotEmpty() || it.isNotBlank() }
     }
 }

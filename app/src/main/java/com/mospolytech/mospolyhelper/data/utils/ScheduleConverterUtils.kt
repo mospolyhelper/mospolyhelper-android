@@ -11,8 +11,6 @@ import java.util.*
 private val titleRegex1 = Regex("""(\p{L}|\))\(""")
 private val titleRegex2 = Regex("""\)(\p{L}|\()""")
 private val titleRegex3 = Regex("""(\p{L})-(\p{L})""")
-private val teacherRegex1 = Regex(""" -\S""")
-private val teacherRegex2 = Regex("""\S- """)
 
 fun processTitle(rawTitle: String): String {
     return rawTitle
@@ -30,8 +28,9 @@ fun parseTeachers(teachers: String): List<Teacher> {
         .filter { it.isNotEmpty() }
         .map {
             Teacher(
-                it.replace(teacherRegex1, " - ")
-                    .replace(teacherRegex2, " - ")
+                it.replace(" - ", "-")
+                    .replace(" -", "-")
+                    .replace("- ", "-")
                     .replace("  ", " ")
                     .trim()
             )

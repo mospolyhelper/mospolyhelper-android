@@ -15,7 +15,7 @@ import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.domain.schedule.utils.LessonTimeUtils
@@ -139,7 +139,7 @@ class LessonRemoteAdapter(
         val localDataSource = ScheduleLocalDataSource(context.applicationContext)
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val user = try {
-            Json.decodeFromString<UserSchedule>(prefs.getString(
+            Json.decodeFromString<ScheduleSource>(prefs.getString(
                 PreferenceKeys.ScheduleUser,
                 PreferenceDefaults.ScheduleUser
             )!!)

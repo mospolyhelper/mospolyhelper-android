@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleIdsBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -88,7 +88,7 @@ class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
         }
     }
 
-    private fun setAdapter(idList: List<UserSchedule>) {
+    private fun setAdapter(idList: List<ScheduleSource>) {
         viewBinding.recyclerviewScheduleIds.adapter = ScheduleIdsAdapter(
             idList,
             viewModel.searchQuery.value,

@@ -7,17 +7,17 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleIdBinding
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 
 class ScheduleIdsAdapter(
-    private val idList: List<UserSchedule>,
+    private val idList: List<ScheduleSource>,
     private var query: String,
     private var filterMode: FilterModes,
-    private val onItemClick: (UserSchedule) -> Unit
+    private val onItemClick: (ScheduleSource) -> Unit
 ): RecyclerView.Adapter<ScheduleIdsAdapter.ViewHolder>() {
 
-    private var filteredIdList: List<UserSchedule>
+    private var filteredIdList: List<ScheduleSource>
 
     init {
         filteredIdList = setFilteredList()
@@ -25,13 +25,13 @@ class ScheduleIdsAdapter(
 
     override fun getItemCount() = filteredIdList.size
 
-    private fun setFilteredList(): List<UserSchedule> {
+    private fun setFilteredList(): List<ScheduleSource> {
         return if (filterMode == FilterModes.All) {
             idList.filter { it.title.contains(query, ignoreCase = true) }
         } else {
             idList.filter {
                 it.title.contains(query, ignoreCase = true) &&
-                        it is StudentSchedule == (filterMode == FilterModes.Groups)}
+                        it is StudentScheduleSource == (filterMode == FilterModes.Groups)}
         }
     }
 
@@ -65,9 +65,9 @@ class ScheduleIdsAdapter(
             viewBinding.textviewId.setOnClickListener { onItemClick(filteredIdList[bindingAdapterPosition]) }
         }
 
-        fun bind(user: UserSchedule) {
-            viewBinding.textviewId.text = user.title
-            if (user is StudentSchedule) {
+        fun bind(source: ScheduleSource) {
+            viewBinding.textviewId.text = source.title
+            if (source is StudentScheduleSource) {
                 viewBinding.textviewId.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     R.drawable.ic_fluent_people_24_regular, 0, 0, 0)
             } else {

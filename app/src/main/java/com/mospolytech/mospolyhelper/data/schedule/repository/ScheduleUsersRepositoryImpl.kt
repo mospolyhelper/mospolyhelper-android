@@ -5,9 +5,9 @@ import com.mospolytech.mospolyhelper.data.schedule.remote.GroupListRemoteDataSou
 import com.mospolytech.mospolyhelper.data.schedule.remote.TeacherListRemoteDataSource
 import com.mospolytech.mospolyhelper.data.utils.getFromJson
 import com.mospolytech.mospolyhelper.data.utils.setAsJson
-import com.mospolytech.mospolyhelper.domain.schedule.model.StudentSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherSchedule
-import com.mospolytech.mospolyhelper.domain.schedule.model.UserSchedule
+import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
+import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleUsersRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,38 +25,38 @@ class ScheduleUsersRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ScheduleUsersRepository {
 
-    private val savedUsersChangesFlow = MutableSharedFlow<List<UserSchedule>>(extraBufferCapacity = 64)
-    private val currentUserChangesFlow = MutableSharedFlow<UserSchedule?>(extraBufferCapacity = 64)
+    private val savedUsersChangesFlow = MutableSharedFlow<List<ScheduleSource>>(extraBufferCapacity = 64)
+    private val currentUserChangesFlow = MutableSharedFlow<ScheduleSource?>(extraBufferCapacity = 64)
 
     override fun getSavedUsers() = flow {
-        val users = prefDataSource.getFromJson<List<UserSchedule>>(PreferenceKeys.ScheduleSavedIds)
+        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
         emit(users)
         emitAll(savedUsersChangesFlow)
     }.flowOn(ioDispatcher)
 
-    override suspend fun setSavedUsers(savedUsers: List<UserSchedule>) = withContext(ioDispatcher) {
-        prefDataSource.setAsJson(PreferenceKeys.ScheduleSavedIds, savedUsers)
-        savedUsersChangesFlow.emit(savedUsers)
+    override suspend fun setSavedUsers(savedSources: List<ScheduleSource>) = withContext(ioDispatcher) {
+        prefDataSource.setAsJson(PreferenceKeys.ScheduleSavedIds, savedSources)
+        savedUsersChangesFlow.emit(savedSources)
     }
 
-    override suspend fun addSavedUser(user: UserSchedule) = withContext(ioDispatcher) {
-        val users = prefDataSource.getFromJson<List<UserSchedule>>(PreferenceKeys.ScheduleSavedIds)
+    override suspend fun addSavedUser(source: ScheduleSource) = withContext(ioDispatcher) {
+        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
-        if (user !in users) {
-            setSavedUsers((users + user).sorted())
+        if (source !in users) {
+            setSavedUsers((users + source).sorted())
         }
     }
 
-    override suspend fun removeSavedUser(user: UserSchedule) = withContext(ioDispatcher) {
-        val users = prefDataSource.getFromJson<List<UserSchedule>>(PreferenceKeys.ScheduleSavedIds)
+    override suspend fun removeSavedUser(source: ScheduleSource) = withContext(ioDispatcher) {
+        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
-        setSavedUsers(users - user)
+        setSavedUsers(users - source)
     }
 
     override fun getScheduleUsers() = flow {
-        emit((groupsDataSource.get() ?: emptyList()).map { StudentSchedule(it, it) } +
-                (teachersDataSource.get() ?: emptyMap()).map { TeacherSchedule(it.key, it.value) }
+        emit((groupsDataSource.get() ?: emptyList()).map { StudentScheduleSource(it, it) } +
+                (teachersDataSource.get() ?: emptyMap()).map { TeacherScheduleSource(it.key, it.value) }
                     .sortedBy { it.title + it.id }.distinct())
     }
 
@@ -65,8 +65,8 @@ class ScheduleUsersRepositoryImpl(
         emitAll(currentUserChangesFlow)
     }
 
-    override suspend fun setCurrentUser(user: UserSchedule?) = withContext(ioDispatcher) {
-        prefDataSource.setAsJson(PreferenceKeys.ScheduleUser, user)
-        currentUserChangesFlow.emit(user)
+    override suspend fun setCurrentUser(source: ScheduleSource?) = withContext(ioDispatcher) {
+        prefDataSource.setAsJson(PreferenceKeys.ScheduleUser, source)
+        currentUserChangesFlow.emit(source)
     }
 }

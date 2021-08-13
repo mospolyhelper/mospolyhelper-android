@@ -15,7 +15,9 @@ includeBuild("build-logic")
 include(":app")
 include(":android-app:ui:schedule")
 
-// common data
-include(":common:data:schedule")
+// shared data
+include(":shared:data:schedule")
 
-// common domain
+// shared domain
+include(":shared:domain:common")
+include(":shared:domain:schedule")
