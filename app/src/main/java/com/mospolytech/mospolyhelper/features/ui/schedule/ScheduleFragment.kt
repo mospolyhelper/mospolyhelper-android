@@ -242,7 +242,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                 scheduleDatesUiData.onSuccess {
                     if (it.isNotEmpty()) {
                         viewBinding.textviewDateAndWeek.text =
-                            getString(R.string.schedule_date, date.date.format(dateFormatter1), week + 1)
+                            getString(R.string.schedule_date, date.new.date.format(dateFormatter1), week + 1)
                         viewBinding.textviewDateAndWeek.show()
                     } else {
                         viewBinding.textviewDateAndWeek.hide()
@@ -261,13 +261,15 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
         lifecycleScope.launchWhenResumed {
             viewModel.store.statesFlow.collect {
-                if (LocalDate.now() == it.date) {
-                    viewBinding.buttonHome.hide()
-                } else {
-                    viewBinding.buttonHome.show()
-                }
+                if (it.isChanged { date }) {
+                    if (LocalDate.now() == it.new.date) {
+                        viewBinding.buttonHome.hide()
+                    } else {
+                        viewBinding.buttonHome.show()
+                    }
 
-                (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(it.date)
+                    (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(it.new.date)
+                }
             }
         }
         lifecycleScope.launchWhenResumed {

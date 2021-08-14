@@ -1,6 +1,5 @@
 package com.mospolytech.mospolyhelper.features.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.mospolyhelper.domain.schedule.model.AdvancedSearchScheduleSource
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
-import kotlin.coroutines.CoroutineContext
 
 
 class ScheduleViewModel(
@@ -128,25 +126,29 @@ class ScheduleViewModel(
     val allLessonTypes = schedule.map { it.getOrNull()?.getAllTypes() ?: emptySet() }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
 
-    private val dates = filteredSchedule.transform {
-        it.onSuccess {
-            emit(it.dateFrom..it.dateTo)
-        }.onFailure {
-            emit(LocalDate.now()..LocalDate.now())
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDate.now()..LocalDate.now())
-
-    private val datesWeeks = scheduleDatesUiData.transform {
-        it.onSuccess {
-            emit(it.dates)
-        }.onFailure {
-            emit(LocalDate.now()..LocalDate.now())
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, LocalDate.now()..LocalDate.now())
-
 
     init {
         launchTimer()
+
+        viewModelScope.launch {
+            filteredSchedule.collect {
+                it.onSuccess {
+                    store.onIntent(ScheduleIntent.SetDates(it.dateFrom..it.dateTo))
+                }.onFailure {
+                    store.onIntent(ScheduleIntent.SetDates(LocalDate.now()..LocalDate.now()))
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            scheduleDatesUiData.collect {
+                it.onSuccess {
+                    store.onIntent(ScheduleIntent.SetDatesWeek(it.dates))
+                }.onFailure {
+                    store.onIntent(ScheduleIntent.SetDatesWeek(LocalDate.now()..LocalDate.now()))
+                }
+            }
+        }
 
         viewModelScope.launch {
             useCase.scheduleUpdates.collect {
@@ -187,21 +189,14 @@ class ScheduleViewModel(
         }
 
         viewModelScope.launch {
-            dates.collect {
-                setDate(store.state.date)
+            store.statesFlow.collect {
+                if (it.isAnyChanged { listOf(date, dates) }) {
+                    _schedulePosition.value = store.state.dates.start.until(store.state.date, ChronoUnit.DAYS).toInt()
+                }
+                if (it.isAnyChanged { listOf(date, datesWeek) }) {
+                    _scheduleWeekPosition.value = (store.state.datesWeek.start.until(store.state.date, ChronoUnit.DAYS) / 7L).toInt()
+                }
             }
-        }
-
-        viewModelScope.launch {
-            combine(datesWeeks, store.statesFlow) { dates, date ->
-                _scheduleWeekPosition.value = (dates.start.until(date.date, ChronoUnit.DAYS) / 7L).toInt()
-            }.collect()
-        }
-
-        viewModelScope.launch {
-            combine(dates, store.statesFlow) { dates, date ->
-                _schedulePosition.value = dates.start.until(date.date, ChronoUnit.DAYS).toInt()
-            }.collect()
         }
     }
 
@@ -227,11 +222,11 @@ class ScheduleViewModel(
     }
 
     fun setDay(day: Int) {
-        setDate(dates.value.start.plusDays(day.toLong()))
+        store.onIntent(ScheduleIntent.SetDay(day))
     }
 
     fun getDateByDay(day: Long): LocalDate {
-        return dates.value.start.plusDays(day)
+        return store.state.dates.start.plusDays(day)
     }
 
     fun removeUser(source: ScheduleSource) {
@@ -264,17 +259,8 @@ class ScheduleViewModel(
         }
     }
 
-    private fun setDate(date: LocalDate) {
-        val newDate = when {
-            date < dates.value.start -> dates.value.start
-            date > dates.value.endInclusive -> dates.value.endInclusive
-            else -> date
-        }
-        store.onIntent(ScheduleIntent.SetDate(newDate))
-    }
-
     fun setTodayDate() {
-        setDate(LocalDate.now())
+        store.onIntent(ScheduleIntent.SetDate(LocalDate.now()))
     }
 
     fun addTypeFilter(filter: String) {
@@ -288,35 +274,51 @@ class ScheduleViewModel(
     fun setWeek(position: Int) {
         _scheduleWeekPosition.value = position
     }
-
-    fun setSchedulePosition(position: Int) {
-        _schedulePosition.value = position
-    }
 }
 
 internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing>(ScheduleState()) {
     override fun onIntent(intent: ScheduleIntent) {
         when (intent) {
-            is ScheduleIntent.SetScheduleSource -> TODO()
             is ScheduleIntent.SetTodayDate -> setTodayDate()
             is ScheduleIntent.SetDate -> setDate(intent.date)
+            is ScheduleIntent.SetDates -> setDates(intent.dates)
+            is ScheduleIntent.SetDay -> setDay(intent.day)
+            is ScheduleIntent.SetDatesWeek -> setDatesWeek(intent.datesWeek)
         }
-    }
-
-    private fun setScheduleSource() {
-
     }
 
     private fun setTodayDate() {
-        val today = LocalDate.now()
-        if (state.date != today) {
-            state = state.copy(date = today)
-        }
+        setDate(LocalDate.now())
+    }
+
+    private fun setDay(day: Int) {
+        setDate(state.dates.start.plusDays(day.toLong()))
     }
 
     private fun setDate(date: LocalDate) {
-        if (state.date != date) {
-            state = state.copy(date = date)
+        val newDate = getBoundedDate(date)
+        if (state.date != newDate) {
+            state = state.copy(date = newDate)
+        }
+    }
+
+    private fun getBoundedDate(date: LocalDate): LocalDate {
+        return when {
+            date < state.dates.start -> state.dates.start
+            date > state.dates.endInclusive -> state.dates.endInclusive
+            else -> date
+        }
+    }
+
+    private fun setDates(dates: ClosedRange<LocalDate>) {
+        if (state.dates != dates) {
+            state = state.copy(dates = dates, date = getBoundedDate(state.date))
+        }
+    }
+
+    private fun setDatesWeek(dates: ClosedRange<LocalDate>) {
+        if (state.datesWeek != dates) {
+            state = state.copy(datesWeek = dates)
         }
     }
 }
@@ -324,11 +326,15 @@ internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing>(Sch
 internal data class ScheduleState(
     val scheduleSource: ScheduleSource? = null,
     val schedule: List<DailySchedulePack> = emptyList(),
+    val dates: ClosedRange<LocalDate> = LocalDate.now()..LocalDate.now(),
+    val datesWeek: ClosedRange<LocalDate> = LocalDate.now()..LocalDate.now(),
     val date: LocalDate = LocalDate.now()
     )
 
 internal sealed class ScheduleIntent {
-    object SetScheduleSource : ScheduleIntent()
     object SetTodayDate : ScheduleIntent()
+    data class SetDay(val day: Int) : ScheduleIntent()
     data class SetDate(val date: LocalDate) : ScheduleIntent()
+    data class SetDates(val dates: ClosedRange<LocalDate>) : ScheduleIntent()
+    data class SetDatesWeek(val datesWeek: ClosedRange<LocalDate>) : ScheduleIntent()
 }
