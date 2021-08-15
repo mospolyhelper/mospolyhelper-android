@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.utils
 
+import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
@@ -9,16 +10,24 @@ abstract class Store<State, Intent, Event>(
 ) {
     val scope: CoroutineScope = StoreCoroutineScope
 
-    private val _state = MutableStateFlow(StatePair(null, state))
+    private val _state = MutableStateFlow(state)
     private val _events = MutableSharedFlow<Event>()
 
+    init {
+        scope.launch(Dispatchers.Default) {
+            _state.collect {
+                Log.d("Store::State", it.toString())
+            }
+        }
+    }
+
     var state: State
-        get() = _state.value.new
+        get() = _state.value
         set(value) {
-            _state.value = _state.value.updated(value)
+            _state.value = value
         }
 
-    val statesFlow: Flow<StatePair<State>> = _state
+    val statesFlow: Flow<State> = _state
     val eventsFlow: Flow<Event> = _events
 
     abstract fun onIntent(intent: Intent)

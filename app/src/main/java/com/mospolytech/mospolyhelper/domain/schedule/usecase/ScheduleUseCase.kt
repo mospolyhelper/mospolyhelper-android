@@ -12,7 +12,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleUsersRepository
+import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleSourcesRepository
 import com.mospolytech.mospolyhelper.utils.PreferenceDefaults
 import com.mospolytech.mospolyhelper.utils.PreferenceKeys
 import com.mospolytech.mospolyhelper.utils.Result0
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.*
 
 class ScheduleUseCase(
     private val scheduleRepository: ScheduleRepository,
-    private val scheduleUsersRepository: ScheduleUsersRepository,
+    private val scheduleSourcesRepository: ScheduleSourcesRepository,
     private val tagRepository: LessonTagsRepository,
     private val deadlineRepository: DeadlinesRepository,
     private val preferences: PreferencesRepository
@@ -55,39 +55,35 @@ class ScheduleUseCase(
         scheduleRepository.getScheduleVersion(source)
 
     fun getAllUsers(): Flow<List<ScheduleSource>> =
-        scheduleUsersRepository.getScheduleUsers()
+        scheduleSourcesRepository.getScheduleSources()
             .catch { Log.e(TAG, "Flow exception", it) }
 
-    fun getSavedUsers() =
-        scheduleUsersRepository.getSavedUsers()
+    fun getFavoriteScheduleSources() =
+        scheduleSourcesRepository.getFavoriteScheduleSources()
         .onEach {
-            if (it.isEmpty() && getCurrentUser().first() != null) {
-                setCurrentUser(null)
+            if (it.isEmpty() && getSelectedScheduleSource().first() != null) {
+                setSelectedScheduleSource(null)
             }
         }
         .catch { Log.e(TAG, "Flow exception", it) }
 
-    suspend fun setSavedUsers(sources: List<ScheduleSource>) {
-        scheduleUsersRepository.setSavedUsers(sources)
-    }
-
     suspend fun addSavedScheduleUser(source: ScheduleSource) {
-        scheduleUsersRepository.addSavedUser(source)
+        scheduleSourcesRepository.addFavoriteScheduleSource(source)
     }
 
     suspend fun removeSavedScheduleUser(source: ScheduleSource) {
-        scheduleUsersRepository.removeSavedUser(source)
-        if (getCurrentUser().first() == source) {
-            setCurrentUser(null)
+        scheduleSourcesRepository.removeFavoriteScheduleSource(source)
+        if (getSelectedScheduleSource().first() == source) {
+            setSelectedScheduleSource(null)
         }
     }
 
-    fun getCurrentUser() =
-        scheduleUsersRepository.getCurrentUser()
+    fun getSelectedScheduleSource() =
+        scheduleSourcesRepository.getSelectedScheduleSource()
             .catch { Log.e(TAG, "Flow exception", it) }
 
-    suspend fun setCurrentUser(source: ScheduleSource?) {
-        scheduleUsersRepository.setCurrentUser(source)
+    suspend fun setSelectedScheduleSource(source: ScheduleSource?) {
+        scheduleSourcesRepository.setSelectedScheduleSource(source)
     }
 
 
