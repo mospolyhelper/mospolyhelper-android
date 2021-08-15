@@ -2,9 +2,7 @@ package com.mospolytech.mospolyhelper.utils
 
 import android.util.Log
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 abstract class Store<State, Intent, Event>(
@@ -14,6 +12,14 @@ abstract class Store<State, Intent, Event>(
 
     private val _state = MutableStateFlow(state)
     private val _events = MutableSharedFlow<Event>()
+
+    init {
+        scope.launch(Dispatchers.Default) {
+            _state.collect {
+                Log.d("Store::State", it.toString())
+            }
+        }
+    }
 
     var state: State
         get() = _state.value
@@ -31,13 +37,37 @@ abstract class Store<State, Intent, Event>(
     }
 }
 
+data class StatePair<State>(
+    val old: State?,
+    val new: State
+) {
+    fun updated(newState: State): StatePair<State> {
+        return StatePair(
+            old = this.new,
+            new = newState
+        )
+    }
+
+    inline fun <T> isChanged(propSelector: State.() -> T) =
+        old == null || propSelector(old) !== propSelector(new)
+
+    inline fun <T> isAnyChanged(propSelector: State.() -> List<T>) =
+        old != null && isNotEqual(propSelector(old), propSelector(new))
+
+    fun <T> isNotEqual(l1: List<T>, l2: List<T>): Boolean {
+        if (l1.size != l2.size) throw IllegalStateException("Lists of properties must have equal size")
+        l1.forEachIndexed { index, t ->
+            if (t !== l2[index]) return true
+        }
+        return false
+    }
+}
+
 fun <T, Y, Z> Store<T, Y, Z>.boundWith(scope: CoroutineScope) : Store<T, Y, Z> {
     scope.launch {
         suspendCancellableCoroutine {
             it.invokeOnCancellation {
-                Log.d(TAG, "Cancel 0")
                 this@boundWith.scope.cancel()
-                Log.d(TAG, "Cancel 1")
             }
         }
     }

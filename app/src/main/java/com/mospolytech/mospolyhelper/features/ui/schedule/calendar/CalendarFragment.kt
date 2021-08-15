@@ -30,8 +30,8 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
         }
 
         val recyclerAdapter = CalendarThreeAdapter(
-            viewModel.filteredSchedule.value.getOrNull(),
-            viewModel.user.value?.let {
+            viewModel.store.state.filteredSchedule,
+            viewModel.selectedScheduleSource.value?.let {
                 LessonFeaturesSettings.fromUserSchedule(it)
             } ?: LessonFeaturesSettings(true, true, true)
         )

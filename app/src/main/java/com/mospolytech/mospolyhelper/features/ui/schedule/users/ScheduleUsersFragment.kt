@@ -89,7 +89,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         for (user in sources) {
             val chip = createChip(user)
             viewBinding.chipgroupUsers.addView(chip)
-            if (viewModel.user.value == user) {
+            if (viewModel.selectedScheduleSource.value == user) {
                 chip.id = View.generateViewId()
                 viewBinding.chipgroupUsers.check(chip.id)
                 checkedChip = chip
@@ -121,7 +121,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         }
 
         lifecycleScope.launchWhenResumed {
-            viewModel.user.collect {
+            viewModel.selectedScheduleSource.collect {
                 it?.let {
                     updateCheckedUser(it)
                 }

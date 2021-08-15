@@ -11,11 +11,11 @@ import com.mospolytech.mospolyhelper.data.schedule.local.ScheduleLocalDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.*
 import com.mospolytech.mospolyhelper.data.schedule.repository.LessonTagsRepositoryImpl
 import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleRepositoryImpl
-import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleUsersRepositoryImpl
+import com.mospolytech.mospolyhelper.data.schedule.repository.ScheduleSourcesRepositoryImpl
 import com.mospolytech.mospolyhelper.di.utils.DiConstants
 import com.mospolytech.mospolyhelper.domain.schedule.repository.LessonTagsRepository
 import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleUsersRepository
+import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleSourcesRepository
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchViewModel
@@ -65,8 +65,8 @@ val scheduleModule = module {
     single<LessonTagsRepository> {
         LessonTagsRepositoryImpl(get())
     }
-    single<ScheduleUsersRepository> {
-        ScheduleUsersRepositoryImpl(get(), get(), get())
+    single<ScheduleSourcesRepository> {
+        ScheduleSourcesRepositoryImpl(get(), get(), get())
     }
 
     // UseCases
