@@ -36,7 +36,7 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
             } ?: LessonFeaturesSettings(true, true, true)
         )
         recyclerAdapter.dayClick += { date ->
-            viewModel.store.onIntent(ScheduleIntent.SetDate(date))
+            viewModel.store.sendIntent(ScheduleIntent.SetDate(date))
             findNavController().safe { navigateUp() }
         }
 
