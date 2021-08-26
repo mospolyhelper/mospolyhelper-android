@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit
 class ScheduleViewModel(
     private val useCase: ScheduleUseCase
 ) : ViewModel() {
-    internal val store: Store<ScheduleState, ScheduleIntent, Nothing> =
+    internal val store: Store<ScheduleState, ScheduleIntent, Nothing, Nothing> =
         ScheduleStore().boundWith(viewModelScope)
 
     private val _currentLessonTimes = MutableStateFlow(Pair(emptyList<LessonTime>(), LocalTime.now()))
@@ -68,18 +68,18 @@ class ScheduleViewModel(
 
         viewModelScope.launch {
             useCase.getAllTags().collect {
-                store.onIntent(ScheduleIntent.SetTags(it.getOrNull() ?: emptyList()))
+                store.sendIntent(ScheduleIntent.SetTags(it.getOrNull() ?: emptyList()))
             }
         }
         viewModelScope.launch {
             useCase.getAllDeadlines().collect {
-                store.onIntent(ScheduleIntent.SetDeadlines(it.getOrNull() ?: emptyMap()))
+                store.sendIntent(ScheduleIntent.SetDeadlines(it.getOrNull() ?: emptyMap()))
             }
         }
 
         viewModelScope.launch {
             schedule.collectLatest {
-                store.onIntent(ScheduleIntent.SetIsLoading(it.isLoading))
+                store.sendIntent(ScheduleIntent.SetIsLoading(it.isLoading))
             }
         }
 
@@ -117,10 +117,10 @@ class ScheduleViewModel(
             combine(schedule, filterTypes) { schedule, filterTypes ->
                 schedule.map { it.filter(types = filterTypes) }
                     .onSuccess {
-                        store.onIntent(ScheduleIntent.SetFilteredSchedule(it))
+                        store.sendIntent(ScheduleIntent.SetFilteredSchedule(it))
                     }.onFailure {
                         if (it !is ScheduleException.UserIsNull || store.state.scheduleSettings == null) {
-                            store.onIntent(ScheduleIntent.SetException(it))
+                            store.sendIntent(ScheduleIntent.SetException(it))
                         }
                     }
 
@@ -131,13 +131,13 @@ class ScheduleViewModel(
             combine(useCase.getShowEmptyLessons(), lessonDateFilter, selectedScheduleSource) {
                     showEmptyLessons, lessonDateFilter, user ->
                 if (user != null) {
-                    store.onIntent(ScheduleIntent.SetScheduleSettings(ScheduleSettings(
+                    store.sendIntent(ScheduleIntent.SetScheduleSettings(ScheduleSettings(
                         showEmptyLessons,
                         lessonDateFilter,
                         LessonFeaturesSettings.fromUserSchedule(user)
                     )))
                 } else {
-                    store.onIntent(ScheduleIntent.SetScheduleSettings(null))
+                    store.sendIntent(ScheduleIntent.SetScheduleSettings(null))
                 }
             }.collect()
         }
@@ -155,7 +155,7 @@ class ScheduleViewModel(
 
                 if (state.isAnyChanged { listOf(filteredSchedule, scheduleSettings, tags, deadlines) }) {
                     if (state.new.filteredSchedule != null && state.new.scheduleSettings != null) {
-                        store.onIntent(
+                        store.sendIntent(
                             ScheduleIntent.SetScheduleUiData(
                                 ScheduleUiData(
                                 state.new.filteredSchedule,
@@ -193,7 +193,7 @@ class ScheduleViewModel(
     }
 
     fun setDay(day: Int) {
-        store.onIntent(ScheduleIntent.SetDay(day))
+        store.sendIntent(ScheduleIntent.SetDay(day))
     }
 
     fun getDateByDay(day: Long): LocalDate {
@@ -224,14 +224,14 @@ class ScheduleViewModel(
 
     fun setRefreshing() {
         viewModelScope.launch {
-            store.onIntent(ScheduleIntent.SetIsRefreshing(true))
+            store.sendIntent(ScheduleIntent.SetIsRefreshing(true))
             updateSchedule()
-            store.onIntent(ScheduleIntent.SetIsRefreshing(false))
+            store.sendIntent(ScheduleIntent.SetIsRefreshing(false))
         }
     }
 
     fun setTodayDate() {
-        store.onIntent(ScheduleIntent.SetDate(LocalDate.now()))
+        store.sendIntent(ScheduleIntent.SetDate(LocalDate.now()))
     }
 
     fun addTypeFilter(filter: String) {
@@ -243,15 +243,15 @@ class ScheduleViewModel(
     }
 
     fun onScheduleWeekPosition(position: Int) {
-        store.onIntent(ScheduleIntent.SetScheduleWeekPosition(position))
+        store.sendIntent(ScheduleIntent.SetScheduleWeekPosition(position))
     }
 }
 
 
 
 // ScheduleStore
-internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing>(ScheduleState()) {
-    override fun onIntent(intent: ScheduleIntent) {
+internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing, Nothing>(ScheduleState()) {
+    override fun processIntent(intent: ScheduleIntent) {
         Log.d("Store::Intent", intent.toString())
         when (intent) {
             is ScheduleIntent.SetTodayDate -> setTodayDate()
@@ -394,6 +394,7 @@ internal class ScheduleStore : Store<ScheduleState, ScheduleIntent, Nothing>(Sch
         }
     }
 
+    override fun processEvent(event: Nothing) { }
 }
 
 internal data class ScheduleState(
