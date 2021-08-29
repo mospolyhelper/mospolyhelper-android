@@ -32,6 +32,9 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleUiData
 import com.mospolytech.mospolyhelper.features.utils.getAttributeRes
 import com.mospolytech.mospolyhelper.features.utils.setSmartCurrentItem
 import com.mospolytech.mospolyhelper.utils.*
+import com.tipapro.mvilight.coroutines.statesFlow
+import com.tipapro.mvilight.main.StatePair
+import com.tipapro.mvilight.main.onChanged
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -221,91 +224,91 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                 setCurrentLessonTimes(it.first)
             }
         }
-        lifecycleScope.launchWhenResumed {
-            viewModel.selectedScheduleSource.collect {
-                setUserTitle(it)
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.selectedScheduleSource.collect {
-                if (it !is AdvancedSearchScheduleSource) {
-                    updateAppWidget()
-                }
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.selectedScheduleSource.collect {
+//                if (it !is AdvancedSearchScheduleSource) {
+//                    updateAppWidget()
+//                }
+//            }
+//        }
 
         findNavController().currentBackStackEntry?.savedStateHandle
             ?.getLiveData<ScheduleFilters>(AdvancedSearchFragment.ADVANCED_SEARCH)
             ?.observe(viewLifecycleOwner) {
-                viewModel.setAdvancedSearch(it)
+                //viewModel.setAdvancedSearch(it)
             }
     }
 
     private fun renderUi(state: StatePair<ScheduleState>) {
-        if (state.isChanged { date }) {
-            if (LocalDate.now() == state.new.date) {
-                viewBinding.buttonHome.hide()
-            } else {
-                viewBinding.buttonHome.show()
-            }
 
-            (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(state.new.date)
+        state.onChanged({ selectedScheduleSource }) {
+            setUserTitle(it.selectedScheduleSource)
         }
 
-        if (state.isChanged { schedulePosition }) {
-            if (state.new.schedulePosition != viewBinding.includeViewpager.viewpagerSchedule.currentItem) {
-                viewBinding.includeViewpager.viewpagerSchedule.setSmartCurrentItem(state.new.schedulePosition)
-            }
-        }
-
-        if (state.isChanged { scheduleWeekPosition }) {
-            if (state.new.scheduleWeekPosition != viewBinding.viewpagerWeeks.currentItem) {
-                viewBinding.viewpagerWeeks.setSmartCurrentItem(state.new.scheduleWeekPosition)
-            }
-        }
-
-        if (state.isChanged { isRefreshing }) {
-            viewBinding.refreshSchedule.isRefreshing = state.new.isRefreshing
-        }
-
-        if (state.isChanged { isLoading }) {
-            setLoading(state.new.isLoading)
-        }
-
-        if (state.isChanged { scheduleDatesUiData }) {
-            setWeekViewPager(state.new.scheduleDatesUiData)
-
-            if (state.new.scheduleDatesUiData != null) {
-                if (state.new.scheduleDatesUiData.isNotEmpty()) {
-                    if (state.isAnyChanged { listOf(date, scheduleWeekPosition) }) {
-                        viewBinding.textviewDateAndWeek.text =
-                            getString(
-                                R.string.schedule_date,
-                                state.new.date.format(dateFormatter1),
-                                state.new.scheduleWeekPosition + 1
-                            )
-                    }
-                    viewBinding.textviewDateAndWeek.show()
-                } else {
-                    viewBinding.textviewDateAndWeek.hide()
-                }
-            } else {
-                viewBinding.textviewDateAndWeek.hide()
-            }
-        }
-
-        if (state.isChanged { scheduleUiData }) {
-            val scheduleUiData = state.new.scheduleUiData
-            if (scheduleUiData != null) {
-                setSchedule(scheduleUiData)
-            } else {
-                if (viewModel.selectedScheduleSource.value == null) {
-                    setAddUser()
-                } else {
-                    setNullSchedule()
-                }
-            }
-        }
+//        if (state.isChanged { date }) {
+//            if (LocalDate.now() == state.new.date) {
+//                viewBinding.buttonHome.hide()
+//            } else {
+//                viewBinding.buttonHome.show()
+//            }
+//
+//            (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(state.new.date)
+//        }
+//
+//        if (state.isChanged { schedulePosition }) {
+//            if (state.new.schedulePosition != viewBinding.includeViewpager.viewpagerSchedule.currentItem) {
+//                viewBinding.includeViewpager.viewpagerSchedule.setSmartCurrentItem(state.new.schedulePosition)
+//            }
+//        }
+//
+//        if (state.isChanged { scheduleWeekPosition }) {
+//            if (state.new.scheduleWeekPosition != viewBinding.viewpagerWeeks.currentItem) {
+//                viewBinding.viewpagerWeeks.setSmartCurrentItem(state.new.scheduleWeekPosition)
+//            }
+//        }
+//
+//        if (state.isChanged { isRefreshing }) {
+//            viewBinding.refreshSchedule.isRefreshing = state.new.isRefreshing
+//        }
+//
+//        if (state.isChanged { isLoading }) {
+//            setLoading(state.new.isLoading)
+//        }
+//
+//        if (state.isChanged { scheduleDatesUiData }) {
+//            setWeekViewPager(state.new.scheduleDatesUiData)
+//
+//            if (state.new.scheduleDatesUiData != null) {
+//                if (state.new.scheduleDatesUiData.isNotEmpty()) {
+//                    if (state.isAnyChanged { listOf(date, scheduleWeekPosition) }) {
+//                        viewBinding.textviewDateAndWeek.text =
+//                            getString(
+//                                R.string.schedule_date,
+//                                state.new.date.format(dateFormatter1),
+//                                state.new.scheduleWeekPosition + 1
+//                            )
+//                    }
+//                    viewBinding.textviewDateAndWeek.show()
+//                } else {
+//                    viewBinding.textviewDateAndWeek.hide()
+//                }
+//            } else {
+//                viewBinding.textviewDateAndWeek.hide()
+//            }
+//        }
+//
+//        if (state.isChanged { scheduleUiData }) {
+//            val scheduleUiData = state.new.scheduleUiData
+//            if (scheduleUiData != null) {
+//                setSchedule(scheduleUiData)
+//            } else {
+//                if (viewModel.selectedScheduleSource.value == null) {
+//                    setAddUser()
+//                } else {
+//                    setNullSchedule()
+//                }
+//            }
+//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -365,7 +368,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
 
         override fun onPageSelected(position: Int) {
-            viewModel.setDay(position)
+            viewModel.store.sendIntent(ScheduleIntent.SetDay(position))
         }
 
         fun reset() {

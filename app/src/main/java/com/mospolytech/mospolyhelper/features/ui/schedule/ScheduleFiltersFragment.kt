@@ -10,10 +10,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleFiltersBinding
+import com.mospolytech.mospolyhelper.utils.StatePair
+import com.mospolytech.mospolyhelper.utils.statesFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class ScheduleFiltersFragment: BottomSheetDialogFragment() {
+class ScheduleFiltersFragment : BottomSheetDialogFragment() {
 
     private val viewModel by sharedViewModel<ScheduleViewModel>()
     private val viewBinding by viewBinding(BottomSheetScheduleFiltersBinding::bind)
@@ -29,41 +31,54 @@ class ScheduleFiltersFragment: BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launchWhenResumed {
-            viewModel.allLessonTypes.collect {
-                for (type in it) {
-                    viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
-                }
+            var currentState: ScheduleState? = null
+            viewModel.store.statesFlow.collect {
+                val state = StatePair(currentState, it)
+                currentState = it
+                renderUi(state)
             }
         }
 
-        if (viewModel.lessonDateFilter.value.showEndedLessons) {
-            viewBinding.chipLessonDatesEnded.isChecked = true
-        }
-        if (viewModel.lessonDateFilter.value.showCurrentLessons) {
-            viewBinding.chipLessonDatesCurrent.isChecked = true
-        }
-        if (viewModel.lessonDateFilter.value.showNotStartedLessons) {
-            viewBinding.chipLessonDatesNotStarted.isChecked = true
-        }
-
-
-
         viewBinding.chipLessonDatesEnded.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.lessonDateFilter.value =
-                viewModel.lessonDateFilter.value
-                    .copy(showEndedLessons = isChecked)
+            viewModel.store.state.lessonDateFilter?.let {
+                viewModel.store.sendIntent(
+                    ScheduleIntent.SetLessonDateFilter(it.copy(showEndedLessons = isChecked))
+                )
+            }
         }
         viewBinding.chipLessonDatesCurrent.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.lessonDateFilter.value =
-                viewModel.lessonDateFilter.value
-                    .copy(showCurrentLessons = isChecked)
+            viewModel.store.state.lessonDateFilter?.let {
+                viewModel.store.sendIntent(
+                    ScheduleIntent.SetLessonDateFilter(it.copy(showCurrentLessons = isChecked))
+                )
+            }
         }
         viewBinding.chipLessonDatesNotStarted.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.lessonDateFilter.value =
-                viewModel.lessonDateFilter.value
-                    .copy(showNotStartedLessons = isChecked)
+            viewModel.store.state.lessonDateFilter?.let {
+                viewModel.store.sendIntent(
+                    ScheduleIntent.SetLessonDateFilter(it.copy(showNotStartedLessons = isChecked))
+                )
+            }
+        }
+    }
+
+    private fun renderUi(state: StatePair<ScheduleState>) {
+        state.onChanged({ allLessonTypes }) {
+            for (type in it.allLessonTypes) {
+                viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
+            }
+        }
+
+        state.onChanged({ lessonDateFilter }) {
+            viewBinding.chipLessonDatesEnded.isChecked =
+                it.lessonDateFilter?.showEndedLessons ?: false
+
+            viewBinding.chipLessonDatesCurrent.isChecked =
+                it.lessonDateFilter?.showCurrentLessons ?: false
+
+            viewBinding.chipLessonDatesCurrent.isChecked =
+                it.lessonDateFilter?.showNotStartedLessons ?: false
         }
     }
 

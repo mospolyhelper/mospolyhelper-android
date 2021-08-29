@@ -301,3 +301,17 @@ inline fun <T> Result0<T>.onSuccess(action: (value: T) -> Unit): Result0<T> {
     if (this is Result0.Success) action(value)
     return this
 }
+
+/**
+ * Performs the given [action] on the encapsulated value if this instance represents [success][Result0.isSuccess].
+ * Returns the original `Result` unchanged.
+ */
+@OptIn(ExperimentalContracts::class)
+@SinceKotlin("1.3")
+inline fun <T> Result0<T>.onLoading(action: () -> Unit): Result0<T> {
+    contract {
+        callsInPlace(action, InvocationKind.AT_MOST_ONCE)
+    }
+    if (this is Result0.Loading) action()
+    return this
+}
