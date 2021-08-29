@@ -21,3 +21,6 @@ include(":shared:data:schedule")
 // shared domain
 include(":shared:domain:common")
 include(":shared:domain:schedule")
+include(":mvi-light")
+include(":mvi-light:mvi-light-main")
+include(":mvi-light:mvi-light-coroutines")

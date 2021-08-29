@@ -27,6 +27,9 @@
             <option value="$PROJECT_DIR$/android-app/ui/schedule" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/mvi-light" />
+            <option value="$PROJECT_DIR$/mvi-light/mvi-light-coroutines" />
+            <option value="$PROJECT_DIR$/mvi-light/mvi-light-main" />
             <option value="$PROJECT_DIR$/shared" />
             <option value="$PROJECT_DIR$/shared/data" />
             <option value="$PROJECT_DIR$/shared/data/schedule" />

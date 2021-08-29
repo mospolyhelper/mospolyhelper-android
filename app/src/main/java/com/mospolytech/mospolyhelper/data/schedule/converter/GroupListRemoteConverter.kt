@@ -12,6 +12,6 @@ class GroupListRemoteConverter {
     fun parseGroupList(groupListString: String) =
         Json.parseToJsonElement(groupListString)
             .jsonObject[GROUPS_KEY]
-            ?.jsonArray?.map { it.jsonPrimitive.content }
+            ?.jsonObject?.map { it.key }
             ?: emptyList()
 }

@@ -26,6 +26,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":mvi-light:mvi-light-main"))
+    implementation(project(":mvi-light:mvi-light-coroutines"))
     // Android
     coreLibraryDesugaring(libs.desugar)
     implementation(libs.androidx.core)

@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.5.21"
-androidBuildTools = "7.0.0"
+androidBuildTools = "7.0.1"
 
 navigation = "2.3.5"
 
