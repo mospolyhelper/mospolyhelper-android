@@ -1,9 +1,12 @@
 package com.mospolytech.mospolyhelper.features.ui.account.group_marks
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -49,15 +52,116 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewBinding.marks.adapter = adapter
+        setListeners()
+        setObservers()
+    }
 
+    @SuppressLint("SetTextI18n")
+    private fun showInfo(item: GradeSheet) {
+        viewBinding.infoGrade.text = item.toString()
+        viewBinding.dateGrade.text = requireContext().getString(R.string.grade_date, item.examType, "${item.examDate} ${item.examTime}")
+        viewBinding.directionGrade.text = "${item.directionCode} ${item.direction}"
+        viewBinding.facultGrade.text = item.school
+        if (!item.fixed) {
+            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed)
+            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorLow))
+        } else {
+            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed_modified, item.modifiedDate)
+            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorHigh))
+        }
+        viewBinding.numberGrade.text = requireContext().getString(R.string.grade_number, item.id)
+        viewBinding.timeGrade.text = requireContext().getString(R.string.grade_group_info, item.year, item.course, item.semester)
+        if (item.specialization.isNotEmpty()) {
+            viewBinding.groupGrade.text = "${item.group}, ${item.specialization}"
+        } else {
+            viewBinding.groupGrade.text = item.group
+        }
+        viewBinding.cafGrade.text = item.department
+        viewBinding.toolbarMarks.title = item.disciplineName
+        if (item.students.isNotEmpty()) {
+            viewBinding.nameStudent.text = item.students[0].name
+            viewBinding.bookStudent.text = item.students[0].recordBook
+            viewBinding.markStudent.text = item.students[0].mark
+        }
+        if (item.teachers.isNotEmpty()) {
+            viewBinding.nameTeacher.text = item.teachers[0].name
+            if (item.teachers[0].signed) {
+                viewBinding.nameTeacher
+                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_person_24_regular,
+                        0, R.drawable.ic_fluent_checkbox_checked_24_regular, 0)
+            } else {
+                viewBinding.nameTeacher
+                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_person_24_regular,
+                        0,R.drawable.ic_fluent_checkbox_unchecked_24_regular, 0)
+            }
+        }
+
+    }
+
+    private fun showMarks(items: List<GradeSheetMark>) {
+        var i = 1
+        adapter.items = items.map { MarksUi(i++, it.name, it.mark) }
+    }
+    
+    private fun setListeners() {
         viewBinding.swipeGrade.setOnRefreshListener {
             lifecycleScope.launch {
                 viewModel.download(guid)
             }
         }
+        viewBinding.toolbarMarks.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_download -> {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.mospolytech.ru/assets/stats_marks.php?s=${guid}"))
+                    ContextCompat.startActivity(requireContext(), browserIntent, null)
+                    true
+                }
+                else -> true
+            }
+        }
+        viewBinding.infoExpander.setOnClickListener {
+            if (viewBinding.infoCourse.visibility == View.VISIBLE) {
+                viewBinding.infoExpand.rotation = 90f
+                viewBinding.infoCourse.gone()
+            } else {
+                viewBinding.infoExpand.rotation = -90f
+                viewBinding.infoCourse.show()
+            }
+        }
 
+        viewBinding.studentsExpander.setOnClickListener {
+            if (viewBinding.infoStudent.visibility == View.VISIBLE) {
+                viewBinding.studentsExpand.rotation = 90f
+                viewBinding.infoStudent.gone()
+            } else {
+                viewBinding.studentsExpand.rotation = -90f
+                viewBinding.infoStudent.show()
+            }
+        }
+
+        viewBinding.teachersExpander.setOnClickListener {
+            if (viewBinding.nameTeacher.visibility == View.VISIBLE) {
+                viewBinding.teachersExpand.rotation = 90f
+                viewBinding.nameTeacher.gone()
+            } else {
+                viewBinding.teachersExpand.rotation = -90f
+                viewBinding.nameTeacher.show()
+            }
+        }
+
+        viewBinding.marksExpander.setOnClickListener {
+            if (viewBinding.infoMarks.visibility == View.VISIBLE) {
+                viewBinding.marksExpand.rotation = 90f
+                viewBinding.infoMarks.gone()
+            } else {
+                viewBinding.marksExpand.rotation = -90f
+                viewBinding.infoMarks.show()
+            }
+        }
+    }
+
+    private fun setObservers() {
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
                 when (result) {
@@ -86,7 +190,7 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
             viewModel.gradeSheet.collect { result ->
                 when (result) {
                     is Result0.Success -> {
-                        viewBinding.swipeGrade.isRefreshing = false
+                        //viewBinding.swipeGrade.isRefreshing = false
                         viewBinding.progressLoadingInfo.gone()
                         showInfo(result.value)
                     }
@@ -153,34 +257,5 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
                 }
             }
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun showInfo(item: GradeSheet) {
-        viewBinding.infoGrade.text = item.toString()
-        viewBinding.dateGrade.text = requireContext().getString(R.string.grade_date, item.examType, "${item.examDate} ${item.examTime}")
-        viewBinding.directionGrade.text = "${item.directionCode} ${item.direction}"
-        viewBinding.facultGrade.text = item.school
-        if (!item.fixed) {
-            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed)
-            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorLow))
-        } else {
-            viewBinding.fixedGrade.text = requireContext().getString(R.string.grade_fixed_modified, item.modifiedDate)
-            viewBinding.fixedGrade.setTextColor(requireContext().getColor(R.color.colorHigh))
-        }
-        viewBinding.numberGrade.text = requireContext().getString(R.string.grade_number, item.id)
-        viewBinding.timeGrade.text = requireContext().getString(R.string.grade_group_info, item.year, item.course, item.semester)
-        if (item.specialization.isNotEmpty()) {
-            viewBinding.groupGrade.text = "${item.group}, ${item.specialization}"
-        } else {
-            viewBinding.groupGrade.text = item.group
-        }
-        viewBinding.cafGrade.text = item.department
-        viewBinding.toolbarMarks.title = item.disciplineName
-    }
-
-    private fun showMarks(items: List<GradeSheetMark>) {
-        var i = 1
-        adapter.items = items.map { MarksUi(i++, it.name, it.mark) }
     }
 }

@@ -3,11 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Alexandr/.gradle/caches/transforms-2/files-2.1/ab9be8be995dccb41806baf093c148db/jetified-fluent-system-icons-1.1.129/res/drawable/ic_fluent_ios_arrow_left_24_filled.xml" value="0.32564102564102565" />
-        <entry key="..\:/Users/Alexandr/StudioProjects/mospolyhelper-android/app/src/main/res/layout/fragment_account_group_marks.xml" value="0.4188626907073509" />
-        <entry key="..\:/Users/Alexandr/StudioProjects/mospolyhelper-android/app/src/main/res/layout/item_grade_mark.xml" value="0.1529888551165147" />
-        <entry key="..\:/Users/Alexandr/StudioProjects/mospolyhelper-android/app/src/main/res/layout/item_lesson.xml" value="0.3120471014492754" />
-        <entry key="..\:/Users/Alexandr/StudioProjects/mospolyhelper-android/app/src/main/res/layout/page_schedule.xml" value="0.3120471014492754" />
+        <entry key="..\:/Users/Alexandr/.gradle/caches/transforms-2/files-2.1/ab9be8be995dccb41806baf093c148db/jetified-fluent-system-icons-1.1.129/res/drawable/ic_fluent_arrow_download_24_regular.xml" value="0.3212962962962963" />
+        <entry key="..\:/Users/Alexandr/AndroidStudioProjects/mospolyhelper-android/app/src/main/res/layout/fragment_account_classmates.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/Alexandr/AndroidStudioProjects/mospolyhelper-android/app/src/main/res/layout/fragment_account_group_marks.xml" value="0.25" />
+        <entry key="..\:/Users/Alexandr/AndroidStudioProjects/mospolyhelper-android/app/src/main/res/menu/menu_grade.xml" value="0.3307291666666667" />
+        <entry key="..\:/Users/Alexandr/AndroidStudioProjects/mospolyhelper-android/app/src/main/res/menu/menu_main.xml" value="0.3307291666666667" />
+        <entry key="..\:/Users/Alexandr/AndroidStudioProjects/mospolyhelper-android/app/src/main/res/menu/menu_schedule.xml" value="0.3307291666666667" />
       </map>
     </option>
   </component>

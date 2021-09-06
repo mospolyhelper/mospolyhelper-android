@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:menu="@menu/menu_grade"
             tools:title="Курсовая по программированию, экзамен"/>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -25,7 +26,8 @@
         android:id="@+id/swipe_grade"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/layerOne">
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -33,8 +35,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:background="@color/layerOne">
+                    android:orientation="vertical">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -105,70 +106,90 @@
                             tools:visibility="visible"
                             android:background="@color/layerTwo">
 
-                            <TextView
+                            <FrameLayout
+                                android:id="@+id/info_expander"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/info"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/ubuntu_medium"
-                                android:textColor="@color/text_color_primary"
-                                android:drawableTint="@color/iconColor"
-                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled" />
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/info"
+                                    android:textSize="20sp"
+                                    android:fontFamily="@font/ubuntu_medium"
+                                    android:textColor="@color/text_color_primary" />
 
-                            <TextView
-                                android:id="@+id/facult_grade"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_building_24_regular"
-                                tools:text="Факультет"
-                                app:drawableTint="@color/iconColor" />
+                                <TextView
+                                    android:id="@+id/info_expand"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                    app:drawableTint="@color/iconColor"
+                                    android:layout_gravity="end"
+                                    android:rotation="-90"/>
+                            </FrameLayout>
 
-                            <TextView
-                                android:id="@+id/caf_grade"
+                            <LinearLayout
+                                android:id="@+id/info_course"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_book_24_regular"
-                                tools:text="Кафедра"
-                                app:drawableTint="@color/iconColor"/>
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/direction_grade"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_teacher_24"
-                                tools:text="Направление"
-                                app:drawableTint="@color/iconColor"/>
+                                <TextView
+                                    android:id="@+id/facult_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_building_24_regular"
+                                    tools:text="Факультет"
+                                    app:drawableTint="@color/iconColor" />
 
-                            <TextView
-                                android:id="@+id/group_grade"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
-                                app:drawableTint="@color/iconColor"
-                                tools:text="Группа"/>
+                                <TextView
+                                    android:id="@+id/caf_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_book_24_regular"
+                                    tools:text="Кафедра"
+                                    app:drawableTint="@color/iconColor"/>
 
-                            <TextView
-                                android:id="@+id/time_grade"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_clock_24_regular"
-                                app:drawableTint="@color/iconColor"
-                                tools:text="@string/grade_group_info"/>
+                                <TextView
+                                    android:id="@+id/direction_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_teacher_24"
+                                    tools:text="Направление"
+                                    app:drawableTint="@color/iconColor"/>
+
+                                <TextView
+                                    android:id="@+id/group_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_people_24_regular"
+                                    app:drawableTint="@color/iconColor"
+                                    tools:text="Группа"/>
+
+                                <TextView
+                                    android:id="@+id/time_grade"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_clock_24_regular"
+                                    app:drawableTint="@color/iconColor"
+                                    tools:text="@string/grade_group_info"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -190,48 +211,68 @@
                             tools:visibility="visible"
                             android:background="@color/layerTwo">
 
-                            <TextView
+                            <FrameLayout
+                                android:id="@+id/students_expander"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/Student"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/ubuntu_medium"
-                                android:textColor="@color/text_color_primary"
-                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
-                                app:drawableTint="@color/iconColor" />
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/Student"
+                                    android:textSize="20sp"
+                                    android:fontFamily="@font/ubuntu_medium"
+                                    android:textColor="@color/text_color_primary"/>
 
-                            <TextView
-                                android:id="@+id/name_student"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_person_24_regular"
-                                tools:text="ФИО"
-                                app:drawableTint="@color/iconColor" />
+                                <TextView
+                                    android:id="@+id/students_expand"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                    app:drawableTint="@color/iconColor"
+                                    android:layout_gravity="end"
+                                    android:rotation="-90"/>
+                            </FrameLayout>
 
-                            <TextView
-                                android:id="@+id/book_student"
+                            <LinearLayout
+                                android:id="@+id/info_student"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_book_open_24_regular"
-                                tools:text="Зачетка"
-                                app:drawableTint="@color/iconColor"/>
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/mark_student"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:drawablePadding="10dp"
-                                android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_fluent_book_star_24_regular"
-                                tools:text="Оценка"
-                                app:drawableTint="@color/iconColor"/>
+                                <TextView
+                                    android:id="@+id/name_student"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_person_24_regular"
+                                    tools:text="ФИО"
+                                    app:drawableTint="@color/iconColor" />
+
+                                <TextView
+                                    android:id="@+id/book_student"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_book_open_24_regular"
+                                    tools:text="Зачетка"
+                                    app:drawableTint="@color/iconColor"/>
+
+                                <TextView
+                                    android:id="@+id/mark_student"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:drawablePadding="10dp"
+                                    android:fontFamily="@font/ubuntu"
+                                    app:drawableStartCompat="@drawable/ic_fluent_book_star_24_regular"
+                                    tools:text="Оценка"
+                                    app:drawableTint="@color/iconColor"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -253,15 +294,27 @@
                             tools:visibility="visible"
                             android:background="@color/layerTwo">
 
-                            <TextView
+                            <FrameLayout
+                                android:id="@+id/teachers_expander"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/teacher"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/ubuntu_medium"
-                                android:textColor="@color/text_color_primary"
-                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
-                                app:drawableTint="@color/iconColor" />
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/teacher"
+                                    android:textSize="20sp"
+                                    android:fontFamily="@font/ubuntu_medium"
+                                    android:textColor="@color/text_color_primary" />
+
+                                <TextView
+                                    android:id="@+id/teachers_expand"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                    app:drawableTint="@color/iconColor"
+                                    android:layout_gravity="end"
+                                    android:rotation="-90"/>
+                            </FrameLayout>
 
                             <TextView
                                 android:id="@+id/name_teacher"
@@ -273,7 +326,7 @@
                                 app:drawableStartCompat="@drawable/ic_fluent_person_24_regular"
                                 tools:text="ФИО"
                                 app:drawableTint="@color/iconColor"
-                                app:drawableEndCompat="@drawable/ic_fluent_checkbox_unchecked_24_regular" />
+                                app:drawableEndCompat="@drawable/ic_fluent_checkbox_unchecked_24_regular"/>
                         </LinearLayout>
 
                     </androidx.cardview.widget.CardView>
@@ -293,17 +346,30 @@
                             tools:visibility="visible"
                             android:background="@color/layerTwo">
 
-                            <TextView
+                            <FrameLayout
+                                android:id="@+id/marks_expander"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/marks"
-                                android:textSize="20sp"
-                                android:fontFamily="@font/ubuntu_medium"
-                                android:textColor="@color/text_color_primary"
-                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
-                                app:drawableTint="@color/iconColor" />
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/marks"
+                                    android:textSize="20sp"
+                                    android:fontFamily="@font/ubuntu_medium"
+                                    android:textColor="@color/text_color_primary" />
+
+                                <TextView
+                                    android:id="@+id/marks_expand"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                    app:drawableTint="@color/iconColor"
+                                    android:layout_gravity="end"
+                                    android:rotation="-90"/>
+                            </FrameLayout>
 
                             <FrameLayout
+                                android:id="@+id/info_marks"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
 
@@ -313,7 +379,8 @@
                                     android:layout_height="match_parent"
                                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     android:overScrollMode="never"
-                                    tools:listitem="@layout/item_grade_mark"/>
+                                    tools:listitem="@layout/item_grade_mark"
+                                    android:layout_marginTop="10dp"/>
 
                                 <ProgressBar
                                     android:id="@+id/progress_loading_marks"
