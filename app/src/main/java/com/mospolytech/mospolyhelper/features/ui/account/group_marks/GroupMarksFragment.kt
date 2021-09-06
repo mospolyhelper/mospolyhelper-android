@@ -59,7 +59,6 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
 
     @SuppressLint("SetTextI18n")
     private fun showInfo(item: GradeSheet) {
-        viewBinding.infoGrade.text = item.toString()
         viewBinding.dateGrade.text = requireContext().getString(R.string.grade_date, item.examType, "${item.examDate} ${item.examTime}")
         viewBinding.directionGrade.text = "${item.directionCode} ${item.direction}"
         viewBinding.facultGrade.text = item.school

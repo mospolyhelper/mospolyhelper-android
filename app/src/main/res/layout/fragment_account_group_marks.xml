@@ -393,18 +393,6 @@
 
                     </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/info_grade"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/base_info"
-                        android:fontFamily="@font/ubuntu"
-                        android:layout_marginTop="5dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/fio_student"/>
-
-
                 </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
