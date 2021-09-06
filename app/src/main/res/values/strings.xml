@@ -257,4 +257,5 @@ Github: https://github.com/alexanderdyndin
     <string name="grade_date">%1$s,\n%2$s</string>
     <string name="grade_group_info">%1$s год, %2$s курс %3$s семестр</string>
     <string name="teacher">Преподаватель</string>
+    <string name="statement">Ведомость</string>
 </resources>

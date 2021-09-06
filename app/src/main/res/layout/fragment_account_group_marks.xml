@@ -9,19 +9,6 @@
     android:paddingHorizontal="3dp"
     android:paddingTop="0dp">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_marks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:menu="@menu/menu_grade"
-            tools:title="Курсовая по программированию, экзамен"/>
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_grade"
         android:layout_width="match_parent"
@@ -38,6 +25,44 @@
                     android:orientation="vertical">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginTop="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/name_grade"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/ubuntu"
+                            android:gravity="center_vertical"
+                            tools:text="Курсовая по программированию, экзамен"
+                            android:textColor="@color/text_color_primary"
+                            android:textSize="17sp"
+                            android:visibility="visible"
+                            app:autoSizeMaxTextSize="21dp"
+                            app:autoSizeMinTextSize="15dp"
+                            app:autoSizeTextType="uniform"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/btn_menu"/>
+
+                        <ImageButton
+                            android:id="@+id/btn_menu"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginTop="1dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_fluent_more_vertical_24_regular"
+                            app:tint="@color/text_color_primary"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -48,13 +73,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:drawablePadding="10dp"
+                            android:layout_marginTop="10dp"
                             android:fontFamily="@font/ubuntu"
                             app:drawableStartCompat="@drawable/ic_fluent_app_generic_24_regular"
                             tools:text="@string/grade_number"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/date_grade"
                             app:layout_constraintBottom_toBottomOf="@id/date_grade"
-                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/name_grade"
                             app:drawableTint="@color/iconColor" />
 
                         <TextView
@@ -63,10 +89,11 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ubuntu"
                             android:textColor="@color/color_secondary"
+                            android:layout_marginTop="10dp"
                             tools:text="@string/grade_date"
                             android:textAlignment="textEnd"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toBottomOf="@id/name_grade"/>
 
                         <TextView
                             android:id="@+id/fixed_grade"
@@ -86,7 +113,9 @@
                             style="?android:attr/progressBarStyle"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            tools:layout_editor_absoluteX="0dp"
+                            tools:layout_editor_absoluteY="-1dp" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

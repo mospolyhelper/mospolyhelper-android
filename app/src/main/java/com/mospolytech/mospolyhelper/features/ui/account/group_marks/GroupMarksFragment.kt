@@ -1,14 +1,22 @@
 package com.mospolytech.mospolyhelper.features.ui.account.group_marks
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountGroupMarksBinding
@@ -16,8 +24,10 @@ import com.mospolytech.mospolyhelper.domain.account.group_marks.model.GradeSheet
 import com.mospolytech.mospolyhelper.domain.account.group_marks.model.GradeSheetMark
 import com.mospolytech.mospolyhelper.features.ui.account.group_marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.group_marks.other.MarksUi
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleFragmentDirections
 import com.mospolytech.mospolyhelper.utils.Result0
 import com.mospolytech.mospolyhelper.utils.gone
+import com.mospolytech.mospolyhelper.utils.safe
 import com.mospolytech.mospolyhelper.utils.show
 import io.ktor.client.features.*
 import kotlinx.coroutines.flow.collect
@@ -59,6 +69,7 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
 
     @SuppressLint("SetTextI18n")
     private fun showInfo(item: GradeSheet) {
+        viewBinding.nameGrade.text = item.disciplineName
         viewBinding.dateGrade.text = requireContext().getString(R.string.grade_date, item.examType, "${item.examDate} ${item.examTime}")
         viewBinding.directionGrade.text = "${item.directionCode} ${item.direction}"
         viewBinding.facultGrade.text = item.school
@@ -77,7 +88,6 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
             viewBinding.groupGrade.text = item.group
         }
         viewBinding.cafGrade.text = item.department
-        viewBinding.toolbarMarks.title = item.disciplineName
         if (item.students.isNotEmpty()) {
             viewBinding.nameStudent.text = item.students[0].name
             viewBinding.bookStudent.text = item.students[0].recordBook
@@ -98,6 +108,40 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
 
     }
 
+    @SuppressLint("RestrictedApi")
+    private fun openMenu(context: Context?) {
+        val menuBuilder = MenuBuilder(context)
+        val inflater = MenuInflater(context)
+        inflater.inflate(R.menu.menu_grade, menuBuilder)
+        menuBuilder.forEach {
+            val drawable = DrawableCompat.wrap(it.icon)
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(requireContext(), R.color.text_color_primary))
+            it.icon = drawable
+        }
+        val optionsMenu = MenuPopupHelper(requireContext(), menuBuilder, viewBinding.btnMenu)
+        optionsMenu.setForceShowIcon(true)
+
+        menuBuilder.setCallback(object : MenuBuilder.Callback {
+            override fun onMenuItemSelected(menu: MenuBuilder, item: MenuItem): Boolean {
+                return onOptionsItemSelected(item)
+            }
+
+            override fun onMenuModeChange(menu: MenuBuilder) {}
+        })
+        optionsMenu.show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_download -> {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.mospolytech.ru/assets/stats_marks.php?s=${guid}"))
+                ContextCompat.startActivity(requireContext(), browserIntent, null)
+            }
+        }
+
+        return true
+    }
+
     private fun showMarks(items: List<GradeSheetMark>) {
         var i = 1
         adapter.items = items.map { MarksUi(i++, it.name, it.mark) }
@@ -109,15 +153,8 @@ class GroupMarksFragment: Fragment(R.layout.fragment_account_group_marks) {
                 viewModel.download(guid)
             }
         }
-        viewBinding.toolbarMarks.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_download -> {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://e.mospolytech.ru/assets/stats_marks.php?s=${guid}"))
-                    ContextCompat.startActivity(requireContext(), browserIntent, null)
-                    true
-                }
-                else -> true
-            }
+        viewBinding.btnMenu.setOnClickListener {
+            openMenu(context)
         }
         viewBinding.infoExpander.setOnClickListener {
             if (viewBinding.infoCourse.visibility == View.VISIBLE) {
