@@ -256,4 +256,5 @@ Github: https://github.com/IIOPHYIIIE4KA
     <string name="grade_fixed_modified">Закрыта в %1$s</string>
     <string name="grade_date">%1$s,\n%2$s</string>
     <string name="grade_group_info">%1$s год, %2$s курс %3$s семестр</string>
+    <string name="teacher">Преподаватель</string>
 </resources>

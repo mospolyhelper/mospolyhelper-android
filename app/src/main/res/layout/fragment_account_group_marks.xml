@@ -33,12 +33,68 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@color/layerOne">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="19dp">
+
+                        <TextView
+                            android:id="@+id/number_grade"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/ubuntu"
+                            app:drawableStartCompat="@drawable/ic_fluent_app_generic_24_regular"
+                            tools:text="@string/grade_number"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/date_grade"
+                            app:layout_constraintBottom_toBottomOf="@id/date_grade"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:drawableTint="@color/iconColor" />
+
+                        <TextView
+                            android:id="@+id/date_grade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/ubuntu"
+                            android:textColor="@color/color_secondary"
+                            tools:text="@string/grade_date"
+                            android:textAlignment="textEnd"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/fixed_grade"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:layout_marginTop="7dp"
+                            app:drawableStartCompat="@drawable/ic_fluent_lock_closed_24_regular"
+                            tools:text="@string/grade_fixed_modified"
+                            app:drawableTint="@color/iconColor"
+                            app:layout_constraintTop_toBottomOf="@id/date_grade"/>
+
+
+                        <ProgressBar
+                            android:id="@+id/progress_loading_info"
+                            style="?android:attr/progressBarStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="5dp">
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="14dp">
 
                         <LinearLayout
                             android:id="@+id/info_layout"
@@ -47,69 +103,17 @@
                             android:padding="15dp"
                             android:orientation="vertical"
                             tools:visibility="visible"
-                            android:background="@color/layerOne">
+                            android:background="@color/layerTwo">
+
                             <TextView
-                                android:id="@+id/info_grade"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@string/base_info"
-                                android:fontFamily="@font/ubuntu"
-                                android:layout_marginTop="5dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/fio_student"/>
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp">
-
-                                <TextView
-                                    android:id="@+id/number_grade"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:drawablePadding="10dp"
-                                    android:fontFamily="@font/ubuntu"
-                                    app:drawableStartCompat="@drawable/ic_fluent_app_generic_24_regular"
-                                    tools:text="@string/grade_number"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintEnd_toStartOf="@id/date_grade"
-                                    app:layout_constraintBottom_toBottomOf="@id/date_grade"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:drawableTint="@color/iconColor" />
-
-                                <TextView
-                                    android:id="@+id/date_grade"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/ubuntu"
-                                    android:textColor="@color/color_secondary"
-                                    tools:text="@string/grade_date"
-                                    android:textAlignment="textEnd"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"/>
-
-                                <TextView
-                                    android:id="@+id/fixed_grade"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:drawablePadding="10dp"
-                                    android:fontFamily="@font/ubuntu"
-                                    android:layout_marginTop="7dp"
-                                    app:drawableStartCompat="@drawable/ic_fluent_lock_closed_24_regular"
-                                    tools:text="@string/grade_fixed_modified"
-                                    app:drawableTint="@color/iconColor"
-                                    app:layout_constraintTop_toBottomOf="@id/date_grade"/>
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                            <View
-                                android:id="@+id/divider_info"
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@color/color_low_emphasis"/>
+                                android:text="@string/info"
+                                android:textSize="20sp"
+                                android:fontFamily="@font/ubuntu_medium"
+                                android:textColor="@color/text_color_primary"
+                                android:drawableTint="@color/iconColor"
+                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled" />
 
                             <TextView
                                 android:id="@+id/facult_grade"
@@ -129,7 +133,7 @@
                                 android:layout_marginTop="10dp"
                                 android:drawablePadding="10dp"
                                 android:fontFamily="@font/ubuntu"
-                                app:drawableStartCompat="@drawable/ic_teacher_24"
+                                app:drawableStartCompat="@drawable/ic_fluent_book_24_regular"
                                 tools:text="Кафедра"
                                 app:drawableTint="@color/iconColor"/>
 
@@ -168,35 +172,172 @@
 
                         </LinearLayout>
 
+                    </androidx.cardview.widget.CardView>
 
-                        <ProgressBar
-                            android:id="@+id/progress_loading_info"
-                            style="?android:attr/progressBarStyle"
-                            android:layout_width="wrap_content"
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="14dp">
+
+                        <LinearLayout
+                            android:id="@+id/student_layout"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
+                            android:padding="15dp"
+                            android:orientation="vertical"
+                            tools:visibility="visible"
+                            android:background="@color/layerTwo">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/Student"
+                                android:textSize="20sp"
+                                android:fontFamily="@font/ubuntu_medium"
+                                android:textColor="@color/text_color_primary"
+                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                app:drawableTint="@color/iconColor" />
+
+                            <TextView
+                                android:id="@+id/name_student"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_person_24_regular"
+                                tools:text="ФИО"
+                                app:drawableTint="@color/iconColor" />
+
+                            <TextView
+                                android:id="@+id/book_student"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_book_open_24_regular"
+                                tools:text="Зачетка"
+                                app:drawableTint="@color/iconColor"/>
+
+                            <TextView
+                                android:id="@+id/mark_student"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_book_star_24_regular"
+                                tools:text="Оценка"
+                                app:drawableTint="@color/iconColor"/>
+
+                        </LinearLayout>
 
                     </androidx.cardview.widget.CardView>
 
-                    <FrameLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="14dp">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/marks"
+                        <LinearLayout
+                            android:id="@+id/teacher_layout"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            android:overScrollMode="never"
-                            tools:listitem="@layout/item_grade_mark"/>
-
-                        <ProgressBar
-                            android:id="@+id/progress_loading_marks"
-                            style="?android:attr/progressBarStyle"
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
-                    </FrameLayout>
+                            android:padding="15dp"
+                            android:orientation="vertical"
+                            tools:visibility="visible"
+                            android:background="@color/layerTwo">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/teacher"
+                                android:textSize="20sp"
+                                android:fontFamily="@font/ubuntu_medium"
+                                android:textColor="@color/text_color_primary"
+                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                app:drawableTint="@color/iconColor" />
+
+                            <TextView
+                                android:id="@+id/name_teacher"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="10dp"
+                                android:fontFamily="@font/ubuntu"
+                                app:drawableStartCompat="@drawable/ic_fluent_person_24_regular"
+                                tools:text="ФИО"
+                                app:drawableTint="@color/iconColor"
+                                app:drawableEndCompat="@drawable/ic_fluent_checkbox_unchecked_24_regular" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="15dp"
+                            android:orientation="vertical"
+                            tools:visibility="visible"
+                            android:background="@color/layerTwo">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/marks"
+                                android:textSize="20sp"
+                                android:fontFamily="@font/ubuntu_medium"
+                                android:textColor="@color/text_color_primary"
+                                app:drawableEndCompat="@drawable/ic_fluent_ios_arrow_left_24_filled"
+                                app:drawableTint="@color/iconColor" />
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/marks"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    android:overScrollMode="never"
+                                    tools:listitem="@layout/item_grade_mark"/>
+
+                                <ProgressBar
+                                    android:id="@+id/progress_loading_marks"
+                                    style="?android:attr/progressBarStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"/>
+                            </FrameLayout>
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/info_grade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/base_info"
+                        android:fontFamily="@font/ubuntu"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/fio_student"/>
+
+
                 </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
