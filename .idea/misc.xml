@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/AndroidStudio/mospolyhelper-android/app/src/main/res/layout/fragment_account_group_marks.xml" value="0.7278350515463917" />
         <entry key="..\:/Projects/AndroidStudio/mospolyhelper-android/app/src/main/res/layout/fragment_schedule.xml" value="0.37864583333333335" />
+        <entry key="..\:/Projects/AndroidStudio/mospolyhelper-android/app/src/main/res/menu/menu_schedule.xml" value="0.32685185185185184" />
+        <entry key="..\:/Projects/AndroidStudio/mospolyhelper-android/app/src/main/res/xml/settings.xml" value="0.32685185185185184" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

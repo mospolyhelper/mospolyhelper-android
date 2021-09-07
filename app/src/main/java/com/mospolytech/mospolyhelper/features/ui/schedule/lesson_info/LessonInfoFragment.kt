@@ -279,11 +279,11 @@ class LessonInfoFragment : DialogFragment(R.layout.fragment_schedule_lesson_info
                     override val description = if (it.isEvening) "Вечерняя" else ""
                     override val avatar = R.drawable.ic_fluent_people_20_regular
                     override val onClickListener: () -> Unit = {
-                        findNavController().safe {
-                            navigate(
-                                LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it.title)
-                            )
-                        }
+//                        findNavController().safe {
+//                            navigate(
+//                                LessonInfoFragmentDirections.actionLessonInfoFragmentToGroupInfoFragment(it.title)
+//                            )
+//                        }
                     }
                 }
             })

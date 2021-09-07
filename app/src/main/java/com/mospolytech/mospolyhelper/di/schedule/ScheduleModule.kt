@@ -19,6 +19,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.repository.ScheduleSourcesR
 import com.mospolytech.mospolyhelper.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchViewModel
+import com.mospolytech.mospolyhelper.features.ui.schedule.calendar.CalendarViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.LessonTagViewModel
@@ -80,4 +81,5 @@ val scheduleModule = module {
     viewModel { LessonTagViewModel(get()) }
     viewModel { ScheduleIdsViewModel(get()) }
     viewModel { ScheduleSourcesViewModel(get()) }
+    viewModel { CalendarViewModel(get()) }
 }

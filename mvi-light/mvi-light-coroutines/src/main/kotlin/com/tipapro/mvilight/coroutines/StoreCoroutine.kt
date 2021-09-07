@@ -12,6 +12,7 @@ import kotlin.coroutines.CoroutineContext
 @OptIn(ExperimentalCoroutinesApi::class)
 val <State : Any, Intent : Any, Action : Any> Store<State, Intent, Action>.statesFlow: Flow<State>
     get() = callbackFlow {
+        trySend(state)
         addOnStateChanged(::trySend)
         awaitClose { removeOnStateChanged(::trySend) }
     }

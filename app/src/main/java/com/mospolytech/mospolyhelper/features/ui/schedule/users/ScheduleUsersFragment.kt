@@ -102,6 +102,9 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
                 viewBinding.root.smoothScrollTo(it.left - it.paddingLeft, it.top)
             }
         }
+        viewModel.selectedScheduleSource.value?.let {
+            updateCheckedUser(it)
+        }
     }
 
     private fun updateCheckedUser(source: ScheduleSource) {

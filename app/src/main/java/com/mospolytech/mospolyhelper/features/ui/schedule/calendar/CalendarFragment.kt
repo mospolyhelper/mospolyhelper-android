@@ -3,6 +3,7 @@ package com.mospolytech.mospolyhelper.features.ui.schedule.calendar
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -10,14 +11,23 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentScheduleCalendarBinding
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleIntent
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
+import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchFragment
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.LessonFeaturesSettings
 import com.mospolytech.mospolyhelper.utils.safe
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
+    companion object {
+        const val CALENDAR_FRAGMENT = "calendar_fragment"
+    }
 
-    private val viewModel by sharedViewModel<ScheduleViewModel>()
+    private val viewModel by viewModel<CalendarViewModel>()
     private val viewBinding by viewBinding(FragmentScheduleCalendarBinding::bind)
 
     override fun getTheme() = R.style.CustomDialogTheme
@@ -29,24 +39,35 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
             findNavController().safe { navigateUp() }
         }
 
-//        val recyclerAdapter = CalendarThreeAdapter(
-//            viewModel.store.state.filteredSchedule,
-//            viewModel.selectedScheduleSource.value?.let {
-//                LessonFeaturesSettings.fromUserSchedule(it)
-//            } ?: LessonFeaturesSettings(true, true, true)
-//        )
-//        recyclerAdapter.dayClick += { date ->
-//            viewModel.store.sendIntent(ScheduleIntent.SetDate(date))
-//            findNavController().safe { navigateUp() }
-//        }
+        viewBinding.recyclerScheduleDay.itemAnimator = null
+        viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
 
-//        viewBinding.recyclerScheduleDay.itemAnimator = null
-//        viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
-//        viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
-//
-//        viewBinding.recyclerScheduleDay.scrollToPosition(
-//            recyclerAdapter.firstPosDate.until(viewModel.store.state.date, ChronoUnit.DAYS).toInt()
-//        )
+        lifecycleScope.launchWhenResumed {
+            viewModel.schedule.debounce(500L).collect {
+                val recyclerAdapter = CalendarThreeAdapter(
+                    it,
+                    viewModel.scheduleSource.value?.let {
+                        LessonFeaturesSettings.fromUserSchedule(it)
+                    } ?: LessonFeaturesSettings(true, true, true)
+                )
+                recyclerAdapter.dayClick += { date ->
+                    findNavController().safe {
+                        previousBackStackEntry?.savedStateHandle
+                            ?.set(CalendarFragment.CALENDAR_FRAGMENT, date.toEpochDay())
+                        navigateUp()
+                    }
+                }
+
+                viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
+                viewBinding.recyclerScheduleDay.scrollToPosition(
+                    recyclerAdapter.firstPosDate.until(LocalDate.now(), ChronoUnit.DAYS).toInt()
+                )
+            }
+        }
+
+
+
+
 
 //        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->
 //            if (!isChecked) {
