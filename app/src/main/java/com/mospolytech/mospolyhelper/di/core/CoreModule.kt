@@ -1,6 +1,7 @@
 package com.mospolytech.mospolyhelper.di.core
 
 import androidx.room.Room
+import com.mospolytech.mospolyhelper.BuildConfig
 import com.mospolytech.mospolyhelper.data.core.local.AppDatabase
 import com.mospolytech.mospolyhelper.data.core.local.AssetsDataSource
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
@@ -14,6 +15,7 @@ import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.nio.charset.Charset
@@ -47,10 +49,12 @@ val coreModule = module {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
             }
-//            install(Logging) {
-//                logger = Logger.DEFAULT
-//                level = LogLevel.ALL
-//            }
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = Logger.DEFAULT
+                    level = LogLevel.ALL
+                }
+            }
         }
     }
 }

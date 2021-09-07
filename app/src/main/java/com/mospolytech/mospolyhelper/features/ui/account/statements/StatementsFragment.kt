@@ -33,6 +33,8 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
     private var semesters: List<String> = emptyList()
     private var marks: List<Statement> = emptyList()
 
+    private val adapter = StatementsAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,51 +50,13 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewBinding.recyclerMarks.adapter = adapter
         setSpinner()
+        setListeners()
+        setObservers()
+    }
 
-        viewBinding.swipeMarks.setOnRefreshListener {
-            lifecycleScope.launch {
-                viewModel.downloadInfo(semesters[viewBinding.semestersSpinner.selectedItemPosition])
-            }
-        }
-
-        viewBinding.fabShare.setOnClickListener {
-            val sheet = marks.groupBy { it.loadType }
-                .toList()
-                .sortedBy { it.first }
-                .joinToString(separator = "\n\n") { statements ->
-                    StringBuilder()
-                        .append(statements.first)
-                        .append(":\n")
-                        .append(
-                            statements.second.withIndex()
-                                .joinToString(separator = "\n") { statement ->
-                                    StringBuilder()
-                                        .append(statement.index + 1)
-                                        .append(") ")
-                                        .append(statement.value.subject.substringBeforeLast("\r"))
-                                        .append(" - ")
-                                        .append(statement.value.appraisalsDate)
-                                        .append(" - ")
-                                        .append(
-                                            if (statement.value.grade.isEmpty())
-                                                getString(R.string.no_mark)
-                                            else
-                                                statement.value.grade
-                                        )
-                                }
-                        )
-                }
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, sheet)
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        }
-
+    private fun setObservers() {
         lifecycleScope.launchWhenResumed {
             viewModel.auth.collect { result ->
                 when (result) {
@@ -150,7 +114,9 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
                 }
             }
         }
+    }
 
+    private fun setListeners() {
         viewBinding.recyclerMarks.setOnScrollChangeListener { _, _, _, _, p4 ->
             if (p4<0) {
                 viewBinding.fabShare.hide()
@@ -158,7 +124,52 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
                 viewBinding.fabShare.show()
             }
         }
+
+        viewBinding.swipeMarks.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.downloadInfo(semesters[viewBinding.semestersSpinner.selectedItemPosition])
+            }
+        }
+
+        viewBinding.fabShare.setOnClickListener {
+            val sheet = getSheet(marks)
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, sheet)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
     }
+
+    private fun getSheet(marks: List<Statement>): String =
+        marks.groupBy { it.loadType }
+            .toList()
+            .sortedBy { it.first }
+            .joinToString(separator = "\n\n") { statements ->
+                StringBuilder()
+                    .append(statements.first)
+                    .append(":\n")
+                    .append(
+                        statements.second.withIndex()
+                            .joinToString(separator = "\n") { statement ->
+                                StringBuilder()
+                                    .append(statement.index + 1)
+                                    .append(") ")
+                                    .append(statement.value.subject.substringBeforeLast("\r"))
+                                    .append(" - ")
+                                    .append(statement.value.appraisalsDate)
+                                    .append(" - ")
+                                    .append(
+                                        if (statement.value.grade.isEmpty())
+                                            getString(R.string.no_mark)
+                                        else
+                                            statement.value.grade
+                                    )
+                            }
+                    )
+            }
 
     private fun fillData(statements: Statements) {
         if (!semesters.containsAll(statements.semesterList)) {
@@ -172,13 +183,12 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             semesters = statements.semesterList
         }
 
-        viewBinding.recyclerMarks.adapter = StatementsAdapter(statements.sheets)
+        adapter.items = statements.sheets
         marks = statements.sheets
 
     }
 
     private fun setSpinner() {
-        viewBinding.semestersSpinner.onItemSelectedListener = null
         ArrayAdapter(
             requireContext(), android.R.layout.simple_spinner_dropdown_item,
             semesters.map { it.replace("/", " / ").replace("|", " год | ") + " семестр" }
@@ -186,22 +196,20 @@ class StatementsFragment : Fragment(R.layout.fragment_account_statements), Adapt
             adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             viewBinding.semestersSpinner.adapter = adapterSpinner
         }
-        viewBinding.semestersSpinner.onItemSelectedListener = this
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        if (currentSemester == -1) {
-            currentSemester = p2
-        } else {
-            viewBinding.recyclerMarks.adapter = StatementsAdapter(emptyList())
+        if (currentSemester != -1 && currentSemester != p2) {
+            adapter.items = emptyList()
             lifecycleScope.launch {
                 viewModel.downloadInfo(semesters[p2])
             }
         }
+        currentSemester = p2
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
-        viewBinding.recyclerMarks.adapter = StatementsAdapter(emptyList())
+        adapter.items = emptyList()
         lifecycleScope.launch {
             viewModel.downloadInfo(viewBinding.semestersSpinner.selectedItem.toString())
         }
