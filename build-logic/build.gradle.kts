@@ -10,5 +10,5 @@ repositories {
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-    api("com.android.tools.build:gradle:7.0.1")
+    api("com.android.tools.build:gradle:7.0.2")
 }

@@ -22,6 +22,7 @@ import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.Advanc
 import com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.mospolyhelper.features.ui.schedule.lesson_info.tag.LessonTagViewModel
+import com.mospolytech.mospolyhelper.features.ui.schedule.users.ScheduleSourcesViewModel
 import io.ktor.client.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -78,4 +79,5 @@ val scheduleModule = module {
     viewModel { LessonInfoViewModel(get(), get(), get()) }
     viewModel { LessonTagViewModel(get()) }
     viewModel { ScheduleIdsViewModel(get()) }
+    viewModel { ScheduleSourcesViewModel(get()) }
 }

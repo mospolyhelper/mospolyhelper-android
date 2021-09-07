@@ -71,7 +71,7 @@ class ScheduleUseCase(
         scheduleSourcesRepository.addFavoriteScheduleSource(source)
     }
 
-    suspend fun removeSavedScheduleUser(source: ScheduleSource) {
+    suspend fun removeFavoriteScheduleSource(source: ScheduleSource) {
         scheduleSourcesRepository.removeFavoriteScheduleSource(source)
         if (getSelectedScheduleSource().first() == source) {
             setSelectedScheduleSource(null)

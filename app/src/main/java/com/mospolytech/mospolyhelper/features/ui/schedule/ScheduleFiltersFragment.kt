@@ -10,8 +10,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetScheduleFiltersBinding
-import com.mospolytech.mospolyhelper.utils.StatePair
-import com.mospolytech.mospolyhelper.utils.statesFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -30,69 +28,69 @@ class ScheduleFiltersFragment : BottomSheetDialogFragment() {
         return inflater.inflate(R.layout.bottom_sheet_schedule_filters, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        lifecycleScope.launchWhenResumed {
-            var currentState: ScheduleState? = null
-            viewModel.store.statesFlow.collect {
-                val state = StatePair(currentState, it)
-                currentState = it
-                renderUi(state)
-            }
-        }
-
-        viewBinding.chipLessonDatesEnded.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.store.state.lessonDateFilter?.let {
-                viewModel.store.sendIntent(
-                    ScheduleIntent.SetLessonDateFilter(it.copy(showEndedLessons = isChecked))
-                )
-            }
-        }
-        viewBinding.chipLessonDatesCurrent.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.store.state.lessonDateFilter?.let {
-                viewModel.store.sendIntent(
-                    ScheduleIntent.SetLessonDateFilter(it.copy(showCurrentLessons = isChecked))
-                )
-            }
-        }
-        viewBinding.chipLessonDatesNotStarted.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.store.state.lessonDateFilter?.let {
-                viewModel.store.sendIntent(
-                    ScheduleIntent.SetLessonDateFilter(it.copy(showNotStartedLessons = isChecked))
-                )
-            }
-        }
-    }
-
-    private fun renderUi(state: StatePair<ScheduleState>) {
-        state.onChanged({ allLessonTypes }) {
-            for (type in it.allLessonTypes) {
-                viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
-            }
-        }
-
-        state.onChanged({ lessonDateFilter }) {
-            viewBinding.chipLessonDatesEnded.isChecked =
-                it.lessonDateFilter?.showEndedLessons ?: false
-
-            viewBinding.chipLessonDatesCurrent.isChecked =
-                it.lessonDateFilter?.showCurrentLessons ?: false
-
-            viewBinding.chipLessonDatesCurrent.isChecked =
-                it.lessonDateFilter?.showNotStartedLessons ?: false
-        }
-    }
-
-    private fun createFilterChip(filter: String): Chip {
-        val chip = layoutInflater.inflate(R.layout.chip_schedule_filter, viewBinding.chipgroupLessonTypes, false) as Chip
-        chip.text = filter
-        chip.isChecked = filter in viewModel.filterTypes.value
-        chip.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                viewModel.addTypeFilter(filter)
-            } else {
-                viewModel.removeTypeFilter(filter)
-            }
-        }
-        return chip
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        lifecycleScope.launchWhenResumed {
+//            var currentState: ScheduleState? = null
+//            viewModel.store.statesFlow.collect {
+//                val state = StatePair(currentState, it)
+//                currentState = it
+//                renderUi(state)
+//            }
+//        }
+//
+//        viewBinding.chipLessonDatesEnded.setOnCheckedChangeListener { _, isChecked ->
+//            viewModel.store.state.lessonDateFilter?.let {
+//                viewModel.store.sendIntent(
+//                    ScheduleIntent.SetLessonDateFilter(it.copy(showEndedLessons = isChecked))
+//                )
+//            }
+//        }
+//        viewBinding.chipLessonDatesCurrent.setOnCheckedChangeListener { _, isChecked ->
+//            viewModel.store.state.lessonDateFilter?.let {
+//                viewModel.store.sendIntent(
+//                    ScheduleIntent.SetLessonDateFilter(it.copy(showCurrentLessons = isChecked))
+//                )
+//            }
+//        }
+//        viewBinding.chipLessonDatesNotStarted.setOnCheckedChangeListener { _, isChecked ->
+//            viewModel.store.state.lessonDateFilter?.let {
+//                viewModel.store.sendIntent(
+//                    ScheduleIntent.SetLessonDateFilter(it.copy(showNotStartedLessons = isChecked))
+//                )
+//            }
+//        }
+//    }
+//
+//    private fun renderUi(state: StatePair<ScheduleState>) {
+//        state.onChanged({ allLessonTypes }) {
+//            for (type in it.allLessonTypes) {
+//                viewBinding.chipgroupLessonTypes.addView(createFilterChip(type))
+//            }
+//        }
+//
+//        state.onChanged({ lessonDateFilter }) {
+//            viewBinding.chipLessonDatesEnded.isChecked =
+//                it.lessonDateFilter?.showEndedLessons ?: false
+//
+//            viewBinding.chipLessonDatesCurrent.isChecked =
+//                it.lessonDateFilter?.showCurrentLessons ?: false
+//
+//            viewBinding.chipLessonDatesCurrent.isChecked =
+//                it.lessonDateFilter?.showNotStartedLessons ?: false
+//        }
+//    }
+//
+//    private fun createFilterChip(filter: String): Chip {
+//        val chip = layoutInflater.inflate(R.layout.chip_schedule_filter, viewBinding.chipgroupLessonTypes, false) as Chip
+//        chip.text = filter
+//        chip.isChecked = filter in viewModel.filterTypes.value
+//        chip.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                viewModel.addTypeFilter(filter)
+//            } else {
+//                viewModel.removeTypeFilter(filter)
+//            }
+//        }
+//        return chip
+//    }
 }

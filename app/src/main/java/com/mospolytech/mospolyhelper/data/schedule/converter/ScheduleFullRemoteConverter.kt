@@ -62,8 +62,8 @@ class ScheduleFullRemoteConverter {
         val tempList = List(7) { mutableMapOf<LessonTime, MutableList<Lesson>>() }
 
         val json0 = Json.parseToJsonElement(semester)
-        val contents0 = json0.array("contents")
-        contents0?.forEach {
+        val contents0 = json0.jsonObject?.get("contents")?.jsonObject
+        contents0?.values?.forEach {
             parse(
                 it,
                 tempList,

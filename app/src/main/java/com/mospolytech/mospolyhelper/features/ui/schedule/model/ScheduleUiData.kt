@@ -11,30 +11,20 @@ class ScheduleUiData(
     private val schedule: Schedule,
     private val tags: List<LessonTag>,
     private val deadlines: Map<String, List<Deadline>>,
-    private val settings: ScheduleSettings
+    private val settings: ScheduleSettings,
+    private val dates: ClosedRange<LocalDate>
 ) : List<DailySchedulePack> {
+
     companion object {
         private const val MAX_COUNT = 400
     }
 
-    override val size: Int
-    val dateFrom: LocalDate
-    init {
-        val tempSize = schedule.dateFrom
-            .until(schedule.dateTo, ChronoUnit.DAYS).toInt() + 1
-        if (tempSize !in 1..MAX_COUNT) {
-            size = MAX_COUNT
-            dateFrom = LocalDate.now().minusDays((MAX_COUNT / 2).toLong())
-        } else {
-            size = tempSize
-            dateFrom = schedule.dateFrom
-        }
-    }
+    override val size: Int = dates.start.until(dates.endInclusive, ChronoUnit.DAYS).toInt()
 
     private val cachedDays = MutableList<DailySchedulePack?>(size) { null }
 
     private fun getDateByPosition(position: Int): LocalDate {
-        return dateFrom.plusDays(position.toLong())
+        return dates.start.plusDays(position.toLong())
     }
 
     override fun isEmpty() = size == 0

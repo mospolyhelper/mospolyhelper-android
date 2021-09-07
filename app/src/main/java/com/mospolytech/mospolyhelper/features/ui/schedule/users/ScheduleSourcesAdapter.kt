@@ -11,8 +11,8 @@ import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemScheduleUserBinding
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 
-class ScheduleUsersAdapter :
-    ListAdapter<ScheduleSource, ScheduleUsersAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ScheduleSourcesAdapter :
+    ListAdapter<ScheduleSource, ScheduleSourcesAdapter.ViewHolder>(DIFF_CALLBACK) {
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ScheduleSource>() {
             override fun areItemsTheSame(oldItem: ScheduleSource, newItem: ScheduleSource): Boolean =

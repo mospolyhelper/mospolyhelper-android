@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.combine
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScheduleIdsFragment: DialogFragment(R.layout.fragment_schedule_ids) {
+    companion object {
+        const val SCHEDULE_SOURCE = "schedule_source"
+    }
 
     private val viewModel by viewModel<ScheduleIdsViewModel>()
     private val viewBinding by viewBinding(FragmentScheduleIdsBinding::bind)

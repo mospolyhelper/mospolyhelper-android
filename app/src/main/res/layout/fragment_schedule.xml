@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/textview_user"
+                    android:id="@+id/tv_schedule_source"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginEnd="45dp"
@@ -72,7 +72,7 @@
                 android:layout_marginBottom="4dp"
                 android:layout_gravity="end"
                 android:fontFamily="@font/ubuntu_medium"
-                android:textSize="11.6sp"
+                android:textSize="10.5sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

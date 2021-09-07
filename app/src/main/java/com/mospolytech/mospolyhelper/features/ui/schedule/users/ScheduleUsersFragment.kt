@@ -14,15 +14,17 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.teacher.Teacher
+import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleIntent
 import com.mospolytech.mospolyhelper.features.ui.schedule.ScheduleViewModel
 import com.mospolytech.mospolyhelper.features.utils.getColorStateList
 import com.mospolytech.mospolyhelper.utils.safe
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScheduleUsersFragment : BottomSheetDialogFragment() {
 
-    private val viewModel by sharedViewModel<ScheduleViewModel>()
+    private val viewModel by viewModel<ScheduleSourcesViewModel>()
     private val viewBinding by viewBinding(BottomSheetScheduleUsersBinding::bind)
 
     override fun getTheme(): Int  = R.style.CustomBottomSheetDialogTheme
@@ -67,7 +69,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         )
         chip.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                viewModel.setUser(source)
+                viewModel.selectScheduleSource(source)
             }
         }
         chip.setOnCreateContextMenuListener { menu, _, _ ->
@@ -89,7 +91,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
         for (user in sources) {
             val chip = createChip(user)
             viewBinding.chipgroupUsers.addView(chip)
-            if (viewModel.selectedScheduleSource.value == user) {
+            if (viewModel.selectedScheduleSource == user) {
                 chip.id = View.generateViewId()
                 viewBinding.chipgroupUsers.check(chip.id)
                 checkedChip = chip
@@ -115,7 +117,7 @@ class ScheduleUsersFragment : BottomSheetDialogFragment() {
 
     private fun bindViewModel() {
         lifecycleScope.launchWhenResumed {
-            viewModel.savedUsers.collect {
+            viewModel.favoriteScheduleSources.collect {
                 setSavedUsers(it)
             }
         }

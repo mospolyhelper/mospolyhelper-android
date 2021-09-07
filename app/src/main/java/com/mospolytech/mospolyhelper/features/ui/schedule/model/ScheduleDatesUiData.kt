@@ -5,20 +5,11 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 class ScheduleDatesUiData(
-    private val schedule: Schedule?
+    private val schedule: Schedule,
+    private val dates: ClosedRange<LocalDate>
 ) : List<ScheduleWeekUiData> {
-    override val size: Int
-    val dates: ClosedRange<LocalDate>
+    override val size: Int = (dates.start.until(dates.endInclusive, ChronoUnit.DAYS) / 7L + 1).toInt()
 
-    init {
-        if (schedule != null) {
-            dates = getMondayOfWeek(schedule.dateFrom)..getSundayOfWeek(schedule.dateTo)
-            size = (dates.start.until(dates.endInclusive, ChronoUnit.DAYS) / 7L + 1).toInt()
-        } else {
-            size = 1
-            dates = getWeek(LocalDate.now())
-        }
-    }
 
     private val cachedDays = MutableList<ScheduleWeekUiData?>(size) { null }
 

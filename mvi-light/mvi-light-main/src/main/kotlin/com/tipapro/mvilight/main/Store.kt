@@ -1,6 +1,5 @@
 package com.tipapro.mvilight.main
 
-import java.lang.ref.WeakReference
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -21,18 +20,17 @@ abstract class Store<State : Any, Intent : Any, Action : Any>(
     private fun notifyState(state: State) {
         Logger.getLogger(Store::class.java.name).log(Level.INFO, "State: $state")
         onStateChanged.forEach {
-            it.get()?.invoke(state)
+            it.invoke(state)
         }
-        onStateChanged.removeIf { it.isEnqueued }
     }
 
-    private val onStateChanged: MutableList<WeakReference<(State) -> Unit>> = LinkedList()
+    private val onStateChanged: MutableList<(State) -> Unit> = LinkedList()
 
     fun addOnStateChanged(onStateChanged: (State) -> Unit) {
-        this.onStateChanged += WeakReference(onStateChanged)
+        this.onStateChanged += onStateChanged
     }
     fun removeOnStateChanged(onStateChanged: (State) -> Unit) {
-        this.onStateChanged.removeIf { it.get() == onStateChanged }
+        this.onStateChanged.removeIf { it == onStateChanged }
     }
 
 
@@ -40,32 +38,34 @@ abstract class Store<State : Any, Intent : Any, Action : Any>(
     // Intent
     ///
     fun sendIntent(intent: Intent) {
-        Logger.getLogger(Store::class.java.name).log(Level.INFO, "Intent: $intent")
+        Logger.getLogger(Store::class.java.name).log(Level.INFO, "Intent: ${intent.javaClass.simpleName}, $intent")
         val result = ResultStateImpl(state)
         result.processIntent(intent)
-        state = result.state
     }
     protected abstract fun ResultState.processIntent(intent: Intent)
+
+    protected fun ResultState.commitState() {
+        this@Store.state = this.state
+    }
 
 
     ///
     // Action
     ///
-    private val onAction: MutableList<WeakReference<(Action) -> Unit>> = LinkedList()
+    private val onAction: MutableList<(Action) -> Unit> = LinkedList()
 
     fun addOnAction(action: (Action) -> Unit) {
-        onAction += WeakReference(action)
+        onAction += action
     }
     fun removeOnAction(action: (Action) -> Unit) {
-        onAction.removeIf { it.get() == action }
+        onAction.removeIf { it == action }
     }
 
     protected fun sendAction(action: Action) {
         Logger.getLogger(Store::class.java.name).log(Level.INFO, "Action: $action")
         onAction.forEach {
-            it.get()?.invoke(action)
+            it.invoke(action)
         }
-        onAction.removeIf { it.isEnqueued }
     }
 
 

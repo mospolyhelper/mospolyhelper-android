@@ -29,24 +29,24 @@ class CalendarFragment : DialogFragment(R.layout.fragment_schedule_calendar) {
             findNavController().safe { navigateUp() }
         }
 
-        val recyclerAdapter = CalendarThreeAdapter(
-            viewModel.store.state.filteredSchedule,
-            viewModel.selectedScheduleSource.value?.let {
-                LessonFeaturesSettings.fromUserSchedule(it)
-            } ?: LessonFeaturesSettings(true, true, true)
-        )
-        recyclerAdapter.dayClick += { date ->
-            viewModel.store.sendIntent(ScheduleIntent.SetDate(date))
-            findNavController().safe { navigateUp() }
-        }
+//        val recyclerAdapter = CalendarThreeAdapter(
+//            viewModel.store.state.filteredSchedule,
+//            viewModel.selectedScheduleSource.value?.let {
+//                LessonFeaturesSettings.fromUserSchedule(it)
+//            } ?: LessonFeaturesSettings(true, true, true)
+//        )
+//        recyclerAdapter.dayClick += { date ->
+//            viewModel.store.sendIntent(ScheduleIntent.SetDate(date))
+//            findNavController().safe { navigateUp() }
+//        }
 
-        viewBinding.recyclerScheduleDay.itemAnimator = null
-        viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
-        viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
-
-        viewBinding.recyclerScheduleDay.scrollToPosition(
-            recyclerAdapter.firstPosDate.until(viewModel.store.state.date, ChronoUnit.DAYS).toInt()
-        )
+//        viewBinding.recyclerScheduleDay.itemAnimator = null
+//        viewBinding.recyclerScheduleDay.layoutManager = GridLayoutManager(context, 3)
+//        viewBinding.recyclerScheduleDay.adapter = recyclerAdapter
+//
+//        viewBinding.recyclerScheduleDay.scrollToPosition(
+//            recyclerAdapter.firstPosDate.until(viewModel.store.state.date, ChronoUnit.DAYS).toInt()
+//        )
 
 //        viewBinding.toolbarScheduleCalendar.btngroupScheduleCalendar.addOnButtonCheckedListener { group, checkedId, isChecked ->
 //            if (!isChecked) {
