@@ -182,7 +182,7 @@ class ScheduleViewModel(
 
 class ScheduleStore(
     private val useCase: ScheduleUseCase
-) : Store<ScheduleState, ScheduleIntent, Nothing>(ScheduleState.Init()) {
+) : Store<ScheduleState, ScheduleIntent, Nothing>(ScheduleState.init()) {
 
     init {
         scope.launch {
@@ -351,7 +351,7 @@ data class ScheduleState(
     val dateIsToday: Boolean = false
 ) {
     companion object {
-        fun Init(): ScheduleState {
+        fun init(): ScheduleState {
             val date = LocalDate.now()
             val dateFrom = ScheduleState().dateFrom
             val schedulePosition = dateFrom.until(date, ChronoUnit.DAYS).toInt()

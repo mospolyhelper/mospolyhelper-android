@@ -26,6 +26,7 @@ import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.Lesson
 import com.mospolytech.mospolyhelper.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.mospolyhelper.features.appwidget.schedule.ScheduleAppWidgetProvider
 import com.mospolytech.mospolyhelper.features.ui.schedule.advanced_search.AdvancedSearchFragment
+import com.mospolytech.mospolyhelper.features.ui.schedule.calendar.CalendarFragment
 import com.mospolytech.mospolyhelper.features.ui.schedule.ids.ScheduleIdsFragment
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.DailySchedulePack
 import com.mospolytech.mospolyhelper.features.ui.schedule.model.ScheduleWeekUiData
@@ -230,7 +231,11 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                 //viewModel.setAdvancedSearch(it)
             }
 
-
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Long>(CalendarFragment.CALENDAR_FRAGMENT)
+            ?.observe(viewLifecycleOwner) {
+                viewModel.store.sendIntent(ScheduleIntent.SetDate(LocalDate.ofEpochDay(it)))
+            }
     }
 
     private fun renderUi(state: StatePair<ScheduleState>) {
