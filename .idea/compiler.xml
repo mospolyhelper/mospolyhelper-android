@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="build-logic" target="11" />
-      <module name="mospolyhelper.android-app.ui.schedule" target="11" />
+    <bytecodeTargetLevel target="11">
       <module name="mospolyhelper.androidApp.ui.schedule" target="11" />
-      <module name="mospolyhelper.app" target="11" />
-      <module name="mospolyhelper.shared.data.schedule" target="11" />
-      <module name="mospolyhelper.shared.domain.common" target="11" />
-      <module name="mospolyhelper.shared.domain.schedule" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

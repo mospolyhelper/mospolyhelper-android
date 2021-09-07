@@ -161,10 +161,11 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         viewBinding.includeViewpager.root.show()
         viewBinding.includeAddUser.root.hide()
         viewBinding.includeNull.root.hide()
+        viewBinding.textviewDateAndWeek.show()
         (viewBinding.includeViewpager.viewpagerSchedule.adapter as? ScheduleAdapter)
             ?.submitData(
                 schedule,
-                viewModel.currentLessonTimes.value.first
+                viewModel.store.state.currentLessonTimes.first
             )
         viewBinding.includeViewpager.viewpagerSchedule.setCurrentItem(viewModel.store.state.schedulePosition, false)
     }
@@ -173,12 +174,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         viewBinding.includeViewpager.root.hide()
         viewBinding.includeAddUser.root.hide()
         viewBinding.includeNull.root.show()
+        viewBinding.textviewDateAndWeek.hide()
     }
 
     private fun setAddUser() {
         viewBinding.includeViewpager.root.hide()
         viewBinding.includeAddUser.root.show()
         viewBinding.includeNull.root.hide()
+        viewBinding.textviewDateAndWeek.hide()
     }
 
     private fun setCurrentLessonTimes(lessonTimes: List<LessonTime>) {
@@ -203,12 +206,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
     }
 
     private fun bindViewModel() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.currentLessonTimes.collect {
-                setCurrentLessonTimes(it.first)
-            }
-        }
-
         var state: ScheduleState? = null
         lifecycleScope.launchWhenResumed {
             viewModel.store.statesFlow.collect { newState ->
@@ -228,7 +225,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         findNavController().currentBackStackEntry?.savedStateHandle
             ?.getLiveData<ScheduleFilters>(AdvancedSearchFragment.ADVANCED_SEARCH)
             ?.observe(viewLifecycleOwner) {
-                //viewModel.setAdvancedSearch(it)
+                viewModel.store.sendIntent(ScheduleIntent.SetAdvancedSearch(it))
             }
 
         findNavController().currentBackStackEntry?.savedStateHandle
@@ -242,6 +239,9 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
 
         state.onChanged({ scheduleSource }) {
             setScheduleSourceTitle(it.scheduleSource)
+            if (it.scheduleSource !is AdvancedSearchScheduleSource) {
+                updateAppWidget()
+            }
         }
 
         state.onChanged({ dateIsToday }) {
@@ -286,19 +286,22 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             viewBinding.refreshSchedule.isRefreshing = it.isRefreshing
         }
 
+        state.onChanged({ currentLessonTimes }) {
+            setCurrentLessonTimes(it.currentLessonTimes.first)
+        }
+
+        state.onChanged({ error }) {
+            when (it.error) {
+                ScheduleError.GroupNotSelected -> setAddUser()
+                ScheduleError.ScheduleNotFound -> setNullSchedule()
+                null -> {}
+            }
+        }
+
 //        state.onChanged({ dayOfWeekPosition }) {
 //            (viewBinding.viewpagerWeeks.adapter as? WeekAdapter)?.updateSelectedDay(it.dayOfWeekPosition)
 //        }
 
-
-
-//        if (state.isChanged { isRefreshing }) {
-//            viewBinding.refreshSchedule.isRefreshing = state.new.isRefreshing
-//        }
-//
-//        if (state.isChanged { isLoading }) {
-//            setLoading(state.new.isLoading)
-//        }
 //
 //        if (state.isChanged { scheduleDatesUiData }) {
 //            setWeekViewPager(state.new.scheduleDatesUiData)
@@ -333,9 +336,9 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             R.id.schedule_advanced_search -> findNavController().safe {
                 navigate(ScheduleFragmentDirections.actionScheduleFragmentToAdvancedSearchFragment())
             }
-            R.id.menu_schedule_filter -> findNavController().safe {
-                navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleFiltersFragment())
-            }
+//            R.id.menu_schedule_filter -> findNavController().safe {
+//                navigate(ScheduleFragmentDirections.actionScheduleFragmentToScheduleFiltersFragment())
+//            }
             R.id.menu_schedule_calendar -> findNavController().safe {
                 navigate(ScheduleFragmentDirections.actionScheduleFragmentToCalendarFragment())
             }

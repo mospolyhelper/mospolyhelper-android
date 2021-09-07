@@ -11,11 +11,11 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/menu_schedule_advanced_search" />
-    <item android:id="@+id/menu_schedule_filter"
-        android:icon="@drawable/ic_fluent_filter_20_regular"
-        android:orderInCategory="101"
-        app:showAsAction="never"
-        android:title="@string/menu_schedule_filters" />
+<!--    <item android:id="@+id/menu_schedule_filter"-->
+<!--        android:icon="@drawable/ic_fluent_filter_20_regular"-->
+<!--        android:orderInCategory="101"-->
+<!--        app:showAsAction="never"-->
+<!--        android:title="@string/menu_schedule_filters" />-->
     <item android:id="@+id/menu_schedule_calendar"
         android:icon="@drawable/ic_fluent_calendar_ltr_20_regular"
         android:orderInCategory="102"

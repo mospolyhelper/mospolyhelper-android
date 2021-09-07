@@ -80,20 +80,19 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/date_grade"
                             app:layout_constraintBottom_toBottomOf="@id/date_grade"
-                            app:layout_constraintTop_toBottomOf="@id/name_grade"
                             app:drawableTint="@color/iconColor" />
 
                         <TextView
                             android:id="@+id/date_grade"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ubuntu"
-                            android:textColor="@color/color_secondary"
                             android:layout_marginTop="10dp"
-                            tools:text="@string/grade_date"
+                            android:fontFamily="@font/ubuntu"
                             android:textAlignment="textEnd"
+                            android:textColor="@color/color_secondary"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/name_grade"/>
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="@string/grade_date" />
 
                         <TextView
                             android:id="@+id/fixed_grade"

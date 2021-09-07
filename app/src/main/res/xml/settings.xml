@@ -11,17 +11,17 @@
         app:icon="@drawable/ic_fluent_dark_theme_24_regular"
         app:defaultValue="true"/>
   </PreferenceScreen>
-    <PreferenceScreen
-        app:title="Расписание"
-        app:key="ScheduleScreen"
-        app:icon="@drawable/ic_fluent_calendar_ltr_20_regular">
-        <SwitchPreferenceCompat
-            app:key="ShowEmptyLessons"
-            app:title="Пустые пары"
-            app:summary="Показывать пустые пары"
-            app:icon="@drawable/ic_fluent_rectangle_landscape_20_regular"
-            app:defaultValue="false"/>
-    </PreferenceScreen>
+<!--    <PreferenceScreen-->
+<!--        app:title="Расписание"-->
+<!--        app:key="ScheduleScreen"-->
+<!--        app:icon="@drawable/ic_fluent_calendar_ltr_20_regular">-->
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="ShowEmptyLessons"-->
+<!--            app:title="Пустые пары"-->
+<!--            app:summary="Показывать пустые пары"-->
+<!--            app:icon="@drawable/ic_fluent_rectangle_landscape_20_regular"-->
+<!--            app:defaultValue="false"/>-->
+<!--    </PreferenceScreen>-->
   <PreferenceScreen
       app:title="@string/pref_category_appwidget"
       app:key="ScheduleAppWidgetScreen"
