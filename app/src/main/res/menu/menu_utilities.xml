@@ -16,10 +16,10 @@
         android:id="@+id/nav_news"
         android:icon="@drawable/ic_fluent_news_20_regular"
         android:title="@string/nav_news" />
-    <item
-        android:id="@+id/nav_university_pass"
-        android:icon="@drawable/ic_outline_contactless_24"
-        android:title="@string/pass" />
+<!--    <item-->
+<!--        android:id="@+id/nav_university_pass"-->
+<!--        android:icon="@drawable/ic_outline_contactless_24"-->
+<!--        android:title="@string/pass" />-->
     <item
         android:id="@+id/nav_about_app"
         android:icon="@drawable/ic_fluent_info_20_regular"
