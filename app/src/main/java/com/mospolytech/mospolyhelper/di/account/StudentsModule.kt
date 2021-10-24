@@ -1,7 +1,6 @@
 package com.mospolytech.mospolyhelper.di.account
 
 import com.mospolytech.mospolyhelper.data.account.students.api.StudentsHerokuClient
-import com.mospolytech.mospolyhelper.data.account.students.remote.StudentsRemoteDataSource
 import com.mospolytech.mospolyhelper.data.account.students.repository.StudentsRepositoryImpl
 import com.mospolytech.mospolyhelper.domain.account.students.repository.StudentsRepository
 import com.mospolytech.mospolyhelper.domain.account.students.usecase.StudentsUseCase

@@ -1,5 +1,6 @@
 package com.mospolytech.mospolyhelper.data.utils
 
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 
 fun JsonElement.array(key: String): JsonArray? {
@@ -25,3 +26,5 @@ fun JsonElement.stringOrNull(key: String): String? {
 fun JsonElement.string(): String {
     return jsonPrimitive.content
 }
+
+inline fun<reified T> String.toObject(): T = Json.decodeFromString(this)
