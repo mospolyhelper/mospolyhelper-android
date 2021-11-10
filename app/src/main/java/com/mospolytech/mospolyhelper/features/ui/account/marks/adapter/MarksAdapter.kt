@@ -11,7 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemMarkBinding
-import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
+import com.mospolytech.mospolyhelper.domain.account.model.marks.MarkInfo
 import java.util.*
 
 class MarksAdapter: RecyclerView.Adapter<MarksAdapter.ViewHolderMarks>() {

@@ -13,7 +13,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStatementBinding
-import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
+import com.mospolytech.mospolyhelper.domain.account.model.statements.Statement
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.show
 import java.util.*
@@ -118,7 +118,7 @@ class StatementsAdapter(): RecyclerView.Adapter<StatementsAdapter.ViewHolderStat
     }
 
     inner class StatementsDiffCallback(private val oldList: List<Statement>,
-                                  private val newList: List<Statement>) : DiffUtil.Callback() {
+                                       private val newList: List<Statement>) : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             oldList[oldItemPosition].id == newList[newItemPosition].id

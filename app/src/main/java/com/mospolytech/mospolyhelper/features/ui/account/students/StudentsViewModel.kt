@@ -5,19 +5,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import com.mospolytech.mospolyhelper.domain.account.students.model.Student
-import com.mospolytech.mospolyhelper.domain.account.students.usecase.StudentsUseCase
+import com.mospolytech.mospolyhelper.domain.account.model.students.Student
+import com.mospolytech.mospolyhelper.domain.account.repository.StudentsRepository
 import com.mospolytech.mospolyhelper.features.ui.account.students.other.FilterEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 
 class StudentsViewModel(
-    private val useCase: StudentsUseCase
+    private val repository: StudentsRepository
     ) : ViewModel(), KoinComponent {
 
     fun fetchStudents(query: String, filters: FilterEntity): Flow<PagingData<Student>> {
-        return useCase.getInfo(query).map { pagingData ->
+        return repository.getInfo(query).map { pagingData ->
             pagingData.filter { student ->
                 var course = true
                 var form = true

@@ -1,8 +1,8 @@
 package com.mospolytech.mospolyhelper.data.schedule.local
 
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
-import com.mospolytech.mospolyhelper.data.utils.getFromJson
-import com.mospolytech.mospolyhelper.data.utils.setAsJson
+import com.mospolytech.mospolyhelper.data.utils.getObject
+import com.mospolytech.mospolyhelper.data.utils.setObject
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTag
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagException
 import com.mospolytech.mospolyhelper.domain.schedule.model.tag.LessonTagKey
@@ -16,7 +16,7 @@ class LessonTagsLocalDataSource(
     private val prefs: SharedPreferencesDataSource
 ) {
     fun getAll(): Result0<List<LessonTag>> {
-        return Result0.Success(prefs.getFromJson("ScheduleTags") ?: emptyList())
+        return Result0.Success(prefs.getObject("ScheduleTags") ?: emptyList())
     }
 
     fun addTag(tag: LessonTag): Result0<List<LessonTag>> {
@@ -90,6 +90,6 @@ class LessonTagsLocalDataSource(
     }
 
     fun setAll(tags: List<LessonTag>) {
-        prefs.setAsJson("ScheduleTags", tags)
+        prefs.setObject("ScheduleTags", tags)
     }
 }

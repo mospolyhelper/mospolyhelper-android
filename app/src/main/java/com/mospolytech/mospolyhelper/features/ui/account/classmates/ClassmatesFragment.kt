@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountClassmatesBinding
-import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
+import com.mospolytech.mospolyhelper.domain.account.model.classmates.Classmate
 import com.mospolytech.mospolyhelper.features.ui.account.classmates.adapter.ClassmatesAdapter
 import com.mospolytech.mospolyhelper.features.ui.account.messaging.MessagingFragment.Companion.DIALOG_ID
 import com.mospolytech.mospolyhelper.utils.*

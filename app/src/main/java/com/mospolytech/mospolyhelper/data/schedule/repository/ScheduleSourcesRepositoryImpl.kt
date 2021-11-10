@@ -3,8 +3,8 @@ package com.mospolytech.mospolyhelper.data.schedule.repository
 import com.mospolytech.mospolyhelper.data.core.local.SharedPreferencesDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.GroupListRemoteDataSource
 import com.mospolytech.mospolyhelper.data.schedule.remote.TeacherListRemoteDataSource
-import com.mospolytech.mospolyhelper.data.utils.getFromJson
-import com.mospolytech.mospolyhelper.data.utils.setAsJson
+import com.mospolytech.mospolyhelper.data.utils.getObject
+import com.mospolytech.mospolyhelper.data.utils.setObject
 import com.mospolytech.mospolyhelper.domain.schedule.model.StudentScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.TeacherScheduleSource
 import com.mospolytech.mospolyhelper.domain.schedule.model.ScheduleSource
@@ -29,19 +29,19 @@ class ScheduleSourcesRepositoryImpl(
     private val currentUserChangesFlow = MutableSharedFlow<ScheduleSource?>(extraBufferCapacity = 64)
 
     override fun getFavoriteScheduleSources() = flow {
-        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
+        val users = prefDataSource.getObject<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
         emit(users)
         emitAll(savedUsersChangesFlow)
     }.flowOn(ioDispatcher)
 
     private suspend fun setFavoriteScheduleSources(savedSources: List<ScheduleSource>) = withContext(ioDispatcher) {
-        prefDataSource.setAsJson(PreferenceKeys.ScheduleSavedIds, savedSources)
+        prefDataSource.setObject(PreferenceKeys.ScheduleSavedIds, savedSources)
         savedUsersChangesFlow.emit(savedSources)
     }
 
     override suspend fun addFavoriteScheduleSource(source: ScheduleSource) = withContext(ioDispatcher) {
-        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
+        val users = prefDataSource.getObject<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
         if (source !in users) {
             setFavoriteScheduleSources((users + source).sorted())
@@ -49,7 +49,7 @@ class ScheduleSourcesRepositoryImpl(
     }
 
     override suspend fun removeFavoriteScheduleSource(source: ScheduleSource) = withContext(ioDispatcher) {
-        val users = prefDataSource.getFromJson<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
+        val users = prefDataSource.getObject<List<ScheduleSource>>(PreferenceKeys.ScheduleSavedIds)
             ?: emptyList()
         setFavoriteScheduleSources(users - source)
     }
@@ -61,12 +61,12 @@ class ScheduleSourcesRepositoryImpl(
     }
 
     override fun getSelectedScheduleSource() = flow {
-        emit(prefDataSource.getFromJson(PreferenceKeys.ScheduleUser))
+        emit(prefDataSource.getObject(PreferenceKeys.ScheduleUser))
         emitAll(currentUserChangesFlow)
     }
 
     override suspend fun setSelectedScheduleSource(source: ScheduleSource?) = withContext(ioDispatcher) {
-        prefDataSource.setAsJson(PreferenceKeys.ScheduleUser, source)
+        prefDataSource.setObject(PreferenceKeys.ScheduleUser, source)
         currentUserChangesFlow.emit(source)
     }
 }

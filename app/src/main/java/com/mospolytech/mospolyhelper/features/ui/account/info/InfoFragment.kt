@@ -9,7 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountInfoBinding
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
+import com.mospolytech.mospolyhelper.domain.account.model.info.Info
 import com.mospolytech.mospolyhelper.features.ui.account.info.adapter.OrderAdapter
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*

@@ -1,16 +1,16 @@
 package com.mospolytech.mospolyhelper.features.ui.account.info
 
 import androidx.lifecycle.ViewModel
-import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
-import com.mospolytech.mospolyhelper.domain.account.info.model.Info
-import com.mospolytech.mospolyhelper.domain.account.info.usecase.InfoUseCase
+import com.mospolytech.mospolyhelper.domain.account.usecase.AuthUseCase
+import com.mospolytech.mospolyhelper.domain.account.model.info.Info
+import com.mospolytech.mospolyhelper.domain.account.repository.InfoRepository
 import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class InfoViewModel(
-    private val useCase: InfoUseCase,
+    private val repository: InfoRepository,
     private val authUseCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
@@ -18,7 +18,7 @@ class InfoViewModel(
     val auth = MutableStateFlow<Result0<String>?>(null)
 
     suspend fun downloadInfo() {
-        useCase.getInfo().collect {
+        repository.getInfo(emitLocal = false).collect {
             info.value = it
         }
     }
@@ -30,10 +30,7 @@ class InfoViewModel(
     }
 
     suspend fun getInfo() {
-        useCase.getLocalInfo().collect {
-            info.value = it
-        }
-        useCase.getInfo().collect {
+        repository.getInfo(emitLocal = true).collect {
             info.value = it
         }
     }

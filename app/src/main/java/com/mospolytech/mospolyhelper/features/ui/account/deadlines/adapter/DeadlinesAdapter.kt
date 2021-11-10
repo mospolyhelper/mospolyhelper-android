@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemDeadlinesBinding
-import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
+import com.mospolytech.mospolyhelper.domain.account.model.deadlines.Deadline
 import com.mospolytech.mospolyhelper.utils.inflate
 
 class DeadlinesAdapter(private var items: List<Deadline>):RecyclerView.Adapter<DeadlinesAdapter.DeadlinesViewHolder>() {

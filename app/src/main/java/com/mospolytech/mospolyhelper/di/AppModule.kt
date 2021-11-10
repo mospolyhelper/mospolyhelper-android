@@ -37,20 +37,10 @@ val diModules = listOf(
     mainModule,
 
     // Account
-    menuModule,
-    authModule,
-    infoModule,
-    marksModule,
-    studentsModule,
-    teachersModule,
-    classmatesModule,
-    messagingModule,
-    applicationsModule,
-    paymentsModule,
-    deadlinesModule,
-    statementsModule,
-    dialogsModule,
-    groupMarksModule,
+    accountMainModule,
+    accountRepositoryModule,
+    accountUseCaseModule,
+    accountViewModelModule,
 
     // Utilities
     addressesModule,

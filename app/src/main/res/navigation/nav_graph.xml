@@ -268,7 +268,7 @@
         android:label="DeadlinesBottomSheetFragment" >
         <argument
             android:name="deadlines"
-            app:argType="com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline[]" />
+            app:argType="com.mospolytech.mospolyhelper.domain.account.model.deadlines.Deadline[]" />
     </dialog>
     <fragment
         android:id="@+id/statementsFragment"

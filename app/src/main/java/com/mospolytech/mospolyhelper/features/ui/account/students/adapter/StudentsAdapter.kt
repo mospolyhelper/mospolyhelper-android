@@ -11,7 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemStudentBinding
-import com.mospolytech.mospolyhelper.domain.account.students.model.Student
+import com.mospolytech.mospolyhelper.domain.account.model.students.Student
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.inflate
 import com.mospolytech.mospolyhelper.utils.show

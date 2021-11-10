@@ -11,7 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemDialogBinding
-import com.mospolytech.mospolyhelper.domain.account.dialogs.model.DialogModel
+import com.mospolytech.mospolyhelper.domain.account.model.dialogs.DialogModel
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
 import java.time.LocalDateTime

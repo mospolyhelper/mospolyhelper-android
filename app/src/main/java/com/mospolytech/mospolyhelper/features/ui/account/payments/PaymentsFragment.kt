@@ -10,7 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountPaymentsBinding
-import com.mospolytech.mospolyhelper.domain.account.payments.model.Payments
+import com.mospolytech.mospolyhelper.domain.account.model.payments.Payments
 import com.mospolytech.mospolyhelper.features.ui.account.payments.adapter.PagerAdapter
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*

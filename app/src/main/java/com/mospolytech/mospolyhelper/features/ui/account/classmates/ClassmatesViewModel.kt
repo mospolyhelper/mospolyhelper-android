@@ -1,16 +1,16 @@
 package com.mospolytech.mospolyhelper.features.ui.account.classmates
 
 import androidx.lifecycle.ViewModel
-import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
-import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
-import com.mospolytech.mospolyhelper.domain.account.classmates.usecase.ClassmatesUseCase
+import com.mospolytech.mospolyhelper.domain.account.usecase.AuthUseCase
+import com.mospolytech.mospolyhelper.domain.account.model.classmates.Classmate
+import com.mospolytech.mospolyhelper.domain.account.repository.ClassmatesRepository
 import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class ClassmatesViewModel(
-    private val useCase: ClassmatesUseCase,
+    private val repository: ClassmatesRepository,
     private val authUseCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
@@ -24,16 +24,13 @@ class ClassmatesViewModel(
     }
 
     suspend fun downloadInfo() {
-        useCase.getInfo().collect {
+        repository.getClassmates(emitLocal = false).collect {
             classmates.value = it
         }
     }
 
     suspend fun getInfo() {
-        useCase.getLocalInfo().collect {
-            classmates.value = it
-        }
-        useCase.getInfo().collect {
+        repository.getClassmates(emitLocal = true).collect {
             classmates.value = it
         }
     }

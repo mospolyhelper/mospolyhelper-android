@@ -2,9 +2,17 @@ package com.mospolytech.mospolyhelper.utils
 
 import com.auth0.android.jwt.JWT
 
+fun String.getJWT(): JWT? {
+    return try {
+        JWT(this)
+    } catch (exception: Throwable) {
+        null
+    }
+}
+
 fun JWT.getSessionId() = this.getClaim("sessionId").asString()
 
-fun JWT.getPermissions(): List<String> = this.getClaim("permissions").asList(String::class.java) ?: emptyList()
+fun JWT.getPermissions(): List<String> = this.getClaim("permissions").asList(String::class.java)
 
 fun JWT.getName(): String? =
     this.getClaim("name").asString()

@@ -12,7 +12,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemClassmateBinding
-import com.mospolytech.mospolyhelper.domain.account.classmates.model.Classmate
+import com.mospolytech.mospolyhelper.domain.account.model.classmates.Classmate
 import com.mospolytech.mospolyhelper.utils.inflate
 
 class ClassmatesAdapter:RecyclerView.Adapter<ClassmatesAdapter.ClassmatesViewHolder>() {

@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountDeadlineBinding
-import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
+import com.mospolytech.mospolyhelper.domain.account.model.deadlines.Deadline
 import com.mospolytech.mospolyhelper.features.ui.account.deadlines.DeadlinesBottomSheetFragment.Companion.DEADLINES
 import com.mospolytech.mospolyhelper.features.ui.account.deadlines.adapter.DeadlinesAdapter
 import com.mospolytech.mospolyhelper.utils.*

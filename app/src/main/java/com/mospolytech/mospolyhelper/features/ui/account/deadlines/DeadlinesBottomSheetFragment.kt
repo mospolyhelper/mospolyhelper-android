@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.BottomSheetDeadlineBinding
-import com.mospolytech.mospolyhelper.domain.account.deadlines.model.Deadline
+import com.mospolytech.mospolyhelper.domain.account.model.deadlines.Deadline
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.time.LocalDate
@@ -129,11 +129,13 @@ class DeadlinesBottomSheetFragment(): BottomSheetDialogFragment(), CoroutineScop
                     importance = 3
                 }
                 list.forEach { if (it.id > id) id = it.id }
-                list.add(Deadline(id, viewBinding.editPredmet.text.toString(),
+                list.add(
+                    Deadline(id, viewBinding.editPredmet.text.toString(),
                 viewBinding.editDescription.text.toString(), isPinned,
                 viewBinding.editDate.text.toString() + " " + viewBinding.editTime.text.toString(),
                     false, importance
-                ))
+                )
+                )
                 GlobalScope.launch(this.coroutineContext) {
                     viewModel.setInfo(list)
                 }

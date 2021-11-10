@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentBinding
-import com.mospolytech.mospolyhelper.domain.account.payments.model.Payment
+import com.mospolytech.mospolyhelper.domain.account.model.payments.Payment
 import com.mospolytech.mospolyhelper.utils.inflate
 
 class PaymentsAdapter(private val items: List<Payment>): RecyclerView.Adapter<PaymentsAdapter.PaymentsViewHolder>() {

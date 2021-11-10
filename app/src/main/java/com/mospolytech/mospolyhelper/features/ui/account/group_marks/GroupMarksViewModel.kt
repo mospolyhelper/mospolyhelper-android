@@ -1,17 +1,17 @@
 package com.mospolytech.mospolyhelper.features.ui.account.group_marks
 
 import androidx.lifecycle.ViewModel
-import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
-import com.mospolytech.mospolyhelper.domain.account.group_marks.model.GradeSheet
-import com.mospolytech.mospolyhelper.domain.account.group_marks.model.GradeSheetMark
-import com.mospolytech.mospolyhelper.domain.account.group_marks.usecase.GroupMarksUseCase
+import com.mospolytech.mospolyhelper.domain.account.usecase.AuthUseCase
+import com.mospolytech.mospolyhelper.domain.account.model.statement.GradeSheet
+import com.mospolytech.mospolyhelper.domain.account.model.statement.GradeSheetMark
+import com.mospolytech.mospolyhelper.domain.account.repository.GroupMarksRepository
 import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class GroupMarksViewModel(
-    private val groupMarksUseCase: GroupMarksUseCase,
+    private val repository: GroupMarksRepository,
     private val authUseCase: AuthUseCase
 ): ViewModel(), KoinComponent {
 
@@ -26,28 +26,22 @@ class GroupMarksViewModel(
     }
 
     suspend fun getGradeSheet(guid: String) {
-        groupMarksUseCase.getLocalGradeSheet(guid).collect {
-            gradeSheet.value = it
-        }
-        groupMarksUseCase.getGradeSheet(guid).collect {
+        repository.getGradeSheet(guid, emitLocal = true).collect {
             gradeSheet.value = it
         }
     }
 
     suspend fun getMarks(guid: String) {
-        groupMarksUseCase.getLocalGradeSheetMarks(guid).collect {
-            gradeSheetMarks.value = it
-        }
-        groupMarksUseCase.getGradeSheetMarks(guid).collect {
+        repository.getGradeSheetMarks(guid, emitLocal = true).collect {
             gradeSheetMarks.value = it
         }
     }
 
     suspend fun download(guid: String) {
-        groupMarksUseCase.getGradeSheet(guid).collect {
+        repository.getGradeSheet(guid, emitLocal = false).collect {
             gradeSheet.value = it
         }
-        groupMarksUseCase.getGradeSheetMarks(guid).collect {
+        repository.getGradeSheetMarks(guid, emitLocal = false).collect {
             gradeSheetMarks.value = it
         }
     }

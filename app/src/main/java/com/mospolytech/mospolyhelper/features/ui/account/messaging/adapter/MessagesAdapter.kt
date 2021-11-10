@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemMessageBinding
 import com.mospolytech.mospolyhelper.databinding.ItemMyMessageBinding
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
+import com.mospolytech.mospolyhelper.domain.account.model.dialog.Message
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.hide
 import com.mospolytech.mospolyhelper.utils.inflate

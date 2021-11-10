@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountMarksBinding
-import com.mospolytech.mospolyhelper.domain.account.marks.model.Mark
-import com.mospolytech.mospolyhelper.domain.account.marks.model.MarkInfo
+import com.mospolytech.mospolyhelper.domain.account.model.marks.Mark
+import com.mospolytech.mospolyhelper.domain.account.model.marks.MarkInfo
 import com.mospolytech.mospolyhelper.features.ui.account.marks.adapter.MarksAdapter
 import com.mospolytech.mospolyhelper.utils.*
 import io.ktor.client.features.*

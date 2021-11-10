@@ -12,7 +12,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemTeacherBinding
-import com.mospolytech.mospolyhelper.domain.account.teachers.model.Teacher
+import com.mospolytech.mospolyhelper.domain.account.model.teachers.Teacher
 import com.mospolytech.mospolyhelper.utils.inflate
 
 class TeachersAdapter : PagingDataAdapter<Teacher, RecyclerView.ViewHolder>(diffUtil) {

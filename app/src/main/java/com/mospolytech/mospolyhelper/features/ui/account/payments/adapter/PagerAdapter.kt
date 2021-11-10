@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemPaymentsBinding
-import com.mospolytech.mospolyhelper.domain.account.payments.model.Contract
+import com.mospolytech.mospolyhelper.domain.account.model.payments.Contract
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
 

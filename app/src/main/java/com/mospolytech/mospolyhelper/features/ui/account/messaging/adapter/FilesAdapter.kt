@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemFileBinding
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.Attachment
+import com.mospolytech.mospolyhelper.domain.account.model.dialog.Attachment
 import com.mospolytech.mospolyhelper.utils.inflate
 
 class FilesAdapter(private val items: List<Attachment>):RecyclerView.Adapter<FilesAdapter.FilesViewHolder>() {

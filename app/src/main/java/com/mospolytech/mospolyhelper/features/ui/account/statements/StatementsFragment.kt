@@ -13,8 +13,8 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.FragmentAccountStatementsBinding
-import com.mospolytech.mospolyhelper.domain.account.statements.model.Statement
-import com.mospolytech.mospolyhelper.domain.account.statements.model.Statements
+import com.mospolytech.mospolyhelper.domain.account.model.statements.Statement
+import com.mospolytech.mospolyhelper.domain.account.model.statements.Statements
 import com.mospolytech.mospolyhelper.features.ui.account.group_marks.GroupMarksFragment.Companion.GUID
 import com.mospolytech.mospolyhelper.features.ui.account.statements.adapter.StatementsAdapter
 import com.mospolytech.mospolyhelper.utils.*

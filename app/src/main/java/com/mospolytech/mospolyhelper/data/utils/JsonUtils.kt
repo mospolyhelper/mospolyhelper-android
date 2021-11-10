@@ -1,6 +1,8 @@
 package com.mospolytech.mospolyhelper.data.utils
 
+import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 
 fun JsonElement.array(key: String): JsonArray? {
@@ -28,3 +30,9 @@ fun JsonElement.string(): String {
 }
 
 inline fun<reified T> String.toObject(): T = Json.decodeFromString(this)
+
+fun Any.toResult(): Result0<Any> = Result0.Success(this)
+
+fun Any.toJson(): String = Json.encodeToString(this)
+
+inline fun<reified T> String.jsonToResult(): Result0<T> = Result0.Success(this.toObject())

@@ -13,7 +13,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.chip.Chip
 import com.mospolytech.mospolyhelper.R
 import com.mospolytech.mospolyhelper.databinding.ItemApplicationBinding
-import com.mospolytech.mospolyhelper.domain.account.applications.model.Application
+import com.mospolytech.mospolyhelper.domain.account.model.applications.Application
 import com.mospolytech.mospolyhelper.utils.gone
 import com.mospolytech.mospolyhelper.utils.show
 
@@ -97,7 +97,7 @@ class ApplicationsAdapter(
     }
 
     internal class ApplicationsDiffCallback(val oldList: List<Application>,
-                                         val newList: List<Application>): DiffUtil.Callback() {
+                                            val newList: List<Application>): DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
 
         override fun getNewListSize() = newList.size

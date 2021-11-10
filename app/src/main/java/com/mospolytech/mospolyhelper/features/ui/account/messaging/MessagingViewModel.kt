@@ -1,16 +1,16 @@
 package com.mospolytech.mospolyhelper.features.ui.account.messaging
 
 import androidx.lifecycle.ViewModel
-import com.mospolytech.mospolyhelper.domain.account.auth.usecase.AuthUseCase
-import com.mospolytech.mospolyhelper.domain.account.messaging.model.Message
-import com.mospolytech.mospolyhelper.domain.account.messaging.usecase.MessagingUseCase
+import com.mospolytech.mospolyhelper.domain.account.usecase.AuthUseCase
+import com.mospolytech.mospolyhelper.domain.account.model.dialog.Message
+import com.mospolytech.mospolyhelper.domain.account.repository.MessagingRepository
 import com.mospolytech.mospolyhelper.utils.Result0
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.KoinComponent
 
 class MessagingViewModel(
-    private val useCase: MessagingUseCase,
+    private val repository: MessagingRepository,
     private val authUseCase: AuthUseCase
     ) : ViewModel(), KoinComponent {
 
@@ -25,28 +25,25 @@ class MessagingViewModel(
     }
 
     suspend fun downloadDialog(dialogId: String) {
-        useCase.getDialog(dialogId).collect {
+        repository.getDialog(dialogId, emitLocal = false).collect {
             update.value = it
         }
     }
 
     suspend fun getDialog(dialogId: String) {
-        useCase.getLocalDialog(dialogId).collect {
-            dialog.value = it
-        }
-        useCase.getDialog(dialogId).collect {
+        repository.getDialog(dialogId, emitLocal = true).collect {
             dialog.value = it
         }
     }
 
     suspend fun sendMessage(dialogId: String, message: String, fileNames: List<String> = emptyList()) {
-        useCase.sendMessage(dialogId, message, fileNames).collect {
+        repository.sendMessage(dialogId, message, fileNames).collect {
             this.dialog.value = it
         }
     }
 
     suspend fun deleteMessage(dialogId: String, removeKey: String) {
-        useCase.deleteMessage(dialogId, removeKey).collect {
+        repository.deleteMessage(dialogId, removeKey).collect {
             this.update.value = it
         }
     }
@@ -54,7 +51,6 @@ class MessagingViewModel(
     fun getName(): String {
         val name = authUseCase.getName().orEmpty().substringBeforeLast(" ", "")
         return "${name.substringAfter(" ")} ${name.substringBefore(" ")}"
-
     }
 
     fun getAvatar(): String {
