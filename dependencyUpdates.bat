@@ -1,1 +1,0 @@
-./gradlew dependencyUpdates -Drevision=release --refresh-dependencies

@@ -12,5 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-keystore.properties
-secrets.properties
+local.properties
