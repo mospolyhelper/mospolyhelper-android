@@ -12,8 +12,8 @@ android {
         applicationId = "com.mospolytech.mospolyhelper"
         minSdk = Config.minSdk
         targetSdk = Config.targetSdkVersion
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 11
+        versionName = "0.5.0-alpha"
 
         testInstrumentationRunner = Config.androidTestInstrumentation
         vectorDrawables {

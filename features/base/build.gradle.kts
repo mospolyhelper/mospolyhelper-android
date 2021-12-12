@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-    //api(project(Modules.Shared.BASE))
+    api(project(Modules.Domain.Base))
+    api(project(Modules.Data.Base))
 
     api(Libs.AndroidX.Compose.ui)
     api(Libs.AndroidX.Compose.material3)
@@ -19,6 +20,7 @@ dependencies {
     api(Libs.AndroidX.coreKtx)
     api(Libs.AndroidX.appCompat)
     api(Libs.Ui.constraintLayout)
+    api(Libs.Ui.fluentIcons)
 
     api(Libs.Ui.material3)
 

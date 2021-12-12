@@ -83,6 +83,7 @@ object Libs {
     object Ui {
         const val material3 = "com.google.android.material:material:${Versions.material}"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
+        const val fluentIcons = "com.microsoft.design:fluent-system-icons:${Versions.fluentIcons}"
     }
 
     object Navigation {
@@ -143,4 +144,6 @@ object Versions {
     const val material = "1.5.0-beta01"
 
     const val navigation = "2.4.0-beta02"
+
+    const val fluentIcons = "1.1.154@aar"
 }

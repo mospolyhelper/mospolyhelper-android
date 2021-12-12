@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.ui.theme
+package com.mospolytech.features.base.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.mospolytech.mospolyhelper.R
+import com.mospolytech.features.base.R
 
 
 private val ManropeFontFamily = FontFamily(

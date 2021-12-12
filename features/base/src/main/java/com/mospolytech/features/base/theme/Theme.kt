@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper.ui.theme
+package com.mospolytech.features.base.theme
 
 import android.os.Build
 import androidx.compose.foundation.LocalIndication
