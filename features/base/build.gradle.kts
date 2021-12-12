@@ -5,29 +5,27 @@ plugins {
 dependencies {
     //api(project(Modules.Shared.BASE))
 
-    api(Deps.AndroidX.composeUi)
-    api(Deps.AndroidX.composeMaterial)
-    debugApi(Deps.AndroidX.composeUiTooling)
-    api(Deps.AndroidX.composeUiToolingPreview)
-    api(Deps.AndroidX.lifecycleRuntime)
-    api(Deps.AndroidX.composeActivity)
+    api(Libs.AndroidX.Compose.ui)
+    api(Libs.AndroidX.Compose.material3)
+    debugApi(Libs.AndroidX.Compose.uiTooling)
+    api(Libs.AndroidX.Compose.uiToolingPreview)
+    api(Libs.AndroidX.lifecycleRuntime)
+    api(Libs.AndroidX.Compose.activity)
 
-    api(Deps.Accompanist.systemUiController)
-    api(Deps.Accompanist.flowLayout)
+    api(Libs.Accompanist.systemUiController)
+    api(Libs.Accompanist.flowLayout)
+    api(Libs.Accompanist.insets)
 
-    api(Deps.AndroidX.coreKtx)
-    api(Deps.AndroidX.appCompat)
-    api(Deps.Ui.constraintLayout)
+    api(Libs.AndroidX.coreKtx)
+    api(Libs.AndroidX.appCompat)
+    api(Libs.Ui.constraintLayout)
 
-    api(Deps.Ui.material)
+    api(Libs.Ui.material3)
 
-    api(Deps.Di.koinAndroid)
-    api(Deps.Di.koinCompose)
+    api(Libs.Di.koinAndroid)
+    api(Libs.Di.koinCompose)
 
-    api(Deps.Navigation.navigation)
+    api(Libs.Navigation.navigation)
 
-    api(Deps.ImageLoading.coil)
-
-    implementation(Deps.Other.libPhoneNumber)
-    implementation(Deps.AndroidX.startup)
+    api(Libs.ImageLoading.coil)
 }

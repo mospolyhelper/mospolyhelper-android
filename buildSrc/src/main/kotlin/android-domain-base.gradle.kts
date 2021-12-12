@@ -48,5 +48,5 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(Deps.Other.coreLibraryDesugaring)
+    coreLibraryDesugaring(Libs.Other.jdkDesugar)
 }

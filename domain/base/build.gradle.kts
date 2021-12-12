@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(Deps.KotlinX.coroutines)
-    api(Deps.KotlinX.serialization)
+    api(Libs.KotlinX.Coroutines.core)
+    api(Libs.KotlinX.serialization)
 }
