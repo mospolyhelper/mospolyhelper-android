@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.mospolytech.features.schedule.ScheduleScreen
 
 sealed class MainScreen(
     val route: String,
@@ -48,7 +49,7 @@ sealed class MainScreen(
 
 fun NavGraphBuilder.mainScreens() {
     composable(MainScreen.Home.route) { TestScreen("Home") }
-    composable(MainScreen.Schedule.route) { TestScreen("Schedule") }
+    composable(MainScreen.Schedule.route) { ScheduleScreen() }
     composable(MainScreen.Account.route) { TestScreen("Account") }
     composable(MainScreen.Misc.route) { TestScreen("Miscellaneous") }
 }

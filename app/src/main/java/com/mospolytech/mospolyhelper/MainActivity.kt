@@ -73,7 +73,7 @@ fun MainContent(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = MainScreen.Home.route,//AuthScreen.Phone.route,
+            startDestination = MainScreen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             mainScreens()

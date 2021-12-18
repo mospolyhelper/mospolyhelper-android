@@ -97,7 +97,7 @@ object Libs {
 
     object Networking {
         const val okHttp = "com.squareup.okhttp3:okhttp:${Versions.okHttp}"
-        const val logging = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
+        const val okHttpLogging = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
         const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
         const val paging = "androidx.paging:paging-runtime:${Versions.paging}"
         const val pagingCompose = "androidx.paging:paging-runtime:${Versions.pagingCompose}"

@@ -1,5 +1,6 @@
 plugins {
     id("android-data-base")
+    kotlin("plugin.serialization") version Versions.kotlin
 }
 
 dependencies {
@@ -7,4 +8,5 @@ dependencies {
 
     api(Libs.Networking.retrofit)
     api(Libs.Networking.okHttp)
+    api(Libs.Networking.okHttpLogging)
 }
