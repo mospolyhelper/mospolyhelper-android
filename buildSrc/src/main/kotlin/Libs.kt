@@ -13,6 +13,7 @@ object Libs {
         object Coroutines {
             private const val version = "1.5.2"
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}"
+            const val jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:${Versions.kotlinCoroutines}"
             const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinCoroutines}"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinCoroutines}"
         }
@@ -33,6 +34,7 @@ object Libs {
             const val uiToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
             const val uiTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
             const val material3 = "androidx.compose.material3:material3:${Versions.composeMaterial3}"
+            const val material = "androidx.compose.material:material:${Versions.compose}"
             //const val material = "androidx.compose.material:material:$version"
 
 
@@ -77,6 +79,7 @@ object Libs {
         const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.accompanist}"
         const val systemUiController = "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
         const val insets = "com.google.accompanist:accompanist-insets:${Versions.accompanist}"
+        const val pager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
     }
 
 
@@ -118,7 +121,7 @@ object Versions {
     const val gradle = "7.0.4"
     const val kotlin = "1.6.0"
 
-    const val kotlinCoroutines = "1.6.0-RC2"
+    const val kotlinCoroutines = "1.5.2"
 
     const val koin = "3.1.4"
     const val coil = "1.4.0"
@@ -132,7 +135,7 @@ object Versions {
     const val okHttp = "4.9.0"
 
     // UI
-    const val compose = "1.1.0-beta04"
+    const val compose = "1.1.0-rc01"
     const val composeMaterial3 = "1.0.0-alpha02"
     const val accompanist = "0.21.4-beta"
 

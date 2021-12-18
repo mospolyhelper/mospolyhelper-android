@@ -8,6 +8,7 @@ dependencies {
 
     api(Libs.AndroidX.Compose.ui)
     api(Libs.AndroidX.Compose.material3)
+    api(Libs.AndroidX.Compose.material)
     debugApi(Libs.AndroidX.Compose.uiTooling)
     api(Libs.AndroidX.Compose.uiToolingPreview)
     api(Libs.AndroidX.lifecycleRuntime)
@@ -16,6 +17,7 @@ dependencies {
     api(Libs.Accompanist.systemUiController)
     api(Libs.Accompanist.flowLayout)
     api(Libs.Accompanist.insets)
+    api(Libs.Accompanist.pager)
 
     api(Libs.AndroidX.coreKtx)
     api(Libs.AndroidX.appCompat)

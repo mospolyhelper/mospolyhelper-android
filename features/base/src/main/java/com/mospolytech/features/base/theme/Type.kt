@@ -65,21 +65,21 @@ val AppTypography = Typography(
     ),
     titleLarge = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         //lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         //lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp,
         //lineHeight = 20.sp,
         letterSpacing = 0.1.sp
@@ -93,14 +93,14 @@ val AppTypography = Typography(
     ),
     bodyMedium = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         //lineHeight = 20.sp,
         letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         //lineHeight = 16.sp,
         letterSpacing = 0.4.sp
@@ -125,5 +125,74 @@ val AppTypography = Typography(
         fontSize = 11.sp,
         //lineHeight = 16.sp,
         letterSpacing = 0.5.sp
+    )
+)
+
+val AppTypography2 = androidx.compose.material.Typography(
+    defaultFontFamily = ManropeFontFamily,
+    h1 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 96.sp,
+        letterSpacing = (-1.5).sp
+    ),
+    h2 = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = 60.sp,
+        letterSpacing = (-0.5).sp
+    ),
+    h3 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 48.sp,
+        letterSpacing = 0.sp
+    ),
+    h4 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 34.sp,
+        letterSpacing = 0.25.sp
+    ),
+    h5 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+        letterSpacing = 0.sp
+    ),
+    h6 = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        letterSpacing = 0.15.sp
+    ),
+    subtitle1 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        letterSpacing = 0.15.sp
+    ),
+    subtitle2 = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        letterSpacing = 0.1.sp
+    ),
+    body1 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        letterSpacing = 0.5.sp
+    ),
+    body2 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        letterSpacing = 0.25.sp
+    ),
+    button = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        letterSpacing = 1.25.sp
+    ),
+    caption = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        letterSpacing = 0.4.sp
+    ),
+    overline = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp,
+        letterSpacing = 1.5.sp
     )
 )

@@ -1,8 +1,11 @@
 package com.mospolytech.features.base.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -68,29 +71,43 @@ private val AppLightColorScheme = lightColorScheme(
     outline = BlueGrey50
 )
 
-//@Composable
-//fun MospolyhelperTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
-//    content: @Composable() () -> Unit
-//) {
-//    val colors = if (darkTheme) {
-//        DarkColorPalette
-//    } else {
-//        LightColorPalette
-//    }
-//
-//    MaterialTheme(
-//        colors = colors,
-//        typography = Typography,
-//        shapes = Shapes,
-//        content = content
-//    )
-//}
+
+private val AppDarkColorScheme2 = darkColors(
+    primary = AppDarkColorScheme.primary,
+    onPrimary = AppDarkColorScheme.onPrimary,
+    secondary = AppDarkColorScheme.secondary,
+    onSecondary = AppDarkColorScheme.onSecondary,
+    error = AppDarkColorScheme.error,
+    onError = AppDarkColorScheme.onError,
+    background = AppDarkColorScheme.background,
+    onBackground = AppDarkColorScheme.onBackground,
+    surface = AppDarkColorScheme.surface,
+    onSurface = AppDarkColorScheme.onSurface,
+
+    primaryVariant = AppDarkColorScheme.primary,
+    secondaryVariant = AppDarkColorScheme.secondary,
+)
+
+private val AppLightColorScheme2 = lightColors(
+    primary = AppLightColorScheme.primary,
+    onPrimary = AppLightColorScheme.onPrimary,
+    secondary = AppLightColorScheme.secondary,
+    onSecondary = AppLightColorScheme.onSecondary,
+    error = AppLightColorScheme.error,
+    onError = AppLightColorScheme.onError,
+    background = AppLightColorScheme.background,
+    onBackground = AppLightColorScheme.onBackground,
+    surface = AppLightColorScheme.surface,
+    onSurface = AppLightColorScheme.onSurface,
+
+    primaryVariant = AppLightColorScheme.primary,
+    secondaryVariant = AppLightColorScheme.secondary,
+)
 
 @Composable
 fun MospolyhelperTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    isDynamicColor: Boolean = true,
+    isDynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     //val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
@@ -105,15 +122,22 @@ fun MospolyhelperTheme(
         else -> AppLightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = myColorScheme,
-        typography = AppTypography
+    val myColorScheme2 = when {
+        isDarkTheme -> AppDarkColorScheme2
+        else -> AppLightColorScheme2
+    }
+
+
+
+    androidx.compose.material.MaterialTheme(
+        colors = myColorScheme2,
+        typography = AppTypography2
     ) {
-        // TODO (M3): MaterialTheme doesn't provide LocalIndication, remove when it does
-        val rippleIndication = rememberRipple()
-        CompositionLocalProvider(
-            LocalIndication provides rippleIndication,
-            content = content
-        )
+        MaterialTheme(
+            colorScheme = myColorScheme,
+            typography = AppTypography
+        ) {
+            content()
+        }
     }
 }
