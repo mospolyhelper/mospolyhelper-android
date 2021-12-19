@@ -23,6 +23,7 @@ dependencies {
     api(Libs.AndroidX.appCompat)
     api(Libs.Ui.constraintLayout)
     api(Libs.Ui.fluentIcons)
+    api(Libs.Ui.lottie)
 
     api(Libs.Ui.material3)
 

@@ -86,14 +86,14 @@ val AppTypography = Typography(
     ),
     bodyLarge = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         //lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         //lineHeight = 20.sp,
         letterSpacing = 0.25.sp
@@ -115,16 +115,16 @@ val AppTypography = Typography(
     labelMedium = TextStyle(
         fontFamily = ManropeFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 12.sp,
+        fontSize = 11.5.sp,
         //lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.8.sp,
     ),
     labelSmall = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 11.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 10.5.sp,
         //lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 1.0.sp
     )
 )
 

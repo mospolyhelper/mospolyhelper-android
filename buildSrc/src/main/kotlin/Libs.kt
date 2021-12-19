@@ -87,6 +87,7 @@ object Libs {
         const val material3 = "com.google.android.material:material:${Versions.material}"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
         const val fluentIcons = "com.microsoft.design:fluent-system-icons:${Versions.fluentIcons}"
+        const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
     }
 
     object Navigation {
@@ -122,11 +123,13 @@ object Versions {
     const val kotlin = "1.6.0"
 
     const val kotlinCoroutines = "1.5.2"
-
-    const val koin = "3.1.4"
-    const val coil = "1.4.0"
     const val kotlinxSerialization = "1.3.1"
 
+    // Di
+    const val koin = "3.1.4"
+
+    // Image loading
+    const val coil = "1.4.0"
 
     // Networking
     const val paging = "3.1.0"
@@ -134,19 +137,20 @@ object Versions {
     const val retrofit = "2.9.0"
     const val okHttp = "4.9.0"
 
-    // UI
+    // Compose
     const val compose = "1.1.0-rc01"
     const val composeMaterial3 = "1.0.0-alpha02"
     const val accompanist = "0.21.4-beta"
 
+    // AndroidX
     const val lifecycle = "2.4.0"
-    const val constraintLayout = "1.0.0-rc02"
-
+    const val navigation = "2.4.0-beta02"
     const val coreKtx = "1.7.0"
     const val appcompat = "1.4.0"
+
+    // UI
     const val material = "1.5.0-beta01"
-
-    const val navigation = "2.4.0-beta02"
-
+    const val constraintLayout = "1.0.0-rc02"
     const val fluentIcons = "1.1.154@aar"
+    const val lottie = "4.2.2"
 }
