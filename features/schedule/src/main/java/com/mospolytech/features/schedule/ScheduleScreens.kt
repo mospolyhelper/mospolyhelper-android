@@ -1,12 +1,13 @@
 package com.mospolytech.features.schedule
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.mospolytech.features.base.navigation.ScheduleScreens
+import com.mospolytech.features.schedule.lessons_review.LessonsReviewScreen
+import com.mospolytech.features.schedule.main.ScheduleScreen
 
 fun NavGraphBuilder.scheduleScreens() {
     composable(ScheduleScreens.Main.route) { ScheduleScreen() }
     composable(ScheduleScreens.Calendar.route) {  }
-    composable(ScheduleScreens.Review.route) {  }
+    composable(ScheduleScreens.LessonsReview.route) { LessonsReviewScreen() }
 }

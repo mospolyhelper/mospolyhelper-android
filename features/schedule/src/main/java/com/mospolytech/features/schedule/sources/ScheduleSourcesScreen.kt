@@ -1,4 +1,4 @@
-package com.mospolytech.features.schedule
+package com.mospolytech.features.schedule.sources
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.schedule.model.ScheduleSourceFull
+import com.mospolytech.features.schedule.main.ScheduleViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable

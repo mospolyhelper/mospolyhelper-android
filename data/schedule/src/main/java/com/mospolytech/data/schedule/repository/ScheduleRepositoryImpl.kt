@@ -2,6 +2,7 @@ package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.base.retrofit.toResult
 import com.mospolytech.data.schedule.api.ScheduleService
+import com.mospolytech.domain.schedule.model.LessonTimesReview
 import com.mospolytech.domain.schedule.model.ScheduleDay
 import com.mospolytech.domain.schedule.model.ScheduleSource
 import com.mospolytech.domain.schedule.model.ScheduleSources
@@ -18,5 +19,9 @@ class ScheduleRepositoryImpl(
 
     override fun getSchedule(source: ScheduleSource) = flow {
         emit(service.getSchedule(source.type.name.lowercase(), source.key).toResult())
+    }
+
+    override fun getLessonsReview(source: ScheduleSource) = flow {
+        emit(service.getLessonsReview(source.type.name.lowercase(), source.key).toResult())
     }
 }

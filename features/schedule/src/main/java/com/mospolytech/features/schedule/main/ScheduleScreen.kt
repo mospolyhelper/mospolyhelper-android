@@ -1,4 +1,4 @@
-package com.mospolytech.features.schedule
+package com.mospolytech.features.schedule.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.FlingBehavior
@@ -16,8 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,12 +25,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.mospolytech.domain.base.utils.TAG
 import com.mospolytech.domain.schedule.model.*
 import com.mospolytech.domain.schedule.utils.getShortName
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
 import com.mospolytech.features.base.utils.disabledHorizontalPointerInputScroll
+import com.mospolytech.features.schedule.R
 import com.mospolytech.features.schedule.model.DayUiModel
 import com.mospolytech.features.schedule.model.WeekUiModel
 import kotlinx.coroutines.flow.collect
@@ -47,14 +45,18 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
 
 
     if (state.schedule.isNotEmpty()) {
-        ScheduleContent(state)
+        ScheduleContent(
+            state,
+            onLessonsReviewClick = viewModel::onLessonsReviewClick
+        )
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ScheduleContent(
-    state: ScheduleState
+    state: ScheduleState,
+    onLessonsReviewClick: () -> Unit = { }
 ) {
     val scope = rememberCoroutineScope()
 
@@ -90,6 +92,9 @@ fun ScheduleContent(
 
     Box {
         Column(Modifier.fillMaxSize()) {
+            Button(onClick = onLessonsReviewClick) {
+                Text(text = "LessonsReview")
+            }
             DaysPager(
                 weeks = state.weeks,
                 pagerState = weekPagerState
@@ -217,7 +222,11 @@ fun SchedulePager(
         if (scheduleDay.lessons.isNotEmpty()) {
             LessonList(scheduleDay.lessons)
         } else {
-            val relaxAnims = remember { listOf(R.raw.sch_relax_0, R.raw.sch_relax_1, R.raw.sch_relax_2) }
+            val relaxAnims = remember { listOf(
+                R.raw.sch_relax_0,
+                R.raw.sch_relax_1,
+                R.raw.sch_relax_2
+            ) }
             val randomAnim = remember { relaxAnims[it % relaxAnims.size] }
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(randomAnim))
             val progress by animateLottieCompositionAsState(
@@ -284,7 +293,7 @@ fun LessonTimeContent(lessonTime: LessonTime) {
 fun LessonContent(lesson: Lesson, onItemClick: () -> Unit = { }) {
     Card(
         elevation = 4.dp,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(25.dp),
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
         onClick = onItemClick
     ) {
@@ -308,12 +317,16 @@ fun LessonContent(lesson: Lesson, onItemClick: () -> Unit = { }) {
 
 @Composable
 fun LessonHeader(type: String) {
+    LessonType(type)
+}
+
+@Composable
+fun LessonType(type: String) {
     Text(
         text = type.uppercase(),
         style = MaterialTheme.typography.labelSmall,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.fillMaxWidth()
+        overflow = TextOverflow.Ellipsis
     )
 }
 

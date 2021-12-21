@@ -11,7 +11,7 @@ object ScheduleScreens {
         "$prefix-calendar"
     )
 
-    object Review : Screen(
+    object LessonsReview : Screen(
         "$prefix-review"
     )
 }
