@@ -9,6 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
@@ -30,7 +31,7 @@ val baseDataModule = module {
             .build()
     }
 
-    single {
+    single(named(DiConst.Schedule)) {
         Retrofit.Builder()
             .baseUrl("https://mph-schedule.herokuapp.com/")
             .addConverterFactory(JsonConverterFactory())
@@ -43,7 +44,23 @@ val baseDataModule = module {
             .client(get())
     }
 
-    single<Retrofit> { get<Retrofit.Builder>().build() }
+    single<Retrofit>(named(DiConst.Schedule)) { get<Retrofit.Builder>(named(DiConst.Schedule)).build() }
+
+
+    single(named(DiConst.Account)) {
+        Retrofit.Builder()
+            .baseUrl("https://mph-account.herokuapp.com/")
+            .addConverterFactory(JsonConverterFactory())
+            .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
+                GlobalScope.launch(Dispatchers.IO) {
+//                    get<EventRepository>().codeResponse
+//                        .emit(code to (body as? Response<*>)?.error?.errorCode)
+                }
+            })
+            .client(get())
+    }
+
+    single<Retrofit>(named(DiConst.Account)) { get<Retrofit.Builder>(named(DiConst.Account)).build() }
 
     single { EventRepository() }
 }

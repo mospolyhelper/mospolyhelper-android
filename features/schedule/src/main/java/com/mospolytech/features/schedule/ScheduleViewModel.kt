@@ -34,7 +34,7 @@ class ScheduleViewModel(
     }
 
     fun onCalendar() {
-        navController.navigate(ScheduleScreens.Main.route)
+        navController.navigate(ScheduleScreens.Calendar.route)
     }
 }
 
