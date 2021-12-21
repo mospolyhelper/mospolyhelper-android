@@ -1,6 +1,5 @@
-package com.mospolytech.domain.peoples.model
+package com.mospolytech.domain.account.model
 
-import com.mospolytech.domain.base.model.EducationType
 import kotlinx.serialization.Serializable
 
 @Serializable

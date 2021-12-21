@@ -1,4 +1,4 @@
-package com.mospolytech.domain.peoples.model
+package com.mospolytech.domain.account.model
 
 import kotlinx.serialization.Serializable
 

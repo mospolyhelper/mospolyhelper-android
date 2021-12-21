@@ -1,4 +1,4 @@
-package com.mospolytech.domain.perfomance.model
+package com.mospolytech.domain.account.model
 
 import com.mospolytech.domain.base.utils.converters.LocalDateTimeConverter
 import kotlinx.serialization.Serializable

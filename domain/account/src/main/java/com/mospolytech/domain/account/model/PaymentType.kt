@@ -1,4 +1,4 @@
-package com.mospolytech.domain.payments.model
+package com.mospolytech.domain.account.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
