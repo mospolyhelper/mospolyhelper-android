@@ -9,4 +9,7 @@ class ScheduleUseCase(
 ) {
     fun getSchedule() =
         repository.getSchedule(ScheduleSource(ScheduleSources.Group, "181-721"))
+
+    fun getLessonsReview() =
+        repository.getLessonsReview(ScheduleSource(ScheduleSources.Group, "181-721"))
 }

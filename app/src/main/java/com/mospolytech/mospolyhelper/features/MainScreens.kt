@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.mospolytech.features.base.navigation.ScheduleScreens
-import com.mospolytech.features.schedule.ScheduleScreen
+import com.mospolytech.features.schedule.main.ScheduleScreen
 import com.mospolytech.mospolyhelper.R
 
 sealed class MainScreen(
