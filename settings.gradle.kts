@@ -24,13 +24,16 @@ include(":app")
 include(":data")
 include(":data:base")
 include(":data:schedule")
+include(":data:account")
 
 
 include(":domain")
 include(":domain:base")
 include(":domain:schedule")
+include(":domain:account")
 
 
 include(":features")
 include(":features:base")
 include(":features:schedule")
+//include(":features:account")

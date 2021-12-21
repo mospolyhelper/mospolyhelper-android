@@ -9,10 +9,12 @@ object Modules {
     object Domain {
         const val Base = ":domain:base"
         const val Schedule = ":domain:schedule"
+        const val Account = ":domain:account"
     }
 
     object Data {
         const val Base = ":data:base"
         const val Schedule = ":data:schedule"
+        const val Account = ":data:account"
     }
 }
