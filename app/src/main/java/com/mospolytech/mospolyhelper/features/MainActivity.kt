@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper
+package com.mospolytech.mospolyhelper.features
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,6 +23,8 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.imePadding
 import com.google.accompanist.insets.systemBarsPadding
 import com.mospolytech.features.base.theme.MospolyhelperTheme
+import com.mospolytech.mospolyhelper.appScreens
+import com.mospolytech.mospolyhelper.features.MainViewModel
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
@@ -71,7 +73,7 @@ fun MainContent(
             startDestination = MainScreen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            mainScreens()
+            appScreens()
         }
     }
 }

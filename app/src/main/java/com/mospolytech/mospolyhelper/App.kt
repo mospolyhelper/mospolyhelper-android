@@ -14,7 +14,7 @@ class App : Application() {
             androidLogger(Level.ERROR)
             androidContext(this@App)
             androidSharedPreferences(this@App, BuildConfig.APPLICATION_ID)
-            modules(koinModules)
+            modules(appModules)
         }
     }
 }

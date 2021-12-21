@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper
+package com.mospolytech.mospolyhelper.features
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -10,7 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.mospolytech.features.base.navigation.ScheduleScreens
 import com.mospolytech.features.schedule.ScheduleScreen
+import com.mospolytech.mospolyhelper.R
 
 sealed class MainScreen(
     val route: String,
@@ -28,7 +30,7 @@ sealed class MainScreen(
         R.string.menu_home
     )
     object Schedule : MainScreen(
-        "history",
+        ScheduleScreens.Main.route,
         R.drawable.ic_fluent_calendar_ltr_24_regular,
         R.drawable.ic_fluent_calendar_ltr_24_filled,
         R.string.menu_schedule

@@ -2,6 +2,7 @@ package com.mospolytech.features.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.mospolytech.domain.base.utils.WeekIterator
 import com.mospolytech.domain.base.utils.WhileViewSubscribed
 import com.mospolytech.domain.schedule.model.ScheduleDay
@@ -11,13 +12,15 @@ import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.State
 import com.mospolytech.features.base.mutate
+import com.mospolytech.features.base.navigation.ScheduleScreens
 import com.mospolytech.features.schedule.model.WeekUiModel
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ScheduleViewModel(
-    private val useCase: ScheduleUseCase
+    private val useCase: ScheduleUseCase,
+    private val navController: NavController
 ) : ViewModel() {
     private val _state = MutableStateFlow(ScheduleState())
     val state = _state.asStateFlow()
@@ -28,6 +31,10 @@ class ScheduleViewModel(
                 _state.value = _state.value.mutate { setSchedule(it.getOrDefault(emptyList())) }
             }
         }
+    }
+
+    fun onCalendar() {
+        navController.navigate(ScheduleScreens.Main.route)
     }
 }
 

@@ -1,4 +1,4 @@
-package com.mospolytech.mospolyhelper
+package com.mospolytech.mospolyhelper.features
 
 import androidx.lifecycle.ViewModel
 
