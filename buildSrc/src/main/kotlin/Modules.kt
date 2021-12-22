@@ -3,8 +3,10 @@ object Modules {
 
     object Features {
         const val Base = ":features:base"
+        const val Home = ":features:home"
         const val Schedule = ":features:schedule"
         const val Account = ":features:account"
+        const val Misc = ":features:misc"
     }
 
     object Domain {

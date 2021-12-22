@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.mospolytech.features.base.navigation.HomeScreens
+import com.mospolytech.features.base.navigation.MiscScreens
 import com.mospolytech.features.base.navigation.ScheduleScreens
 import com.mospolytech.features.schedule.main.ScheduleScreen
 import com.mospolytech.mospolyhelper.R
@@ -24,7 +26,7 @@ sealed class MainScreen(
         if (selected) iconSelectedId else iconId
 
     object Home : MainScreen(
-        "home",
+        HomeScreens.Main.route,
         R.drawable.ic_fluent_home_24_regular,
         R.drawable.ic_fluent_home_24_filled,
         R.string.menu_home
@@ -36,32 +38,16 @@ sealed class MainScreen(
         R.string.menu_schedule
     )
     object Account : MainScreen(
-        "payments",
+        "account",
         R.drawable.ic_fluent_person_24_regular,
         R.drawable.ic_fluent_person_24_filled,
         R.string.menu_account
     )
     object Misc : MainScreen(
-        "misc",
+        MiscScreens.Menu.route,
         R.drawable.ic_fluent_apps_24_regular,
         R.drawable.ic_fluent_apps_24_filled,
         R.string.menu_misc
     )
-}
-
-fun NavGraphBuilder.mainScreens() {
-    composable(MainScreen.Home.route) { TestScreen("Home") }
-    composable(MainScreen.Account.route) { TestScreen("Account") }
-    composable(MainScreen.Misc.route) { TestScreen("Miscellaneous") }
-}
-
-@Composable
-fun TestScreen(text: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text)
-    }
 }
 
