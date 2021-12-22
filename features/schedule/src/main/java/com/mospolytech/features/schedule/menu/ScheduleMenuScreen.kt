@@ -13,20 +13,29 @@ import org.koin.androidx.compose.getViewModel
 fun ScheduleMenuScreen(viewModel: ScheduleMenuViewModel = getViewModel()) {
     ScheduleMenuContent(
         onScheduleClick = viewModel::onScheduleClick,
-        onLessonsReviewClick = viewModel::onLessonsReviewClick
+        onLessonsReviewClick = viewModel::onLessonsReviewClick,
+        onScheduleCalendarClick = viewModel::onScheduleCalendarClick,
+        onScheduleSourceClick = viewModel::onScheduleSourceClick,
+        onFreePlaceClick = viewModel::onFreePlaceClick
     )
 }
 
 @Composable
 fun ScheduleMenuContent(
     onScheduleClick: () -> Unit = { },
-    onLessonsReviewClick: () -> Unit = { }
+    onLessonsReviewClick: () -> Unit = { },
+    onScheduleCalendarClick: () -> Unit = { },
+    onScheduleSourceClick: () -> Unit = { },
+    onFreePlaceClick: () -> Unit = { },
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
-        Button(onClick = { }) {
-            Text(text = "Schedule sources")
+        Button(onClick = onScheduleSourceClick) {
+            Column {
+                Text(text = "Schedule sources")
+                Text(text = "181-721")
+            }
         }
         Button(onClick = onScheduleClick) {
             Text(text = "Schedule")
@@ -34,10 +43,10 @@ fun ScheduleMenuContent(
         Button(onClick = onLessonsReviewClick) {
             Text(text = "Lessons review")
         }
-        Button(onClick = { }) {
+        Button(onClick = onScheduleCalendarClick) {
             Text(text = "Calendar")
         }
-        Button(onClick = { }) {
+        Button(onClick = onFreePlaceClick) {
             Text(text = "Find free place")
         }
     }

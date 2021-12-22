@@ -17,7 +17,15 @@ class ScheduleMenuViewModel(
         navController.navigate(ScheduleScreens.LessonsReview.route)
     }
 
-    fun onCalendar() {
+    fun onScheduleCalendarClick() {
         navController.navigate(ScheduleScreens.Calendar.route)
+    }
+
+    fun onScheduleSourceClick() {
+        navController.navigate(ScheduleScreens.Source.route)
+    }
+
+    fun onFreePlaceClick() {
+        navController.navigate(ScheduleScreens.FreePlace.route)
     }
 }
