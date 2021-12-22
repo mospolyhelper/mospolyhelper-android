@@ -3,6 +3,10 @@ package com.mospolytech.features.base.navigation
 object ScheduleScreens {
     private const val prefix = "schedule"
 
+    object Menu : Screen(
+        "$prefix-menu"
+    )
+
     object Main : Screen(
         "$prefix-main"
     )

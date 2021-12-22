@@ -27,14 +27,6 @@ class ScheduleViewModel(
             }
         }
     }
-
-    fun onLessonsReviewClick() {
-        navController.navigate(ScheduleScreens.LessonsReview.route)
-    }
-
-    fun onCalendar() {
-        navController.navigate(ScheduleScreens.Calendar.route)
-    }
 }
 
 data class ScheduleState(

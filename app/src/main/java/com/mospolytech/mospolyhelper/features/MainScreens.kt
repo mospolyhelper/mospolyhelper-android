@@ -30,7 +30,7 @@ sealed class MainScreen(
         R.string.menu_home
     )
     object Schedule : MainScreen(
-        ScheduleScreens.Main.route,
+        ScheduleScreens.Menu.route,
         R.drawable.ic_fluent_calendar_ltr_24_regular,
         R.drawable.ic_fluent_calendar_ltr_24_filled,
         R.string.menu_schedule
@@ -51,7 +51,6 @@ sealed class MainScreen(
 
 fun NavGraphBuilder.mainScreens() {
     composable(MainScreen.Home.route) { TestScreen("Home") }
-    composable(MainScreen.Schedule.route) { ScheduleScreen() }
     composable(MainScreen.Account.route) { TestScreen("Account") }
     composable(MainScreen.Misc.route) { TestScreen("Miscellaneous") }
 }

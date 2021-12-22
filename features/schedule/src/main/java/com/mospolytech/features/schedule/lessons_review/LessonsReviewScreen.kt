@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,8 @@ import com.mospolytech.features.schedule.main.LessonHeader
 import com.mospolytech.features.schedule.main.LessonTitle
 import com.mospolytech.features.schedule.main.LessonType
 import org.koin.androidx.compose.getViewModel
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -60,15 +63,16 @@ fun LessonTimesReviewContent(lessonTimesReview: LessonTimesReview) {
                 .fillMaxWidth()
         ) {
             LessonTitle(lessonTimesReview.lessonTitle)
-            Spacer(Modifier.height(10.dp))
-            FlowRow(
-                mainAxisSpacing = 19.dp,
-                crossAxisSpacing = 12.dp
-            ) {
-                lessonTimesReview.days.forEach { lessonReviewDay ->
-                    when (lessonReviewDay) {
-                        is LessonReviewDay.Regular -> RegularLessonTime(lessonReviewDay)
-                        is LessonReviewDay.Single -> SingleLessonTime(lessonReviewDay)
+            lessonTimesReview.days.forEach { lessonTimesReviewByType ->
+                Spacer(Modifier.height(10.dp))
+                LessonType(lessonTimesReviewByType.lessonType)
+                Spacer(Modifier.height(3.dp))
+                FlowRow(
+                    mainAxisSpacing = 19.dp,
+                    crossAxisSpacing = 12.dp
+                ) {
+                    lessonTimesReviewByType.days.forEach { lessonReviewDay ->
+                        RegularLessonTime(lessonReviewDay)
                     }
                 }
             }
@@ -76,20 +80,17 @@ fun LessonTimesReviewContent(lessonTimesReview: LessonTimesReview) {
     }
 }
 
-private val weekFormat = DateTimeFormatter.ofPattern("EEE")
+private val weekFormat = DateTimeFormatter.ofPattern("EEEE")
 private val dateFormat = DateTimeFormatter.ofPattern("d MMM")
-private val singleDateFormat = DateTimeFormatter.ofPattern("EEE, d MMM")
 
 @Composable
-fun RegularLessonTime(lessonTime: LessonReviewDay.Regular) {
+fun RegularLessonTime(lessonTime: LessonReviewDay) {
     Column {
-        LessonType(lessonTime.lessonType)
-        Spacer(Modifier.height(3.dp))
         WithContentAlpha(ContentAlpha.medium) {
-            Text(
-                text = weekFormat.format(lessonTime.dayOfWeek)
-                    .capitalized() + ", " + dateFormat.format(lessonTime.dateFrom) + " - " + dateFormat.format(lessonTime.dateTo),
-                style = MaterialTheme.typography.bodySmall
+            DateRange(
+                dayOfWeek = lessonTime.dayOfWeek,
+                dateFrom = lessonTime.dateFrom,
+                dateTo = lessonTime.dateTo
             )
             Text(
                 text = "${lessonTime.time.startTime} - ${lessonTime.time.endTime}",
@@ -100,19 +101,15 @@ fun RegularLessonTime(lessonTime: LessonReviewDay.Regular) {
 }
 
 @Composable
-fun SingleLessonTime(lessonTime: LessonReviewDay.Single) {
-    Column {
-        LessonType(lessonTime.lessonType)
-        Spacer(Modifier.height(3.dp))
-        WithContentAlpha(ContentAlpha.medium) {
-            Text(
-                text = singleDateFormat.format(lessonTime.date).capitalized(),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "${lessonTime.time.startTime} - ${lessonTime.time.endTime}",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+fun DateRange(dayOfWeek: DayOfWeek, dateFrom: LocalDate, dateTo: LocalDate) {
+    val dateRange = remember(dayOfWeek, dateFrom, dateTo) {
+        if (dateFrom == dateTo)
+            dateFormat.format(dateFrom)
+        else
+            dateFormat.format(dateFrom) + " - " + dateFormat.format(dateTo)
     }
+    Text(
+        text = weekFormat.format(dayOfWeek).capitalized() + "\n" + dateRange,
+        style = MaterialTheme.typography.bodySmall
+    )
 }

@@ -46,8 +46,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
 
     if (state.schedule.isNotEmpty()) {
         ScheduleContent(
-            state,
-            onLessonsReviewClick = viewModel::onLessonsReviewClick
+            state
         )
     }
 }
@@ -55,8 +54,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ScheduleContent(
-    state: ScheduleState,
-    onLessonsReviewClick: () -> Unit = { }
+    state: ScheduleState
 ) {
     val scope = rememberCoroutineScope()
 
@@ -92,9 +90,6 @@ fun ScheduleContent(
 
     Box {
         Column(Modifier.fillMaxSize()) {
-            Button(onClick = onLessonsReviewClick) {
-                Text(text = "LessonsReview")
-            }
             DaysPager(
                 weeks = state.weeks,
                 pagerState = weekPagerState

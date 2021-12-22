@@ -89,7 +89,7 @@ fun BottomNav(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    if (currentDestination?.route in showNavBar) {
+    if (true || currentDestination?.route in showNavBar) {
         NavigationBar(
             Modifier.height(50.dp)
         ) {
