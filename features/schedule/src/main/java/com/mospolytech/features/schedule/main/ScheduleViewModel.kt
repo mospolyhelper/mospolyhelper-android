@@ -1,29 +1,27 @@
 package com.mospolytech.features.schedule.main
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.mospolytech.domain.schedule.model.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.State
-import com.mospolytech.features.base.mutate
-import com.mospolytech.features.base.navigation.ScheduleScreens
+import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.schedule.model.WeekUiModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ScheduleViewModel(
-    private val useCase: ScheduleUseCase,
-    private val navController: NavController
-) : ViewModel() {
-    private val _state = MutableStateFlow(ScheduleState())
-    val state = _state.asStateFlow()
+    private val useCase: ScheduleUseCase
+) : BaseViewModel<ScheduleState, ScheduleMutator>(
+    ScheduleState(),
+    ScheduleMutator()
+) {
 
     init {
         viewModelScope.launch {
             useCase.getSchedule().collect {
-                _state.value = _state.value.mutate { setSchedule(it.getOrDefault(emptyList())) }
+                mutateState {
+                    setSchedule(it.getOrDefault(emptyList()))
+                }
             }
         }
     }
@@ -35,20 +33,19 @@ data class ScheduleState(
     val scheduleDayPosition: Int = 0,
     val weeksPosition: Int = 0,
     val dayOfWeekPosition: Int = 0
-) : State<ScheduleState.Mutator> {
-    inner class Mutator : BaseMutator<ScheduleState>(this) {
-        fun setSchedule(schedule: List<ScheduleDay>) {
-            if (state.schedule != schedule) {
-                state = state.copy(schedule = schedule)
-                setWeeks(WeekUiModel.fromSchedule(schedule))
-            }
-        }
+)
 
-        fun setWeeks(weeks: List<WeekUiModel>) {
-            if (state.weeks != weeks) {
-                state = state.copy(weeks = weeks)
-            }
+class ScheduleMutator : BaseMutator<ScheduleState>() {
+    fun setSchedule(schedule: List<ScheduleDay>) {
+        if (state.schedule != schedule) {
+            state = state.copy(schedule = schedule)
+            setWeeks(WeekUiModel.fromSchedule(schedule))
         }
     }
-    override fun mutator() = Mutator()
+
+    fun setWeeks(weeks: List<WeekUiModel>) {
+        if (state.weeks != weeks) {
+            state = state.copy(weeks = weeks)
+        }
+    }
 }

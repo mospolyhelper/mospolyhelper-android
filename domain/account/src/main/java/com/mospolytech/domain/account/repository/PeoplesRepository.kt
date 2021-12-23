@@ -1,8 +1,8 @@
 package com.mospolytech.domain.account.repository
 
-import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.account.model.Student
 import com.mospolytech.domain.account.model.Teacher
+import com.mospolytech.domain.base.model.PagingDTO
 import kotlinx.coroutines.flow.Flow
 
 interface PeoplesRepository {

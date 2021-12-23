@@ -9,8 +9,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val scheduleFeaturesModule = module {
-    viewModel { ScheduleMenuViewModel(get(), get()) }
-    viewModel { ScheduleViewModel(get(), get()) }
+    viewModel { ScheduleMenuViewModel(get()) }
+    viewModel { ScheduleViewModel(get()) }
     viewModel { LessonsReviewViewModel(get()) }
     viewModel { ScheduleCalendarViewModel(get()) }
     viewModel { FreePlaceViewModel(get()) }

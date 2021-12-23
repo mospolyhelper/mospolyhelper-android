@@ -1,17 +1,12 @@
 package com.mospolytech.features.account.main
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -22,7 +17,7 @@ fun AccountMainScreen(viewModel: AccountMainViewModel = getViewModel()) {
 }
 
 @Composable
-fun AccountContent(state: AccountState) {
+fun AccountContent(state: AccountMenuState) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
     ) {

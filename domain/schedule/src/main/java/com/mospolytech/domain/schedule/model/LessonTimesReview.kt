@@ -1,7 +1,6 @@
 package com.mospolytech.domain.schedule.model
 
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate

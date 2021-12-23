@@ -1,6 +1,5 @@
 package com.mospolytech.domain.base.utils
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 
 ///**

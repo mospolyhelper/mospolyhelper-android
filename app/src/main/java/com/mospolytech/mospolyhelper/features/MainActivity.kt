@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +23,6 @@ import com.google.accompanist.insets.imePadding
 import com.google.accompanist.insets.systemBarsPadding
 import com.mospolytech.features.base.theme.MospolyhelperTheme
 import com.mospolytech.mospolyhelper.appScreens
-import com.mospolytech.mospolyhelper.features.MainViewModel
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
