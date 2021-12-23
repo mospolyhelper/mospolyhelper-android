@@ -2,9 +2,9 @@ package com.mospolytech.features.account
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.mospolytech.features.account.main.AccountMainScreen
+import com.mospolytech.features.base.navigation.AccountScreens
 
-fun NavGraphBuilder.scheduleScreens() {
-//    composable(ScheduleScreens.Main.route) { ScheduleScreen() }
-//    composable(ScheduleScreens.Calendar.route) {  }
-//    composable(ScheduleScreens.Review.route) {  }
+fun NavGraphBuilder.accountScreens() {
+    composable(AccountScreens.Menu.route) { AccountMainScreen() }
 }

@@ -2,18 +2,10 @@ package com.mospolytech.mospolyhelper.features
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import com.mospolytech.features.base.navigation.AccountScreens
 import com.mospolytech.features.base.navigation.HomeScreens
 import com.mospolytech.features.base.navigation.MiscScreens
 import com.mospolytech.features.base.navigation.ScheduleScreens
-import com.mospolytech.features.schedule.main.ScheduleScreen
 import com.mospolytech.mospolyhelper.R
 
 sealed class MainScreen(
@@ -38,7 +30,7 @@ sealed class MainScreen(
         R.string.menu_schedule
     )
     object Account : MainScreen(
-        "account",
+        AccountScreens.Menu.route,
         R.drawable.ic_fluent_person_24_regular,
         R.drawable.ic_fluent_person_24_filled,
         R.string.menu_account

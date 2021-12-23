@@ -4,13 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.navigation.ScheduleScreens
+import com.mospolytech.features.base.navigation.*
+import com.mospolytech.features.base.utils.nav
 
 class ScheduleMenuViewModel(
     private val useCase: ScheduleUseCase,
     private val navController: NavController
 ) : ViewModel() {
     fun onScheduleClick() {
-        navController.navigate(ScheduleScreens.Main.route)
+        navController.nav(ScheduleScreens.Main)
     }
 
     fun onLessonsReviewClick() {
