@@ -14,8 +14,6 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>>(
 
     protected val navController: NavController by inject()
 
-
-    //    initialData: D
     private val _state = MutableStateFlow(initialState)
     val state = _state.asStateFlow()
 
@@ -24,19 +22,4 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>>(
     override fun mutateState(mutate: TMutator.() -> Unit) {
         _state.value = getMutator(_state.value).apply(mutate).state
     }
-
-//    private var initialized = false
-
-//    init {
-//        initializeIfNeeded(initialData)
-//    }
-//
-//    fun initializeIfNeeded(data: D) {
-//        if (!initialized) {
-//            initialized = true
-//            init(data)
-//        }
-//    }
-//
-//    open fun init(data: D) { }
 }

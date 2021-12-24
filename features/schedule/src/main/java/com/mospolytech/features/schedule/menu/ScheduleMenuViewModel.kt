@@ -4,6 +4,7 @@ import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.navigation.ScheduleScreens
+import com.mospolytech.features.base.navigation.*
 import com.mospolytech.features.base.utils.nav
 
 class ScheduleMenuViewModel(
