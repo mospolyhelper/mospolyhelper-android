@@ -1,18 +1,21 @@
-package com.mospolytech.features.account.classmates
+package com.mospolytech.features.account.payments
 
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.domain.account.model.Student
-import com.mospolytech.domain.account.repository.PeoplesRepository
+import com.mospolytech.domain.account.model.Application
+import com.mospolytech.domain.account.model.Payments
+import com.mospolytech.domain.account.repository.ApplicationsRepository
+import com.mospolytech.domain.account.repository.PaymentsRepository
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
-class ClassmatesViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<ClassmatesState, ClassmatesMutator>(ClassmatesState(), ClassmatesMutator()) {
+class PaymentsViewModel(private val repository: PaymentsRepository) :
+    BaseViewModel<PaymentsState, PaymentsMutator>(PaymentsState(), PaymentsMutator()) {
+
         init {
             viewModelScope.launch {
-                repository.getClassmates("ФИО").execute(
+                repository.getPayments().execute(
                     onStart = {
                         mutateState {
                             setLoading(true)
@@ -34,14 +37,14 @@ class ClassmatesViewModel(private val repository: PeoplesRepository) :
 
 }
 
-data class ClassmatesState(
-    val data: List<Student> = emptyList(),
+data class PaymentsState(
+    val data: List<Payments> = emptyList(),
     val isLoading: Boolean = false,
     val isError: Boolean = false
 )
 
-class ClassmatesMutator : BaseMutator<ClassmatesState>() {
-    fun setData(data: List<Student>) {
+class PaymentsMutator : BaseMutator<PaymentsState>() {
+    fun setData(data: List<Payments>) {
         state = state.copy(data = data, isLoading = false, isError = false)
     }
 

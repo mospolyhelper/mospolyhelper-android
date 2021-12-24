@@ -3,11 +3,9 @@ package com.mospolytech.features.account.applications
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.account.model.Application
 import com.mospolytech.domain.account.repository.ApplicationsRepository
-import com.mospolytech.features.account.base.DataLoadingState
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.utils.execute
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :

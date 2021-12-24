@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mospolytech.features.account.base.DataLoadingState.*
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -21,7 +20,7 @@ fun ClassmatesScreen(viewModel: ClassmatesViewModel = getViewModel()) {
 }
 
 @Composable
-fun ClassmatesContent(state: ApplicationsState) {
+fun ClassmatesContent(state: ClassmatesState) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
     ) {

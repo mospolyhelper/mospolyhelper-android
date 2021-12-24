@@ -1,4 +1,4 @@
-package com.mospolytech.features.account.applications
+package com.mospolytech.features.account.payments
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,14 +13,14 @@ import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ApplicationsScreen(viewModel: ApplicationsViewModel = getViewModel()) {
+fun PaymentsScreen(viewModel: PaymentsViewModel = getViewModel()) {
     val state by viewModel.state.collectAsState()
 
-    ApplicationsContent(state)
+    PaymentsContent(state)
 }
 
 @Composable
-fun ApplicationsContent(state: ApplicationsState) {
+fun PaymentsContent(state: PaymentsState) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
