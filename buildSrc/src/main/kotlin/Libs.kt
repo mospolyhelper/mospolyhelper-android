@@ -124,8 +124,8 @@ object Versions {
     const val gradle = "7.0.4"
     const val kotlin = "1.6.0"
 
-    const val kotlinCoroutines = "1.5.2"
-    const val kotlinxSerialization = "1.3.1"
+    const val kotlinCoroutines = "1.6.0"
+    const val kotlinxSerialization = "1.3.2"
 
     // Di
     const val koin = "3.1.4"
@@ -147,12 +147,12 @@ object Versions {
 
     // AndroidX
     const val lifecycle = "2.4.0"
-    const val navigation = "2.4.0-beta02"
+    const val navigation = "2.4.0-rc01"
     const val coreKtx = "1.7.0"
     const val appcompat = "1.4.0"
 
     // UI
-    const val material = "1.5.0-beta01"
+    const val material = "1.5.0-rc01"
     const val constraintLayout = "1.0.0-rc02"
     const val fluentIcons = "1.1.154@aar"
     const val lottie = "4.2.2"
