@@ -1,7 +1,7 @@
 package com.mospolytech.features.schedule.calendar
 
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.domain.schedule.model.ScheduleDay
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel

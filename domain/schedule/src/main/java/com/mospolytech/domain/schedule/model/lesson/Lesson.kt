@@ -1,5 +1,8 @@
-package com.mospolytech.domain.schedule.model
+package com.mospolytech.domain.schedule.model.lesson
 
+import com.mospolytech.domain.schedule.model.group.Group
+import com.mospolytech.domain.schedule.model.place.Place
+import com.mospolytech.domain.schedule.model.teacher.Teacher
 import kotlinx.serialization.Serializable
 
 @Serializable

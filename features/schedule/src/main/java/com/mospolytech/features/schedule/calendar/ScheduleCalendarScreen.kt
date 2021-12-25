@@ -15,8 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mospolytech.domain.base.utils.capitalized
-import com.mospolytech.domain.schedule.model.LessonsByTime
-import com.mospolytech.domain.schedule.model.ScheduleDay
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
 import org.koin.androidx.compose.getViewModel

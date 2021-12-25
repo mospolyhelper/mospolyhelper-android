@@ -1,7 +1,7 @@
 package com.mospolytech.features.schedule.lessons_review
 
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.domain.schedule.model.LessonTimesReview
+import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel

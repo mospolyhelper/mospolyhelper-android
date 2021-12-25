@@ -3,7 +3,7 @@ package com.mospolytech.features.schedule.model
 import com.mospolytech.domain.base.utils.WeekIterator
 import com.mospolytech.domain.base.utils.getCeilSunday
 import com.mospolytech.domain.base.utils.getFloorMonday
-import com.mospolytech.domain.schedule.model.ScheduleDay
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 
 data class WeekUiModel(
     val days: List<DayUiModel>

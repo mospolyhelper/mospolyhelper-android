@@ -16,8 +16,8 @@ import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import com.mospolytech.domain.base.utils.capitalized
-import com.mospolytech.domain.schedule.model.LessonReviewDay
-import com.mospolytech.domain.schedule.model.LessonTimesReview
+import com.mospolytech.domain.schedule.model.review.LessonReviewDay
+import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
 import com.mospolytech.features.schedule.main.LessonHeader

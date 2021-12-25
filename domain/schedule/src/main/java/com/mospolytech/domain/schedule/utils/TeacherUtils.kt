@@ -1,6 +1,6 @@
 package com.mospolytech.domain.schedule.utils
 
-import com.mospolytech.domain.schedule.model.Teacher
+import com.mospolytech.domain.schedule.model.teacher.Teacher
 
 fun Teacher.getShortName(): String {
     val names = getNames(name)

@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,13 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.mospolytech.domain.schedule.model.*
+import com.mospolytech.domain.schedule.model.group.Group
+import com.mospolytech.domain.schedule.model.lesson.Lesson
+import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.schedule.model.place.Place
+import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
+import com.mospolytech.domain.schedule.model.teacher.Teacher
 import com.mospolytech.domain.schedule.utils.getShortName
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
@@ -105,18 +113,23 @@ fun ScheduleContent(
 
 @Composable
 fun BoxScope.Fab(onClick: () -> Unit) {
-    FloatingActionButton(
+    ExtendedFloatingActionButton(
         onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.primary,
         modifier = Modifier
             .align(Alignment.BottomEnd)
-            .padding(24.dp)
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_fluent_home_24_regular),
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
-        )
-    }
+            .padding(24.dp),
+        text = {
+            Text(text = stringResource(R.string.sch_to_today))
+        },
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_fluent_calendar_today_24_regular),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    )
 }
 
 @OptIn(ExperimentalPagerApi::class)

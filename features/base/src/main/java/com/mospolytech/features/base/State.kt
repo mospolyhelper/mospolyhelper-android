@@ -1,8 +1,5 @@
 package com.mospolytech.features.base
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-
 //interface State<TMutator : BaseMutator<*>> {
 //    fun mutator(): TMutator
 //}
@@ -34,14 +31,19 @@ abstract class BaseMutator<TState> {
             _state = value
         }
 
-    protected inline fun <T> set(v: T, v2: T, crossinline action: TState.(T) -> TState) {
-        if (v != v2) {
-            state = state.action(v2)
+    protected inline fun <T> set(stateProperty: T, newValue: T, crossinline action: TState.(T) -> TState): Boolean {
+        val isChanged = stateProperty == newValue
+        if (!isChanged) {
+            state = state.action(newValue)
         }
+        return isChanged
     }
 
-    inline fun <T> T.then(crossinline action: () -> Unit) {
-        action()
+    inline fun Boolean.then(crossinline action: () -> Unit): Boolean {
+        if (this) {
+            action()
+        }
+        return this
     }
 }
 

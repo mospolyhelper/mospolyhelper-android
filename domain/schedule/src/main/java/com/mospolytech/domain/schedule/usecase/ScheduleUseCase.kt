@@ -1,7 +1,8 @@
 package com.mospolytech.domain.schedule.usecase
 
-import com.mospolytech.domain.schedule.model.ScheduleSource
-import com.mospolytech.domain.schedule.model.ScheduleSources
+import com.mospolytech.domain.schedule.model.place.PlaceFilters
+import com.mospolytech.domain.schedule.model.source.ScheduleSource
+import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 
 class ScheduleUseCase(
@@ -12,4 +13,7 @@ class ScheduleUseCase(
 
     fun getLessonsReview() =
         repository.getLessonsReview(ScheduleSource(ScheduleSources.Group, "181-721"))
+
+    fun findFreePlaces(filters: PlaceFilters) =
+        repository.findFreePlaces(filters)
 }

@@ -18,6 +18,8 @@ dependencies {
     api(Libs.Accompanist.flowLayout)
     api(Libs.Accompanist.insets)
     api(Libs.Accompanist.pager)
+    api(Libs.Accompanist.placeholder)
+    api(Libs.Accompanist.swiperefresh)
 
     api(Libs.AndroidX.coreKtx)
     api(Libs.AndroidX.appCompat)

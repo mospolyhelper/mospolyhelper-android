@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.mospolytech.domain.schedule.model.ScheduleSourceFull
+import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.features.schedule.main.ScheduleViewModel
 import org.koin.androidx.compose.getViewModel
 
