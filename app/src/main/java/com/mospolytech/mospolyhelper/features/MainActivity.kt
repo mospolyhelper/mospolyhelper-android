@@ -4,14 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.imePadding
 import com.google.accompanist.insets.systemBarsPadding
+import com.mospolytech.features.base.navigation.MainScreen
 import com.mospolytech.features.base.theme.MospolyhelperTheme
 import com.mospolytech.mospolyhelper.appScreens
 import org.koin.androidx.compose.get
@@ -89,14 +89,14 @@ fun BottomNav(navController: NavHostController) {
 
     if (true || currentDestination?.route in showNavBar) {
         NavigationBar(
-            Modifier.height(50.dp)
-        ) {
 
+        ) {
             items.forEach { screen ->
                 val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
                 NavigationBarItem(
                     icon = { Icon(painterResource(screen.getIcon(selected)), contentDescription = null) },
                     selected = selected,
+                    label = { Text(stringResource(screen.resourceId)) },
                     onClick = {
                         navController.navigate(screen.route) {
                             // Pop up to the start destination of the graph to

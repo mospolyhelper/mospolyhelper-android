@@ -1,6 +1,6 @@
 package com.mospolytech.features.schedule.sources
 
-import com.mospolytech.domain.schedule.model.ScheduleSources
+import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel

@@ -1,4 +1,4 @@
-package com.mospolytech.domain.schedule.model
+package com.mospolytech.domain.schedule.model.lesson
 
 import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
 import kotlinx.serialization.Serializable

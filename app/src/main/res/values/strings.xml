@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">mospolyhelper</string>
-    <string name="menu_home">Home</string>
-    <string name="menu_schedule">Schedule</string>
-    <string name="menu_account">Account</string>
-    <string name="menu_misc">Misc</string>
 </resources>

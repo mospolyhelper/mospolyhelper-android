@@ -80,6 +80,8 @@ object Libs {
         const val systemUiController = "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
         const val insets = "com.google.accompanist:accompanist-insets:${Versions.accompanist}"
         const val pager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
+        const val placeholder = "com.google.accompanist:accompanist-placeholder:${Versions.accompanist}"
+        const val swiperefresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
     }
 
 
@@ -140,7 +142,8 @@ object Versions {
     // Compose
     const val compose = "1.1.0-rc01"
     const val composeMaterial3 = "1.0.0-alpha02"
-    const val accompanist = "0.21.4-beta"
+    const val accompanistOld = "0.21.4-beta"
+    const val accompanist = "0.22.0-rc"
 
     // AndroidX
     const val lifecycle = "2.4.0"
