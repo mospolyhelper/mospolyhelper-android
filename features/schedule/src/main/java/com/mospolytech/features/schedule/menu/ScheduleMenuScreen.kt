@@ -1,11 +1,17 @@
 package com.mospolytech.features.schedule.menu
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.GridItemSpan
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.material.Card
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
@@ -20,6 +26,7 @@ fun ScheduleMenuScreen(viewModel: ScheduleMenuViewModel = getViewModel()) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleMenuContent(
     onScheduleClick: () -> Unit = { },
@@ -28,26 +35,44 @@ fun ScheduleMenuContent(
     onScheduleSourceClick: () -> Unit = { },
     onFreePlaceClick: () -> Unit = { },
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-    ) {
-        Button(onClick = onScheduleSourceClick) {
-            Column {
-                Text(text = "Schedule sources")
-                Text(text = "181-721")
+    LazyVerticalGrid(cells = GridCells.Fixed(3)) {
+        item({ GridItemSpan(2) }) {
+            Card(modifier = Modifier.height(100.dp)) {
+                Button(onClick = onScheduleSourceClick) {
+                    Column {
+                        Text(text = "Schedule sources")
+                        Text(text = "181-721")
+                    }
+                }
             }
         }
-        Button(onClick = onScheduleClick) {
-            Text(text = "Schedule")
+        item({ GridItemSpan(2) }) {
+            Card(modifier = Modifier.height(200.dp)) {
+                Button(onClick = onScheduleClick) {
+                    Text(text = "Schedule")
+                }
+            }
         }
-        Button(onClick = onLessonsReviewClick) {
-            Text(text = "Lessons review")
+        item({ GridItemSpan(1) }) {
+            Card(modifier = Modifier.height(100.dp)) {
+                Button(onClick = onLessonsReviewClick) {
+                    Text(text = "Lessons review")
+                }
+            }
         }
-        Button(onClick = onScheduleCalendarClick) {
-            Text(text = "Calendar")
+        item({ GridItemSpan(1) }) {
+            Card(modifier = Modifier.height(100.dp)) {
+                Button(onClick = onScheduleCalendarClick) {
+                    Text(text = "Calendar")
+                }
+            }
         }
-        Button(onClick = onFreePlaceClick) {
-            Text(text = "Find free place")
+        item({ GridItemSpan(1) }) {
+            Card(modifier = Modifier.height(100.dp)) {
+                Button(onClick = onFreePlaceClick) {
+                    Text(text = "Find free place")
+                }
+            }
         }
     }
 }
