@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class LessonsReviewViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<LessonsReviewState, LessonsReviewMutator>(
+) : BaseViewModel<LessonsReviewState, LessonsReviewMutator, Nothing>(
     LessonsReviewState(),
     LessonsReviewMutator()
 ) {

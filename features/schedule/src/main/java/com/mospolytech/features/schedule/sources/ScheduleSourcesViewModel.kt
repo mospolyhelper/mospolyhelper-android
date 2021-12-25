@@ -7,7 +7,7 @@ import com.mospolytech.features.base.BaseViewModel
 
 class ScheduleSourcesViewModel(
     private val useCase: ScheduleUseCase
-): BaseViewModel<ScheduleSourceState, ScheduleSourceMutator>(
+): BaseViewModel<ScheduleSourceState, ScheduleSourceMutator, Nothing>(
     ScheduleSourceState(),
     ScheduleSourceMutator()
 ) {

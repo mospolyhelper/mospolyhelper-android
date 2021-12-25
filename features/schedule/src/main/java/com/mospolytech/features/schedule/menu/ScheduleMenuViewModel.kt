@@ -9,7 +9,7 @@ import com.mospolytech.features.base.utils.nav
 
 class ScheduleMenuViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<ScheduleMenuState, ScheduleMenuMutator>(
+) : BaseViewModel<ScheduleMenuState, ScheduleMenuMutator, Nothing>(
     ScheduleMenuState(),
     ScheduleMenuMutator()
 ) {

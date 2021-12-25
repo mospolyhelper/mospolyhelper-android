@@ -10,7 +10,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class TeachersViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<TeachersState, TeachersMutator>(TeachersState(), TeachersMutator()) {
+    BaseViewModel<TeachersState, TeachersMutator, Nothing>(TeachersState(), TeachersMutator()) {
         init {
             viewModelScope.launch {
                 repository.getTeachers("ФИО").execute(

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class ScheduleCalendarViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<ScheduleCalendarState, ScheduleCalendarMutator>(
+) : BaseViewModel<ScheduleCalendarState, ScheduleCalendarMutator, Nothing>(
     ScheduleCalendarState(),
     ScheduleCalendarMutator()
 ){

@@ -90,6 +90,8 @@ object Libs {
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
         const val fluentIcons = "com.microsoft.design:fluent-system-icons:${Versions.fluentIcons}"
         const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
+        const val placeholders = "com.google.accompanist:accompanist-placeholder:${Versions.placeholders}"
+        const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.swipeRefresh}"
     }
 
     object Navigation {
@@ -156,4 +158,6 @@ object Versions {
     const val constraintLayout = "1.0.0-rc02"
     const val fluentIcons = "1.1.154@aar"
     const val lottie = "4.2.2"
+    const val placeholders = "0.22.0-rc"
+    const val swipeRefresh = "0.22.0-rc"
 }

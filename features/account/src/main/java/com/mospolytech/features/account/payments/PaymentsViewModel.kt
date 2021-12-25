@@ -11,7 +11,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class PaymentsViewModel(private val repository: PaymentsRepository) :
-    BaseViewModel<PaymentsState, PaymentsMutator>(PaymentsState(), PaymentsMutator()) {
+    BaseViewModel<PaymentsState, PaymentsMutator, Nothing>(PaymentsState(), PaymentsMutator()) {
 
         init {
             viewModelScope.launch {

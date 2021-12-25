@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ScheduleViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<ScheduleState, ScheduleMutator>(
+) : BaseViewModel<ScheduleState, ScheduleMutator, Nothing>(
     ScheduleState(),
     ScheduleMutator()
 ) {
