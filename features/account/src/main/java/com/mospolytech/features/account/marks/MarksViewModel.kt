@@ -11,7 +11,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class MarksViewModel(private val repository: PerformanceRepository) :
-    BaseViewModel<MarksState, MarksMutator>(MarksState(), MarksMutator()) {
+    BaseViewModel<MarksState, MarksMutator, Nothing>(MarksState(), MarksMutator()) {
 
         init {
             viewModelScope.launch {

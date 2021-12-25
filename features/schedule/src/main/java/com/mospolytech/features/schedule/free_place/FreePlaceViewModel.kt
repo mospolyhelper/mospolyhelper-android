@@ -6,7 +6,7 @@ import com.mospolytech.features.base.BaseViewModel
 
 class FreePlaceViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<FreePlaceState, FreePlaceMutator>(
+) : BaseViewModel<FreePlaceState, FreePlaceMutator, Nothing>(
     FreePlaceState(),
     FreePlaceMutator()
 ) {

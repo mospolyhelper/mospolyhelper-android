@@ -8,7 +8,7 @@ import com.mospolytech.features.base.navigation.AccountScreens
 import com.mospolytech.features.base.utils.nav
 
 class AccountMainViewModel :
-    BaseViewModel<AccountMenuState, AccountMenuMutator>(AccountMenuState(), AccountMenuMutator()) {
+    BaseViewModel<AccountMenuState, AccountMenuMutator, Nothing>(AccountMenuState(), AccountMenuMutator()) {
 
     fun navigateToAuth() {
         navController.nav(AccountScreens.Authorization)
@@ -44,7 +44,7 @@ class AccountMainViewModel :
 }
 
 data class AccountMenuState(
-    val menu: List<MenuUi> = listOf(MenuUi.Auth,
+    val menu: List<MenuUi> = listOf(Auth,
         Personal, Students, Teachers, Classmates, Payments, Applications, Marks)
 )
 

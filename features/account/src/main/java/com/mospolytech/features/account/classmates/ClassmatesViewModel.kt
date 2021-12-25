@@ -9,7 +9,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class ClassmatesViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<ClassmatesState, ClassmatesMutator>(ClassmatesState(), ClassmatesMutator()) {
+    BaseViewModel<ClassmatesState, ClassmatesMutator, Nothing>(ClassmatesState(), ClassmatesMutator()) {
         init {
             viewModelScope.launch {
                 repository.getClassmates("ФИО").execute(

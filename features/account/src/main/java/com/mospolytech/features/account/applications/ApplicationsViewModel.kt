@@ -9,7 +9,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :
-    BaseViewModel<ApplicationsState, ApplicationsMutator>(ApplicationsState(), ApplicationsMutator()) {
+    BaseViewModel<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ApplicationsMutator()) {
 
         init {
             viewModelScope.launch {
