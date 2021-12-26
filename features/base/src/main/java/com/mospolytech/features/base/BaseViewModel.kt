@@ -2,6 +2,8 @@ package com.mospolytech.features.base
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.mospolytech.features.base.navigation.Screen
+import com.mospolytech.features.base.utils.nav
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,5 +28,13 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>, TAction>(
 
     override fun mutateState(mutate: TMutator.() -> Unit) {
         _state.value = getMutator(_state.value).apply(mutate).state
+    }
+
+    open fun navigateBack() {
+        navController.popBackStack()
+    }
+
+    open fun navigateTo(screen: Screen) {
+        navController.nav(screen)
     }
 }

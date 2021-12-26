@@ -2,12 +2,14 @@ package com.mospolytech.features.base.utils
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 
 suspend fun<T> Flow<Result<T>>.execute(
     onStart: (() -> Unit)? = null,
     onSuccess: ((T) -> Unit)? = null,
     onError: ((Throwable) -> Unit)? = null) {
-    onStart?.invoke()
+    onStart { onStart?.invoke() }
     collect {
         if (it.isSuccess)
             it.getOrNull()?.let { value -> onSuccess?.invoke(value) }
