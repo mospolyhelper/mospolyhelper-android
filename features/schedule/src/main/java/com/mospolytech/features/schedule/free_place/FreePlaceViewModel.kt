@@ -34,7 +34,7 @@ class FreePlaceViewModel(
     init {
         viewModelScope.launch {
             useCase.getSources(ScheduleSources.Place)
-                .onSuccess { mutateState { setPlaces(it.map { Place(it.key, it.title) }) } }
+                .onSuccess { mutateState { setPlaces(it.map { Place(it.key, it.title, it.description) }) } }
                 .onFailure { mutateState { setPlaces(emptyList()) } }
                 .collect()
         }

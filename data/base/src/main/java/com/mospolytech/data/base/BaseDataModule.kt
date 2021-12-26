@@ -7,6 +7,7 @@ import com.mospolytech.data.base.retrofit.network.NetworkResponseAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
@@ -34,7 +35,7 @@ val baseDataModule = module {
     single(named(DiConst.Schedule)) {
         Retrofit.Builder()
             .baseUrl("https://mph-schedule.herokuapp.com/")
-            .addConverterFactory(JsonConverterFactory())
+            .addConverterFactory(JsonConverterFactory(Json { ignoreUnknownKeys = true }))
             .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
                 GlobalScope.launch(Dispatchers.IO) {
 //                    get<EventRepository>().codeResponse
@@ -50,7 +51,7 @@ val baseDataModule = module {
     single(named(DiConst.Account)) {
         Retrofit.Builder()
             .baseUrl("https://mph-account.herokuapp.com/")
-            .addConverterFactory(JsonConverterFactory())
+            .addConverterFactory(JsonConverterFactory(Json { ignoreUnknownKeys = true }))
             .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
                 GlobalScope.launch(Dispatchers.IO) {
 //                    get<EventRepository>().codeResponse
