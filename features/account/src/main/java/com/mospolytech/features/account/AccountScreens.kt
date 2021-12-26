@@ -11,6 +11,7 @@ import com.mospolytech.features.account.marks.MarksScreen
 import com.mospolytech.features.account.payments.PaymentsScreen
 import com.mospolytech.features.account.personal.PersonalScreen
 import com.mospolytech.features.account.students.StudentsScreen
+import com.mospolytech.features.account.teachers.TeachersScreen
 import com.mospolytech.features.base.navigation.*
 import com.mospolytech.features.base.utils.composable
 
@@ -20,7 +21,7 @@ fun NavGraphBuilder.accountScreens() {
         composable(AccountScreens.Applications) { ApplicationsScreen() }
         composable(AccountScreens.Authorization) { AuthScreen() }
         composable(AccountScreens.Payments) { PaymentsScreen() }
-        composable(AccountScreens.Teachers) { }
+        composable(AccountScreens.Teachers) { TeachersScreen() }
         composable(AccountScreens.Classmates) { ClassmatesScreen() }
         composable(AccountScreens.Students) { StudentsScreen() }
         composable(AccountScreens.Marks) { MarksScreen() }

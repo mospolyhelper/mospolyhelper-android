@@ -115,8 +115,7 @@ fun Personal(personal: Personal) {
             IconText(personal.direction, Icons.Filled.AccountCircle)
             IconText(personal.course.toString(), Icons.Filled.Place)
             IconText(personal.group, Icons.Filled.Person)
-            IconText(personal.startDate?.format(), Icons.Filled.ThumbUp)
-            IconText(personal.endDate?.format(), Icons.Filled.ThumbUp)
+            IconText(personal.startDate?.format())
         }
     }
 }
