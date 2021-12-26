@@ -10,27 +10,36 @@ import kotlinx.coroutines.launch
 
 class StudentsViewModel(private val repository: PeoplesRepository) :
     BaseViewModel<StudentsState, StudentsMutator, Nothing>(StudentsState(), StudentsMutator()) {
+
         init {
-            viewModelScope.launch {
-                repository.getStudents("ФИО").execute(
-                    onStart = {
-                        mutateState {
-                            setLoading(true)
-                        }
-                    },
-                    onSuccess = {
-                        mutateState {
-                            setData(it.data)
-                        }
-                    },
-                    onError = {
-                        mutateState {
-                            setError(true)
-                        }
-                    }
-                )
-            }
+            loadStudents()
         }
+
+    fun loadStudents() {
+        viewModelScope.launch {
+            repository.getStudents("ФИО").execute(
+                onStart = {
+                    mutateState {
+                        setLoading(true)
+                    }
+                },
+                onSuccess = {
+                    mutateState {
+                        setData(it.data)
+                    }
+                },
+                onError = {
+                    mutateState {
+                        setError(true)
+                    }
+                }
+            )
+        }
+    }
+
+    fun inputName(name: String) {
+
+    }
 
 }
 

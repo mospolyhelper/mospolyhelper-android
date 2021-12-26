@@ -15,45 +15,49 @@ class PersonalViewModel(private val repository: PersonalRepository) :
     BaseViewModel<PersonalState, PersonalMutator, Nothing>(PersonalState(), PersonalMutator()) {
 
         init {
-            viewModelScope.launch {
-                repository.getPersonalInfo().execute(
-                    onStart = {
-                        mutateState {
-                            setPersonalLoading(true)
-                        }
-                    },
-                    onSuccess = {
-                        mutateState {
-                            setPersonalData(it)
-                        }
-                    },
-                    onError = {
-                        mutateState {
-                            setPersonalError(true)
-                        }
-                    }
-                )
-            }
-            viewModelScope.launch {
-                repository.getOrders().execute(
-                    onStart = {
-                        mutateState {
-                            setOrdersLoading(true)
-                        }
-                    },
-                    onSuccess = {
-                        mutateState {
-                            setOrdersData(it)
-                        }
-                    },
-                    onError = {
-                        mutateState {
-                            setOrdersError(true)
-                        }
-                    }
-                )
-            }
+            load()
         }
+
+    fun load() {
+        viewModelScope.launch {
+            repository.getPersonalInfo().execute(
+                onStart = {
+                    mutateState {
+                        setPersonalLoading(true)
+                    }
+                },
+                onSuccess = {
+                    mutateState {
+                        setPersonalData(it)
+                    }
+                },
+                onError = {
+                    mutateState {
+                        setPersonalError(true)
+                    }
+                }
+            )
+        }
+        viewModelScope.launch {
+            repository.getOrders().execute(
+                onStart = {
+                    mutateState {
+                        setOrdersLoading(true)
+                    }
+                },
+                onSuccess = {
+                    mutateState {
+                        setOrdersData(it)
+                    }
+                },
+                onError = {
+                    mutateState {
+                        setOrdersError(true)
+                    }
+                }
+            )
+        }
+    }
 
 }
 
