@@ -10,6 +10,7 @@ import com.mospolytech.features.schedule.lessons_review.LessonsReviewScreen
 import com.mospolytech.features.schedule.main.ScheduleScreen
 import com.mospolytech.features.schedule.menu.ScheduleMenuScreen
 import com.mospolytech.features.base.navigation.MainScreen
+import com.mospolytech.features.schedule.sources.ScheduleSourcesScreen
 
 fun NavGraphBuilder.scheduleScreens() {
     navigation(startDestination = ScheduleScreens.Menu.route, route = MainScreen.Schedule.route) {
@@ -17,7 +18,7 @@ fun NavGraphBuilder.scheduleScreens() {
         composable(ScheduleScreens.Main.route) { ScheduleScreen() }
         composable(ScheduleScreens.Calendar.route) { ScheduleCalendarScreen() }
         composable(ScheduleScreens.LessonsReview.route) { LessonsReviewScreen() }
-        composable(ScheduleScreens.Source.route) {  }
+        composable(ScheduleScreens.Source.route) { ScheduleSourcesScreen() }
         composable(ScheduleScreens.FreePlace.route) { FreePlaceScreen() }
     }
 }
