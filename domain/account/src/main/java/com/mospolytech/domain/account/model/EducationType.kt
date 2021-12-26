@@ -14,3 +14,10 @@ enum class EducationType {
     @SerialName("college")
     College
 }
+
+fun EducationType.print() = when(this) {
+    EducationType.Bachelor -> "Бакалавр"
+    EducationType.Magistrate -> "Магистр"
+    EducationType.Aspirant -> "Аспирант"
+    EducationType.College -> "Студент колледжа"
+}
