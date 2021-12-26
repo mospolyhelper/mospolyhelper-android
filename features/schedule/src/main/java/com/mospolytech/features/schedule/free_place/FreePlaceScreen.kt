@@ -1,9 +1,13 @@
 package com.mospolytech.features.schedule.free_place
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.TextField
 import androidx.compose.material3.Button
@@ -12,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.mospolytech.features.base.utils.ContentAlpha
+import com.mospolytech.features.base.utils.MaterialTheme3
+import com.mospolytech.features.base.utils.WithContentAlpha
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
@@ -29,7 +36,8 @@ fun FreePlaceScreen(viewModel: FreePlaceViewModel = getViewModel()) {
         viewModel::onDateSelect,
         viewModel::onTimeFromSelect,
         viewModel::onTimeToSelect,
-        viewModel::onEnterFilterQuery
+        viewModel::onEnterFilterQuery,
+        viewModel::onFindFreePlaces
     )
 }
 
@@ -41,6 +49,7 @@ fun FreePlaceContent(
     onTimeFromSelect: (LocalTime) -> Unit,
     onTimeToSelect: (LocalTime) -> Unit,
     onEnterFilterQuery: (String) -> Unit,
+    onFindFreePlaces: () -> Unit,
 ) {
     Box(
         Modifier
@@ -60,7 +69,7 @@ fun FreePlaceContent(
 //        Text(text = state.timeTo.toString())
 //        RangeSlider(values = state.timesPositionRange, onValueChange = onTimeRangeChange)
 
-        Column {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
             Text(text = state.date.toString())
             Text(text = state.timeFrom.toString())
             Text(text = state.timeTo.toString())
@@ -75,7 +84,10 @@ fun FreePlaceContent(
             }
             TextField(value = state.filterQuery, onValueChange = onEnterFilterQuery)
             
-            LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)) {
                 items(state.filteredPlaces) { item ->
                     var checked by remember { mutableStateOf(false) }
                     Row(
@@ -97,8 +109,35 @@ fun FreePlaceContent(
                     }
                 }
             }
-            Button(onClick = {  }) {
+            Button(onClick = onFindFreePlaces) {
                 Text(text = "Найти свободные аудитории")
+            }
+            val freePlaces = remember(state.freePlaces) {
+                state.freePlaces.toList()
+            }
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)) {
+                items(freePlaces) { item ->
+                    var checked by remember { mutableStateOf(false) }
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { checked = !checked }) {
+                        Text(
+                            text = item.first.title,
+                            style = MaterialTheme3.typography.titleSmall
+                        )
+                        WithContentAlpha(alpha = ContentAlpha.medium) {
+                            Text(
+                                text = "Занятий в это время: " + item.second.size.toString(),
+                                style = MaterialTheme3.typography.bodySmall
+                            )
+                        }
+                        Spacer(Modifier.height(10.dp))
+                    }
+                }
             }
         }
 

@@ -1,7 +1,9 @@
 package com.mospolytech.features.schedule.free_place
 
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.place.Place
+import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
@@ -11,6 +13,7 @@ import com.mospolytech.features.base.utils.onSuccess
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class FreePlaceViewModel(
@@ -63,6 +66,20 @@ class FreePlaceViewModel(
             setFilterQuery(query)
         }
     }
+
+    fun onFindFreePlaces() {
+        viewModelScope.launch {
+            useCase.findFreePlaces(
+                PlaceFilters(
+                    ids = state.value.places.map { it.id },
+                    dateTimeFrom = LocalDateTime.of(state.value.date, state.value.timeFrom),
+                    dateTimeTo = LocalDateTime.of(state.value.date, state.value.timeTo)
+                )
+            ).onSuccess { mutateState { setFreePlaces(it) } }
+                .onFailure { mutateState { setFreePlaces(emptyMap()) } }
+                .collect()
+        }
+    }
 }
 
 data class FreePlaceState(
@@ -78,6 +95,7 @@ data class FreePlaceState(
     val filterQuery: String = "",
     val places: List<Place> = emptyList(),
     val filteredPlaces: List<Place> = emptyList(),
+    val freePlaces: Map<Place, List<LessonDateTimes>> = emptyMap()
 ) {
     companion object {
         val minPerDay = LocalTime.MAX.toSecondOfDay() / 60
@@ -140,6 +158,11 @@ class FreePlaceMutator : BaseMutator<FreePlaceState>() {
     fun setFilteredPlaces(filteredPlaces: List<Place>) =
         set(state.filteredPlaces, filteredPlaces) {
             copy(filteredPlaces = it)
+        }
+
+    fun setFreePlaces(freePlaces: Map<Place, List<LessonDateTimes>>) =
+        set(state.freePlaces, freePlaces) {
+            copy(freePlaces = it)
         }
 
 //    fun setTimeRange(timesPositionRange: ClosedFloatingPointRange<Float>) =

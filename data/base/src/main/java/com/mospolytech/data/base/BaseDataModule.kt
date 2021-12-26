@@ -35,7 +35,14 @@ val baseDataModule = module {
     single(named(DiConst.Schedule)) {
         Retrofit.Builder()
             .baseUrl("https://mph-schedule.herokuapp.com/")
-            .addConverterFactory(JsonConverterFactory(Json { ignoreUnknownKeys = true }))
+            .addConverterFactory(
+                JsonConverterFactory(
+                    Json {
+                        ignoreUnknownKeys = true
+                        allowStructuredMapKeys = true
+                    }
+                )
+            )
             .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
                 GlobalScope.launch(Dispatchers.IO) {
 //                    get<EventRepository>().codeResponse
@@ -51,7 +58,14 @@ val baseDataModule = module {
     single(named(DiConst.Account)) {
         Retrofit.Builder()
             .baseUrl("https://mph-account.herokuapp.com/")
-            .addConverterFactory(JsonConverterFactory(Json { ignoreUnknownKeys = true }))
+            .addConverterFactory(
+                JsonConverterFactory(
+                    Json {
+                        ignoreUnknownKeys = true
+                        allowStructuredMapKeys = true
+                    }
+                )
+            )
             .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
                 GlobalScope.launch(Dispatchers.IO) {
 //                    get<EventRepository>().codeResponse
