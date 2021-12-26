@@ -6,13 +6,19 @@ import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.utils.execute
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :
     BaseViewModel<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ApplicationsMutator()) {
 
         init {
-            viewModelScope.launch {
+            loadData()
+        }
+
+    fun loadData() {
+        viewModelScope.launch {
+            if (!state.value.isLoading) {
                 repository.getApplications().execute(
                     onStart = {
                         mutateState {
@@ -32,6 +38,7 @@ class ApplicationsViewModel(private val repository: ApplicationsRepository) :
                 )
             }
         }
+    }
 
 }
 
