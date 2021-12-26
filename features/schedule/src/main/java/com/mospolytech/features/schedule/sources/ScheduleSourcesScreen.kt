@@ -32,9 +32,7 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
-import com.mospolytech.features.base.utils.MaterialTheme2
-import com.mospolytech.features.base.utils.MaterialTheme3
-import com.mospolytech.features.base.utils.TypedListener
+import com.mospolytech.features.base.utils.*
 import com.mospolytech.features.base.view.InitialAvatar
 import com.mospolytech.features.schedule.main.ScheduleViewModel
 import org.koin.androidx.compose.getViewModel
@@ -120,8 +118,16 @@ fun SourceItem(source: ScheduleSourceFull, onItemClick: () -> Unit = { }) {
             InitialAvatar(url = source.avatarUrl, initials)
             Spacer(Modifier.width(5.dp))
             Column {
-                Text(text = source.title)
-                Text(text = source.description)
+                Text(
+                    text = source.title,
+                    style = MaterialTheme3.typography.titleSmall
+                )
+                WithContentAlpha(alpha = ContentAlpha.medium) {
+                    Text(
+                        text = source.description,
+                        style = MaterialTheme3.typography.bodySmall
+                    )
+                }
             }
         }
         Spacer(Modifier.height(5.dp))
