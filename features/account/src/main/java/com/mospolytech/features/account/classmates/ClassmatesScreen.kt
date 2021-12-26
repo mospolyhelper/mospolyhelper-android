@@ -4,10 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -49,7 +46,7 @@ fun ClassmatesContent(state: ClassmatesState,
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     Scaffold(topBar = {
-        MediumTopAppBar(title = { TextField(value = name,
+        TopAppBar(title = { TextField(value = name,
             onValueChange = {
             inputListener.invoke(it)
             name = it }, label = { Text("ФИО")})},

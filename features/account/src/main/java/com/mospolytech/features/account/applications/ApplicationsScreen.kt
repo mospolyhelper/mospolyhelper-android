@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -43,7 +40,7 @@ fun ApplicationsScreen(viewModel: ApplicationsViewModel = getViewModel()) {
 @Composable
 fun ApplicationsContent(state: ApplicationsState, retryListener: ClickListener, backListener: ClickListener) {
     Scaffold(topBar = {
-        MediumTopAppBar(title = {Text("Справки", fontSize = 22.sp)},
+        TopAppBar(title = {Text("Справки", fontSize = 22.sp)},
             navigationIcon = { IconButton(onClick = { backListener.invoke() }) { Icon(Icons.Filled.ArrowBack, contentDescription = "Назад") } })
     }) {
         LazyColumn(

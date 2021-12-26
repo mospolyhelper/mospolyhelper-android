@@ -10,3 +10,8 @@ enum class PaymentType {
     @SerialName("education")
     Education
 }
+
+fun PaymentType.print(): String = when (this) {
+    PaymentType.Dormitory -> "Общежитие"
+    PaymentType.Education -> "Образование"
+}

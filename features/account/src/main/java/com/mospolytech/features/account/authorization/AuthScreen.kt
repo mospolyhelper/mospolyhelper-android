@@ -1,9 +1,11 @@
 package com.mospolytech.features.account.authorization
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +33,7 @@ fun AuthScreen(viewModel: AuthViewModel = getViewModel()) {
 @Composable
 fun AuthContent(state: AuthState, onLoginClick: Typed2ClickListener<String, String>, onLoggedClick: ClickListener) {
     Scaffold(topBar = {
-        MediumTopAppBar(title = {Text("Авторизация", fontSize = 22.sp)},
+        TopAppBar(title = {Text("Авторизация", fontSize = 22.sp)},
         navigationIcon = {IconButton(onClick = { onLoggedClick.invoke() }) {Icon(Icons.Filled.ArrowBack, contentDescription = "Назад") }})
     }) {
         if (state.auth) {
@@ -46,7 +49,8 @@ fun NotAuthorized(state: AuthState, onAuthorize: Typed2ClickListener<String,Stri
     var login by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp).fillMaxWidth()
     ) {
         TextField(
             value = login,
@@ -70,7 +74,8 @@ fun NotAuthorized(state: AuthState, onAuthorize: Typed2ClickListener<String,Stri
 @Composable
 fun Authorized(state: AuthState, listener: ClickListener) {
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp).fillMaxWidth()
     ) {
         Text(text = "Привет ${state.name}")
         Button(onClick = { listener.invoke() }) {
