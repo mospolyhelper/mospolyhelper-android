@@ -43,7 +43,7 @@ class ApplicationsViewModel(private val repository: ApplicationsRepository) :
 }
 
 data class ApplicationsState(
-    val data: List<Application> = emptyList(),
+    val data: List<Application?> = emptyList(),
     val isLoading: Boolean = false,
     val isError: Boolean = false
 )
@@ -54,7 +54,8 @@ class ApplicationsMutator : BaseMutator<ApplicationsState>() {
     }
 
     fun setLoading(isLoading: Boolean) {
-        state = state.copy(isLoading = isLoading, isError = !isLoading && state.isError)
+        state = state.copy(isLoading = isLoading, isError = !isLoading && state.isError,
+        data = if (state.data.isEmpty() && isLoading) List(5) { null } else state.data)
     }
 
     fun setError(isError: Boolean) {

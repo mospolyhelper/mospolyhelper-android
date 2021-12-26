@@ -9,8 +9,8 @@ import retrofit2.http.Query
 
 interface AccountService {
 
-    @GET("/peoples/classmates/{name}")
-    suspend fun getClassmates(@Path("name") name: String?): NetworkResponse<List<Student>>
+    @GET("/peoples/classmates")
+    suspend fun getClassmates(): NetworkResponse<List<Student>>
 
     @GET("/peoples/students/{name}")
     suspend fun getStudents(@Path("name") name: String?, @Query("page") page: Int,
