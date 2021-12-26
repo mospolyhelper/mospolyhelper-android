@@ -26,8 +26,8 @@ class PeoplesRepositoryImpl(private val api: AccountService): PeoplesRepository 
         emit(api.getStudents(name, page, pageSize).toResult())
     }
 
-    override fun getClassmates(name: String): Flow<Result<List<Student>>> = flow {
-        emit(api.getClassmates(name).toResult())
+    override fun getClassmates(): Flow<Result<List<Student>>> = flow {
+        emit(api.getClassmates().toResult())
     }
 
 }

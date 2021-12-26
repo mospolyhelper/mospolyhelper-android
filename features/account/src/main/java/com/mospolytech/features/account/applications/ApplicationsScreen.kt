@@ -50,7 +50,7 @@ fun ApplicationsContent(state: ApplicationsState, retryListener: ClickListener, 
                     }
                 }
             } else {
-                items(if (state.data.isNotEmpty()) state.data else List<Application?>(10) { null }) {
+                items(state.data) {
                     Application(it)
                     Spacer(modifier = Modifier.padding(2.dp))
                 }
