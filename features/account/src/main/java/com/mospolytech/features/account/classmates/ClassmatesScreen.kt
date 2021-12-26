@@ -1,8 +1,11 @@
 package com.mospolytech.features.account.classmates
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
@@ -14,7 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.account.model.Student
 import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.TypedListener
@@ -68,15 +76,35 @@ fun ClassmatesContent(state: ClassmatesState,
 
 @Composable
 fun Student(student: Student?) {
-    Column(Modifier.fillMaxWidth()) {
-        Text(text = student?.name.orEmpty(),
-            modifier = Modifier
-                .widthIn(min = 200.dp)
-                .placeholder(student.isNull()))
-        Text(text = student?.avatar.orEmpty(),
-            modifier = Modifier
-                .widthIn(min = 200.dp)
-                .placeholder(student.isNull()))
-    }
+    Card(shape = MaterialTheme.shapes.medium, elevation = 2.dp, modifier = Modifier.fillMaxWidth()) {
+        ConstraintLayout(modifier = Modifier.padding(5.dp)) {
+            val (name, image) = createRefs()
+            Text(text = student?.name.orEmpty(),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.constrainAs(name) {
+                    start.linkTo(image.end)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+                    .padding(start = 10.dp))
+            student?.avatar?.let {
+                Image(
+                    painter = rememberImagePainter(
+                        data = it,
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .constrainAs(image) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                        }
+                )
+            }
 
+        }
+    }
 }
