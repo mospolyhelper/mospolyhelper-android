@@ -26,6 +26,7 @@ dependencies {
     api(Libs.Ui.constraintLayout)
     api(Libs.Ui.fluentIcons)
     api(Libs.Ui.lottie)
+    api(Libs.Ui.materialDateTimePicker)
 
     api(Libs.Ui.material3)
 

@@ -2,17 +2,22 @@ package com.mospolytech.features.schedule.menu
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.GridItemSpan
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.mospolytech.features.base.utils.ContentAlpha
+import com.mospolytech.features.base.utils.WithContentAlpha
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -26,7 +31,7 @@ fun ScheduleMenuScreen(viewModel: ScheduleMenuViewModel = getViewModel()) {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleMenuContent(
     onScheduleClick: () -> Unit = { },
@@ -35,42 +40,89 @@ fun ScheduleMenuContent(
     onScheduleSourceClick: () -> Unit = { },
     onFreePlaceClick: () -> Unit = { },
 ) {
-    LazyVerticalGrid(cells = GridCells.Fixed(3)) {
-        item({ GridItemSpan(2) }) {
-            Card(modifier = Modifier.height(100.dp)) {
-                Button(onClick = onScheduleSourceClick) {
-                    Column {
-                        Text(text = "Schedule sources")
-                        Text(text = "181-721")
+    Column(Modifier.padding(top = 10.dp).fillMaxSize()) {
+        Row(
+            Modifier
+                .height(100.dp)
+                .fillMaxWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.6f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleSourceClick
+            ) {
+                Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
+                    Text(text = "Выберите расписание")
+                }
+            }
+        }
+        Row(
+            Modifier
+                .height(150.dp)
+                .fillMaxWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.6f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleClick
+            ) {
+                Column(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
+                    Text(text = "Расписание")
+                    WithContentAlpha(alpha = ContentAlpha.medium) {
+                        Text(text = "Сейчас\nИнформационные системы и технологии")
+                    }
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleCalendarClick
+            ) {
+                Column(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
+                    Text(text = "Календарь")
+                    WithContentAlpha(alpha = ContentAlpha.medium) {
+                        Text(text = "Сегодня\n10 декабря\nПятница")
                     }
                 }
             }
         }
-        item({ GridItemSpan(2) }) {
-            Card(modifier = Modifier.height(200.dp)) {
-                Button(onClick = onScheduleClick) {
-                    Text(text = "Schedule")
+        Row(
+            Modifier
+                .height(100.dp)
+                .fillMaxWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.5f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onLessonsReviewClick
+            ) {
+                Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
+                    Text(text = "Обзор предметов")
                 }
             }
-        }
-        item({ GridItemSpan(1) }) {
-            Card(modifier = Modifier.height(100.dp)) {
-                Button(onClick = onLessonsReviewClick) {
-                    Text(text = "Lessons review")
-                }
-            }
-        }
-        item({ GridItemSpan(1) }) {
-            Card(modifier = Modifier.height(100.dp)) {
-                Button(onClick = onScheduleCalendarClick) {
-                    Text(text = "Calendar")
-                }
-            }
-        }
-        item({ GridItemSpan(1) }) {
-            Card(modifier = Modifier.height(100.dp)) {
-                Button(onClick = onFreePlaceClick) {
-                    Text(text = "Find free place")
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onFreePlaceClick
+            ) {
+                Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
+                    Text(text = "Найти свободную аудиторию")
                 }
             }
         }

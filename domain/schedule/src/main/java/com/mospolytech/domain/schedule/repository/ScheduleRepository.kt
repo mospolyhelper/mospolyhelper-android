@@ -15,4 +15,5 @@ interface ScheduleRepository {
     fun getSchedule(source: ScheduleSource): Flow<Result<List<ScheduleDay>>>
     fun getLessonsReview(source: ScheduleSource): Flow<Result<List<LessonTimesReview>>>
     fun findFreePlaces(filters: PlaceFilters): Flow<Result<Map<Place, List<LessonDateTimes>>>>
+    fun getSourceTypes(): Flow<Result<List<ScheduleSources>>>
 }

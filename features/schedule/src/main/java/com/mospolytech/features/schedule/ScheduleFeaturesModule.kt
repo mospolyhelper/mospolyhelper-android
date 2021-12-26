@@ -5,6 +5,7 @@ import com.mospolytech.features.schedule.free_place.FreePlaceViewModel
 import com.mospolytech.features.schedule.lessons_review.LessonsReviewViewModel
 import com.mospolytech.features.schedule.main.ScheduleViewModel
 import com.mospolytech.features.schedule.menu.ScheduleMenuViewModel
+import com.mospolytech.features.schedule.sources.ScheduleSourcesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -14,4 +15,5 @@ val scheduleFeaturesModule = module {
     viewModel { LessonsReviewViewModel(get()) }
     viewModel { ScheduleCalendarViewModel(get()) }
     viewModel { FreePlaceViewModel(get()) }
+    viewModel { ScheduleSourcesViewModel(get()) }
 }

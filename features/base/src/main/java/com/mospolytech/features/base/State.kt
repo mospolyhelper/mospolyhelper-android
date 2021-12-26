@@ -32,8 +32,8 @@ abstract class BaseMutator<TState> {
         }
 
     protected inline fun <T> set(stateProperty: T, newValue: T, crossinline action: TState.(T) -> TState): Boolean {
-        val isChanged = stateProperty == newValue
-        if (!isChanged) {
+        val isChanged = stateProperty != newValue
+        if (isChanged) {
             state = state.action(newValue)
         }
         return isChanged

@@ -90,6 +90,7 @@ object Libs {
         const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
         const val fluentIcons = "com.microsoft.design:fluent-system-icons:${Versions.fluentIcons}"
         const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
+        const val materialDateTimePicker = "io.github.vanpra.compose-material-dialogs:datetime:${Versions.materialDateTimePicker}"
     }
 
     object Navigation {
@@ -156,4 +157,5 @@ object Versions {
     const val constraintLayout = "1.0.0-rc02"
     const val fluentIcons = "1.1.154@aar"
     const val lottie = "4.2.2"
+    const val materialDateTimePicker = "0.6.2"
 }

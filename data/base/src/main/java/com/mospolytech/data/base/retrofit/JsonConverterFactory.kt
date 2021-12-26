@@ -11,14 +11,17 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-class JsonConverterFactory : Converter.Factory() {
+class JsonConverterFactory(
+    private val json: Json = Json
+) : Converter.Factory() {
+
     @Suppress("RedundantNullableReturnType")
     override fun responseBodyConverter(
         type: Type,
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
-        return DeserializationStrategyConverter(Json.serializersModule.serializer(type))
+        return DeserializationStrategyConverter(json.serializersModule.serializer(type), json)
     }
 
     @Suppress("RedundantNullableReturnType")
@@ -28,23 +31,26 @@ class JsonConverterFactory : Converter.Factory() {
         methodAnnotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<*, RequestBody>? {
-        return SerializationStrategyConverter(Json.serializersModule.serializer(type))
+        return SerializationStrategyConverter(json.serializersModule.serializer(type), json)
     }
 }
 
 
 
 internal class SerializationStrategyConverter<T>(
-    private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>,
+    private val json: Json = Json
 ) : Converter<T, RequestBody> {
     private val contentType = "application/json".toMediaType()
 
     override fun convert(value: T) =
-        Json.encodeToString(serializer, value).toRequestBody(contentType)
+        json.encodeToString(serializer, value).toRequestBody(contentType)
 }
 
 internal class DeserializationStrategyConverter<T>(
-    private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>,
+    private val json: Json = Json
 ) : Converter<ResponseBody, T> {
-    override fun convert(value: ResponseBody) = Json.decodeFromString(serializer, value.string())
+    override fun convert(value: ResponseBody) =
+        json.decodeFromString(serializer, value.string())
 }
