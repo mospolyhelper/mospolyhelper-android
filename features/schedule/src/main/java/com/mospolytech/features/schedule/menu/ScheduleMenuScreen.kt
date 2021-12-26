@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.GridItemSpan
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +31,7 @@ fun ScheduleMenuScreen(viewModel: ScheduleMenuViewModel = getViewModel()) {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleMenuContent(
     onScheduleClick: () -> Unit = { },
@@ -49,9 +50,9 @@ fun ScheduleMenuContent(
                 modifier = Modifier
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxHeight()
-                    .fillMaxWidth(0.6f)
-                    .clickable(onClick = onScheduleSourceClick),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(0.6f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleSourceClick
             ) {
                 Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                     Text(text = "Выберите расписание")
@@ -67,9 +68,9 @@ fun ScheduleMenuContent(
                 modifier = Modifier
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxHeight()
-                    .fillMaxWidth(0.6f)
-                    .clickable(onClick = onScheduleClick),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(0.6f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleClick
             ) {
                 Column(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                     Text(text = "Расписание")
@@ -83,9 +84,9 @@ fun ScheduleMenuContent(
                 modifier = Modifier
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxHeight()
-                    .fillMaxWidth()
-                    .clickable(onClick = onScheduleCalendarClick),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onScheduleCalendarClick
             ) {
                 Column(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                     Text(text = "Календарь")
@@ -104,9 +105,9 @@ fun ScheduleMenuContent(
                 modifier = Modifier
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxHeight()
-                    .fillMaxWidth(0.5f)
-                    .clickable(onClick = onLessonsReviewClick),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(0.5f),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onLessonsReviewClick
             ) {
                 Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                     Text(text = "Обзор предметов")
@@ -116,9 +117,9 @@ fun ScheduleMenuContent(
                 modifier = Modifier
                     .padding(horizontal = 5.dp, vertical = 5.dp)
                     .fillMaxHeight()
-                    .fillMaxWidth()
-                    .clickable(onClick = onFreePlaceClick),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                onClick = onFreePlaceClick
             ) {
                 Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
                     Text(text = "Найти свободную аудиторию")

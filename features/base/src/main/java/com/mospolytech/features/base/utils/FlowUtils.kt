@@ -24,3 +24,9 @@ suspend fun<T> Flow<Result<T>>.executeResult(onStart: (() -> Unit)? = null, onEx
         onExecute?.invoke(it)
     }
 }
+
+fun<T> Flow<Result<T>>.onSuccess(action: (value: T) -> Unit) =
+    onEach { it.onSuccess(action) }
+
+fun<T> Flow<Result<T>>.onFailure(action: (exception: Throwable) -> Unit) =
+    onEach { it.onFailure(action) }
