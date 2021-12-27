@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.sp
 import com.mospolytech.features.base.R
 
@@ -44,14 +45,14 @@ val AppTypography = Typography(
     ),
     headlineLarge = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 32.sp,
         //lineHeight = 40.sp,
         letterSpacing = 0.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 28.sp,
         //lineHeight = 36.sp,
         letterSpacing = 0.sp
@@ -110,14 +111,14 @@ val AppTypography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp,
         //lineHeight = 20.sp,
-        letterSpacing = 0.1.sp
+        letterSpacing = 0.8.sp
     ),
     labelMedium = TextStyle(
         fontFamily = ManropeFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 11.5.sp,
         //lineHeight = 16.sp,
-        letterSpacing = 0.8.sp,
+        letterSpacing = 1.0.sp,
     ),
     labelSmall = TextStyle(
         fontFamily = ManropeFontFamily,
