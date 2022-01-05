@@ -123,7 +123,7 @@ object Libs {
 
 object Versions {
     const val gradle = "7.0.4"
-    const val kotlin = "1.6.0"
+    const val kotlin = "1.6.10"
 
     const val kotlinCoroutines = "1.6.0"
     const val kotlinxSerialization = "1.3.2"
