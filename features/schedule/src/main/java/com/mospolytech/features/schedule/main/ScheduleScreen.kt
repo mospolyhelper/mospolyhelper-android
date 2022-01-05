@@ -1,13 +1,13 @@
 package com.mospolytech.features.schedule.main
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -26,7 +27,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.mospolytech.domain.schedule.model.*
 import com.mospolytech.domain.schedule.model.group.Group
 import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
@@ -35,26 +35,26 @@ import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.model.teacher.Teacher
 import com.mospolytech.domain.schedule.utils.getShortName
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.utils.WithContentAlpha
-import com.mospolytech.features.base.utils.disabledHorizontalPointerInputScroll
+import com.mospolytech.features.base.utils.*
+import com.mospolytech.features.base.view.placeholder
 import com.mospolytech.features.schedule.R
 import com.mospolytech.features.schedule.model.DayUiModel
 import com.mospolytech.features.schedule.model.WeekUiModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
     val state by viewModel.state.collectAsState()
 
-
-    if (state.schedule.isNotEmpty()) {
+    if (state.schedule.isNotEmpty() || state.isPreloading) {
         ScheduleContent(
-            state
+            state,
+            viewModel::onFabClick,
+            viewModel::onSchedulePosChanged,
+            viewModel::onWeeksPosChanged
         )
     }
 }
@@ -62,49 +62,38 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ScheduleContent(
-    state: ScheduleState
+    state: ScheduleState,
+    onFabClick: ClickListener,
+    onSchedulePosChanged: TypedListener<Int>,
+    onWeeksPosChanged: TypedListener<Int>
 ) {
-    val scope = rememberCoroutineScope()
+    val schedulePagerState = rememberPagerState(state.schedulePos)
+    val weekPagerState = rememberPagerState(state.weeksPos)
 
-
-    val today = remember(state.schedule) {
-        val now = LocalDate.now()
-        state.schedule.indexOfFirst { it.date == now }.coerceAtLeast(0)
-    }
-    val schedulePagerState = rememberPagerState(today)
-    val selectedDate = remember(schedulePagerState.currentPage) {
-        state.schedule.getOrNull(schedulePagerState.currentPage)?.date ?: LocalDate.MIN
-    }
-    val selectedWeek = remember(state.weeks, selectedDate) {
-        state.weeks.indexOfFirst { it.days.any { it.date == selectedDate } }
-    }
-
-
-    val weekPagerState = rememberPagerState(selectedWeek)
-
-    LaunchedEffect(schedulePagerState) {
-        snapshotFlow { schedulePagerState.currentPage }.collect {
-            val selectedDate = state.schedule.getOrNull(it)?.date ?: LocalDate.MIN
-            val selectedWeek = state.weeks.indexOfFirst { it.days.any { it.date == selectedDate } }
-
-            weekPagerState.animateScrollToPage(selectedWeek)
+    LaunchedEffect(state.selectedDate) {
+        if (schedulePagerState.currentPage != state.schedulePos) {
+            schedulePagerState.scrollToPage(state.schedulePos)
+        }
+        if (weekPagerState.currentPage != state.weeksPos) {
+            weekPagerState.scrollToPage(state.weeksPos)
         }
     }
 
-    val onFabClick: () -> Unit = remember(today) {
-        { scope.launch { schedulePagerState.animateScrollToPage(today) } }
-    }
+    schedulePagerState.onPageChanged { onSchedulePosChanged(it) }
+    weekPagerState.onPageChanged { onWeeksPosChanged(it) }
 
 
     Box {
         Column(Modifier.fillMaxSize()) {
             DaysPager(
                 weeks = state.weeks,
+                dayOfWeekPos = state.dayOfWeekPos,
                 pagerState = weekPagerState
             )
             SchedulePager(
                 scheduleDays = state.schedule,
-                pagerState = schedulePagerState
+                pagerState = schedulePagerState,
+                isLoading = state.isPreloading
             )
         }
         Fab(onFabClick)
@@ -136,6 +125,7 @@ fun BoxScope.Fab(onClick: () -> Unit) {
 @Composable
 fun DaysPager(
     weeks: List<WeekUiModel>,
+    dayOfWeekPos: Int,
     pagerState: PagerState
 ) {
     HorizontalPager(
@@ -152,35 +142,65 @@ fun DaysPager(
         }
     ) {
         val week by remember(weeks, it) { mutableStateOf(weeks[it]) }
-        WeekContent(week)
+        WeekContent(
+            week,
+            dayOfWeekPos
+        )
     }
 }
 
 @Composable
-fun WeekContent(week: WeekUiModel) {
+fun WeekContent(
+    week: WeekUiModel,
+    dayOfWeekPos: Int
+) {
+    val lazyRowState = rememberLazyListState(dayOfWeekPos)
+
+    LaunchedEffect(dayOfWeekPos) {
+        if (!lazyRowState.isItemFullyVisible(dayOfWeekPos)) {
+            lazyRowState.animateScrollToItem(dayOfWeekPos)
+        }
+    }
+
     LazyRow(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        state = lazyRowState,
+        contentPadding = PaddingValues(horizontal = 6.dp)
     ) {
-        items(week.days) { day ->
-            DayContent(day)
+        itemsIndexed(week.days) { index, day ->
+            DayContent(day, dayOfWeekPos == index)
         }
     }
 }
 
 private val weekFormat = DateTimeFormatter.ofPattern("EEE")
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun DayContent(day: DayUiModel) {
+fun DayContent(
+    day: DayUiModel,
+    isSelected: Boolean
+) {
+    val colorFrom = MaterialTheme3.colorScheme.secondary
+    
+    val borderColor by animateColorAsState(
+        if (isSelected) colorFrom else Color.Transparent,
+        tween(500)
+    )
+
+    val border = BorderStroke(1.dp, borderColor)
     Card(
         modifier = Modifier
-            .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp)
-            .width(60.dp),
-        shape = RoundedCornerShape(20.dp)
+            .padding(start = 3.dp, end = 3.dp, top = 5.dp, bottom = 5.dp)
+            .width(60.dp)
+            .height(70.dp),
+        shape = RoundedCornerShape(20.dp),
+        border = border
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 5.dp, end = 5.dp, top = 10.dp, bottom = 13.dp)
+                .padding(start = 5.dp, end = 5.dp, top = 10.dp)
         ) {
             Text(
                 text = weekFormat.format(day.date).uppercase(),
@@ -219,8 +239,34 @@ fun DayContent(day: DayUiModel) {
 @Composable
 fun SchedulePager(
     scheduleDays: List<ScheduleDay>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    isLoading: Boolean = false
 ) {
+    val scheduleDays = remember(scheduleDays, isLoading) {
+        if (isLoading) {
+            listOf(
+                ScheduleDay(
+                    date = LocalDate.now(),
+                    lessons = List(10) {
+                        LessonsByTime(
+                            time = LessonTime(LocalTime.now(), LocalTime.now()),
+                            lessons = listOf(
+                                Lesson(
+                                    "",
+                                    "Qwerty qwerty",
+                                    listOf(Teacher("", "")),
+                                    listOf(Group("", "")),
+                                    listOf(Place("", "", ""))
+                                )
+                            )
+                        )
+                    }
+                )
+            )
+        } else {
+            scheduleDays
+        }
+    }
     HorizontalPager(
         count = scheduleDays.size,
         state = pagerState,
@@ -228,7 +274,7 @@ fun SchedulePager(
     ) {
         val scheduleDay by remember(scheduleDays, it) { mutableStateOf(scheduleDays[it]) }
         if (scheduleDay.lessons.isNotEmpty()) {
-            LessonList(scheduleDay.lessons)
+            LessonList(scheduleDay.lessons, isLoading)
         } else {
             val relaxAnims = remember { listOf(
                 R.raw.sch_relax_0,
@@ -269,36 +315,38 @@ fun DateContent(date: LocalDate) {
 }
 
 @Composable
-fun LessonList(lessons: List<LessonsByTime>) {
+fun LessonList(lessons: List<LessonsByTime>, isLoading: Boolean = false) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         for (lessonsByTime in lessons) {
-            LessonPlace(lessonsByTime = lessonsByTime)
+            LessonPlace(lessonsByTime = lessonsByTime, isLoading = isLoading)
         }
     }
 }
 
 
-fun LazyListScope.LessonPlace(lessonsByTime: LessonsByTime) {
+fun LazyListScope.LessonPlace(lessonsByTime: LessonsByTime, isLoading: Boolean = false) {
     item {
-        LessonTimeContent(lessonsByTime.time)
+        LessonTimeContent(lessonsByTime.time, isLoading)
     }
     items(lessonsByTime.lessons) { lesson ->
-        LessonContent(lesson = lesson)
+        LessonContent(lesson = lesson, isLoading = isLoading)
     }
 }
 
 @Composable
-fun LessonTimeContent(lessonTime: LessonTime) {
+fun LessonTimeContent(lessonTime: LessonTime, isLoading: Boolean = false) {
     Text(
         text = "${lessonTime.startTime} - ${lessonTime.endTime}",
         style = MaterialTheme.typography.titleSmall,
-        modifier = Modifier.padding(horizontal = 34.dp)
+        modifier = Modifier
+            .padding(horizontal = 34.dp)
+            .placeholder(visible = isLoading)
     )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LessonContent(lesson: Lesson, onItemClick: () -> Unit = { }) {
+fun LessonContent(lesson: Lesson, isLoading: Boolean = false, onItemClick: () -> Unit = { }) {
     Card(
         elevation = 4.dp,
         shape = RoundedCornerShape(25.dp),
@@ -307,49 +355,54 @@ fun LessonContent(lesson: Lesson, onItemClick: () -> Unit = { }) {
     ) {
         Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 15.dp, bottom = 18.dp)) {
             WithContentAlpha(ContentAlpha.medium) {
-                LessonHeader(lesson.type)
+                LessonHeader(lesson.type, isLoading)
             }
             Spacer(Modifier.height(4.dp))
-            LessonTitle(lesson.title)
+            LessonTitle(lesson.title, isLoading)
             Spacer(Modifier.height(6.dp))
             WithContentAlpha(ContentAlpha.medium) {
-                TeachersContent(lesson.teachers)
+                TeachersContent(lesson.teachers, isLoading)
                 Spacer(Modifier.height(4.dp))
-                GroupsContent(lesson.groups)
+                GroupsContent(lesson.groups, isLoading)
                 Spacer(Modifier.height(4.dp))
-                PlacesContent(lesson.places)
+                PlacesContent(lesson.places, isLoading)
             }
         }
     }
 }
 
 @Composable
-fun LessonHeader(type: String) {
-    LessonType(type)
+fun LessonHeader(type: String, isLoading: Boolean = false) {
+    LessonType(type, isLoading)
 }
 
 @Composable
-fun LessonType(type: String) {
+fun LessonType(type: String, isLoading: Boolean = false) {
     Text(
         text = type.uppercase(),
         style = MaterialTheme.typography.labelSmall,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.placeholder(visible = isLoading)
     )
 }
 
 @Composable
-fun LessonTitle(title: String) {
+fun LessonTitle(title: String, isLoading: Boolean = false) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .placeholder(visible = isLoading)
     )
 }
 
 @Composable
-fun TeachersContent(teachers: List<Teacher>) {
-    Row {
+fun TeachersContent(teachers: List<Teacher>, isLoading: Boolean = false) {
+    Row(
+        modifier = Modifier.placeholder(visible = isLoading)
+    ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_fluent_hat_graduation_16_regular),
             contentDescription = null,
@@ -377,8 +430,10 @@ fun TeachersContent(teachers: List<Teacher>) {
 }
 
 @Composable
-fun GroupsContent(groups: List<Group>) {
-    Row {
+fun GroupsContent(groups: List<Group>, isLoading: Boolean = false) {
+    Row(
+        modifier = Modifier.placeholder(visible = isLoading)
+    ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_fluent_people_16_regular),
             contentDescription = null,
@@ -401,8 +456,10 @@ fun GroupsContent(groups: List<Group>) {
 }
 
 @Composable
-fun PlacesContent(places: List<Place>) {
-    Row {
+fun PlacesContent(places: List<Place>, isLoading: Boolean = false) {
+    Row(
+        modifier = Modifier.placeholder(visible = isLoading)
+    ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_fluent_location_16_regular),
             contentDescription = null,
