@@ -13,7 +13,7 @@ import java.time.LocalDate
 class ScheduleViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<ScheduleState, ScheduleMutator, Nothing>(
-    ScheduleState(),
+    initState(),
     ScheduleMutator()
 ) {
 
@@ -46,6 +46,14 @@ class ScheduleViewModel(
     }
 }
 
+fun initState(): ScheduleState {
+    return ScheduleMutator().apply {
+        this.state = ScheduleState()
+        setWeeksPos(state.selectedDate)
+        setDayOfWeekPos(state.selectedDate)
+    }.state
+}
+
 data class ScheduleState(
     val isPreloading: Boolean = true,
     val isLoading: Boolean = false,
@@ -56,7 +64,9 @@ data class ScheduleState(
     val selectedDate: LocalDate = LocalDate.now(),
     val schedulePos: Int = 0,
     val weeksPos: Int = 0,
-    val dayOfWeekPos: Int = 0
+    val dayOfWeekPos: Int = 0,
+
+    val showBackToTodayFab: Boolean = false
 )
 
 class ScheduleMutator : BaseMutator<ScheduleState>() {
@@ -68,6 +78,8 @@ class ScheduleMutator : BaseMutator<ScheduleState>() {
             setIsPreloading(false)
             setIsLoading(false)
             setSchedulePos(state.selectedDate)
+            setWeeksPos(state.selectedDate)
+            setDayOfWeekPos(state.selectedDate)
         }
 
     fun setWeeks(weeks: List<WeekUiModel>) =
@@ -86,10 +98,11 @@ class ScheduleMutator : BaseMutator<ScheduleState>() {
             setSchedulePos(state.selectedDate)
             setWeeksPos(state.selectedDate)
             setDayOfWeekPos(state.selectedDate)
+            setShowBackToTodayFabByDate(state.selectedDate)
         }
 
     fun setWeeksPos(date: LocalDate) {
-        val pos = state.weeks.indexOfFirst { it.days.any { it.date == date } }
+        val pos = state.weeks.indexOfFirst { it.days.any { it.date == date } }.coerceAtLeast(0)
         setWeeksPos(pos)
     }
 
@@ -139,5 +152,15 @@ class ScheduleMutator : BaseMutator<ScheduleState>() {
     fun setIsPreloading(isPreloading: Boolean) =
         set(state.isPreloading, isPreloading) {
             copy(isPreloading = it)
+        }
+
+    fun setShowBackToTodayFabByDate(date: LocalDate) {
+        val dateIsToday = date == LocalDate.now()
+        setShowBackToTodayFab(!dateIsToday)
+    }
+
+    fun setShowBackToTodayFab(showBackToTodayFab: Boolean) =
+        set(state.showBackToTodayFab, showBackToTodayFab) {
+            copy(showBackToTodayFab = it)
         }
 }

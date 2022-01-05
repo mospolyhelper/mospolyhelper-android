@@ -68,18 +68,11 @@ fun ScheduleContent(
     onWeeksPosChanged: TypedListener<Int>
 ) {
     val schedulePagerState = rememberPagerState(state.schedulePos)
-    val weekPagerState = rememberPagerState(state.weeksPos)
-
-    LaunchedEffect(state.selectedDate) {
-        if (schedulePagerState.currentPage != state.schedulePos) {
-            schedulePagerState.scrollToPage(state.schedulePos)
-        }
-        if (weekPagerState.currentPage != state.weeksPos) {
-            weekPagerState.scrollToPage(state.weeksPos)
-        }
-    }
-
+    schedulePagerState.bindTo(state.schedulePos)
     schedulePagerState.onPageChanged { onSchedulePosChanged(it) }
+
+    val weekPagerState = rememberPagerState(state.weeksPos)
+    weekPagerState.bindTo(state.weeksPos)
     weekPagerState.onPageChanged { onWeeksPosChanged(it) }
 
 
@@ -96,29 +89,35 @@ fun ScheduleContent(
                 isLoading = state.isPreloading
             )
         }
-        Fab(onFabClick)
+        Fab(state.showBackToTodayFab, onFabClick)
     }
 }
 
 @Composable
-fun BoxScope.Fab(onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        onClick = onClick,
-        containerColor = MaterialTheme.colorScheme.primary,
+fun BoxScope.Fab(isVisible: Boolean, onClick: () -> Unit) {
+    AnimatedVisibility(
+        visible = isVisible,
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(24.dp),
-        text = {
-            Text(text = stringResource(R.string.sch_to_today))
-        },
-        icon = {
-            Icon(
-                painter = painterResource(R.drawable.ic_fluent_calendar_today_24_regular),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-    )
+        enter = fadeIn() + slideInVertically { it / 2 },
+        exit = slideOutVertically { it / 2 } + fadeOut(),
+    ) {
+        ExtendedFloatingActionButton(
+            onClick = onClick,
+            containerColor = MaterialTheme.colorScheme.primary,
+            text = {
+                Text(text = stringResource(R.string.sch_to_today))
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_fluent_calendar_today_24_regular),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class)

@@ -15,3 +15,17 @@ fun PagerState.onPageChanged(action: suspend (page: Int) -> Unit) {
         }
     }
 }
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun PagerState.bindTo(position: Int, animated: Boolean = false) {
+    LaunchedEffect(position, animated) {
+        if (currentPage != position) {
+            if (animated) {
+                animateScrollToPage(position)
+            } else {
+                scrollToPage(position)
+            }
+        }
+    }
+}
