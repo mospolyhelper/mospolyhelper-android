@@ -12,7 +12,7 @@ class LessonsReviewViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<LessonsReviewState, LessonsReviewMutator, Nothing>(
     LessonsReviewState(),
-    LessonsReviewMutator()
+    ::LessonsReviewMutator
 ) {
 
     init {

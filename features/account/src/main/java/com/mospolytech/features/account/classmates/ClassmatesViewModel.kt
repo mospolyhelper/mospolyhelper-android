@@ -10,7 +10,7 @@ import com.mospolytech.features.base.utils.isNull
 import kotlinx.coroutines.launch
 
 class ClassmatesViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<ClassmatesState, ClassmatesMutator, Nothing>(ClassmatesState(), ClassmatesMutator()) {
+    BaseViewModel<ClassmatesState, ClassmatesMutator, Nothing>(ClassmatesState(), ::ClassmatesMutator) {
         init {
             loadClassmates()
         }

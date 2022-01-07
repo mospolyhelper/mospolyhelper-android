@@ -11,7 +11,7 @@ class ScheduleMenuViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<ScheduleMenuState, ScheduleMenuMutator, Nothing>(
     ScheduleMenuState(),
-    ScheduleMenuMutator()
+    ::ScheduleMenuMutator
 ) {
     fun onScheduleClick() {
         navController.nav(ScheduleScreens.Main)

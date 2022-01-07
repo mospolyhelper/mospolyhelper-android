@@ -14,7 +14,7 @@ class ScheduleViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<ScheduleState, ScheduleMutator, Nothing>(
     initState(),
-    ScheduleMutator()
+    ::ScheduleMutator
 ) {
 
     init {

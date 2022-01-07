@@ -12,7 +12,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class PersonalViewModel(private val repository: PersonalRepository) :
-    BaseViewModel<PersonalState, PersonalMutator, Nothing>(PersonalState(), PersonalMutator()) {
+    BaseViewModel<PersonalState, PersonalMutator, Nothing>(PersonalState(), ::PersonalMutator) {
 
         init {
             load()

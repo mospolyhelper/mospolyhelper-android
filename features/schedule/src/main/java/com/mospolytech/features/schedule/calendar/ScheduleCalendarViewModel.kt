@@ -12,7 +12,7 @@ class ScheduleCalendarViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<ScheduleCalendarState, ScheduleCalendarMutator, Nothing>(
     ScheduleCalendarState(),
-    ScheduleCalendarMutator()
+    ::ScheduleCalendarMutator
 ){
     init {
         viewModelScope.launch {

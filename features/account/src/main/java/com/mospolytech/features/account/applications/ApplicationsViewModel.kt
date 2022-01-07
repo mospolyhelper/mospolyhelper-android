@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :
-    BaseViewModel<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ApplicationsMutator()) {
+    BaseViewModel<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ::ApplicationsMutator) {
 
         init {
             loadData()

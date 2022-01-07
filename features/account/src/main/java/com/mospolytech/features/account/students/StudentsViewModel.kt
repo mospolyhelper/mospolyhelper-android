@@ -9,7 +9,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class StudentsViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<StudentsState, StudentsMutator, Nothing>(StudentsState(), StudentsMutator()) {
+    BaseViewModel<StudentsState, StudentsMutator, Nothing>(StudentsState(), ::StudentsMutator) {
 
         init {
             loadStudents()

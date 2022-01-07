@@ -20,7 +20,7 @@ class FreePlaceViewModel(
     private val useCase: ScheduleUseCase
 ) : BaseViewModel<FreePlaceState, FreePlaceMutator, Nothing>(
     FreePlaceState(),
-    FreePlaceMutator()
+    ::FreePlaceMutator
 ) {
 //    fun onDateRangeChange(dateRange: ClosedFloatingPointRange<Float>) {
 //        mutateState {

@@ -9,7 +9,7 @@ import com.mospolytech.features.base.utils.execute
 import kotlinx.coroutines.launch
 
 class AuthViewModel() :
-    BaseViewModel<AuthState, AuthMutator, Nothing>(AuthState(), AuthMutator()) {
+    BaseViewModel<AuthState, AuthMutator, Nothing>(AuthState(), ::AuthMutator) {
 
     fun authorize(login: String, password: String) {
         mutateState {

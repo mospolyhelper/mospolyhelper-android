@@ -14,7 +14,7 @@ import org.koin.core.component.inject
 
 abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>, TAction>(
     initialState: TState,
-    private val mutator: TMutator
+    private val mutatorFactory: () -> TMutator
 ): ViewModel(), StateStore<TState, TMutator>, KoinComponent {
 
     protected val navController: NavController by inject()
@@ -33,7 +33,7 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>, TAction>(
     private val _action = MutableSharedFlow<TAction>(replay = 0)
     val action = _action.asSharedFlow()
 
-    override fun getMutator(state: TState) = mutator.apply { this.state = state }
+    override fun getMutator(state: TState) = mutatorFactory().apply { this.state = state }
 
     override fun mutateState(mutate: TMutator.() -> Unit) {
         _state.value = getMutator(_state.value).apply(mutate).state
