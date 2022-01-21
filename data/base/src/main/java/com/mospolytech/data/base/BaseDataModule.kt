@@ -1,5 +1,6 @@
 package com.mospolytech.data.base
 
+import com.mospolytech.data.base.local.DataVersionLocalDS
 import com.mospolytech.data.base.retrofit.ApiVersionInterceptor
 import com.mospolytech.data.base.retrofit.JsonConverterFactory
 import com.mospolytech.data.base.retrofit.TokenInterceptor
@@ -78,4 +79,5 @@ val baseDataModule = module {
     single<Retrofit>(named(DiConst.Account)) { get<Retrofit.Builder>(named(DiConst.Account)).build() }
 
     single { EventRepository() }
+    single { DataVersionLocalDS(get()) }
 }

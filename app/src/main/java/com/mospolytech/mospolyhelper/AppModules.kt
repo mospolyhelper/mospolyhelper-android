@@ -27,5 +27,9 @@ val appModules = listOf(
     // Features modules
     baseUiModule,
     scheduleFeaturesModule,
-    accountFeaturesModule
+    accountFeaturesModule,
+
+
+
+    tempModule
 )

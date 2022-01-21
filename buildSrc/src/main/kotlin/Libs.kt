@@ -110,6 +110,14 @@ object Libs {
         const val pagingCompose = "androidx.paging:paging-runtime:${Versions.pagingCompose}"
     }
 
+    object Storage {
+        object KodeinDB {
+            const val debug = "org.kodein.db:kodein-db-android-debug:${Versions.kodeinDB}"
+            const val release = "org.kodein.db:kodein-db-android:${Versions.kodeinDB}"
+            const val kotlinxSerializer = "org.kodein.db:kodein-db-serializer-kotlinx:${Versions.kodeinDB}"
+        }
+    }
+
     object Di {
         const val koinCore = "io.insert-koin:koin-core:${Versions.koin}"
         const val koinAndroid = "io.insert-koin:koin-android:${Versions.koin}"
@@ -139,6 +147,9 @@ object Versions {
     const val pagingCompose = "1.0.0-alpha14"
     const val retrofit = "2.9.0"
     const val okHttp = "4.9.0"
+
+    // Storage
+    const val kodeinDB = "0.9.0-beta"
 
     // Compose
     const val compose = "1.1.0-rc01"
