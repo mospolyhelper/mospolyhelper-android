@@ -1,14 +1,10 @@
 package com.mospolytech.features.base
 
-
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.mospolytech.data.base.PreferencesDataSource
-import com.mospolytech.features.base.utils.createNavController
-import org.koin.dsl.bind
+import com.mospolytech.features.base.navigation.core.Router
 import org.koin.dsl.module
 
 val baseUiModule = module {
-    single<NavHostController> { createNavController(get()) } bind NavController::class
+    single { Router() }
     single<PreferencesDataSource> { SharedPreferencesDataSource(get()) }
 }

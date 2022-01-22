@@ -3,6 +3,7 @@ package com.mospolytech.features.base.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.mospolytech.features.base.R
+import com.mospolytech.features.base.navigation.core.Screen
 
 sealed class MainScreen(
     route: String,

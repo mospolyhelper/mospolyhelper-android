@@ -22,7 +22,6 @@ import androidx.constraintlayout.compose.Dimension
 import com.mospolytech.domain.account.model.Payment
 import com.mospolytech.domain.account.model.Payments
 import com.mospolytech.domain.account.model.print
-import com.mospolytech.features.account.applications.Application
 import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.format
 import com.mospolytech.features.base.view.ErrorView
@@ -34,7 +33,7 @@ fun PaymentsScreen(viewModel: PaymentsViewModel = getViewModel()) {
 
     PaymentsContent(state,
         retryListener = { viewModel.load() },
-        backListener = { viewModel.navigateBack() },)
+        backListener = { viewModel.exit() },)
 }
 
 @Composable

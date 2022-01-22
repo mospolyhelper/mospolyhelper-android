@@ -5,8 +5,6 @@ import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.navigation.ScheduleScreens
-import com.mospolytech.features.base.navigation.*
-import com.mospolytech.features.base.utils.nav
 import java.time.LocalDate
 
 class ScheduleMenuViewModel(
@@ -16,23 +14,23 @@ class ScheduleMenuViewModel(
     ::ScheduleMenuMutator
 ) {
     fun onScheduleClick() {
-        navController.nav(ScheduleScreens.Main)
+        router.navigateTo(ScheduleScreens.Main)
     }
 
     fun onLessonsReviewClick() {
-        navController.navigate(ScheduleScreens.LessonsReview.route)
+        router.navigateTo(ScheduleScreens.LessonsReview)
     }
 
     fun onScheduleCalendarClick() {
-        navController.navigate(ScheduleScreens.Calendar.route)
+        router.navigateTo(ScheduleScreens.Calendar)
     }
 
     fun onScheduleSourceClick() {
-        navController.navigate(ScheduleScreens.Source.route)
+        router.navigateTo(ScheduleScreens.Source)
     }
 
     fun onFreePlaceClick() {
-        navController.navigate(ScheduleScreens.FreePlace.route)
+        router.navigateTo(ScheduleScreens.FreePlace)
     }
 }
 

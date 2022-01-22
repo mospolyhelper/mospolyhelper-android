@@ -3,9 +3,7 @@ package com.mospolytech.features.base
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.mospolytech.features.base.navigation.Screen
-import com.mospolytech.features.base.utils.nav
+import com.mospolytech.features.base.navigation.core.Router
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +15,7 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>, TAction>(
     private val mutatorFactory: () -> TMutator
 ): ViewModel(), StateStore<TState, TMutator>, KoinComponent {
 
-    protected val navController: NavController by inject()
+    val router: Router by inject()
 
     private val _state = MutableStateFlow(initialState)
     val state = _state.asStateFlow()
@@ -39,11 +37,11 @@ abstract class BaseViewModel<TState, TMutator : BaseMutator<TState>, TAction>(
         _state.value = getMutator(_state.value).apply(mutate).state
     }
 
-    open fun navigateBack() {
-        navController.popBackStack()
+    open fun exit() {
+        router.exit()
     }
 
-    open fun navigateTo(screen: Screen) {
-        navController.nav(screen)
-    }
+//    open fun navigateTo(screen: Screen) {
+//        router.navigateTo(screen)
+//    }
 }

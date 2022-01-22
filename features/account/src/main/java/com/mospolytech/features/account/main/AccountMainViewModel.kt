@@ -5,41 +5,40 @@ import com.mospolytech.features.account.main.model.MenuUi.*
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.navigation.AccountScreens
-import com.mospolytech.features.base.utils.nav
 
 class AccountMainViewModel :
     BaseViewModel<AccountMenuState, AccountMenuMutator, Nothing>(AccountMenuState(), ::AccountMenuMutator) {
 
     fun navigateToAuth() {
-        navController.nav(AccountScreens.Authorization)
+        router.navigateTo(AccountScreens.Authorization)
     }
 
     fun navigateToApplications() {
-        navController.nav(AccountScreens.Applications)
+        router.navigateTo(AccountScreens.Applications)
     }
 
     fun navigateToPayments() {
-        navController.nav(AccountScreens.Payments)
+        router.navigateTo(AccountScreens.Payments)
     }
 
     fun navigateToStudents() {
-        navController.nav(AccountScreens.Students)
+        router.navigateTo(AccountScreens.Students)
     }
 
     fun navigateToTeachers() {
-        navController.nav(AccountScreens.Teachers)
+        router.navigateTo(AccountScreens.Teachers)
     }
 
     fun navigateToClassmates() {
-        navController.nav(AccountScreens.Classmates)
+        router.navigateTo(AccountScreens.Classmates)
     }
 
     fun navigateToMarks() {
-        navController.nav(AccountScreens.Marks)
+        router.navigateTo(AccountScreens.Marks)
     }
 
     fun navigateToPersonal() {
-        navController.nav(AccountScreens.Personal)
+        router.navigateTo(AccountScreens.Personal)
     }
 }
 

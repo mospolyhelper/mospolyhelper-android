@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,9 +22,7 @@ import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.account.model.Student
 import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.TypedListener
-import com.mospolytech.features.base.utils.isNull
 import com.mospolytech.features.base.view.ErrorView
-import com.mospolytech.features.base.view.placeholder
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -34,7 +31,7 @@ fun ClassmatesScreen(viewModel: ClassmatesViewModel = getViewModel()) {
 
     ClassmatesContent(state,
     retryListener = {viewModel.loadClassmates()},
-    backListener = {viewModel.navigateBack()},
+    backListener = {viewModel.exit()},
     inputListener = {viewModel.inputName(it)})
 }
 

@@ -1,7 +1,6 @@
 package com.mospolytech.features.account.teachers
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,8 +22,6 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.account.model.Teacher
-import com.mospolytech.domain.account.model.print
-import com.mospolytech.features.account.students.Student
 import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.TypedListener
 import com.mospolytech.features.base.view.ErrorView
@@ -36,7 +33,7 @@ fun TeachersScreen(viewModel: TeachersViewModel = getViewModel()) {
 
     TeachersContent(state,
         retryListener = {viewModel.load()},
-        backListener = {viewModel.navigateBack()},
+        backListener = {viewModel.exit()},
         inputListener = {})
 }
 

@@ -3,13 +3,11 @@ package com.mospolytech.features.account.applications
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,10 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mospolytech.domain.account.model.Application
 import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.format
-import com.mospolytech.features.base.utils.isNull
 import com.mospolytech.features.base.view.ErrorView
-import com.mospolytech.features.base.view.placeholder
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -34,7 +29,7 @@ fun ApplicationsScreen(viewModel: ApplicationsViewModel = getViewModel()) {
 
     ApplicationsContent(state,
     retryListener = { viewModel.loadData() },
-    backListener = { viewModel.navigateBack() })
+    backListener = { viewModel.router.exit() })
 }
 
 @Composable
