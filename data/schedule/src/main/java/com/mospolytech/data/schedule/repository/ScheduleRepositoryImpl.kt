@@ -1,12 +1,12 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.data.base.VersionConsts
+import com.mospolytech.data.base.Versions
 import com.mospolytech.data.base.local.DataVersionLocalDS
 import com.mospolytech.data.base.local.isExpired
-import com.mospolytech.data.base.model.isExpired
 import com.mospolytech.data.base.retrofit.toResult
 import com.mospolytech.data.schedule.api.ScheduleService
 import com.mospolytech.data.schedule.local.ScheduleLocalDS
+import com.mospolytech.domain.base.utils.loading
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
@@ -15,8 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.time.ZonedDateTime
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.days
 
 class ScheduleRepositoryImpl(
     private val service: ScheduleService,
@@ -32,23 +31,15 @@ class ScheduleRepositoryImpl(
     }.flowOn(Dispatchers.IO)
 
     override fun getSchedule(source: ScheduleSource, forceUpdate: Boolean) = flow {
-        val cachedSchedule = local.getSchedule(source).getOrNull()
-        // TODO: Fix if failure download and null local but is not expired
-        cachedSchedule?.let {
-            emit(Result.success(it))
-        }
+        val cachedSchedule = local.getSchedule(source)
+        val needUpdate = versionDS.isExpired(1.days, Versions.Schedule, source.id) || forceUpdate
+        emit(cachedSchedule.loading(needUpdate))
 
-        val isExpired = versionDS.isExpired(
-            1.toDuration(DurationUnit.DAYS),
-            VersionConsts.Schedule,
-            source.id
-        )
-
-        if (isExpired || forceUpdate) {
-            val schedule = service.getSchedule(source.type.name.lowercase(), source.key).toResult()
-            local.saveSchedule(source, schedule.getOrNull())
-            versionDS.setVersion(ZonedDateTime.now(), VersionConsts.Schedule, source.id)
-            emit(schedule)
+        if (needUpdate) {
+            val newSchedule = service.getSchedule(source.type.name.lowercase(), source.key).toResult()
+            local.saveSchedule(source, newSchedule.getOrNull())
+            versionDS.setVersion(ZonedDateTime.now(), Versions.Schedule, source.id)
+            emit(newSchedule.loading(false))
         }
     }.flowOn(Dispatchers.IO)
 

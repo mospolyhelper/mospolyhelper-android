@@ -1,6 +1,9 @@
 package com.mospolytech.features.schedule.calendar
 
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.domain.base.utils.getOrDefault
+import com.mospolytech.domain.base.utils.isFinalFailure
+import com.mospolytech.domain.base.utils.onSuccess
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
@@ -17,8 +20,10 @@ class ScheduleCalendarViewModel(
     init {
         viewModelScope.launch {
             useCase.getSchedule().collect {
-                mutateState {
-                    setSchedule(it.getOrDefault(emptyList()))
+                if (!it.isFinalFailure) {
+                    mutateState {
+                        setSchedule(it.getOrDefault(emptyList()))
+                    }
                 }
             }
         }

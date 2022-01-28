@@ -69,9 +69,36 @@ class Lce<out T>(
          * Returns an instance that encapsulates the given [Throwable] [exception] as failure.
          */
         fun <T> failure(exception: Throwable, isLoading: Boolean = false): Lce<T> =
-            Lce(Result.failure<T>(exception), isLoading)
+            Lce(Result.failure(exception), isLoading)
     }
 }
+
+// ---------
+// | s | l |    s = isSuccess/isFailure, l = isLoading
+// ---------
+// | 0 | 0 |    isFailure && isNotLoading   |   isFinalFailure
+// | 0 | 1 |    isFailure && isLoading      |   isLoadingFailure
+// | 1 | 0 |    isSuccess && isNotLoading   |   isFinalSuccess
+// | 1 | 1 |    isSuccess && isLoading      |   isLoadingSuccess
+// ---------
+
+
+
+val <T> Lce<T>.isNotLoading
+    get() = !isLoading
+
+
+val <T> Lce<T>.isFinalFailure
+    get() = isFailure && isLoading
+
+val <T> Lce<T>.isLoadingFailure
+    get() = isFailure && !isLoading
+
+val <T> Lce<T>.isFinalSuccess
+    get() = isSuccess && isLoading
+
+val <T> Lce<T>.isLoadingSuccess
+    get() = isSuccess && !isLoading
 
 
 /**
@@ -191,4 +218,8 @@ fun <T> Lce<T>.onLoading(action: () -> Unit): Lce<T> {
     return this
 }
 
+
+fun <T> Result<T>.loading(isLoading: Boolean): Lce<T> {
+    return Lce(this, isLoading)
+}
 // -------------------

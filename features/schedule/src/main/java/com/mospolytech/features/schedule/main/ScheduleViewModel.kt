@@ -1,12 +1,14 @@
 package com.mospolytech.features.schedule.main
 
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.domain.base.utils.getOrDefault
+import com.mospolytech.domain.base.utils.isFinalFailure
+import com.mospolytech.domain.base.utils.isNotLoading
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.schedule.model.WeekUiModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -20,8 +22,11 @@ class ScheduleViewModel(
     init {
         viewModelScope.launch {
             useCase.getSchedule().collect {
-                mutateState {
-                    setSchedule(it.getOrDefault(emptyList()))
+                if (!it.isFinalFailure) {
+                    mutateState {
+                        setSchedule(it.getOrDefault(emptyList()))
+                        setIsLoading(it.isLoading)
+                    }
                 }
             }
         }

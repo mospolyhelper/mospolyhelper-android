@@ -1,5 +1,5 @@
 package com.mospolytech.data.base
 
-object VersionConsts {
+object Versions {
     const val Schedule = "Schedule"
 }

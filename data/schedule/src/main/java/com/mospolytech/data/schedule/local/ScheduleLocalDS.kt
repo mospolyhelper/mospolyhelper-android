@@ -16,10 +16,10 @@ class ScheduleLocalDS(
         )
     }
 
-    fun getSchedule(source: ScheduleSource): Result<List<ScheduleDay>?> {
+    fun getSchedule(source: ScheduleSource): Result<List<ScheduleDay>> {
         return runCatching {
             //val key = db.keyFrom(source.id)
-            db.getById<ScheduleDao>(source.id)?.days
+            db.getById<ScheduleDao>(source.id)?.days ?: emptyList()
         }
     }
 }

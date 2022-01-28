@@ -1,7 +1,6 @@
 package com.mospolytech.features.schedule.menu
 
 import androidx.lifecycle.viewModelScope
-import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.domain.schedule.utils.getClosestLessons
