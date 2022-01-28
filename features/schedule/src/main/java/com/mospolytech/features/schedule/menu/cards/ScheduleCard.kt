@@ -14,10 +14,12 @@ import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.MaterialTheme3
 import com.mospolytech.features.base.utils.WithContentAlpha
 import com.mospolytech.features.schedule.R
+import com.mospolytech.features.schedule.menu.ScheduleMenuState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleCard(
+    state: ScheduleMenuState.MainState,
     onScheduleClick: ClickListener
 ) {
     Card(

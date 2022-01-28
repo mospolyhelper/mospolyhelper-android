@@ -33,6 +33,7 @@ class ScheduleRepositoryImpl(
 
     override fun getSchedule(source: ScheduleSource, forceUpdate: Boolean) = flow {
         val cachedSchedule = local.getSchedule(source).getOrNull()
+        // TODO: Fix if failure download and null local but is not expired
         cachedSchedule?.let {
             emit(Result.success(it))
         }

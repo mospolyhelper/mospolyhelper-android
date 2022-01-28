@@ -20,4 +20,8 @@ data class LessonTime(
         return start
     }
 
+    operator fun contains(value: LocalTime): Boolean {
+        return value in startTime..endTime
+    }
+
 }

@@ -14,6 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 val baseDataModule = module {
     single { TokenInterceptor(get()) }
@@ -27,6 +28,9 @@ val baseDataModule = module {
     single { OkHttpClient.Builder() }
     single {
         get<OkHttpClient.Builder>()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .addInterceptor(get<TokenInterceptor>())
             .addInterceptor(get<ApiVersionInterceptor>())
             .addInterceptor(get<HttpLoggingInterceptor>())

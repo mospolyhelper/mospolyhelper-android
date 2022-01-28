@@ -6,4 +6,5 @@
     <string name="sch_calendar">Календарь</string>
     <string name="sch_lessons_review">Обзор предметов</string>
     <string name="sch_find_free_place">Найти свободную аудиторию</string>
+    <string name="sch_no_lessons_today">Сегодня нет занятий</string>
 </resources>

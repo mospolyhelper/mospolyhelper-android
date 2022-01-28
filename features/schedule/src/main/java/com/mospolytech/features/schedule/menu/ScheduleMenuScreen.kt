@@ -54,7 +54,7 @@ fun ScheduleMenuContent(
         ) {
             Column {
                 ScheduleSourcesCard(onScheduleSourceClick)
-                ScheduleCard(onScheduleClick)
+                ScheduleCard(state.main, onScheduleClick)
             }
             CalendarCard(
                 state.date,
