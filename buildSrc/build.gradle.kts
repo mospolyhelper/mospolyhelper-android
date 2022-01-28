@@ -10,6 +10,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:7.1.0")
+    implementation("com.android.tools.build:gradle:7.0.4")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
 }
