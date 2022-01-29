@@ -25,9 +25,7 @@ class ScheduleViewModel(
                 if (!it.isFinalFailure) {
                     mutateState {
                         setSchedule(it.getOrDefault(emptyList()))
-                        if (!state.isPreloading) {
-                            setIsLoading(it.isLoading)
-                        }
+                        setIsLoading(it.isLoading && !state.isPreloading)
                     }
                 }
             }
