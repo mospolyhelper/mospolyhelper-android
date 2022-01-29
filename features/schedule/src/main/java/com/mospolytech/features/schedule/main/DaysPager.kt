@@ -45,7 +45,7 @@ fun DaysPager(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
             .disabledHorizontalPointerInputScroll(),
         flingBehavior = object : FlingBehavior {
             override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
@@ -104,19 +104,19 @@ fun DayContent(
     val border = BorderStroke(1.dp, borderColor)
     Card(
         modifier = Modifier
-            .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 5.dp)
-            .width(60.dp)
-            .height(70.dp),
+            .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)
+            .width(50.dp)
+            .height(60.dp),
         shape = RoundedCornerShape(20.dp),
         border = border
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 5.dp, end = 5.dp, top = 10.dp)
+                .padding(start = 3.dp, end = 3.dp, top = 5.dp)
         ) {
             Text(
                 text = weekFormat.format(day.date).uppercase(),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 textAlign = TextAlign.Center,
@@ -124,21 +124,21 @@ fun DayContent(
             )
             Text(
                 text = day.date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(5.dp))
             Row(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 (0 until day.lessonCount).forEach {
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 2.dp)
-                            .size(4.dp)
+                            .padding(horizontal = 1.5.dp)
+                            .size(3.5.dp)
                             .background(MaterialTheme.colorScheme.primary, CircleShape)
                     )
                 }

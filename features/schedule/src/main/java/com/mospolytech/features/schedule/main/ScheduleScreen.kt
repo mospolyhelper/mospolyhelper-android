@@ -2,7 +2,6 @@ package com.mospolytech.features.schedule.main
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.mospolytech.features.base.utils.*
+import com.mospolytech.features.base.view.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
 import org.koin.androidx.compose.getViewModel
 
@@ -23,6 +23,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
     if (state.schedule.isNotEmpty() || state.isPreloading) {
         ScheduleContent(
             state,
+            viewModel::exit,
             viewModel::onFabClick,
             viewModel::onSchedulePosChanged,
             viewModel::onWeeksPosChanged
@@ -34,6 +35,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
 @Composable
 fun ScheduleContent(
     state: ScheduleState,
+    onBackClick: ClickListener,
     onFabClick: ClickListener,
     onSchedulePosChanged: TypedListener<Int>,
     onWeeksPosChanged: TypedListener<Int>
@@ -44,25 +46,11 @@ fun ScheduleContent(
             weekPagerState.bindTo(state.weeksPos)
             weekPagerState.onPageChanged { onWeeksPosChanged(it) }
 
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, end = 16.dp, top = 1.dp, bottom = 1.dp)
-            ) {
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(painter = painterResource(FluentIcons.ic_fluent_arrow_left_24_filled), contentDescription = null)
-                }
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                            .size(26.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
-            }
+            PrimaryTopAppBar(
+                title = stringResource(R.string.sch_schedule),
+                showLoading = !state.isLoading,
+                onBackClick = onBackClick
+            )
 
             DaysPager(
                 weeks = state.weeks,
