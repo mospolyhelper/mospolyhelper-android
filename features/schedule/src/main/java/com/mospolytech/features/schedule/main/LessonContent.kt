@@ -20,9 +20,9 @@ import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.teacher.Teacher
 import com.mospolytech.domain.schedule.utils.getShortName
 import com.mospolytech.features.base.utils.ContentAlpha
+import com.mospolytech.features.base.utils.FluentIcons
 import com.mospolytech.features.base.utils.WithContentAlpha
 import com.mospolytech.features.base.view.placeholder
-import com.mospolytech.features.schedule.R
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -84,7 +84,7 @@ fun TeachersContent(teachers: List<Teacher>, isLoading: Boolean = false) {
         modifier = Modifier.placeholder(visible = isLoading)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_fluent_hat_graduation_16_regular),
+            painter = painterResource(id = FluentIcons.ic_fluent_hat_graduation_16_regular),
             contentDescription = null,
             modifier = Modifier
                 .size(17.dp)
@@ -115,7 +115,7 @@ fun GroupsContent(groups: List<Group>, isLoading: Boolean = false) {
         modifier = Modifier.placeholder(visible = isLoading)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_fluent_people_16_regular),
+            painter = painterResource(id = FluentIcons.ic_fluent_people_16_regular),
             contentDescription = null,
             modifier = Modifier
                 .size(17.dp)
@@ -141,7 +141,7 @@ fun PlacesContent(places: List<Place>, isLoading: Boolean = false) {
         modifier = Modifier.placeholder(visible = isLoading)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_fluent_location_16_regular),
+            painter = painterResource(id = FluentIcons.ic_fluent_location_16_regular),
             contentDescription = null,
             modifier = Modifier
                 .size(17.dp)

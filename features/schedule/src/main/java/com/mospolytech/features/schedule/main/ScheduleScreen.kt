@@ -7,7 +7,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,7 +53,7 @@ fun ScheduleContent(
                     onClick = { },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
-                    Icon(painter = painterResource(R.drawable.ic_fluent_arrow_left_24_filled), contentDescription = null)
+                    Icon(painter = painterResource(FluentIcons.ic_fluent_arrow_left_24_filled), contentDescription = null)
                 }
                 if (state.isLoading) {
                     CircularProgressIndicator(
@@ -106,7 +105,7 @@ fun BoxScope.Fab(isVisible: Boolean, onClick: () -> Unit) {
             },
             icon = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_fluent_calendar_today_24_regular),
+                    painter = painterResource(FluentIcons.ic_fluent_calendar_today_24_regular),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
