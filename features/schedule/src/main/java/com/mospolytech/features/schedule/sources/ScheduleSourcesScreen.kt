@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -34,6 +35,8 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.features.base.utils.*
 import com.mospolytech.features.base.view.InitialAvatar
+import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.schedule.R
 import com.mospolytech.features.schedule.main.ScheduleViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -43,6 +46,7 @@ fun ScheduleSourcesScreen(viewModel: ScheduleSourcesViewModel = getViewModel()) 
     
     ScheduleSourcesContent(
         state,
+        viewModel::exit,
         viewModel::onSelectSourceType
     )
 }
@@ -50,10 +54,16 @@ fun ScheduleSourcesScreen(viewModel: ScheduleSourcesViewModel = getViewModel()) 
 @Composable
 fun ScheduleSourcesContent(
     state: ScheduleSourceState,
+    onBackClick: ClickListener,
     onSourceTypeSelected: TypedListener<ScheduleSources>
 ) {
     
     Column {
+        PrimaryTopAppBar(
+            title = "Выбор расписания",
+            onBackClick = onBackClick
+        )
+
         LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {

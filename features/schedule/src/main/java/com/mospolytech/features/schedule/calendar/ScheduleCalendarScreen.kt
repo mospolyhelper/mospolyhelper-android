@@ -13,11 +13,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
+import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
+import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.schedule.R
 import org.koin.androidx.compose.getViewModel
 import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
@@ -26,11 +30,14 @@ import kotlin.math.ceil
 fun ScheduleCalendarScreen(viewModel: ScheduleCalendarViewModel = getViewModel()) {
     val state by viewModel.state.collectAsState()
 
-    ScheduleCalendarContent(state)
+    ScheduleCalendarContent(state, viewModel::exit)
 }
 
 @Composable
-fun ScheduleCalendarContent(state: ScheduleCalendarState) {
+fun ScheduleCalendarContent(
+    state: ScheduleCalendarState,
+    onBackClick: ClickListener
+) {
     var cellCount by remember { mutableStateOf(3) }
 //    val q = rememberTransformableState { zoomChange, _, _ ->
 //        Log.d("ZOOM", zoomChange.toString())
@@ -40,6 +47,10 @@ fun ScheduleCalendarContent(state: ScheduleCalendarState) {
 
     Column(
     ) {
+        PrimaryTopAppBar(
+            title = stringResource(R.string.sch_calendar),
+            onBackClick = onBackClick
+        )
         CalendarThree(schedule = state.schedule, 3)
     }
 }

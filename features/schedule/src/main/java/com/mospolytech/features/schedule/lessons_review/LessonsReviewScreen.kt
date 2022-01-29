@@ -12,14 +12,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.model.review.LessonReviewDay
 import com.mospolytech.domain.schedule.model.review.LessonTimesReview
+import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.WithContentAlpha
+import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.schedule.R
 import com.mospolytech.features.schedule.main.LessonHeader
 import com.mospolytech.features.schedule.main.LessonTitle
 import com.mospolytech.features.schedule.main.LessonType
@@ -35,16 +39,23 @@ fun LessonsReviewScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    LessonsReviewContent(state.lessons)
+    LessonsReviewContent(state.lessons, viewModel::exit)
 }
 
 @Composable
-fun LessonsReviewContent(lessons: List<LessonTimesReview>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(lessons) { lessonTimesReview ->
-            LessonTimesReviewContent(lessonTimesReview)
+fun LessonsReviewContent(
+    lessons: List<LessonTimesReview>,
+    onBackClick: ClickListener
+) {
+    Column(Modifier.fillMaxSize()) {
+        PrimaryTopAppBar(
+            title = stringResource(R.string.sch_lessons_review),
+            onBackClick = onBackClick
+        )
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(lessons) { lessonTimesReview ->
+                LessonTimesReviewContent(lessonTimesReview)
+            }
         }
     }
 }

@@ -15,10 +15,14 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mospolytech.features.base.utils.ClickListener
 import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.utils.MaterialTheme3
 import com.mospolytech.features.base.utils.WithContentAlpha
+import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.schedule.R
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
@@ -33,6 +37,7 @@ fun FreePlaceScreen(viewModel: FreePlaceViewModel = getViewModel()) {
 
     FreePlaceContent(
         state,
+        viewModel::exit,
         viewModel::onDateSelect,
         viewModel::onTimeFromSelect,
         viewModel::onTimeToSelect,
@@ -45,6 +50,7 @@ fun FreePlaceScreen(viewModel: FreePlaceViewModel = getViewModel()) {
 @Composable
 fun FreePlaceContent(
     state: FreePlaceState,
+    onBackClick: ClickListener,
     onDateSelect: (LocalDate) -> Unit,
     onTimeFromSelect: (LocalTime) -> Unit,
     onTimeToSelect: (LocalTime) -> Unit,
@@ -54,7 +60,6 @@ fun FreePlaceContent(
     Box(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
     ) {
         val dialogDatePickerState = rememberMaterialDialogState()
         val dialogTimePickerFromState = rememberMaterialDialogState()
@@ -70,6 +75,10 @@ fun FreePlaceContent(
 //        RangeSlider(values = state.timesPositionRange, onValueChange = onTimeRangeChange)
 
         Column(Modifier.verticalScroll(rememberScrollState())) {
+            PrimaryTopAppBar(
+                title = stringResource(R.string.sch_find_free_place),
+                onBackClick = onBackClick
+            )
             Text(text = state.date.toString())
             Text(text = state.timeFrom.toString())
             Text(text = state.timeTo.toString())
