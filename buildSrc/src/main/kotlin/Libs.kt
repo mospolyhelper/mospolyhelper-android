@@ -107,7 +107,7 @@ object Libs {
         const val okHttpLogging = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
         const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
         const val paging = "androidx.paging:paging-runtime:${Versions.paging}"
-        const val pagingCompose = "androidx.paging:paging-runtime:${Versions.pagingCompose}"
+        const val pagingCompose = "androidx.paging:paging-compose:${Versions.pagingCompose}"
     }
 
     object Storage {
@@ -131,7 +131,7 @@ object Libs {
 
 object Versions {
     const val gradle = "7.1.0"
-    const val kotlin = "1.6.0"
+    const val kotlin = "1.6.10"
 
     const val kotlinCoroutines = "1.6.0"
     const val kotlinxSerialization = "1.3.2"
@@ -146,27 +146,26 @@ object Versions {
     const val paging = "3.1.0"
     const val pagingCompose = "1.0.0-alpha14"
     const val retrofit = "2.9.0"
-    const val okHttp = "4.9.0"
+    const val okHttp = "4.9.3"
 
     // Storage
     const val kodeinDB = "0.9.0-beta"
 
     // Compose
-    const val compose = "1.1.0-rc01"
-    const val composeMaterial3 = "1.0.0-alpha03"
-    const val accompanistOld = "0.21.4-beta"
-    const val accompanist = "0.22.0-rc"
+    const val compose = "1.1.0-rc03"
+    const val composeMaterial3 = "1.0.0-alpha04"
+    const val accompanist = "0.22.1-rc"
 
     // AndroidX
     const val lifecycle = "2.4.0"
-    const val navigation = "2.4.0-rc01"
+    const val navigation = "2.4.0"
     const val coreKtx = "1.7.0"
-    const val appcompat = "1.4.0"
+    const val appcompat = "1.4.1"
 
     // UI
-    const val material = "1.5.0-rc01"
+    const val material = "1.5.0"
     const val constraintLayout = "1.0.0"
     const val fluentIcons = "1.1.157@aar"
     const val lottie = "4.2.2"
-    const val materialDateTimePicker = "0.6.2"
+    const val materialDateTimePicker = "0.6.3"
 }

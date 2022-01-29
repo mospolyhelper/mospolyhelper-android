@@ -41,7 +41,7 @@ fun FreePlaceScreen(viewModel: FreePlaceViewModel = getViewModel()) {
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun FreePlaceContent(
     state: FreePlaceState,
