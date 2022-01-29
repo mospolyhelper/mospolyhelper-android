@@ -112,7 +112,7 @@ fun DayContent(
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 3.dp, end = 3.dp, top = 5.dp)
+                .padding(start = 3.dp, end = 3.dp, top = 6.dp)
         ) {
             Text(
                 text = weekFormat.format(day.date).uppercase(),

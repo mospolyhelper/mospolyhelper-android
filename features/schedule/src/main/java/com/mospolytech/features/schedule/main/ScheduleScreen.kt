@@ -48,7 +48,7 @@ fun ScheduleContent(
 
             PrimaryTopAppBar(
                 title = stringResource(R.string.sch_schedule),
-                showLoading = !state.isLoading,
+                showLoading = state.isLoading,
                 onBackClick = onBackClick
             )
 

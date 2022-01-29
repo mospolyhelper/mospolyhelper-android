@@ -45,6 +45,8 @@ fun PrimaryTopAppBar(
                             .size(26.dp),
                         strokeWidth = 2.dp
                     )
+                } else {
+                    Spacer(Modifier.size(26.dp))
                 }
             }
         },
