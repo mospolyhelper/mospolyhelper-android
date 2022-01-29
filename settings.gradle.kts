@@ -1,5 +1,23 @@
 @file:Suppress("UnstableApiUsage")
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+
+    val androidGradleVersion = "7.1.0"
+    val kotlinVersion = "1.6.10"
+
+    plugins {
+        id("com.android.application") version androidGradleVersion apply false
+        id("com.android.library") version androidGradleVersion  apply false
+        kotlin("android") version kotlinVersion apply false
+        kotlin("plugin.serialization") version kotlinVersion apply false
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -7,6 +25,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "mospolyhelper"
 
 include(":app")

@@ -1,6 +1,6 @@
 plugins {
     id("android-domain-base")
-    kotlin("plugin.serialization") version Versions.kotlin
+    kotlin("plugin.serialization")
 }
 
 dependencies {
