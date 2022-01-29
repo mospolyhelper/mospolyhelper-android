@@ -2,10 +2,7 @@ package com.mospolytech.features.schedule.main
 
 import androidx.annotation.RawRes
 import androidx.annotation.XmlRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -83,6 +80,7 @@ fun NoLessonsDay(@RawRes animation: Int) {
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .weight(4f)
+                .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 10.dp),
             softWrap = true,
             textAlign = TextAlign.Center
@@ -142,5 +140,5 @@ fun ScheduleDayPlaceHolder() {
         )
     }
 
-    LessonList(lessons = lessons)
+    LessonList(lessons = lessons, isLoading = true)
 }

@@ -2,10 +2,12 @@ package com.mospolytech.features.schedule.main
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,26 @@ fun ScheduleContent(
             val weekPagerState = rememberPagerState(state.weeksPos)
             weekPagerState.bindTo(state.weeksPos)
             weekPagerState.onPageChanged { onWeeksPosChanged(it) }
+
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 16.dp, top = 1.dp, bottom = 1.dp)
+            ) {
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(painter = painterResource(R.drawable.ic_fluent_arrow_left_24_filled), contentDescription = null)
+                }
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                            .size(26.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
 
             DaysPager(
                 weeks = state.weeks,

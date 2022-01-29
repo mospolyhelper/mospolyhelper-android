@@ -104,7 +104,7 @@ fun DayContent(
     val border = BorderStroke(1.dp, borderColor)
     Card(
         modifier = Modifier
-            .padding(start = 3.dp, end = 3.dp, top = 5.dp, bottom = 5.dp)
+            .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 5.dp)
             .width(60.dp)
             .height(70.dp),
         shape = RoundedCornerShape(20.dp),
