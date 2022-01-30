@@ -12,10 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mospolytech.features.base.utils.ClickListener
+import com.mospolytech.features.schedule.menu.ScheduleMenuState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleSourcesCard(
+    state: ScheduleMenuState.SourceState,
     onScheduleSourceClick: ClickListener
 ) {
     Card(
@@ -27,7 +29,7 @@ fun ScheduleSourcesCard(
         onClick = onScheduleSourceClick
     ) {
         Box(Modifier.padding(horizontal = 15.dp, vertical = 10.dp)) {
-            Text(text = "Выберите расписание")
+            Text(text = state.selectedSource?.title ?: "Выберите расписание")
         }
     }
 }

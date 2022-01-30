@@ -7,8 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.*
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +33,7 @@ import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.features.base.utils.*
+import com.mospolytech.features.base.utils.ContentAlpha
 import com.mospolytech.features.base.view.InitialAvatar
 import com.mospolytech.features.base.view.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
@@ -47,7 +47,9 @@ fun ScheduleSourcesScreen(viewModel: ScheduleSourcesViewModel = getViewModel()) 
     ScheduleSourcesContent(
         state,
         viewModel::exit,
-        viewModel::onSelectSourceType
+        viewModel::onQueryChange,
+        viewModel::onSelectSourceType,
+        viewModel::onSelectSource
     )
 }
 
@@ -55,13 +57,32 @@ fun ScheduleSourcesScreen(viewModel: ScheduleSourcesViewModel = getViewModel()) 
 fun ScheduleSourcesContent(
     state: ScheduleSourceState,
     onBackClick: ClickListener,
-    onSourceTypeSelected: TypedListener<ScheduleSources>
+    onQueryChange: TypedListener<String>,
+    onSourceTypeSelected: TypedListener<ScheduleSources>,
+    onSourceSelected: TypedListener<ScheduleSourceFull>
 ) {
     
     Column {
         PrimaryTopAppBar(
             title = "Выбор расписания",
             onBackClick = onBackClick
+        )
+
+        OutlinedTextField(
+            value = state.query,
+            onValueChange = onQueryChange,
+            colors = TextFieldDefaults
+                .outlinedTextFieldColors(textColor = MaterialTheme3.colorScheme.onBackground),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            placeholder = {
+                WithContentAlpha(alpha = ContentAlpha.medium) {
+                    Text(
+                        text = "Поиск"
+                    )
+                }
+            }
         )
 
         LazyRow(
@@ -78,8 +99,8 @@ fun ScheduleSourcesContent(
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(state.sources) { source ->
-                SourceItem(source)
+            items(state.filteredSources) { source ->
+                SourceItem(source, onSourceSelected)
             }
         }
     }
@@ -108,10 +129,10 @@ fun SourceType(
 }
 
 @Composable
-fun SourceItem(source: ScheduleSourceFull, onItemClick: () -> Unit = { }) {
+fun SourceItem(source: ScheduleSourceFull, onItemClick: TypedListener<ScheduleSourceFull>) {
     Column(
         Modifier
-            .clickable(onClick = onItemClick)
+            .clickable(onClick = { onItemClick(source) })
             .fillMaxWidth()
     ) {
         Spacer(Modifier.height(5.dp))

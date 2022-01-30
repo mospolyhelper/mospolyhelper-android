@@ -53,7 +53,7 @@ fun ScheduleMenuContent(
                 .fillMaxWidth()
         ) {
             Column {
-                ScheduleSourcesCard(onScheduleSourceClick)
+                ScheduleSourcesCard(state.source, onScheduleSourceClick)
                 ScheduleCard(state.main, onScheduleClick)
             }
             CalendarCard(

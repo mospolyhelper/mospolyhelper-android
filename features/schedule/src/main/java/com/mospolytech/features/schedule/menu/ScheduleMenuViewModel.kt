@@ -2,11 +2,13 @@ package com.mospolytech.features.schedule.menu
 
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
+import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.domain.schedule.utils.getClosestLessons
 import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.navigation.ScheduleScreens
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -48,6 +50,12 @@ class ScheduleMenuViewModel(
 
             }
         }
+
+        viewModelScope.launch {
+            useCase.getSelectedSource().collect {
+                mutateState { setSelectedSource(it.getOrNull()) }
+            }
+        }
     }
 
     fun onScheduleClick() {
@@ -73,16 +81,24 @@ class ScheduleMenuViewModel(
 
 data class ScheduleMenuState(
     val main: MainState = MainState(),
+    val source: SourceState = SourceState(),
     val date: LocalDate = LocalDate.now()
 ) {
     data class MainState(
         val currentLessons: List<ClosestLessons> = emptyList(),
         val notStartedLessons: List<ClosestLessons> = emptyList()
     )
+
+    data class SourceState(
+        val selectedSource: ScheduleSourceFull? = null
+    )
 }
 
 class ScheduleMenuMutator : BaseMutator<ScheduleMenuState>() {
-
+    fun setSelectedSource(selectedSource: ScheduleSourceFull?) =
+        set(state.source.selectedSource, selectedSource) {
+            copy(source = source.copy(selectedSource = it))
+        }
 }
 
 class ClosestLessons(

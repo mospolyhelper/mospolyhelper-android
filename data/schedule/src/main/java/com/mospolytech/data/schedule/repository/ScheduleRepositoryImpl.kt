@@ -9,13 +9,17 @@ import com.mospolytech.data.schedule.local.ScheduleLocalDS
 import com.mospolytech.domain.base.utils.loading
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
+import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 
 class ScheduleRepositoryImpl(
     private val service: ScheduleService,
@@ -28,6 +32,15 @@ class ScheduleRepositoryImpl(
 
     override fun getSources(type: ScheduleSources) = flow {
         emit(service.getSources(type.name.lowercase()).toResult())
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun setSelectedSource(source: ScheduleSourceFull) = withContext(Dispatchers.IO) {
+        local.setSelectedSource(source)
+    }
+
+    override fun getSelectedSource() = flow {
+        val q = local.getSelectedSource()
+        emit(q)
     }.flowOn(Dispatchers.IO)
 
     override fun getSchedule(source: ScheduleSource, forceUpdate: Boolean) = flow {

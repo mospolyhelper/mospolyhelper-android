@@ -5,6 +5,7 @@ import com.mospolytech.data.base.local.DataVersionLocalDS
 import com.mospolytech.data.base.model.DataVersion
 import com.mospolytech.data.schedule.model.ScheduleDao
 import com.mospolytech.data.schedule.model.ScheduleSourceDao
+import com.mospolytech.data.schedule.model.ScheduleSourceFullDao
 import org.kodein.db.DB
 import org.kodein.db.OpenPolicy
 import org.kodein.db.impl.open
@@ -36,6 +37,7 @@ fun buildDB(pathProvider: PathProvider): DB {
             +ScheduleDao.serializer()
             +ScheduleSourceDao.serializer()
             +DataVersion.serializer()
+            +ScheduleSourceFullDao.serializer()
         },
         OpenPolicy.OpenOrCreate
     )

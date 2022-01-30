@@ -8,7 +8,7 @@ import com.mospolytech.features.base.BaseMutator
 import com.mospolytech.features.base.BaseViewModel
 import com.mospolytech.features.base.utils.onFailure
 import com.mospolytech.features.base.utils.onSuccess
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ScheduleSourcesViewModel(
@@ -24,12 +24,12 @@ class ScheduleSourcesViewModel(
                 .onFailure { mutateState { setSourceTypes(emptyList()) } }
                 .collect()
         }
-    }
 
-    fun onSelectSourceType(sourceType: ScheduleSources) {
-        mutateState {
-            setSelectedSourceType(sourceType)
-            state.selectedSourceType?.let {
+        viewModelScope.launch {
+            state.map { it.selectedSourceType }
+                .filterNotNull()
+                .distinctUntilChanged()
+                .collect {
                 viewModelScope.launch {
                     useCase.getSources(it)
                         .onSuccess { mutateState { setSources(it) } }
@@ -37,7 +37,25 @@ class ScheduleSourcesViewModel(
                         .collect()
                 }
             }
+        }
+    }
 
+    fun onSelectSourceType(sourceType: ScheduleSources) {
+        mutateState {
+            setSelectedSourceType(sourceType)
+        }
+    }
+
+    fun onSelectSource(source: ScheduleSourceFull) {
+        viewModelScope.launch {
+            useCase.setSelectedSource(source)
+            router.exit()
+        }
+    }
+
+    fun onQueryChange(query: String) {
+        mutateState {
+            setQuery(query)
         }
     }
 
@@ -46,7 +64,9 @@ class ScheduleSourcesViewModel(
 data class ScheduleSourceState(
     val sourceTypes: List<ScheduleSources> = emptyList(),
     val selectedSourceType: ScheduleSources? = null,
-    val sources: List<ScheduleSourceFull> = emptyList()
+    val query: String = "",
+    val sources: List<ScheduleSourceFull> = emptyList(),
+    val filteredSources: List<ScheduleSourceFull> = emptyList()
 )
 
 class ScheduleSourceMutator : BaseMutator<ScheduleSourceState>() {
@@ -69,5 +89,27 @@ class ScheduleSourceMutator : BaseMutator<ScheduleSourceState>() {
     fun setSources(sources: List<ScheduleSourceFull>) =
         set(state.sources, sources) {
             copy(sources = it)
+        }.then {
+            setFilteredSources(state.sources
+                .filter {
+                    state.query.isEmpty() ||
+                            it.title.contains(state.query, ignoreCase = true)
+                })
+        }
+
+    fun setFilteredSources(filteredSources: List<ScheduleSourceFull>) =
+        set(state.filteredSources, filteredSources) {
+            copy(filteredSources = it)
+        }
+
+    fun setQuery(query: String) =
+        set(state.query, query) {
+            copy(query = it)
+        }.then {
+            setFilteredSources(state.sources
+                .filter {
+                    state.query.isEmpty() ||
+                        it.title.contains(state.query, ignoreCase = true)
+                })
         }
 }
