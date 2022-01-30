@@ -22,7 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -88,7 +91,7 @@ private val weekFormat = DateTimeFormatter.ofPattern("EEE")
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun DayContent(
+fun RowScope.DayContent(
     day: DayUiModel,
     isSelected: Boolean
 ) {
@@ -105,7 +108,10 @@ fun DayContent(
     )
 
     val border = BorderStroke(1.dp, borderColor)
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.weight(1f)
+    ) {
         WithContentAlpha(ContentAlpha.medium) {
             Text(
                 text = weekFormat.format(day.date).uppercase(),
@@ -119,8 +125,7 @@ fun DayContent(
         Card(
             modifier = Modifier
                 .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)
-                .width(40.dp)
-                .height(40.dp),
+                .size(39.dp),
             shape = CircleShape,
             border = border,
             backgroundColor = backgroundColor
@@ -137,20 +142,38 @@ fun DayContent(
                 )
             }
         }
-        Spacer(Modifier.height(4.dp))
-        Row(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .height(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            (0 until day.lessonCount).forEach {
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 1.5.dp)
-                        .size(3.5.dp)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape)
-                )
+        Spacer(Modifier.height(2.5.dp))
+        if (day.lessonCount < 6) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .height(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                (0 until day.lessonCount).forEach {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 1.5.dp)
+                            .size(4.5.dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    )
+                }
+            }
+        } else {
+            Card(
+                modifier = Modifier.height(14.dp),
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        modifier =  Modifier.padding(bottom = 1.dp, start = 5.dp, end = 5.dp),
+                        text = day.lessonCount.toString(),
+                        style =  MaterialTheme3.typography.titleSmall,
+                        fontSize = 9.0.dp.sp(),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         }
     }
