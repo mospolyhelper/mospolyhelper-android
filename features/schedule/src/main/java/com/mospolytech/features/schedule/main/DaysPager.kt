@@ -26,9 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.mospolytech.features.base.utils.MaterialTheme3
-import com.mospolytech.features.base.utils.disabledHorizontalPointerInputScroll
-import com.mospolytech.features.base.utils.isItemFullyVisible
+import com.mospolytech.features.base.utils.*
 import com.mospolytech.features.schedule.model.DayUiModel
 import com.mospolytech.features.schedule.model.WeekUiModel
 import java.time.format.DateTimeFormatter
@@ -45,7 +43,7 @@ fun DaysPager(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(85.dp)
             .disabledHorizontalPointerInputScroll(),
         flingBehavior = object : FlingBehavior {
             override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
@@ -74,13 +72,13 @@ fun WeekContent(
         }
     }
 
-    LazyRow(
+    Row(
         modifier = Modifier
+            .padding(horizontal = 8.dp)
             .fillMaxWidth(),
-        state = lazyRowState,
-        contentPadding = PaddingValues(horizontal = 6.dp)
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
-        itemsIndexed(week.days) { index, day ->
+        week.days.forEachIndexed { index, day ->
             DayContent(day, dayOfWeekPos == index)
         }
     }
@@ -96,52 +94,63 @@ fun DayContent(
 ) {
     val colorFrom = MaterialTheme3.colorScheme.secondary
 
+    val backgroundColor = if (day.isToday)
+        MaterialTheme3.colorScheme.secondaryContainer
+    else
+        MaterialTheme3.colorScheme.surface
+
     val borderColor by animateColorAsState(
         if (isSelected) colorFrom else Color.Transparent,
         tween(500)
     )
 
     val border = BorderStroke(1.dp, borderColor)
-    Card(
-        modifier = Modifier
-            .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)
-            .width(50.dp)
-            .height(60.dp),
-        shape = RoundedCornerShape(20.dp),
-        border = border
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(start = 3.dp, end = 3.dp, top = 6.dp)
-        ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        WithContentAlpha(ContentAlpha.medium) {
             Text(
                 text = weekFormat.format(day.date).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                textAlign = TextAlign.Center
             )
-            Text(
-                text = day.date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(5.dp))
-            Row(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                (0 until day.lessonCount).forEach {
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 1.5.dp)
-                            .size(3.5.dp)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                    )
-                }
+        }
+        Spacer(Modifier.height(3.5.dp))
+        Card(
+            modifier = Modifier
+                .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)
+                .width(40.dp)
+                .height(40.dp),
+            shape = CircleShape,
+            border = border,
+            backgroundColor = backgroundColor
+        ) {
+            Box(Modifier.padding(start = 3.dp, end = 3.dp)) {
+                Text(
+                    text = day.date.dayOfMonth.toString(),
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(bottom = 1.dp)
+                )
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            (0 until day.lessonCount).forEach {
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 1.5.dp)
+                        .size(3.5.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                )
             }
         }
     }

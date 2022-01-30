@@ -39,14 +39,15 @@ fun PrimaryTopAppBar(
                     style = MaterialTheme3.typography.titleMedium,
                     textAlign = TextAlign.Center
                 )
-                if (showLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(26.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Spacer(Modifier.size(26.dp))
+                Box(Modifier.width(50.dp)) {
+                    if (showLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(26.dp)
+                                .align(Alignment.CenterEnd),
+                            strokeWidth = 2.dp
+                        )
+                    }
                 }
             }
         },
