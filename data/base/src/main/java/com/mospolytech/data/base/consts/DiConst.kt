@@ -1,4 +1,4 @@
-package com.mospolytech.data.base
+package com.mospolytech.data.base.consts
 
 object DiConst {
     const val Schedule = "schedule"

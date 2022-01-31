@@ -1,6 +1,8 @@
 package com.mospolytech.data.base
 
-import com.mospolytech.data.base.local.DataVersionLocalDS
+import com.mospolytech.data.base.consts.DiConst
+import com.mospolytech.data.base.local.*
+import com.mospolytech.data.base.repository.EventRepository
 import com.mospolytech.data.base.retrofit.ApiVersionInterceptor
 import com.mospolytech.data.base.retrofit.JsonConverterFactory
 import com.mospolytech.data.base.retrofit.TokenInterceptor
@@ -84,4 +86,7 @@ val baseDataModule = module {
 
     single { EventRepository() }
     single { DataVersionLocalDS(get()) }
+    single<PreferencesDS> { PreferencesLocalDS(get()) }
+    single { CacheLocalDS(get()) }
+    single { CacheVersionLocalDS(get(), get()) }
 }

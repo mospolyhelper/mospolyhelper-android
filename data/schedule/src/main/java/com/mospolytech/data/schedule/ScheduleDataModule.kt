@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule
 
-import com.mospolytech.data.base.DiConst
+import com.mospolytech.data.base.consts.DiConst
 import com.mospolytech.data.schedule.api.ScheduleService
 import com.mospolytech.data.schedule.local.ScheduleLocalDS
 import com.mospolytech.data.schedule.repository.ScheduleRepositoryImpl

@@ -2,7 +2,7 @@ package com.mospolytech.data.account
 
 import com.mospolytech.data.account.api.AccountService
 import com.mospolytech.data.account.repository.*
-import com.mospolytech.data.base.DiConst
+import com.mospolytech.data.base.consts.DiConst
 import com.mospolytech.domain.account.repository.*
 import org.koin.core.qualifier.named
 import org.koin.dsl.module

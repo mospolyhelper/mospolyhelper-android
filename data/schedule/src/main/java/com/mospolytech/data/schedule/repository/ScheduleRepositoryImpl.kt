@@ -1,19 +1,21 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.data.base.Versions
-import com.mospolytech.data.base.local.DataVersionLocalDS
-import com.mospolytech.data.base.local.isExpired
+import com.mospolytech.data.base.consts.CacheConst
+import com.mospolytech.data.base.consts.PrefConst
+import com.mospolytech.data.base.consts.Versions
+import com.mospolytech.data.base.local.*
 import com.mospolytech.data.base.retrofit.toResult
 import com.mospolytech.data.schedule.api.ScheduleService
 import com.mospolytech.data.schedule.local.ScheduleLocalDS
+import com.mospolytech.data.schedule.model.ScheduleDao
 import com.mospolytech.domain.base.utils.loading
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -23,8 +25,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class ScheduleRepositoryImpl(
     private val service: ScheduleService,
-    private val local: ScheduleLocalDS,
-    private val versionDS: DataVersionLocalDS
+    private val cachedDS: CacheVersionLocalDS,
+    private val preferencesDS: PreferencesDS
 ) : ScheduleRepository {
     override fun getSourceTypes() = flow {
         emit(service.getSourceTypes().toResult())
@@ -34,24 +36,22 @@ class ScheduleRepositoryImpl(
         emit(service.getSources(type.name.lowercase()).toResult())
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun setSelectedSource(source: ScheduleSourceFull) = withContext(Dispatchers.IO) {
-        local.setSelectedSource(source)
-    }
+    override suspend fun setSelectedSource(source: ScheduleSourceFull): Unit =
+        withContext(Dispatchers.IO) {
+            preferencesDS.set(source, PrefConst.SelectedScheduleSource)
+        }
 
-    override fun getSelectedSource() = flow {
-        val q = local.getSelectedSource()
-        emit(q)
-    }.flowOn(Dispatchers.IO)
+    override fun getSelectedSource() = preferencesDS
+        .flowOf<ScheduleSourceFull>(PrefConst.SelectedScheduleSource)
+        .flowOn(Dispatchers.IO)
 
     override fun getSchedule(source: ScheduleSource, forceUpdate: Boolean) = flow {
-        val cachedSchedule = local.getSchedule(source)
-        val needUpdate = versionDS.isExpired(1.days, Versions.Schedule, source.id) || forceUpdate
-        emit(cachedSchedule.loading(needUpdate))
+        val (cachedSchedule, isExpired) = cachedDS.get<ScheduleDao>(CacheConst.Schedule, 1.seconds)
+        emit(cachedSchedule.map { it?.days ?: emptyList() }.loading(isExpired || forceUpdate))
 
-        if (needUpdate) {
+        if (isExpired || forceUpdate) {
             val newSchedule = service.getSchedule(source.type.name.lowercase(), source.key).toResult()
-            local.saveSchedule(source, newSchedule.getOrNull())
-            versionDS.setVersion(ZonedDateTime.now(), Versions.Schedule, source.id)
+            cachedDS.save(ScheduleDao.from(source, newSchedule.getOrNull()), CacheConst.Schedule)
             emit(newSchedule.loading(false))
         }
     }.flowOn(Dispatchers.IO)

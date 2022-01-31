@@ -2,6 +2,8 @@ package com.mospolytech.data.base.local
 
 import com.mospolytech.data.base.model.DataVersion
 import com.mospolytech.data.base.model.isExpired
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.kodein.db.DB
 import org.kodein.db.get
 import org.kodein.db.keyById
@@ -27,6 +29,7 @@ class DataVersionLocalDS(
     }
 
     fun getVersion(id: String): DataVersion? {
+        Json.encodeToString(Any())
         return kotlin.runCatching {
             val key = db.keyById<DataVersion>(id)
             db.get<DataVersion>(key)
