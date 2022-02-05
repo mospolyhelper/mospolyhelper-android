@@ -1,13 +1,12 @@
 package com.mospolytech.features.base.core.utils
 
-import androidx.compose.material.*
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.TextStyle
-
 
 fun TextStyle.withAlpha(alpha: Float): TextStyle {
     return this.copy(color = this.color.copy(alpha = alpha))
@@ -20,7 +19,7 @@ fun Color.withAlpha(alpha: Float): Color {
 @Composable
 fun WithContentAlpha(alpha: Float, content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalContentColor provides LocalContentColor.current.withAlpha(ContentAlpha.medium),
+        LocalContentColor provides LocalContentColor.current.withAlpha(alpha),
         content = content
     )
 }
