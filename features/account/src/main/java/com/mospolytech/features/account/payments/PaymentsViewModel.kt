@@ -6,9 +6,9 @@ import com.mospolytech.domain.account.model.PaymentType
 import com.mospolytech.domain.account.model.Payments
 import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.domain.account.repository.PaymentsRepository
-import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.BaseViewModel
-import com.mospolytech.features.base.utils.execute
+import com.mospolytech.features.base.core.BaseMutator
+import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.utils.execute
 import kotlinx.coroutines.launch
 
 class PaymentsViewModel(private val repository: PaymentsRepository) :

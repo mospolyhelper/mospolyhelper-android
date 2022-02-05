@@ -1,7 +1,7 @@
 package com.mospolytech.features.account.authorization
 
-import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.BaseViewModel
+import com.mospolytech.features.base.core.BaseMutator
+import com.mospolytech.features.base.core.BaseViewModel
 
 class AuthViewModel() :
     BaseViewModel<AuthState, AuthMutator, Nothing>(AuthState(), ::AuthMutator) {

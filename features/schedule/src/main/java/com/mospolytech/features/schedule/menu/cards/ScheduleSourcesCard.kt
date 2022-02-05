@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mospolytech.features.base.utils.ClickListener
+import com.mospolytech.features.base.core.utils.ClickListener
 import com.mospolytech.features.schedule.menu.ScheduleMenuState
 
 @OptIn(ExperimentalMaterialApi::class)

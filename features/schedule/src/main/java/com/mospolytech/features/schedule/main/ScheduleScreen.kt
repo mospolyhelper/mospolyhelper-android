@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
-import com.mospolytech.features.base.utils.*
-import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.base.core.utils.*
+import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
 import org.koin.androidx.compose.getViewModel
 
@@ -37,8 +37,8 @@ fun ScheduleContent(
     state: ScheduleState,
     onBackClick: ClickListener,
     onFabClick: ClickListener,
-    onSchedulePosChanged: TypedListener<Int>,
-    onWeeksPosChanged: TypedListener<Int>
+    onSchedulePosChanged: Typed1Listener<Int>,
+    onWeeksPosChanged: Typed1Listener<Int>
 ) {
     Box {
         Column(Modifier.fillMaxSize()) {

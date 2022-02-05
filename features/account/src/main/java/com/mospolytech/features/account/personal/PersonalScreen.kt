@@ -26,8 +26,8 @@ import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.account.model.Order
 import com.mospolytech.domain.account.model.Personal
 import com.mospolytech.domain.account.model.print
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.format
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.format
 import org.koin.androidx.compose.getViewModel
 
 @Composable

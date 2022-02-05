@@ -46,12 +46,14 @@ class ScheduleRepositoryImpl(
         .flowOn(Dispatchers.IO)
 
     override fun getSchedule(source: ScheduleSource, forceUpdate: Boolean) = flow {
-        val (cachedSchedule, isExpired) = cachedDS.get<ScheduleDao>(CacheConst.Schedule, 1.seconds)
+        val (cachedSchedule, isExpired) = cachedDS.get<ScheduleDao>(CacheConst.Schedule, 1.days)
         emit(cachedSchedule.map { it?.days ?: emptyList() }.loading(isExpired || forceUpdate))
 
         if (isExpired || forceUpdate) {
             val newSchedule = service.getSchedule(source.type.name.lowercase(), source.key).toResult()
-            cachedDS.save(ScheduleDao.from(source, newSchedule.getOrNull()), CacheConst.Schedule)
+            newSchedule.onSuccess {
+                cachedDS.save(ScheduleDao.from(source, it), CacheConst.Schedule)
+            }
             emit(newSchedule.loading(false))
         }
     }.flowOn(Dispatchers.IO)

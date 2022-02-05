@@ -22,9 +22,9 @@ import androidx.constraintlayout.compose.Dimension
 import com.mospolytech.domain.account.model.Payment
 import com.mospolytech.domain.account.model.Payments
 import com.mospolytech.domain.account.model.print
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.format
-import com.mospolytech.features.base.view.ErrorView
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.format
+import com.mospolytech.features.base.elements.ErrorView
 import org.koin.androidx.compose.getViewModel
 
 @Composable

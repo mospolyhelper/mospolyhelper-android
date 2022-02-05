@@ -1,8 +1,6 @@
 package com.mospolytech.features.schedule.free_place
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,11 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.utils.MaterialTheme3
-import com.mospolytech.features.base.utils.WithContentAlpha
-import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.ContentAlpha
+import com.mospolytech.features.base.core.utils.MaterialTheme3
+import com.mospolytech.features.base.core.utils.WithContentAlpha
+import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker

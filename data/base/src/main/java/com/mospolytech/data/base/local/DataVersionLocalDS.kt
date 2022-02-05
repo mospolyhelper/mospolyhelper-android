@@ -29,7 +29,6 @@ class DataVersionLocalDS(
     }
 
     fun getVersion(id: String): DataVersion? {
-        Json.encodeToString(Any())
         return kotlin.runCatching {
             val key = db.keyById<DataVersion>(id)
             db.get<DataVersion>(key)

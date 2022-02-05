@@ -22,9 +22,9 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.account.model.Teacher
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.TypedListener
-import com.mospolytech.features.base.view.ErrorView
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.Typed1Listener
+import com.mospolytech.features.base.elements.ErrorView
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -41,7 +41,7 @@ fun TeachersScreen(viewModel: TeachersViewModel = getViewModel()) {
 fun TeachersContent(state: TeachersState,
                     retryListener: ClickListener,
                     backListener: ClickListener,
-                    inputListener: TypedListener<String>) {
+                    inputListener: Typed1Listener<String>) {
     var name by rememberSaveable { mutableStateOf("") }
     Scaffold(topBar = {
         TopAppBar(title = { TextField(value = name,

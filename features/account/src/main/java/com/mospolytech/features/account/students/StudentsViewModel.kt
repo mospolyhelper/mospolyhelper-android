@@ -3,9 +3,9 @@ package com.mospolytech.features.account.students
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.account.model.Student
 import com.mospolytech.domain.account.repository.PeoplesRepository
-import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.BaseViewModel
-import com.mospolytech.features.base.utils.execute
+import com.mospolytech.features.base.core.BaseMutator
+import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.utils.execute
 import kotlinx.coroutines.launch
 
 class StudentsViewModel(private val repository: PeoplesRepository) :

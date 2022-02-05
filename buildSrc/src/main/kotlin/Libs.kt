@@ -80,8 +80,10 @@ object Libs {
         const val systemUiController = "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
         const val insets = "com.google.accompanist:accompanist-insets:${Versions.accompanist}"
         const val pager = "com.google.accompanist:accompanist-pager:${Versions.accompanist}"
+        const val pagerIndicators = "com.google.accompanist:accompanist-pager-indicators:${Versions.accompanist}"
         const val placeholder = "com.google.accompanist:accompanist-placeholder:${Versions.accompanist}"
         const val swiperefresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
+        const val permissions = "com.google.accompanist:accompanist-permissions:${Versions.accompanist}"
     }
 
 
@@ -100,6 +102,7 @@ object Libs {
     object Other {
         const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.1.5"
         const val junit = "junit:junit:4.13"
+        const val ktorUtils = "io.ktor:ktor-utils:2.0.0-beta-1"
     }
 
     object Networking {
@@ -154,6 +157,7 @@ object Versions {
     // Compose
     const val compose = "1.1.0-rc03"
     const val composeMaterial3 = "1.0.0-alpha04"
+    const val composeMaterial = "1.1.0-rc03"
     const val accompanist = "0.22.1-rc"
 
     // AndroidX
@@ -165,7 +169,7 @@ object Versions {
     // UI
     const val material = "1.5.0"
     const val constraintLayout = "1.0.0"
-    const val fluentIcons = "1.1.157@aar"
     const val lottie = "4.2.2"
     const val materialDateTimePicker = "0.6.3"
+    const val fluentIcons = "1.1.157@aar"
 }

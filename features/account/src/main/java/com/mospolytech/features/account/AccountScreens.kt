@@ -1,7 +1,6 @@
 package com.mospolytech.features.account
 
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.mospolytech.features.account.applications.ApplicationsScreen
 import com.mospolytech.features.account.authorization.AuthScreen
@@ -12,19 +11,22 @@ import com.mospolytech.features.account.payments.PaymentsScreen
 import com.mospolytech.features.account.personal.PersonalScreen
 import com.mospolytech.features.account.students.StudentsScreen
 import com.mospolytech.features.account.teachers.TeachersScreen
-import com.mospolytech.features.base.navigation.*
-import com.mospolytech.features.base.utils.composable
+import com.mospolytech.features.base.core.navigation.addScreen
+import com.mospolytech.features.base.core.navigation.getRoute
+import com.mospolytech.features.base.core.navigation.groupScreen
+import com.mospolytech.features.base.navigation.AccountScreens
+import com.mospolytech.features.base.navigation.MainScreen
 
 fun NavGraphBuilder.accountScreens() {
-    navigation(startDestination = AccountScreens.Menu.route, route = MainScreen.Account.route) {
-        composable(AccountScreens.Menu) { AccountMainScreen() }
-        composable(AccountScreens.Applications) { ApplicationsScreen() }
-        composable(AccountScreens.Authorization) { AuthScreen() }
-        composable(AccountScreens.Payments) { PaymentsScreen() }
-        composable(AccountScreens.Teachers) { TeachersScreen() }
-        composable(AccountScreens.Classmates) { ClassmatesScreen() }
-        composable(AccountScreens.Students) { StudentsScreen() }
-        composable(AccountScreens.Marks) { MarksScreen() }
-        composable(AccountScreens.Personal) { PersonalScreen() }
+    groupScreen<MainScreen.Account, AccountScreens.Menu> {
+        addScreen<AccountScreens.Menu> { AccountMainScreen() }
+        addScreen<AccountScreens.Applications> { ApplicationsScreen() }
+        addScreen<AccountScreens.Authorization> { AuthScreen() }
+        addScreen<AccountScreens.Payments> { PaymentsScreen() }
+        addScreen<AccountScreens.Teachers> { TeachersScreen() }
+        addScreen<AccountScreens.Classmates> { ClassmatesScreen() }
+        addScreen<AccountScreens.Students> { StudentsScreen() }
+        addScreen<AccountScreens.Marks> { MarksScreen() }
+        addScreen<AccountScreens.Personal> { PersonalScreen() }
     }
 }

@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.utils.MaterialTheme3
-import com.mospolytech.features.base.utils.WithContentAlpha
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.ContentAlpha
+import com.mospolytech.features.base.core.utils.MaterialTheme3
+import com.mospolytech.features.base.core.utils.WithContentAlpha
 import com.mospolytech.features.schedule.R
 import com.mospolytech.features.schedule.menu.ScheduleMenuState
 

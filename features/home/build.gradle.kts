@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Features.Base))
+    implementation(project(Modules.Features.Base.Core))
+    implementation(project(Modules.Features.Base.Navigation))
+    implementation(project(Modules.Features.Base.Elements))
 }

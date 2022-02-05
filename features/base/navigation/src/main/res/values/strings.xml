@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_home">Главная</string>
+    <string name="menu_schedule">Расписание</string>
+    <string name="menu_account">Сервисы</string>
+    <string name="menu_misc">Прочее</string>
+</resources>

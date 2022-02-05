@@ -1,7 +1,6 @@
 package com.mospolytech.features.schedule.main
 
 import androidx.annotation.RawRes
-import androidx.annotation.XmlRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -27,7 +26,7 @@ import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.model.teacher.Teacher
-import com.mospolytech.features.base.view.placeholder
+import com.mospolytech.features.base.elements.placeholder
 import com.mospolytech.features.schedule.R
 import java.time.LocalDate
 import java.time.LocalTime

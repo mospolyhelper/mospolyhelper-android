@@ -2,8 +2,8 @@ package com.mospolytech.features.account.main
 
 import com.mospolytech.features.account.main.model.MenuUi
 import com.mospolytech.features.account.main.model.MenuUi.*
-import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.BaseViewModel
+import com.mospolytech.features.base.core.BaseMutator
+import com.mospolytech.features.base.core.BaseViewModel
 import com.mospolytech.features.base.navigation.AccountScreens
 
 class AccountMainViewModel :

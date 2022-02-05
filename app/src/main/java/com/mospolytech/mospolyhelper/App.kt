@@ -1,7 +1,7 @@
 package com.mospolytech.mospolyhelper
 
 import android.app.Application
-import com.mospolytech.features.base.utils.androidSharedPreferences
+import com.mospolytech.features.base.core.utils.androidSharedPreferences
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

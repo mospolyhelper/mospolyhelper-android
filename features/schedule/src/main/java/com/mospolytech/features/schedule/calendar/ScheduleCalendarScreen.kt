@@ -1,9 +1,6 @@
 package com.mospolytech.features.schedule.calendar
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -17,14 +14,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.utils.WithContentAlpha
-import com.mospolytech.features.base.view.PrimaryTopAppBar
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.ContentAlpha
+import com.mospolytech.features.base.core.utils.WithContentAlpha
+import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
 import org.koin.androidx.compose.getViewModel
 import java.time.format.DateTimeFormatter
-import kotlin.math.ceil
 
 @Composable
 fun ScheduleCalendarScreen(viewModel: ScheduleCalendarViewModel = getViewModel()) {

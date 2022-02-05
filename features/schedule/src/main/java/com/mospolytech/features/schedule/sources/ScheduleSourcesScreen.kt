@@ -1,43 +1,21 @@
 package com.mospolytech.features.schedule.sources
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
-import com.mospolytech.features.base.utils.*
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.view.InitialAvatar
-import com.mospolytech.features.base.view.PrimaryTopAppBar
-import com.mospolytech.features.schedule.R
-import com.mospolytech.features.schedule.main.ScheduleViewModel
+import com.mospolytech.features.base.core.utils.*
+import com.mospolytech.features.base.core.utils.ContentAlpha
+import com.mospolytech.features.base.elements.InitialAvatar
+import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -57,9 +35,9 @@ fun ScheduleSourcesScreen(viewModel: ScheduleSourcesViewModel = getViewModel()) 
 fun ScheduleSourcesContent(
     state: ScheduleSourceState,
     onBackClick: ClickListener,
-    onQueryChange: TypedListener<String>,
-    onSourceTypeSelected: TypedListener<ScheduleSources>,
-    onSourceSelected: TypedListener<ScheduleSourceFull>
+    onQueryChange: Typed1Listener<String>,
+    onSourceTypeSelected: Typed1Listener<ScheduleSources>,
+    onSourceSelected: Typed1Listener<ScheduleSourceFull>
 ) {
     
     Column {
@@ -111,7 +89,7 @@ fun ScheduleSourcesContent(
 fun SourceType(
     sourceType: ScheduleSources,
     isSelected: Boolean,
-    onSourceTypeSelected: TypedListener<ScheduleSources>
+    onSourceTypeSelected: Typed1Listener<ScheduleSources>
 ) {
     val color = if (isSelected) MaterialTheme3.colorScheme.primary else MaterialTheme3.colorScheme.surface
     val textColor = if (isSelected) MaterialTheme3.colorScheme.onPrimary else MaterialTheme3.colorScheme.onSurface
@@ -129,7 +107,7 @@ fun SourceType(
 }
 
 @Composable
-fun SourceItem(source: ScheduleSourceFull, onItemClick: TypedListener<ScheduleSourceFull>) {
+fun SourceItem(source: ScheduleSourceFull, onItemClick: Typed1Listener<ScheduleSourceFull>) {
     Column(
         Modifier
             .clickable(onClick = { onItemClick(source) })

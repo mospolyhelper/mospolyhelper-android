@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.Typed2ClickListener
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.Typed2Listener
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -31,7 +31,7 @@ fun AuthScreen(viewModel: AuthViewModel = getViewModel()) {
 }
 
 @Composable
-fun AuthContent(state: AuthState, onLoginClick: Typed2ClickListener<String, String>, onLoggedClick: ClickListener) {
+fun AuthContent(state: AuthState, onLoginClick: Typed2Listener<String, String>, onLoggedClick: ClickListener) {
     Scaffold(topBar = {
         TopAppBar(title = {Text("Авторизация", fontSize = 22.sp)},
         navigationIcon = {IconButton(onClick = { onLoggedClick.invoke() }) {Icon(Icons.Filled.ArrowBack, contentDescription = "Назад") }})
@@ -45,7 +45,7 @@ fun AuthContent(state: AuthState, onLoginClick: Typed2ClickListener<String, Stri
 }
 
 @Composable
-fun NotAuthorized(state: AuthState, onAuthorize: Typed2ClickListener<String,String>) {
+fun NotAuthorized(state: AuthState, onAuthorize: Typed2Listener<String,String>) {
     var login by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     Column(

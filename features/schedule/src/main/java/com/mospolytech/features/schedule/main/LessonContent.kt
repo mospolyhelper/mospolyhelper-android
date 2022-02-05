@@ -19,10 +19,10 @@ import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.teacher.Teacher
 import com.mospolytech.domain.schedule.utils.getShortName
-import com.mospolytech.features.base.utils.ContentAlpha
-import com.mospolytech.features.base.utils.FluentIcons
-import com.mospolytech.features.base.utils.WithContentAlpha
-import com.mospolytech.features.base.view.placeholder
+import com.mospolytech.features.base.core.utils.ContentAlpha
+import com.mospolytech.features.base.core.utils.FluentIcons
+import com.mospolytech.features.base.core.utils.WithContentAlpha
+import com.mospolytech.features.base.elements.placeholder
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

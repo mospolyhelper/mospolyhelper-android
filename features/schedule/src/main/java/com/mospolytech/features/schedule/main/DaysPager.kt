@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.mospolytech.features.base.utils.*
+import com.mospolytech.features.base.core.utils.*
 import com.mospolytech.features.schedule.model.DayUiModel
 import com.mospolytech.features.schedule.model.WeekUiModel
 import java.time.format.DateTimeFormatter

@@ -17,9 +17,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.mospolytech.domain.account.model.Mark
 import com.mospolytech.domain.account.model.print
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.utils.TypedListener
-import com.mospolytech.features.base.view.ErrorView
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.core.utils.Typed1Listener
+import com.mospolytech.features.base.elements.ErrorView
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -37,7 +37,7 @@ fun MarksScreen(viewModel: MarksViewModel = getViewModel()) {
 fun MarksContent(state: MarksState,
                  retryListener: ClickListener,
                  backListener: ClickListener,
-                 inputListener: TypedListener<Int>) {
+                 inputListener: Typed1Listener<Int>) {
     Scaffold(topBar = {
         var expandedState by remember { mutableStateOf(false) }
         var selectedIndex by remember { mutableStateOf(if (state.coursesAndSemesters.keys.isNotEmpty()) state.coursesAndSemesters.keys.first() else 1) }

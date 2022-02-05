@@ -9,4 +9,8 @@ dependencies {
     api(Libs.Networking.retrofit)
     api(Libs.Networking.okHttp)
     api(Libs.Networking.okHttpLogging)
+
+    debugApi(Libs.Storage.KodeinDB.debug)
+    releaseApi(Libs.Storage.KodeinDB.release)
+    api(Libs.Storage.KodeinDB.kotlinxSerializer)
 }

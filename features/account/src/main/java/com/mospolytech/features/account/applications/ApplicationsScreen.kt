@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mospolytech.domain.account.model.Application
-import com.mospolytech.features.base.utils.ClickListener
-import com.mospolytech.features.base.view.ErrorView
+import com.mospolytech.features.base.core.utils.ClickListener
+import com.mospolytech.features.base.elements.ErrorView
 import org.koin.androidx.compose.getViewModel
 
 @Composable

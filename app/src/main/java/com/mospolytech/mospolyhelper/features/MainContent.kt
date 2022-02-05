@@ -12,9 +12,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.mospolytech.features.base.core.navigation.getRoute
+import com.mospolytech.features.base.core.navigation.rememberNavController
 import com.mospolytech.features.base.navigation.MainScreen
-import com.mospolytech.features.base.navigation.core.rememberNavController
 import com.mospolytech.mospolyhelper.appScreens
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 val showNavBar = listOf(
@@ -27,7 +29,7 @@ val showNavBar = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
-    viewModel: MainViewModel = getViewModel()
+    viewModel: MainViewModel = get()
 ) {
     val navController = rememberNavController(viewModel.router)
 

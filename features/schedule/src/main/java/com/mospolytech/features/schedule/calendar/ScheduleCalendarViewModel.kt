@@ -6,8 +6,8 @@ import com.mospolytech.domain.base.utils.isFinalFailure
 import com.mospolytech.domain.base.utils.onSuccess
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
-import com.mospolytech.features.base.BaseMutator
-import com.mospolytech.features.base.BaseViewModel
+import com.mospolytech.features.base.core.BaseMutator
+import com.mospolytech.features.base.core.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
