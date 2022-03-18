@@ -1,6 +1,7 @@
 package com.mospolytech.features.schedule.free_place
 
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.domain.base.utils.onSuccess
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
@@ -8,8 +9,7 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.core.BaseMutator
 import com.mospolytech.features.base.core.BaseViewModel
-import com.mospolytech.features.base.core.utils.onFailure
-import com.mospolytech.features.base.core.utils.onSuccess
+import com.mospolytech.domain.base.utils.onFailure
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate

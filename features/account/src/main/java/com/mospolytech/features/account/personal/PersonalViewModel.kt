@@ -8,7 +8,7 @@ import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.domain.account.repository.PersonalRepository
 import com.mospolytech.features.base.core.BaseMutator
 import com.mospolytech.features.base.core.BaseViewModel
-import com.mospolytech.features.base.core.utils.execute
+import com.mospolytech.domain.base.utils.execute
 import kotlinx.coroutines.launch
 
 class PersonalViewModel(private val repository: PersonalRepository) :

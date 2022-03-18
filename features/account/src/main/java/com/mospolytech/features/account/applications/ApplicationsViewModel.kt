@@ -5,7 +5,7 @@ import com.mospolytech.domain.account.model.Application
 import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.features.base.core.BaseMutator
 import com.mospolytech.features.base.core.BaseViewModel
-import com.mospolytech.features.base.core.utils.execute
+import com.mospolytech.domain.base.utils.execute
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :
