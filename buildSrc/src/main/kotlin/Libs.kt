@@ -133,7 +133,7 @@ object Libs {
 }
 
 object Versions {
-    const val gradle = "7.1.0"
+    const val gradle = "7.1.2"
     const val kotlin = "1.6.10"
 
     const val kotlinCoroutines = "1.6.0"
@@ -146,7 +146,7 @@ object Versions {
     const val coil = "1.4.0"
 
     // Networking
-    const val paging = "3.1.0"
+    const val paging = "3.1.1"
     const val pagingCompose = "1.0.0-alpha14"
     const val retrofit = "2.9.0"
     const val okHttp = "4.9.3"
@@ -155,21 +155,21 @@ object Versions {
     const val kodeinDB = "0.9.0-beta"
 
     // Compose
-    const val compose = "1.1.0-rc03"
-    const val composeMaterial3 = "1.0.0-alpha04"
-    const val composeMaterial = "1.1.0-rc03"
-    const val accompanist = "0.22.1-rc"
+    const val compose = "1.1.1"
+    const val composeMaterial3 = "1.0.0-alpha07"
+    const val composeMaterial = "1.1.1"
+    const val accompanist = "0.23.1"
 
     // AndroidX
-    const val lifecycle = "2.4.0"
-    const val navigation = "2.4.0"
+    const val lifecycle = "2.4.1"
+    const val navigation = "2.4.1"
     const val coreKtx = "1.7.0"
     const val appcompat = "1.4.1"
 
     // UI
     const val material = "1.5.0"
     const val constraintLayout = "1.0.0"
-    const val lottie = "4.2.2"
+    const val lottie = "5.0.2"
     const val materialDateTimePicker = "0.6.3"
     const val fluentIcons = "1.1.157@aar"
 }

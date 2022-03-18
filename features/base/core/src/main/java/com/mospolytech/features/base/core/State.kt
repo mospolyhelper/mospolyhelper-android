@@ -1,27 +1,9 @@
 package com.mospolytech.features.base.core
 
-//interface State<TMutator : BaseMutator<*>> {
-//    fun mutator(): TMutator
-//}
-//
-//abstract class BaseMutator<TState>(state: TState) {
-//    var state: TState = state
-//        protected set
-//}
-//
-//@SuppressWarnings("UNCHECKED_CAST")
-//fun <TMutator : BaseMutator<*>, TState : State<TMutator>>
-//        TState.mutate(mutate: TMutator.() -> Unit): TState {
-//    return mutator().apply(mutate).state as TState
-//}
-
-
 interface StateStore<TState, TMutator : BaseMutator<*>> {
     fun getMutator(state: TState): TMutator
     fun mutateState(mutate: TMutator.() -> Unit)
 }
-
-//interface State
 
 abstract class BaseMutator<TState> {
     private var _state: TState? = null
