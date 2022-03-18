@@ -3,14 +3,9 @@ package com.mospolytech.data.base
 import com.mospolytech.data.base.consts.DiConst
 import com.mospolytech.data.base.local.*
 import com.mospolytech.data.base.repository.EventRepository
-import com.mospolytech.data.base.retrofit.ApiVersionInterceptor
-import com.mospolytech.data.base.retrofit.JsonConverterFactory
-import com.mospolytech.data.base.retrofit.TokenInterceptor
-import com.mospolytech.data.base.retrofit.network.NetworkResponseAdapterFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
+import com.mospolytech.data.base.utils.retrofit.buildRetrofitBuilder
+import com.mospolytech.data.base.utils.retrofit.interceptors.ApiVersionInterceptor
+import com.mospolytech.data.base.utils.retrofit.interceptors.TokenInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
@@ -40,48 +35,14 @@ val baseDataModule = module {
     }
 
     single(named(DiConst.Schedule)) {
-        Retrofit.Builder()
-            .baseUrl("https://mph-schedule.herokuapp.com/")
-            .addConverterFactory(
-                JsonConverterFactory(
-                    Json {
-                        ignoreUnknownKeys = true
-                        allowStructuredMapKeys = true
-                    }
-                )
-            )
-            .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
-                GlobalScope.launch(Dispatchers.IO) {
-//                    get<EventRepository>().codeResponse
-//                        .emit(code to (body as? Response<*>)?.error?.errorCode)
-                }
-            })
-            .client(get())
+        buildRetrofitBuilder(get(), "https://mph-schedule.herokuapp.com/")
     }
-
     single<Retrofit>(named(DiConst.Schedule)) { get<Retrofit.Builder>(named(DiConst.Schedule)).build() }
 
 
     single(named(DiConst.Account)) {
-        Retrofit.Builder()
-            .baseUrl("https://mph-account.herokuapp.com/")
-            .addConverterFactory(
-                JsonConverterFactory(
-                    Json {
-                        ignoreUnknownKeys = true
-                        allowStructuredMapKeys = true
-                    }
-                )
-            )
-            .addCallAdapterFactory(NetworkResponseAdapterFactory { code: Int, body: Any? ->
-                GlobalScope.launch(Dispatchers.IO) {
-//                    get<EventRepository>().codeResponse
-//                        .emit(code to (body as? Response<*>)?.error?.errorCode)
-                }
-            })
-            .client(get())
+        buildRetrofitBuilder(get(), "https://mph-account.herokuapp.com/")
     }
-
     single<Retrofit>(named(DiConst.Account)) { get<Retrofit.Builder>(named(DiConst.Account)).build() }
 
     single { EventRepository() }

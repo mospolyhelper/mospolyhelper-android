@@ -1,8 +1,8 @@
 package com.mospolytech.data.account.api
 
-import com.mospolytech.data.base.retrofit.network.NetworkResponse
 import com.mospolytech.domain.account.model.*
 import com.mospolytech.domain.base.model.PagingDTO
+import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -10,47 +10,58 @@ import retrofit2.http.Query
 interface AccountService {
 
     @GET("/peoples/classmates")
-    suspend fun getClassmates(): NetworkResponse<List<Student>>
+    fun getClassmates(): Flow<Result<List<Student>>>
 
     @GET("/peoples/students/{name}")
-    suspend fun getStudents(@Path("name") name: String?, @Query("page") page: Int,
-                    @Query("pageSize") pageSize: Int): NetworkResponse<PagingDTO<Student>>
+    fun getStudents(
+        @Path("name") name: String?, @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
+    ): Flow<Result<PagingDTO<Student>>>
 
     @GET("/peoples/teachers/{name}")
-    suspend fun getTeachers(@Path("name") name: String?, @Query("page") page: Int,
-                    @Query("pageSize") pageSize: Int): NetworkResponse<PagingDTO<Teacher>>
+    fun getTeachers(
+        @Path("name") name: String?,
+        @Query("page") page: Int,
+        @Query("pageSize") pageSize: Int
+    ): Flow<Result<PagingDTO<Teacher>>>
 
     @GET("/applications")
-    suspend fun getApplications(): NetworkResponse<List<Application>>
+    fun getApplications(): Flow<Result<List<Application>>>
 
     @GET("/performance")
-    suspend fun getMarks(): NetworkResponse<List<Marks>>
+    fun getMarks(): Flow<Result<List<Marks>>>
 
     @GET("/performance/semesters")
-    suspend fun getSemesters(): NetworkResponse<List<Int>>
+    fun getSemesters(): Flow<Result<List<Int>>>
 
     @GET("/performance/semesters/{semester}")
-    suspend fun getMarksBySemester(@Path("semester") semester: String): NetworkResponse<Marks>
+    fun getMarksBySemester(
+        @Path("semester") semester: String
+    ): Flow<Result<Marks>>
 
     @GET("/performance/courses")
-    suspend fun getCourses(): NetworkResponse<List<Int>>
+    fun getCourses(): Flow<Result<List<Int>>>
 
     @GET("/performance/courses/{course}")
-    suspend fun getMarksByCourse(@Path("course") course: String): NetworkResponse<List<Marks>>
+    fun getMarksByCourse(
+        @Path("course") course: String
+    ): Flow<Result<List<Marks>>>
 
     @GET("/personal")
-    suspend fun getPersonalInfo(): NetworkResponse<Personal>
+    fun getPersonalInfo(): Flow<Result<Personal>>
 
     @GET("/personal/orders")
-    suspend fun getOrders(): NetworkResponse<List<Order>>
+    fun getOrders(): Flow<Result<List<Order>>>
 
     @GET("/payments")
-    suspend fun getPayments(): NetworkResponse<List<Payments>>
+    fun getPayments(): Flow<Result<List<Payments>>>
 
     @GET("/payments/types")
-    suspend fun getPaymentsTypes(): NetworkResponse<List<PaymentType>>
+    fun getPaymentsTypes(): Flow<Result<List<PaymentType>>>
 
     @GET("/payment/{type}")
-    suspend fun getPayment(@Path("type") type: String): NetworkResponse<Payments>
+    fun getPayment(
+        @Path("type") type: String
+    ): Flow<Result<Payments>>
 
 }

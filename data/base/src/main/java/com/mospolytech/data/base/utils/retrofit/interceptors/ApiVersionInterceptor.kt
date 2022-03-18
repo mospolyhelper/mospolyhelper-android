@@ -1,4 +1,4 @@
-package com.mospolytech.data.base.retrofit
+package com.mospolytech.data.base.utils.retrofit.interceptors
 
 import okhttp3.Interceptor
 import okhttp3.Response

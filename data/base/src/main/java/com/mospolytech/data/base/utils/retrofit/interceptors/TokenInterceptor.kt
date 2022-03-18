@@ -1,6 +1,7 @@
-package com.mospolytech.data.base.retrofit
+package com.mospolytech.data.base.utils.retrofit.interceptors
 
 import com.mospolytech.data.base.local.PreferencesDS
+import com.mospolytech.data.base.local.PreferencesLocalDS
 import com.mospolytech.data.base.local.get
 import com.mospolytech.domain.base.PrefKeys
 import okhttp3.Interceptor

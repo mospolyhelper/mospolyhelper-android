@@ -1,4 +1,4 @@
-package com.mospolytech.data.base.retrofit
+package com.mospolytech.data.base.utils.retrofit
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
