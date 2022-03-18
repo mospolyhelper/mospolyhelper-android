@@ -7,9 +7,9 @@ import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.onFailure
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -18,7 +18,7 @@ import java.time.LocalTime
 
 class FreePlaceViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<FreePlaceState, FreePlaceMutator, Nothing>(
+) : BaseViewModelFull<FreePlaceState, FreePlaceMutator, Nothing>(
     FreePlaceState(),
     ::FreePlaceMutator
 ) {

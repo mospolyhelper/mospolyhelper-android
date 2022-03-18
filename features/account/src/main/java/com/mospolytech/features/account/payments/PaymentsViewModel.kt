@@ -6,13 +6,13 @@ import com.mospolytech.domain.account.model.PaymentType
 import com.mospolytech.domain.account.model.Payments
 import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.domain.account.repository.PaymentsRepository
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.execute
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.launch
 
 class PaymentsViewModel(private val repository: PaymentsRepository) :
-    BaseViewModel<PaymentsState, PaymentsMutator, Nothing>(PaymentsState(), ::PaymentsMutator) {
+    BaseViewModelFull<PaymentsState, PaymentsMutator, Nothing>(PaymentsState(), ::PaymentsMutator) {
 
         init {
             load()

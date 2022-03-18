@@ -1,10 +1,10 @@
 package com.mospolytech.features.account.authorization
 
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 
 class AuthViewModel() :
-    BaseViewModel<AuthState, AuthMutator, Nothing>(AuthState(), ::AuthMutator) {
+    BaseViewModelFull<AuthState, AuthMutator, Nothing>(AuthState(), ::AuthMutator) {
 
     fun authorize(login: String, password: String) {
         mutateState {

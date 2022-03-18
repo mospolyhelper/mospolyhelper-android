@@ -2,12 +2,12 @@ package com.mospolytech.features.account.main
 
 import com.mospolytech.features.account.main.model.MenuUi
 import com.mospolytech.features.account.main.model.MenuUi.*
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import com.mospolytech.features.base.navigation.AccountScreens
 
 class AccountMainViewModel :
-    BaseViewModel<AccountMenuState, AccountMenuMutator, Nothing>(AccountMenuState(), ::AccountMenuMutator) {
+    BaseViewModelFull<AccountMenuState, AccountMenuMutator, Nothing>(AccountMenuState(), ::AccountMenuMutator) {
 
     fun navigateToAuth() {
         router.navigateTo(AccountScreens.Authorization)

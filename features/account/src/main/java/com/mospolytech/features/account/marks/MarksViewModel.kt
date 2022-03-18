@@ -5,13 +5,13 @@ import com.mospolytech.domain.account.model.Application
 import com.mospolytech.domain.account.model.Marks
 import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.domain.account.repository.PerformanceRepository
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.execute
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.launch
 
 class MarksViewModel(private val repository: PerformanceRepository) :
-    BaseViewModel<MarksState, MarksMutator, Nothing>(MarksState(), ::MarksMutator) {
+    BaseViewModelFull<MarksState, MarksMutator, Nothing>(MarksState(), ::MarksMutator) {
 
         init {
             loadMarks()

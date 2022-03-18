@@ -6,13 +6,13 @@ import com.mospolytech.domain.account.model.Order
 import com.mospolytech.domain.account.model.Personal
 import com.mospolytech.domain.account.repository.ApplicationsRepository
 import com.mospolytech.domain.account.repository.PersonalRepository
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.execute
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.launch
 
 class PersonalViewModel(private val repository: PersonalRepository) :
-    BaseViewModel<PersonalState, PersonalMutator, Nothing>(PersonalState(), ::PersonalMutator) {
+    BaseViewModelFull<PersonalState, PersonalMutator, Nothing>(PersonalState(), ::PersonalMutator) {
 
         init {
             load()

@@ -3,13 +3,13 @@ package com.mospolytech.features.account.students
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.account.model.Student
 import com.mospolytech.domain.account.repository.PeoplesRepository
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.execute
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.launch
 
 class StudentsViewModel(private val repository: PeoplesRepository) :
-    BaseViewModel<StudentsState, StudentsMutator, Nothing>(StudentsState(), ::StudentsMutator) {
+    BaseViewModelFull<StudentsState, StudentsMutator, Nothing>(StudentsState(), ::StudentsMutator) {
 
         init {
             loadStudents()

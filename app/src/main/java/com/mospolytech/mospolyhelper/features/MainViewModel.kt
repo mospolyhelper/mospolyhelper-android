@@ -1,9 +1,8 @@
 package com.mospolytech.mospolyhelper.features
 
-import androidx.lifecycle.ViewModel
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 
-class MainViewModel : BaseViewModel<Unit, Nothing, Nothing>(
+class MainViewModel : BaseViewModelFull<Unit, Nothing, Nothing>(
     Unit,
     { error(Unit) }
 ) {

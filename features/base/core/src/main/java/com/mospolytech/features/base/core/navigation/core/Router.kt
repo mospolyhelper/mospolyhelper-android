@@ -1,4 +1,4 @@
-package com.mospolytech.features.base.core.navigation
+package com.mospolytech.features.base.core.navigation.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,8 +24,8 @@ class Router {
      *
      * @param screen screen
      */
-    fun navigateTo(screen: BaseScreen, key: String = "") {
-        executeCommands(Command.Forward(screen, key))
+    fun navigateTo(screen: Screen) {
+        executeCommands(Command.Forward(screen))
     }
 
     /**
@@ -33,8 +33,8 @@ class Router {
      *
      * @param screen screen
      */
-    fun newRootScreen(screen: BaseScreen, key: String = "") {
-        executeCommands(Command.BackTo(null, key), Command.Replace(screen))
+    fun newRootScreen(screen: Screen) {
+        executeCommands(Command.BackTo(null), Command.Replace(screen))
     }
 
     /**
@@ -46,8 +46,8 @@ class Router {
      *
      * @param screen screen
      */
-    fun replaceScreen(screen: BaseScreen, key: String = "") {
-        executeCommands(Command.Replace(screen, key))
+    fun replaceScreen(screen: Screen) {
+        executeCommands(Command.Replace(screen))
     }
 
     /**
@@ -58,8 +58,8 @@ class Router {
      *
      * @param screen screen
      */
-    fun backTo(screen: BaseScreen?, key: String = "") {
-        executeCommands(Command.BackTo(screen, key))
+    fun backTo(screen: Screen?) {
+        executeCommands(Command.BackTo(screen))
     }
 
     /**
@@ -67,7 +67,7 @@ class Router {
      *
      * @param screens
      */
-    fun newChain(vararg screens: BaseScreen, key: String = "") {
+    fun newChain(vararg screens: Screen) {
         val commands = screens.map { Command.Forward(it) }
         executeCommands(*commands.toTypedArray())
     }
@@ -77,7 +77,7 @@ class Router {
      *
      * @param screens
      */
-    fun newRootChain(vararg screens: BaseScreen, key: String = "") {
+    fun newRootChain(vararg screens: Screen) {
         val commands = screens.mapIndexed { index, screen ->
             if (index == 0)
                 Command.Replace(screen)
@@ -105,25 +105,4 @@ class Router {
     fun exit() {
         executeCommands(Command.Back)
     }
-
-
-
-    inline fun <reified T : BaseScreen> navigateTo(screen: T) {
-        navigateTo(screen, getRoute<T>())
-    }
-    inline fun <reified T : BaseScreen> newRootScreen(screen: T) {
-        newRootScreen(screen, getRoute<T>())
-    }
-    inline fun <reified T : BaseScreen> replaceScreen(screen: T) {
-        replaceScreen(screen, getRoute<T>())
-    }
-    inline fun <reified T : BaseScreen> backTo(screen: T?) {
-        backTo(screen, getRoute<T>())
-    }
-//    inline fun <reified T : BaseScreen> newChain(screen: T) {
-//        newChain(screen, T::class.qualifiedName ?: "")
-//    }
-//    inline fun <reified T: BaseScreen> newRootChain(vararg screens: T) {
-//        newRootChain(T::class.qualifiedName ?: "", *screens)
-//    }
 }

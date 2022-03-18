@@ -3,14 +3,14 @@ package com.mospolytech.features.schedule.lessons_review
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LessonsReviewViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModel<LessonsReviewState, LessonsReviewMutator, Nothing>(
+) : BaseViewModelFull<LessonsReviewState, LessonsReviewMutator, Nothing>(
     LessonsReviewState(),
     ::LessonsReviewMutator
 ) {

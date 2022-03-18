@@ -3,13 +3,13 @@ package com.mospolytech.features.account.applications
 import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.account.model.Application
 import com.mospolytech.domain.account.repository.ApplicationsRepository
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.execute
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.launch
 
 class ApplicationsViewModel(private val repository: ApplicationsRepository) :
-    BaseViewModel<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ::ApplicationsMutator) {
+    BaseViewModelFull<ApplicationsState, ApplicationsMutator, Nothing>(ApplicationsState(), ::ApplicationsMutator) {
 
         init {
             loadData()

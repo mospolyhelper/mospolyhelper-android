@@ -1,10 +1,8 @@
-package com.mospolytech.features.base.core.navigation
+package com.mospolytech.features.base.core.navigation.compose
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.Navigator
+import com.mospolytech.features.base.core.navigation.core.Command
+import com.mospolytech.features.base.core.navigation.core.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,12 +38,12 @@ class ComposeNavigator(
     }
 
     private fun forward(command: Command.Forward) {
-        navController.navigate(buildFullRoute(command.screen, command.key))
+        navController.navigate(command.screen.getFullRoute())
     }
 
     private fun replace(command: Command.Replace) {
         navController.popBackStack()
-        navController.navigate(buildFullRoute(command.screen, command.key))
+        navController.navigate(command.screen.getFullRoute())
     }
 
     private fun back() {
@@ -58,24 +56,7 @@ class ComposeNavigator(
                 navController.popBackStack(it.id, false)
             }
         } else {
-            navController.popBackStack(buildFullRoute(command.screen, command.key ?: ""), true)
+            navController.popBackStack(command.screen.getFullRoute(), true)
         }
     }
-
-    private fun buildFullRoute(screen: BaseScreen, key: String): String {
-        return "$key?screen=${screen.toUrlParameter()}"
-    }
-}
-
-@Composable
-fun rememberNavController(
-    router: Router,
-    vararg navigators: Navigator<out NavDestination>
-): NavHostController {
-    val navController = androidx.navigation.compose.rememberNavController(*navigators)
-    val navigator = remember(navController, router) {
-        ComposeNavigator(navController, router)
-    }
-
-    return navigator.navController
 }

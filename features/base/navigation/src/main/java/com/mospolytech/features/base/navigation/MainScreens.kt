@@ -2,8 +2,8 @@ package com.mospolytech.features.base.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.mospolytech.features.base.core.navigation.Screen
-import com.mospolytech.features.base.core.navigation.getRoute
+import com.mospolytech.features.base.core.navigation.compose.getRoute
+import com.mospolytech.features.base.core.navigation.core.Screen
 import com.mospolytech.features.base.core.utils.FluentIcons
 import com.mospolytech.features.navigation.R
 

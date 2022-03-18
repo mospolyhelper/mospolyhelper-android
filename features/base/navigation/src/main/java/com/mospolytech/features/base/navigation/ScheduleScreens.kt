@@ -1,19 +1,18 @@
 package com.mospolytech.features.base.navigation
 
-import com.mospolytech.features.base.core.navigation.Screen
+import com.mospolytech.features.base.core.navigation.core.Screen
 
 object ScheduleScreens {
-    private const val prefix = "schedule"
 
-    object Menu : Screen()//"$prefix-menu")
+    object Menu : Screen()
 
-    object Main : Screen()//"$prefix-main")
+    object Main : Screen()
 
-    object Source : Screen()//"$prefix-source")
+    object Source : Screen()
 
-    object Calendar : Screen()//"$prefix-calendar")
+    object Calendar : Screen()
 
-    object LessonsReview : Screen()//"$prefix-review")
+    object LessonsReview : Screen()
 
-    object FreePlace : Screen()//"$prefix-free-place")
+    object FreePlace : Screen()
 }

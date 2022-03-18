@@ -1,7 +1,6 @@
 package com.mospolytech.features.account
 
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.navigation
 import com.mospolytech.features.account.applications.ApplicationsScreen
 import com.mospolytech.features.account.authorization.AuthScreen
 import com.mospolytech.features.account.classmates.ClassmatesScreen
@@ -11,9 +10,8 @@ import com.mospolytech.features.account.payments.PaymentsScreen
 import com.mospolytech.features.account.personal.PersonalScreen
 import com.mospolytech.features.account.students.StudentsScreen
 import com.mospolytech.features.account.teachers.TeachersScreen
-import com.mospolytech.features.base.core.navigation.addScreen
-import com.mospolytech.features.base.core.navigation.getRoute
-import com.mospolytech.features.base.core.navigation.groupScreen
+import com.mospolytech.features.base.core.navigation.compose.addScreen
+import com.mospolytech.features.base.core.navigation.compose.groupScreen
 import com.mospolytech.features.base.navigation.AccountScreens
 import com.mospolytech.features.base.navigation.MainScreen
 

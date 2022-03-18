@@ -4,16 +4,16 @@ import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
-import com.mospolytech.features.base.core.BaseMutator
-import com.mospolytech.features.base.core.BaseViewModel
+import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.domain.base.utils.onFailure
 import com.mospolytech.domain.base.utils.onSuccess
+import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ScheduleSourcesViewModel(
     private val useCase: ScheduleUseCase
-): BaseViewModel<ScheduleSourceState, ScheduleSourceMutator, Nothing>(
+): BaseViewModelFull<ScheduleSourceState, ScheduleSourceMutator, Nothing>(
     ScheduleSourceState(),
     ::ScheduleSourceMutator
 ) {
