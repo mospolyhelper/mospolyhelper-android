@@ -1,4 +1,4 @@
-package com.mospolytech.features.base.theme
+package com.mospolytech.features.base.core.theme
 
 import androidx.compose.ui.graphics.Color
 

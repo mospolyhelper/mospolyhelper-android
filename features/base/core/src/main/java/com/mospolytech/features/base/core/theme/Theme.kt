@@ -1,4 +1,4 @@
-package com.mospolytech.features.base.theme
+package com.mospolytech.features.base.core.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -7,8 +7,6 @@ import androidx.compose.material.lightColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.mospolytech.features.base.core.theme.AppTypography
-import com.mospolytech.features.base.core.theme.AppTypography2
 
 //private val AppDarkColorScheme = darkColorScheme(
 //    primary = Blue80,

@@ -10,7 +10,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.imePadding
 import com.google.accompanist.insets.systemBarsPadding
-import com.mospolytech.features.base.theme.MospolyhelperTheme
+import com.mospolytech.features.base.core.theme.MospolyhelperTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -97,6 +97,12 @@ class ScheduleViewModel(
             state = state.copy(weeksPos = weeksPos)
         }
     }
+
+    fun onDayClick(date: LocalDate) {
+        mutateState {
+            state = state.copy(selectedDate = date)
+        }
+    }
 }
 
 private fun initState(): ScheduleState {

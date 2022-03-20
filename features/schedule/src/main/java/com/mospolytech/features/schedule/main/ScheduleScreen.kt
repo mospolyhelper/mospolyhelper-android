@@ -15,6 +15,7 @@ import com.mospolytech.features.base.core.utils.*
 import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
 import org.koin.androidx.compose.getViewModel
+import java.time.LocalDate
 
 @Composable
 fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
@@ -26,7 +27,8 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
             viewModel::exit,
             viewModel::onFabClick,
             viewModel::onSchedulePosChanged,
-            viewModel::onWeeksPosChanged
+            viewModel::onWeeksPosChanged,
+            onDayClick = viewModel::onDayClick
         )
     }
 }
@@ -38,7 +40,8 @@ fun ScheduleContent(
     onBackClick: ClickListener,
     onFabClick: ClickListener,
     onSchedulePosChanged: Typed1Listener<Int>,
-    onWeeksPosChanged: Typed1Listener<Int>
+    onWeeksPosChanged: Typed1Listener<Int>,
+    onDayClick: Typed1Listener<LocalDate>
 ) {
     Box {
         Column(Modifier.fillMaxSize()) {
@@ -55,7 +58,8 @@ fun ScheduleContent(
             DaysPager(
                 weeks = state.weeks,
                 dayOfWeekPos = state.dayOfWeekPos,
-                pagerState = weekPagerState
+                pagerState = weekPagerState,
+                onDayClick = onDayClick
             )
 
             if (state.isPreloading) {

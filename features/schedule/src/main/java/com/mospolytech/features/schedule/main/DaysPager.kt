@@ -13,8 +13,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.google.accompanist.pager.PagerState
 import com.mospolytech.features.base.core.utils.*
 import com.mospolytech.features.schedule.model.DayUiModel
 import com.mospolytech.features.schedule.model.WeekUiModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalPagerApi::class)
@@ -39,7 +41,8 @@ import java.time.format.DateTimeFormatter
 fun DaysPager(
     weeks: List<WeekUiModel>,
     dayOfWeekPos: Int,
-    pagerState: PagerState
+    pagerState: PagerState,
+    onDayClick: Typed1Listener<LocalDate>
 ) {
     HorizontalPager(
         count = weeks.size,
@@ -57,7 +60,8 @@ fun DaysPager(
         val week by remember(weeks, it) { mutableStateOf(weeks[it]) }
         WeekContent(
             week,
-            dayOfWeekPos
+            dayOfWeekPos,
+            onDayClick = onDayClick
         )
     }
 }
@@ -65,7 +69,8 @@ fun DaysPager(
 @Composable
 fun WeekContent(
     week: WeekUiModel,
-    dayOfWeekPos: Int
+    dayOfWeekPos: Int,
+    onDayClick: Typed1Listener<LocalDate>
 ) {
     val lazyRowState = rememberLazyListState(dayOfWeekPos)
 
@@ -82,25 +87,30 @@ fun WeekContent(
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         week.days.forEachIndexed { index, day ->
-            DayContent(day, dayOfWeekPos == index)
+            DayContent(
+                day,
+                dayOfWeekPos == index,
+                onDayClick = onDayClick
+            )
         }
     }
 }
 
 private val weekFormat = DateTimeFormatter.ofPattern("EEE")
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun RowScope.DayContent(
     day: DayUiModel,
-    isSelected: Boolean
+    isSelected: Boolean,
+    onDayClick: Typed1Listener<LocalDate>
 ) {
     val colorFrom = MaterialTheme3.colorScheme.secondary
 
     val backgroundColor = if (day.isToday)
         MaterialTheme3.colorScheme.secondaryContainer
     else
-        MaterialTheme3.colorScheme.surface
+        MaterialTheme3.colorScheme.surfaceVariant
 
     val borderColor by animateColorAsState(
         if (isSelected) colorFrom else Color.Transparent,
@@ -123,14 +133,15 @@ fun RowScope.DayContent(
         }
         Spacer(Modifier.height(3.5.dp))
         Card(
+            onClick = { onDayClick(day.date) },
             modifier = Modifier
                 .padding(start = 3.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)
                 .size(39.dp),
             shape = CircleShape,
             border = border,
-            backgroundColor = backgroundColor
+            containerColor = backgroundColor
         ) {
-            Box(Modifier.padding(start = 3.dp, end = 3.dp)) {
+            Box(Modifier.padding(start = 3.dp, end = 3.dp).fillMaxSize()) {
                 Text(
                     text = day.date.dayOfMonth.toString(),
                     style = MaterialTheme.typography.titleSmall,
@@ -160,9 +171,9 @@ fun RowScope.DayContent(
                 }
             }
         } else {
-            Card(
+            Surface(
                 modifier = Modifier.height(14.dp),
-                backgroundColor = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.primary,
                 shape = CircleShape
             ) {
                 Box(contentAlignment = Alignment.Center) {
