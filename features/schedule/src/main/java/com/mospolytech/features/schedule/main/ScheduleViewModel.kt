@@ -1,31 +1,79 @@
 package com.mospolytech.features.schedule.main
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.mospolytech.domain.base.utils.TAG
 import com.mospolytech.domain.base.utils.getOrDefault
 import com.mospolytech.domain.base.utils.isFinalFailure
-import com.mospolytech.domain.base.utils.isNotLoading
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.core.mvi.BaseMutator
+import com.mospolytech.features.base.core.mvi.BaseViewModel
 import com.mospolytech.features.base.core.mvi.BaseViewModelFull
+import com.mospolytech.features.base.core.mvi.SimpleMutator
 import com.mospolytech.features.schedule.model.WeekUiModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class ScheduleViewModel(
     private val useCase: ScheduleUseCase
-) : BaseViewModelFull<ScheduleState, ScheduleMutator, Nothing>(
-    initState(),
-    ::ScheduleMutator
-) {
+) : BaseViewModel<ScheduleState>(initState()) {
 
     init {
+        setupMutator {
+            forProp { schedule }.onChanged {
+                val weeks = WeekUiModel.fromSchedule(state.schedule)
+                val schedulePos = state.getSchedulePos(state.selectedDate)
+                val weekPos = state.getWeeksPos(state.selectedDate)
+                val dayOfWeekPos = state.getDayOfWeekPos(state.selectedDate)
+
+                state = state.copy(
+                    isPreloading = false,
+                    isLoading = false,
+                    weeks = weeks,
+                    schedulePos = schedulePos,
+                    weeksPos = weekPos,
+                    dayOfWeekPos = dayOfWeekPos
+                )
+            }
+
+            forProp { selectedDate }.onChanged {
+                val schedulePos = state.getSchedulePos(state.selectedDate)
+                val weekPos = state.getWeeksPos(state.selectedDate)
+                val dayOfWeekPos = state.getDayOfWeekPos(state.selectedDate)
+                val dateIsToday = state.selectedDate == LocalDate.now()
+
+                state = state.copy(
+                    schedulePos = schedulePos,
+                    weeksPos = weekPos,
+                    dayOfWeekPos = dayOfWeekPos,
+                    showBackToTodayFab = !dateIsToday
+                )
+            }
+
+            forProp { schedulePos }.onChanged {
+                val date = state.schedule.getOrNull(state.schedulePos)?.date ?: LocalDate.now()
+                state = state.copy(selectedDate = date)
+            }
+
+            forProp { isLoading }.onChanged {
+                val isError = !state.isLoading && state.isError
+                state = state.copy(isError = isError)
+            }
+        }
+
+
         viewModelScope.launch {
             useCase.getSchedule().collect {
                 if (!it.isFinalFailure) {
                     mutateState {
-                        setSchedule(it.getOrDefault(emptyList()))
-                        setIsLoading(it.isLoading && !state.isPreloading)
+                        val schedule = it.getOrDefault(emptyList())
+                        val isLoading = it.isLoading && !state.isPreloading
+
+                        state = state.copy(
+                            schedule = schedule,
+                            isLoading = isLoading
+                        )
                     }
                 }
             }
@@ -34,29 +82,50 @@ class ScheduleViewModel(
 
     fun onFabClick() {
         mutateState {
-            setToday()
+            state = state.copy(selectedDate = LocalDate.now())
         }
     }
 
     fun onSchedulePosChanged(schedulePos: Int) {
         mutateState {
-            setSchedulePos(schedulePos)
+            state = state.copy(schedulePos = state.coerceSchedulePos(schedulePos))
         }
     }
 
     fun onWeeksPosChanged(weeksPos: Int) {
         mutateState {
-            setWeeksPos(weeksPos)
+            state = state.copy(weeksPos = weeksPos)
         }
     }
 }
 
-fun initState(): ScheduleState {
-    return ScheduleMutator().apply {
+private fun initState(): ScheduleState {
+    return SimpleMutator<ScheduleState>().apply {
         this.state = ScheduleState()
-        setWeeksPos(state.selectedDate)
-        setDayOfWeekPos(state.selectedDate)
+        mutationScope {
+            val pos = state.getWeeksPos(state.selectedDate)
+            state = state.copy(weeksPos = pos)
+            state = state.copy(dayOfWeekPos = state.getDayOfWeekPos(state.selectedDate))
+        }
     }.state
+}
+
+private fun ScheduleState.getWeeksPos(date: LocalDate): Int {
+    return weeks.indexOfFirst { it.days.any { it.date == date } }.coerceAtLeast(0)
+}
+
+private fun ScheduleState.getDayOfWeekPos(date: LocalDate): Int {
+    return date.dayOfWeek.value - 1
+}
+
+private fun ScheduleState.getSchedulePos(date: LocalDate): Int {
+    return coerceSchedulePos(
+        schedule.indexOfFirst { it.date == date }.coerceAtLeast(0)
+    )
+}
+
+private fun ScheduleState.coerceSchedulePos(schedulePos: Int): Int {
+    return schedulePos.coerceIn(0, (schedule.size - 1).coerceAtLeast(0))
 }
 
 data class ScheduleState(
@@ -73,99 +142,3 @@ data class ScheduleState(
 
     val showBackToTodayFab: Boolean = false
 )
-
-class ScheduleMutator : BaseMutator<ScheduleState>() {
-    fun setSchedule(schedule: List<ScheduleDay>) =
-        set(state.schedule, schedule) {
-            copy(schedule = schedule)
-        }.then {
-            setWeeks(WeekUiModel.fromSchedule(schedule))
-            setIsPreloading(false)
-            setIsLoading(false)
-            setSchedulePos(state.selectedDate)
-            setWeeksPos(state.selectedDate)
-            setDayOfWeekPos(state.selectedDate)
-        }
-
-    fun setWeeks(weeks: List<WeekUiModel>) =
-        set(state.weeks, weeks) {
-            copy(weeks = weeks)
-        }
-
-    fun setToday() {
-        setSelectedDate(LocalDate.now())
-    }
-
-    fun setSelectedDate(selectedDate: LocalDate) =
-        set(state.selectedDate, selectedDate) {
-            copy(selectedDate = it)
-        }.then {
-            setSchedulePos(state.selectedDate)
-            setWeeksPos(state.selectedDate)
-            setDayOfWeekPos(state.selectedDate)
-            setShowBackToTodayFabByDate(state.selectedDate)
-        }
-
-    fun setWeeksPos(date: LocalDate) {
-        val pos = state.weeks.indexOfFirst { it.days.any { it.date == date } }.coerceAtLeast(0)
-        setWeeksPos(pos)
-    }
-
-
-    fun setWeeksPos(weeksPos: Int) =
-        set(state.weeksPos, weeksPos) {
-            copy(weeksPos = it)
-        }
-
-    fun setDayOfWeekPos(date: LocalDate) {
-        val pos = date.dayOfWeek.value - 1
-        setDayOfWeekPos(pos)
-    }
-
-
-    fun setDayOfWeekPos(dayOfWeekPos: Int) =
-        set(state.dayOfWeekPos, dayOfWeekPos) {
-            copy(dayOfWeekPos = it)
-        }
-
-    fun setSchedulePos(date: LocalDate) {
-        val pos = state.schedule.indexOfFirst { it.date == date }.coerceAtLeast(0)
-        setSchedulePos(pos)
-    }
-
-
-    fun setSchedulePos(schedulePos: Int) =
-        set(state.schedulePos, schedulePos) {
-            copy(schedulePos = it)
-        }.then {
-            val date = state.schedule[schedulePos].date
-            setSelectedDate(date)
-        }
-
-    fun setIsLoading(isLoading: Boolean) =
-        set(state.isLoading, isLoading) {
-            copy(isLoading = it)
-        }.then {
-            setIsError(!state.isLoading && state.isError)
-        }
-
-    fun setIsError(isError: Boolean) =
-        set(state.isError, isError) {
-            copy(isError = it)
-        }
-
-    fun setIsPreloading(isPreloading: Boolean) =
-        set(state.isPreloading, isPreloading) {
-            copy(isPreloading = it)
-        }
-
-    fun setShowBackToTodayFabByDate(date: LocalDate) {
-        val dateIsToday = date == LocalDate.now()
-        setShowBackToTodayFab(!dateIsToday)
-    }
-
-    fun setShowBackToTodayFab(showBackToTodayFab: Boolean) =
-        set(state.showBackToTodayFab, showBackToTodayFab) {
-            copy(showBackToTodayFab = it)
-        }
-}

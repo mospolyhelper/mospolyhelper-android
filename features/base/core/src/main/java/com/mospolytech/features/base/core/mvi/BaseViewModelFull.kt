@@ -37,7 +37,11 @@ abstract class BaseViewModelFull<TState, TMutator : BaseMutator<TState>, TAction
     }
 
     override fun mutateState(mutate: TMutator.() -> Unit) {
-        _state.value = getMutator(_state.value).apply(mutate).state
+        _state.value = getMutator(_state.value).apply {
+            mutationScope {
+                mutate()
+            }
+        }.state
     }
 
 
@@ -53,10 +57,12 @@ abstract class BaseViewModelFull<TState, TMutator : BaseMutator<TState>, TAction
 
     private var mutatorSetup: TMutator.() -> Unit = { }
 
-    fun setupMutator(setup: MutatorObserver<TState>.() -> Unit) {
-        val observer = MutatorObserver<TState>().apply(setup)
+    fun setupMutator(setup: MutatorObserver<TState, TMutator>.() -> Unit) {
+        val observer = MutatorObserver<TState, TMutator>().apply(setup)
         mutatorSetup = {
-            this.observer = observer
+            this.onStateChanged += {
+                observer.notify(this)
+            }
         }
     }
 
