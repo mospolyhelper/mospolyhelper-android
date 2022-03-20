@@ -3,7 +3,9 @@ package com.mospolytech.features.base.elements
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.mospolytech.features.base.core.utils.MaterialTheme3
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialAvatar(url: String, initials: String = "") {
     if (url.isEmpty()) {
@@ -31,9 +35,13 @@ fun InitialAvatar(url: String, initials: String = "") {
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .height(48.dp)
-                .width(48.dp)
+                .width(48.dp),
+            containerColor = MaterialTheme3.colorScheme.surfaceVariant
         ) {
-            Box {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = fixedInitials,
                     modifier = Modifier
