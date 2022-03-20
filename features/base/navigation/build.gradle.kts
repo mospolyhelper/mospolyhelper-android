@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(Modules.Features.Base.Core))
+
+    implementation(project(Modules.Domain.Schedule))
 }

@@ -11,6 +11,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
+import com.mospolytech.domain.schedule.model.lesson.Lesson
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
+import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.features.base.core.utils.*
 import com.mospolytech.features.base.elements.PrimaryTopAppBar
 import com.mospolytech.features.schedule.R
@@ -28,7 +31,8 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = getViewModel()) {
             viewModel::onFabClick,
             viewModel::onSchedulePosChanged,
             viewModel::onWeeksPosChanged,
-            onDayClick = viewModel::onDayClick
+            onDayClick = viewModel::onDayClick,
+            onLessonClick = viewModel::onLessonClick
         )
     }
 }
@@ -41,7 +45,8 @@ fun ScheduleContent(
     onFabClick: ClickListener,
     onSchedulePosChanged: Typed1Listener<Int>,
     onWeeksPosChanged: Typed1Listener<Int>,
-    onDayClick: Typed1Listener<LocalDate>
+    onDayClick: Typed1Listener<LocalDate>,
+    onLessonClick: Typed2Listener<Lesson, LessonDateTime>
 ) {
     Box {
         Column(Modifier.fillMaxSize()) {
@@ -71,7 +76,8 @@ fun ScheduleContent(
 
                 SchedulePager(
                     scheduleDays = state.schedule,
-                    pagerState = schedulePagerState
+                    pagerState = schedulePagerState,
+                    onLessonClick = onLessonClick
                 )
             }
         }

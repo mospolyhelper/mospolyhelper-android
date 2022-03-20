@@ -5,12 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.mospolytech.domain.base.utils.TAG
 import com.mospolytech.domain.base.utils.getOrDefault
 import com.mospolytech.domain.base.utils.isFinalFailure
+import com.mospolytech.domain.schedule.model.lesson.Lesson
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
+import com.mospolytech.domain.schedule.model.lesson.LessonInfo
+import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.usecase.ScheduleUseCase
 import com.mospolytech.features.base.core.mvi.BaseMutator
 import com.mospolytech.features.base.core.mvi.BaseViewModel
 import com.mospolytech.features.base.core.mvi.BaseViewModelFull
 import com.mospolytech.features.base.core.mvi.SimpleMutator
+import com.mospolytech.features.base.navigation.ScheduleScreens
 import com.mospolytech.features.schedule.model.WeekUiModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -102,6 +107,17 @@ class ScheduleViewModel(
         mutateState {
             state = state.copy(selectedDate = date)
         }
+    }
+
+    fun onLessonClick(lesson: Lesson, dateTime: LessonDateTime) {
+        router.navigateTo(
+            ScheduleScreens.LessonInfo(
+                lessonInfo = LessonInfo(
+                    lesson = lesson,
+                    dateTime = dateTime
+                )
+            )
+        )
     }
 }
 

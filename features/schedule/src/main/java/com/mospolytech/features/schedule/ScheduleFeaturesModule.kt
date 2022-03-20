@@ -2,6 +2,7 @@ package com.mospolytech.features.schedule
 
 import com.mospolytech.features.schedule.calendar.ScheduleCalendarViewModel
 import com.mospolytech.features.schedule.free_place.FreePlaceViewModel
+import com.mospolytech.features.schedule.lesson_info.LessonInfoViewModel
 import com.mospolytech.features.schedule.lessons_review.LessonsReviewViewModel
 import com.mospolytech.features.schedule.main.ScheduleViewModel
 import com.mospolytech.features.schedule.menu.ScheduleMenuViewModel
@@ -16,4 +17,5 @@ val scheduleFeaturesModule = module {
     viewModel { ScheduleCalendarViewModel(get()) }
     viewModel { FreePlaceViewModel(get()) }
     viewModel { ScheduleSourcesViewModel(get()) }
+    viewModel { LessonInfoViewModel() }
 }

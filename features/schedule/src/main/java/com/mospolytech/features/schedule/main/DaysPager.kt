@@ -114,7 +114,7 @@ fun RowScope.DayContent(
 
     val borderColor by animateColorAsState(
         if (isSelected) colorFrom else Color.Transparent,
-        tween(500)
+        tween(250)
     )
 
     val border = BorderStroke(1.dp, borderColor)

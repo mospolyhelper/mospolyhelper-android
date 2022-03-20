@@ -2,8 +2,8 @@ package com.mospolytech.features.base.core.navigation.core
 
 import com.mospolytech.features.base.core.NativeText
 import com.mospolytech.features.base.core.navigation.core.Screen.Companion.toArgString
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.capturedKClass
 import kotlinx.serialization.json.Json
 
 abstract class Screen(
@@ -25,6 +25,10 @@ abstract class Screen(
                 is NativeText -> Json.encodeToString(this as NativeText)
                 else -> this.toString()
             }
+        }
+
+        inline fun <reified T> T.serialized(): String {
+            return Json.encodeToString(this)
         }
     }
 

@@ -19,19 +19,21 @@ import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.teacher.Teacher
 import com.mospolytech.domain.schedule.utils.getShortName
-import com.mospolytech.features.base.core.utils.ContentAlpha
-import com.mospolytech.features.base.core.utils.FluentIcons
-import com.mospolytech.features.base.core.utils.WithContentAlpha
+import com.mospolytech.features.base.core.utils.*
 import com.mospolytech.features.base.elements.placeholder
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LessonContent(lesson: Lesson, isLoading: Boolean = false, onItemClick: () -> Unit = { }) {
+fun LessonContent(
+    lesson: Lesson,
+    isLoading: Boolean = false,
+    onLessonClick: Typed1Listener<Lesson>
+) {
     Card(
         elevation = 4.dp,
         shape = RoundedCornerShape(25.dp),
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-        onClick = onItemClick
+        onClick = { onLessonClick(lesson) }
     ) {
         Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 15.dp, bottom = 18.dp)) {
             WithContentAlpha(ContentAlpha.medium) {

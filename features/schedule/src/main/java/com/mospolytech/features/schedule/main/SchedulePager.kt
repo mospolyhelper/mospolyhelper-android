@@ -21,11 +21,14 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.mospolytech.domain.schedule.model.group.Group
 import com.mospolytech.domain.schedule.model.lesson.Lesson
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import com.mospolytech.domain.schedule.model.teacher.Teacher
+import com.mospolytech.features.base.core.utils.Typed1Listener
+import com.mospolytech.features.base.core.utils.Typed2Listener
 import com.mospolytech.features.base.elements.placeholder
 import com.mospolytech.features.schedule.R
 import java.time.LocalDate
@@ -41,7 +44,8 @@ private val relaxAnims = listOf(
 @Composable
 fun SchedulePager(
     scheduleDays: List<ScheduleDay>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    onLessonClick: Typed2Listener<Lesson, LessonDateTime>
 ) {
     HorizontalPager(
         count = scheduleDays.size,
@@ -51,7 +55,12 @@ fun SchedulePager(
         val scheduleDay by remember(scheduleDays, it) { mutableStateOf(scheduleDays[it]) }
 
         if (scheduleDay.lessons.isNotEmpty()) {
-            LessonList(scheduleDay.lessons)
+            LessonList(
+                scheduleDay.lessons,
+                onLessonClick = { lesson, time ->
+                    onLessonClick(lesson, LessonDateTime(scheduleDay.date, time))
+                }
+            )
         } else {
             val randomAnim = remember { relaxAnims[it % relaxAnims.size] }
             NoLessonsDay(randomAnim)
@@ -93,21 +102,39 @@ fun DateContent(date: LocalDate) {
 }
 
 @Composable
-fun LessonList(lessons: List<LessonsByTime>, isLoading: Boolean = false) {
+fun LessonList(
+    lessons: List<LessonsByTime>,
+    isLoading: Boolean = false,
+    onLessonClick: Typed2Listener<Lesson, LessonTime>
+) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         for (lessonsByTime in lessons) {
-            LessonPlace(lessonsByTime = lessonsByTime, isLoading = isLoading)
+            LessonPlace(
+                lessonsByTime = lessonsByTime,
+                isLoading = isLoading,
+                onLessonClick = { lesson, lessonTime ->
+                    onLessonClick(lesson, lessonTime)
+                }
+            )
         }
     }
 }
 
 
-fun LazyListScope.LessonPlace(lessonsByTime: LessonsByTime, isLoading: Boolean = false) {
+fun LazyListScope.LessonPlace(
+    lessonsByTime: LessonsByTime,
+    isLoading: Boolean = false,
+    onLessonClick: Typed2Listener<Lesson, LessonTime>
+) {
     item {
         LessonTimeContent(lessonsByTime.time, isLoading)
     }
     items(lessonsByTime.lessons) { lesson ->
-        LessonContent(lesson = lesson, isLoading = isLoading)
+        LessonContent(
+            lesson = lesson,
+            isLoading = isLoading,
+            onLessonClick = { onLessonClick(it, lessonsByTime.time) }
+        )
     }
 }
 
@@ -139,5 +166,5 @@ fun ScheduleDayPlaceHolder() {
         )
     }
 
-    LessonList(lessons = lessons, isLoading = true)
+    LessonList(lessons = lessons, isLoading = true) { _, _ -> }
 }

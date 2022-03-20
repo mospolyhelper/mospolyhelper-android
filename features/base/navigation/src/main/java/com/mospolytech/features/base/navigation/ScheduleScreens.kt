@@ -15,4 +15,10 @@ object ScheduleScreens {
     object LessonsReview : Screen()
 
     object FreePlace : Screen()
+
+    class LessonInfo(
+        val lessonInfo: com.mospolytech.domain.schedule.model.lesson.LessonInfo
+    ) : Screen(
+        LessonInfo::lessonInfo.name to lessonInfo.serialized()
+    )
 }

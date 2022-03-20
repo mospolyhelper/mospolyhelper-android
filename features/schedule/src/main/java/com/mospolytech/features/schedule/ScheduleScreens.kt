@@ -10,6 +10,7 @@ import com.mospolytech.features.schedule.lessons_review.LessonsReviewScreen
 import com.mospolytech.features.schedule.main.ScheduleScreen
 import com.mospolytech.features.schedule.menu.ScheduleMenuScreen
 import com.mospolytech.features.base.navigation.MainScreen
+import com.mospolytech.features.schedule.lesson_info.LessonInfoScreen
 import com.mospolytech.features.schedule.sources.ScheduleSourcesScreen
 
 fun NavGraphBuilder.scheduleScreens() {
@@ -20,5 +21,10 @@ fun NavGraphBuilder.scheduleScreens() {
         addScreen<ScheduleScreens.LessonsReview> { LessonsReviewScreen() }
         addScreen<ScheduleScreens.Source> { ScheduleSourcesScreen() }
         addScreen<ScheduleScreens.FreePlace> { FreePlaceScreen() }
+        addScreen<ScheduleScreens.LessonInfo> {
+            LessonInfoScreen(
+                lessonInfo = getArg(ScheduleScreens.LessonInfo::lessonInfo.name)
+            )
+        }
     }
 }

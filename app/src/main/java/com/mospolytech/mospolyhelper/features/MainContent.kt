@@ -15,7 +15,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mospolytech.features.base.core.navigation.compose.rememberNavController
 import com.mospolytech.features.base.navigation.MainScreen
 import com.mospolytech.mospolyhelper.appScreens
-import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 
 val showNavBar = listOf(
@@ -28,7 +27,7 @@ val showNavBar = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
-    viewModel: MainViewModel = get()
+    viewModel: MainViewModel = getViewModel()
 ) {
     val navController = rememberNavController(viewModel.router)
 
