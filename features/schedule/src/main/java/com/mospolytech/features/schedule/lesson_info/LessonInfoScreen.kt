@@ -59,7 +59,7 @@ private fun LessonInfoContent(
             .verticalScroll(rememberScrollState())
     ) {
         Surface(
-            color = MaterialTheme3.colorScheme.primaryContainer,
+            color = MaterialTheme3.colorScheme.surfaceVariant,
             shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
         ) {
             Column(Modifier.fillMaxWidth()) {
@@ -68,7 +68,7 @@ private fun LessonInfoContent(
                     onBackClick = onBackClick,
                     colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent)
                 )
-                SpacerHeight(height = 16.dp)
+                SpacerHeight(height = 32.dp)
                 LessonType(
                     type = state.lessonInfo?.lesson?.type ?: ""
                 )
@@ -77,7 +77,7 @@ private fun LessonInfoContent(
                 )
                 SpacerHeight(height = 4.dp)
                 state.lessonInfo?.dateTime?.let { LessonDateTime(lessonDateTime = it) }
-                SpacerHeight(height = 20.dp)
+                SpacerHeight(height = 16.dp)
             }
         }
         SpacerHeight(height = 8.dp)
@@ -174,7 +174,7 @@ private fun LessonTeachers(teachers: List<Teacher>) {
                 painter = painterResource(FluentIcons.ic_fluent_hat_graduation_20_regular),
                 contentDescription = null
             )
-            SpacerWidth(5.dp)
+            SpacerWidth(4.dp)
             Text(
                 text = "Преподаватели",
                 style = MaterialTheme3.typography.titleSmall,
@@ -182,7 +182,7 @@ private fun LessonTeachers(teachers: List<Teacher>) {
             )
         }
     }
-    SpacerHeight(2.dp)
+    SpacerHeight(1.dp)
     teachers.forEachIndexed { index, teacher ->
         LessonItem(
             imageUrl = "",
@@ -210,7 +210,7 @@ private fun LessonPlaces(places: List<Place>) {
                 painter = painterResource(FluentIcons.ic_fluent_location_20_regular),
                 contentDescription = null
             )
-            SpacerWidth(5.dp)
+            SpacerWidth(4.dp)
             Text(
                 text = "Места",
                 style = MaterialTheme3.typography.titleSmall,
@@ -218,7 +218,7 @@ private fun LessonPlaces(places: List<Place>) {
             )
         }
     }
-    SpacerHeight(2.dp)
+    SpacerHeight(1.dp)
     places.forEachIndexed { index, place ->
         LessonItem(
             imageUrl = "",
@@ -246,7 +246,7 @@ private fun LessonGroups(groups: List<Group>) {
                 painter = painterResource(FluentIcons.ic_fluent_people_20_regular),
                 contentDescription = null
             )
-            SpacerWidth(5.dp)
+            SpacerWidth(4.dp)
             Text(
                 text = "Группы",
                 style = MaterialTheme3.typography.titleSmall,
@@ -254,7 +254,7 @@ private fun LessonGroups(groups: List<Group>) {
             )
         }
     }
-    SpacerHeight(2.dp)
+    SpacerHeight(1.dp)
     groups.forEachIndexed { index, group ->
         LessonItem(
             imageUrl = "",
