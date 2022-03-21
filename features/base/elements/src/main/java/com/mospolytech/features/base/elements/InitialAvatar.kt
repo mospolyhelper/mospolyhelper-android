@@ -2,6 +2,7 @@ package com.mospolytech.features.base.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardElevation
@@ -32,7 +33,7 @@ fun InitialAvatar(url: String, initials: String = "") {
         }
 
         Card(
-            shape = RoundedCornerShape(24.dp),
+            shape = CircleShape,
             modifier = Modifier
                 .height(48.dp)
                 .width(48.dp),
