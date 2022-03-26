@@ -12,6 +12,7 @@ object Modules {
             const val Elements = "$prefix$prefix1:elements"
         }
 
+        const val Nodes = "$prefix:nodes"
         const val Home = "$prefix:home"
         const val Schedule = "$prefix:schedule"
         const val Account = "$prefix:account"
@@ -19,14 +20,20 @@ object Modules {
     }
 
     object Domain {
-        const val Base = ":domain:base"
-        const val Schedule = ":domain:schedule"
-        const val Account = ":domain:account"
+        private const val prefix = ":domain"
+
+        const val Base = "$prefix:base"
+        const val Nodes = "$prefix:nodes"
+        const val Schedule = "$prefix:schedule"
+        const val Account = "$prefix:account"
     }
 
     object Data {
-        const val Base = ":data:base"
-        const val Schedule = ":data:schedule"
-        const val Account = ":data:account"
+        private const val prefix = ":data"
+
+        const val Base = "$prefix:base"
+        const val Nodes = "$prefix:nodes"
+        const val Schedule = "$prefix:schedule"
+        const val Account = "$prefix:account"
     }
 }

@@ -8,19 +8,19 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 interface PreferencesDS {
-    fun setJson(str: String, key: String)
-    fun getJson(key: String): Result<PreferenceDao?>
+    suspend fun setJson(str: String, key: String)
+    suspend fun getJson(key: String): Result<PreferenceDao?>
     fun flowOfPreferences(key: String): Flow<PreferenceDao?>
 }
 
-inline fun <reified T> PreferencesDS.set(obj: T, key: String): Result<Unit> {
+suspend inline fun <reified T> PreferencesDS.set(obj: T, key: String): Result<Unit> {
     return kotlin.runCatching {
         val str = Json.encodeToString(obj)
         setJson(str, key)
     }
 }
 
-inline fun <reified T> PreferencesDS.get(key: String): Result<T?> {
+suspend inline fun <reified T> PreferencesDS.get(key: String): Result<T?> {
     val json = getJson(key)
     return json.mapCatching { it?.let { Json.decodeFromString(it.value) } }
 }
@@ -30,6 +30,6 @@ inline fun <reified T> PreferencesDS.flowOf(key: String): Flow<Result<T?>> {
         .map { kotlin.runCatching { it?.let { Json.decodeFromString(it.value) } } }
 }
 
-inline fun <reified T> PreferencesDS.get(key: String, defaultValue: T): T {
+suspend inline fun <reified T> PreferencesDS.get(key: String, defaultValue: T): T {
     return get<T>(key).getOrNull() ?: defaultValue
 }

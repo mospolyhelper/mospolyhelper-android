@@ -1,5 +1,14 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":data:nodes")
+
+
+include(":domain:nodes")
+
+
+include(":features:nodes")
+
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -15,6 +24,7 @@ pluginManagement {
         id("com.android.library") version androidGradleVersion  apply false
         kotlin("android") version kotlinVersion apply false
         kotlin("plugin.serialization") version kotlinVersion apply false
+        id("org.jetbrains.kotlin.jvm") version "1.6.10"
     }
 }
 
@@ -52,3 +62,4 @@ include(":features:schedule")
 include(":features:account")
 include(":features:misc")
 include(":features:home")
+
