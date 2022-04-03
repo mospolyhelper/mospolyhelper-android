@@ -1,3 +1,6 @@
+# [Edugma](https://github.com/Edugma/app) - новое приложение для всех учебных заведений
+Поддержка mospolyhelper прекращена
+
 # mospolyhelper
 Неофициальное приложение Московского Политеха
 
